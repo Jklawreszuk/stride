@@ -44,6 +44,8 @@
   <ItemGroup>
     <None Include="Native\XAudio2.cpp" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <PackageReference Include="Silk.NET.OpenAL" Version="2.17.1" />
+  </ItemGroup>
   <Import Project="$(StrideSdkTargets)" />
 </Project>

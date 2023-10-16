@@ -24,10 +24,7 @@ namespace Stride.Audio
 
         static AudioEngine()
         {
-            if (!AudioLayer.Init())
-            {
-                throw new Exception("Failed to initialize the audio native layer.");
-            }
+            AudioLayer.Init();
         }
 
         /// <summary>
@@ -67,9 +64,9 @@ namespace Stride.Audio
         /// <summary>
         /// Initialize audio engine
         /// </summary>
-        internal virtual void InitializeAudioEngine(AudioLayer.DeviceFlags flags)
+        internal virtual void InitializeAudioEngine()
         {
-            AudioDevice = AudioLayer.Create(audioDevice.Name == "default" ? null : audioDevice.Name, flags);
+            AudioDevice = AudioLayer.Create(audioDevice.Name == "default" ? null : audioDevice.Name);
             if (AudioDevice.Ptr == IntPtr.Zero)
             {
                 State = AudioEngineState.Invalidated;
