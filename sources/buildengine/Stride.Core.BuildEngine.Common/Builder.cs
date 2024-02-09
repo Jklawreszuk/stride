@@ -194,7 +194,7 @@ public class Builder : IDisposable
     /// <summary>
     /// Runs this instance.
     /// </summary>
-    public BuildResultCode Run(Mode mode, bool writeIndexFile = true)
+    public BuildResultCode Run(Mode mode)
     {
         // When we setup the database ourself we have to take responsibility to close it after
         var shouldCloseDatabase = ObjectDatabase == null;
