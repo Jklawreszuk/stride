@@ -612,7 +612,7 @@ namespace Stride.Core.Collections
             private bool MoveNextRare()
             {
                 index = list.size + 1;
-                current = default(T);
+                current = default;
                 return false;
             }
 
