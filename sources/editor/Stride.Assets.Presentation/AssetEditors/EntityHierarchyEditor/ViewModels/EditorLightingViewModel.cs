@@ -112,7 +112,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewMode
             dialog.Filters.Add(new FileDialogFilter("DDS texture", "dds"));
             dialog.DefaultExtension = "dds";
             if (editor.Session.SolutionPath != null)
-                dialog.InitialDirectory = editor.Session.SolutionPath.GetFullDirectory().ToWindowsPath();
+                dialog.InitialDirectory = editor.Session.SolutionPath.GetFullDirectory().ToOSPath();
 
             var result = await dialog.ShowModal();
             if (result == DialogResult.Ok)

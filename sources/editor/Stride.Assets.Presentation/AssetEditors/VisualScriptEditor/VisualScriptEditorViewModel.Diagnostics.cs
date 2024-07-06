@@ -47,7 +47,7 @@ namespace Stride.Assets.Presentation.AssetEditors.VisualScriptEditor
 
             try
             {
-                var generatedAbsolutePath = assetItem.GetGeneratedAbsolutePath()?.ToWindowsPath();
+                var generatedAbsolutePath = assetItem.GetGeneratedAbsolutePath()?.ToOSPath();
                 if (generatedAbsolutePath == null)
                     return;
 

@@ -29,7 +29,7 @@ namespace Stride.Core.Assets.Editor.Components.TemplateDescriptions.ViewModels
 
         public string Name => Path.GetFileNameWithoutExtension();
 
-        public string Description => Path.ToWindowsPath();
+        public string Description => Path.ToOSPath();
 
         public string FullDescription => "";
 
@@ -56,7 +56,7 @@ namespace Stride.Core.Assets.Editor.Components.TemplateDescriptions.ViewModels
 
         private void Explore()
         {
-            var startInfo = new ProcessStartInfo("explorer.exe", $"/select,{this.Path.ToWindowsPath()}") { UseShellExecute = true };
+            var startInfo = new ProcessStartInfo("explorer.exe", $"/select,{this.Path.ToOSPath()}") { UseShellExecute = true };
             var explorer = new Process { StartInfo = startInfo };
             explorer.Start();
         }

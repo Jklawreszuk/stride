@@ -155,7 +155,7 @@ namespace Stride.Core.Presentation.Dialogs
         {
             var dialog = CreateFileOpenModalDialog();
             dialog.AllowMultiSelection = false;
-            dialog.InitialDirectory = initialPath;
+            dialog.InitialDirectory = initialPath.ToOSPath();
             if (filters is not null)
                 dialog.Filters.AddRange(filters?.Select(x => new FileDialogFilter(x.Name, string.Join(';', x.Patterns))));
 
@@ -169,7 +169,7 @@ namespace Stride.Core.Presentation.Dialogs
         {
             var dialog = CreateFileOpenModalDialog();
             dialog.AllowMultiSelection = true;
-            dialog.InitialDirectory = initialPath;
+            dialog.InitialDirectory = initialPath.ToOSPath();
             if (filters is not null)
                 dialog.Filters.AddRange(filters?.Select(x => new FileDialogFilter(x.Name, string.Join(';', x.Patterns))));
 
@@ -180,11 +180,26 @@ namespace Stride.Core.Presentation.Dialogs
         async Task<UDirectory> IDialogService.OpenFolderPickerAsync(UDirectory initialPath)
         {
             var dialog = CreateFolderOpenModalDialog();
-            dialog.InitialDirectory = initialPath;
+            dialog.InitialDirectory = initialPath.ToOSPath();
 
             var result = await dialog.ShowModal();
             return result == DialogResult.Ok
                 ? dialog.Directory
+                : null;
+        }
+
+        async Task<UFile> IDialogService.SaveFilePickerAsync(UDirectory initialPath, IReadOnlyList<FilePickerFilter> filters, string defaultExtension, string defaultFileName)
+        {
+            var dialog = CreateFileSaveModalDialog();
+            dialog.DefaultExtension = defaultExtension;
+            dialog.DefaultFileName = defaultFileName;
+            dialog.InitialDirectory = initialPath.ToOSPath();
+            if (filters is not null)
+                dialog.Filters.AddRange(filters?.Select(x => new FileDialogFilter(x.Name, string.Join(';', x.Patterns))));
+
+            var result = await dialog.ShowModal();
+            return result == DialogResult.Ok
+                ? dialog.FilePath
                 : null;
         }
     }
