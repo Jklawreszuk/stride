@@ -44,11 +44,7 @@ namespace Stride.TextureConverter.TexLibraries
     {
         private static Logger Log = GlobalLogger.GetLogger("DxtTexLib");
 
-        private static HashSet<string> SupportedExtensions = new(StringComparer.InvariantCultureIgnoreCase)
-        {
-            ".dds",
-            ".tga",
-        };
+        private static HashSet<string> SupportedExtensions = GetSupportedExtensions();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DxtTexLib"/> class.
@@ -222,7 +218,13 @@ namespace Stride.TextureConverter.TexLibraries
             {
                 hr = Utilities.LoadTGAFile(loader.FilePath, out libraryData.Metadata, libraryData.Image);
             }
-            
+            // TODO : Temporary fix for GH issue #2376
+            // Grayscale texture loading using FreeImage should be possible to be implemented in the future
+            else if (OperatingSystem.IsWindows()) 
+            {
+                hr = Utilities.LoadWICFile(loader.FilePath, WIC_FLAGS.WIC_FLAGS_NONE, out libraryData.Metadata, libraryData.Image);
+            }
+
             if (hr != HRESULT.S_OK)
             {
                 Log.Error("Loading dds file " + loader.FilePath + " failed: " + hr);
@@ -767,5 +769,28 @@ namespace Stride.TextureConverter.TexLibraries
             return ((int) (format) >= 1 && (int) (format) <= 115);
         }
 
+        private static HashSet<string> GetSupportedExtensions()
+        {
+            if(OperatingSystem.IsWindows())
+            {
+                return new(StringComparer.InvariantCultureIgnoreCase)
+                {
+                    ".dds",
+                    ".bmp",
+                    ".tga",
+                    ".jpg",
+                    ".jpeg",
+                    ".jpe",
+                    ".png",
+                    ".tiff",
+                    ".tif",
+                };
+            }
+            return new(StringComparer.InvariantCultureIgnoreCase)
+            {
+                ".dds",
+                ".tga",
+            };
+        }
     }
 }

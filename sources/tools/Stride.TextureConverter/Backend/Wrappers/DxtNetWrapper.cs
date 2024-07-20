@@ -522,6 +522,9 @@ namespace Stride.TextureConverter.DxtWrapper
         private extern static uint dxtLoadTGAFile(string filePath, out TexMetadata metadata, IntPtr image);
 
         [DllImport("DxtWrapper", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode), SuppressUnmanagedCodeSecurity]
+        private extern static uint dxtLoadWICFile(string filePath, WIC_FLAGS flags, out TexMetadata metadata, IntPtr image);
+
+        [DllImport("DxtWrapper", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode), SuppressUnmanagedCodeSecurity]
         private extern static bool dxtIsCompressed(DXGI_FORMAT fmt);
 
         [DllImport("DxtWrapper", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode), SuppressUnmanagedCodeSecurity]
@@ -582,6 +585,10 @@ namespace Stride.TextureConverter.DxtWrapper
         public static HRESULT LoadTGAFile(string filePath, out TexMetadata metadata, ScratchImage image)
         {
             return HandleHRESULT(dxtLoadTGAFile(filePath, out metadata, image.ptr));
+        }
+        public static HRESULT LoadWICFile(String filePath, WIC_FLAGS flags, out TexMetadata metadata, ScratchImage image)
+        {
+            return HandleHRESULT(dxtLoadWICFile(filePath, flags, out metadata, image.ptr));
         }
 
         public static HRESULT SaveToDDSFile(ref DxtImage dxtImage, DDS_FLAGS flags, string szFile)
