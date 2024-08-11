@@ -13,6 +13,7 @@ using Stride.Rendering;
 using Stride.Shaders;
 using Stride.Graphics.OpenGL;
 using Color4 = Stride.Core.Mathematics.Color4;
+using System.Runtime.InteropServices;
 #if STRIDE_PLATFORM_ANDROID
 using Monitor = System.Threading.Monitor;
 #endif
@@ -747,11 +748,7 @@ namespace Stride.Graphics
 
         private static void DebugCallback(GLEnum source, GLEnum type, int id, GLEnum severity, int length, IntPtr message, IntPtr userparam)
         {
-            if ((DebugSeverity)severity == DebugSeverity.DebugSeverityHigh)
-            {
-                string msg = System.Runtime.InteropServices.Marshal.PtrToStringAnsi(message);
-                Log.Error($"[GL] {source}; {type}; {id}; {severity}; {msg}");
-            }
+            Log.Info($"[GL] {source}; {type}; {id}; {severity}; {Marshal.PtrToStringAnsi(message)}");
         }
 
         protected void DestroyPlatformDevice()
