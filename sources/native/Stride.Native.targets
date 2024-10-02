@@ -46,7 +46,7 @@
   <!-- Define default CPU architectures -->
   <!-- TODO: Some targets are not crossplatform, so they are restricted to Windows OS -->
   <ItemGroup Condition="'$(TargetFramework)' == '$(StrideFramework)'">
-    <StrideNativeCPU Condition="$([MSBuild]::IsOSPlatform('Windows'))" Include="win-x64;win-x86" LibraryExtension=".dll" LibraryRuntime="win" />
+    <StrideNativeCPU Include="win-x64;win-x86" LibraryExtension=".dll" LibraryRuntime="win" />
     <StrideNativeCPU Include="linux-x64"  LibraryExtension=".so" LibraryRuntime="linux" />
     <StrideNativeCPU Condition="$([MSBuild]::IsOSPlatform('Windows'))" Include="osx-x64"  LibraryExtension=".dylib" LibraryRuntime="osx" />
   </ItemGroup>
