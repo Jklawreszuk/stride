@@ -12,7 +12,7 @@
 #error "The compiler must be clang!"
 #endif
 
-#include "../../../../deps/OculusOVR/Include/OVR_CAPI.h"
+#include "../../../../deps/OculusOVR/Include/ovr_capi.h"
 
 typedef struct _GUID {
 	unsigned long  Data1;

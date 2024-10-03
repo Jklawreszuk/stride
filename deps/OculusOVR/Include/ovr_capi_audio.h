@@ -14,7 +14,7 @@
 #define NOMINMAX
 #endif
 #include <windows.h>
-#include "OVR_CAPI.h"
+#include "ovr_capi.h"
 #define OVR_AUDIO_MAX_DEVICE_STR_SIZE 128
 
 #if !defined(OVR_EXPORTING_CAPI)

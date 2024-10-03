@@ -1,5 +1,5 @@
 /********************************************************************************//**
-\file      OVR_CAPI.h
+\file      ovr_capi.h
 \brief     C Interface to the Oculus PC SDK tracking and rendering library.
 \copyright Copyright 2014 Oculus VR, LLC All Rights reserved.
 ************************************************************************************/
@@ -8,9 +8,9 @@
 #define OVR_CAPI_h  ///< Header include guard
 
 
-#include "OVR_CAPI_Keys.h"
-#include "OVR_Version.h"
-#include "OVR_ErrorCode.h"
+#include "ovr_capi_keys.h"
+#include "ovr_version.h"
+#include "ovr_errorcode.h"
 
 
 #include <stdint.h>
@@ -2548,7 +2548,7 @@ OVR_STATIC_ASSERT(sizeof(ovrHmdDesc) ==
 // declarations above.
 
 #if !defined(OVR_CAPI_NO_UTILS)
-    #include "Extras/OVR_CAPI_Util.h"
+    #include "Extras/ovr_capi_util.h"
 #endif
 
 /// @endcond

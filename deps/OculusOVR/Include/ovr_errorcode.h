@@ -8,7 +8,7 @@
 #define OVR_ErrorCode_h
 
 
-#include "OVR_Version.h"
+#include "ovr_version.h"
 #include <stdint.h>
 
 

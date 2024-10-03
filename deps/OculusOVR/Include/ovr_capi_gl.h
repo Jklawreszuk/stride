@@ -7,7 +7,7 @@
 #ifndef OVR_CAPI_GL_h
 #define OVR_CAPI_GL_h
 
-#include "OVR_CAPI.h"
+#include "ovr_capi.h"
 
 #if !defined(OVR_EXPORTING_CAPI)
 

@@ -7,8 +7,8 @@
 #ifndef OVR_CAPI_D3D_h
 #define OVR_CAPI_D3D_h
 
-#include "OVR_CAPI.h"
-#include "OVR_Version.h"
+#include "ovr_capi.h"
+#include "ovr_version.h"
 
 
 #if defined (_WIN32)

@@ -19,7 +19,7 @@
 #include <float.h>
 
 #ifndef OVR_EXCLUDE_CAPI_FROM_MATH
-    #include "../OVR_CAPI.h" // Required due to a dependence on the ovrFovPort_ declaration.
+    #include "../ovr_capi.h" // Required due to a dependence on the ovrFovPort_ declaration.
 #endif
 
 #if defined(_MSC_VER)

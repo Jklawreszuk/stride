@@ -28,7 +28,7 @@ limitations under the License.
 #define OVR_StereoProjection_h
 
 
-#include "Extras/OVR_Math.h"
+#include "Extras/ovr_math.h"
 
 
 namespace OVR {

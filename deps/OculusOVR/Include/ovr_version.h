@@ -1,5 +1,5 @@
 /********************************************************************************//**
-\file      OVR_Version.h
+\file      ovr_version.h
 \brief     This header provides LibOVR version identification.
 \copyright Copyright 2014-2016 Oculus VR, LLC All Rights reserved.
 *************************************************************************************/
