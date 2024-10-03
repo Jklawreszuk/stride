@@ -494,15 +494,13 @@ printf("\n");
 
 double doublerand()
 {
-	double result;
 	double expo;
-	long a, b, c;
 	long i;
 
-	a = rand();
-	b = rand();
-	c = rand();
-	result = (double)(a - 1073741824) * 8388608.0 + (double)(b >> 8);
+	long a = rand();
+	long b = rand();
+	long c = rand();
+	double result = (double) (a - 1073741824) * 8388608.0 + (double) (b >> 8);
 	for (i = 512, expo = 2; i <= 131072; i *= 2, expo = expo * expo) {
 		if (c & i) {
 			result *= expo;
@@ -520,15 +518,13 @@ double doublerand()
 
 double narrowdoublerand()
 {
-	double result;
 	double expo;
-	long a, b, c;
 	long i;
 
-	a = rand();
-	b = rand();
-	c = rand();
-	result = (double)(a - 1073741824) * 8388608.0 + (double)(b >> 8);
+	long a = rand();
+	long b = rand();
+	long c = rand();
+	double result = (double) (a - 1073741824) * 8388608.0 + (double) (b >> 8);
 	for (i = 512, expo = 2; i <= 2048; i *= 2, expo = expo * expo) {
 		if (c & i) {
 			result *= expo;
@@ -545,12 +541,9 @@ double narrowdoublerand()
 
 double uniformdoublerand()
 {
-	double result;
-	long a, b;
-
-	a = rand();
-	b = rand();
-	result = (double)(a - 1073741824) * 8388608.0 + (double)(b >> 8);
+	long a = rand();
+	long b = rand();
+	double result = (double) (a - 1073741824) * 8388608.0 + (double) (b >> 8);
 	return result;
 }
 
@@ -563,14 +556,12 @@ double uniformdoublerand()
 
 float floatrand()
 {
-	float result;
 	float expo;
-	long a, c;
 	long i;
 
-	a = rand();
-	c = rand();
-	result = (float)((a - 1073741824) >> 6);
+	long a = rand();
+	long c = rand();
+	float result = (float) ((a - 1073741824) >> 6);
 	for (i = 512, expo = 2; i <= 16384; i *= 2, expo = expo * expo) {
 		if (c & i) {
 			result *= expo;
@@ -588,14 +579,12 @@ float floatrand()
 
 float narrowfloatrand()
 {
-	float result;
 	float expo;
-	long a, c;
 	long i;
 
-	a = rand();
-	c = rand();
-	result = (float)((a - 1073741824) >> 6);
+	long a = rand();
+	long c = rand();
+	float result = (float)((a - 1073741824) >> 6);
 	for (i = 512, expo = 2; i <= 2048; i *= 2, expo = expo * expo) {
 		if (c & i) {
 			result *= expo;
@@ -612,11 +601,8 @@ float narrowfloatrand()
 
 float uniformfloatrand()
 {
-	float result;
-	long a;
-
-	a = rand();
-	result = (float)((a - 1073741824) >> 6);
+	long a = rand();
+	float result = (float) ((a - 1073741824) >> 6);
 	return result;
 }
 
@@ -641,15 +627,13 @@ float uniformfloatrand()
 
 DLL_EXPORT_API void exactinit()
 {
-	REAL half;
-	REAL check, lastcheck;
-	int every_other;
+	REAL lastcheck;
 
-	every_other = 1;
-	half = 0.5;
+	int every_other = 1;
+	REAL half = 0.5;
 	epsilon = 1.0;
 	splitter = 1.0;
-	check = 1.0;
+	REAL check = 1.0;
 	/* Repeatedly divide `epsilon' by two until it is too small to add to    */
 	/*   one without causing roundoff.  (Also check if the sum is equal to   */
 	/*   the previous sum, for machines that round up instead of using exact */
@@ -696,14 +680,13 @@ DLL_EXPORT_API void exactinit()
 
 int grow_expansion(int elen, REAL *e, REAL b, REAL *h)                /* e and h can be the same. */
 {
-	REAL Q;
 	INEXACT REAL Qnew;
 	int eindex;
 	REAL enow;
 	INEXACT REAL bvirt;
 	REAL avirt, bround, around;
 
-	Q = b;
+	REAL Q = b;
 	for (eindex = 0; eindex < elen; eindex++) {
 		enow = e[eindex];
 		Two_Sum(Q, enow, Qnew, h[eindex]);
@@ -729,15 +712,15 @@ int grow_expansion(int elen, REAL *e, REAL b, REAL *h)                /* e and h
 
 int grow_expansion_zeroelim(int elen, REAL *e, REAL b, REAL *h)       /* e and h can be the same. */
 {
-	REAL Q, hh;
+	REAL hh;
 	INEXACT REAL Qnew;
-	int eindex, hindex;
+	int eindex;
 	REAL enow;
 	INEXACT REAL bvirt;
 	REAL avirt, bround, around;
 
-	hindex = 0;
-	Q = b;
+	int hindex = 0;
+	REAL Q = b;
 	for (eindex = 0; eindex < elen; eindex++) {
 		enow = e[eindex];
 		Two_Sum(Q, enow, Qnew, hh);
@@ -768,14 +751,13 @@ int grow_expansion_zeroelim(int elen, REAL *e, REAL b, REAL *h)       /* e and h
 int expansion_sum(int elen, REAL *e, int flen, REAL *f, REAL *h)
 /* e and h can be the same, but f and h cannot. */
 {
-	REAL Q;
 	INEXACT REAL Qnew;
 	int findex, hindex, hlast;
 	REAL hnow;
 	INEXACT REAL bvirt;
 	REAL avirt, bround, around;
 
-	Q = f[0];
+	REAL Q = f[0];
 	for (hindex = 0; hindex < elen; hindex++) {
 		hnow = e[hindex];
 		Two_Sum(Q, hnow, Qnew, h[hindex]);
@@ -812,21 +794,20 @@ int expansion_sum(int elen, REAL *e, int flen, REAL *f, REAL *h)
 int expansion_sum_zeroelim1(int elen, REAL *e, int flen, REAL *f, REAL *h)
 /* e and h can be the same, but f and h cannot. */
 {
-	REAL Q;
 	INEXACT REAL Qnew;
-	int index, findex, hindex, hlast;
+	int index, findex, hindex;
 	REAL hnow;
 	INEXACT REAL bvirt;
 	REAL avirt, bround, around;
 
-	Q = f[0];
+	REAL Q = f[0];
 	for (hindex = 0; hindex < elen; hindex++) {
 		hnow = e[hindex];
 		Two_Sum(Q, hnow, Qnew, h[hindex]);
 		Q = Qnew;
 	}
 	h[hindex] = Q;
-	hlast = hindex;
+	int hlast = hindex;
 	for (findex = 1; findex < flen; findex++) {
 		Q = f[findex];
 		for (hindex = findex; hindex <= hlast; hindex++) {
@@ -868,15 +849,15 @@ int expansion_sum_zeroelim1(int elen, REAL *e, int flen, REAL *f, REAL *h)
 int expansion_sum_zeroelim2(int elen, REAL *e, int flen, REAL *f, REAL *h)
 /* e and h can be the same, but f and h cannot. */
 {
-	REAL Q, hh;
+	REAL hh;
 	INEXACT REAL Qnew;
-	int eindex, findex, hindex, hlast;
+	int eindex, findex, hlast;
 	REAL enow;
 	INEXACT REAL bvirt;
 	REAL avirt, bround, around;
 
-	hindex = 0;
-	Q = f[0];
+	int hindex = 0;
+	REAL Q = f[0];
 	for (eindex = 0; eindex < elen; eindex++) {
 		enow = e[eindex];
 		Two_Sum(Q, enow, Qnew, hh);
@@ -923,12 +904,11 @@ int fast_expansion_sum(int elen, REAL *e, int flen, REAL *f, REAL *h)
 	INEXACT REAL Qnew;
 	INEXACT REAL bvirt;
 	REAL avirt, bround, around;
-	int eindex, findex, hindex;
-	REAL enow, fnow;
+	int findex;
 
-	enow = e[0];
-	fnow = f[0];
-	eindex = findex = 0;
+	REAL enow = e[0];
+	REAL fnow = f[0];
+	int eindex = findex = 0;
 	if ((fnow > enow) == (fnow > -enow)) {
 		Q = enow;
 		enow = e[++eindex];
@@ -937,7 +917,7 @@ int fast_expansion_sum(int elen, REAL *e, int flen, REAL *f, REAL *h)
 		Q = fnow;
 		fnow = f[++findex];
 	}
-	hindex = 0;
+	int hindex = 0;
 	if ((eindex < elen) && (findex < flen)) {
 		if ((fnow > enow) == (fnow > -enow)) {
 			Fast_Two_Sum(enow, Q, Qnew, h[0]);
@@ -999,12 +979,11 @@ int fast_expansion_sum_zeroelim(int elen, REAL *e, int flen, REAL *f, REAL *h)  
 	INEXACT REAL hh;
 	INEXACT REAL bvirt;
 	REAL avirt, bround, around;
-	int eindex, findex, hindex;
-	REAL enow, fnow;
+	int findex;
 
-	enow = e[0];
-	fnow = f[0];
-	eindex = findex = 0;
+	REAL enow = e[0];
+	REAL fnow = f[0];
+	int eindex = findex = 0;
 	if ((fnow > enow) == (fnow > -enow)) {
 		Q = enow;
 		enow = e[++eindex];
@@ -1013,7 +992,7 @@ int fast_expansion_sum_zeroelim(int elen, REAL *e, int flen, REAL *f, REAL *h)  
 		Q = fnow;
 		fnow = f[++findex];
 	}
-	hindex = 0;
+	int hindex = 0;
 	if ((eindex < elen) && (findex < flen)) {
 		if ((fnow > enow) == (fnow > -enow)) {
 			Fast_Two_Sum(enow, Q, Qnew, hh);
@@ -1077,18 +1056,17 @@ int fast_expansion_sum_zeroelim(int elen, REAL *e, int flen, REAL *f, REAL *h)  
 
 int linear_expansion_sum(int elen, REAL *e, int flen, REAL *f, REAL *h)         /* h cannot be e or f. */
 {
-	REAL Q, q;
+	REAL q;
 	INEXACT REAL Qnew;
 	INEXACT REAL R;
 	INEXACT REAL bvirt;
 	REAL avirt, bround, around;
-	int eindex, findex, hindex;
-	REAL enow, fnow;
+	int findex, hindex;
 	REAL g0;
 
-	enow = e[0];
-	fnow = f[0];
-	eindex = findex = 0;
+	REAL enow = e[0];
+	REAL fnow = f[0];
+	int eindex = findex = 0;
 	if ((fnow > enow) == (fnow > -enow)) {
 		g0 = enow;
 		enow = e[++eindex];
@@ -1106,7 +1084,7 @@ int linear_expansion_sum(int elen, REAL *e, int flen, REAL *f, REAL *h)         
 		Fast_Two_Sum(fnow, g0, Qnew, q);
 		fnow = f[++findex];
 	}
-	Q = Qnew;
+	REAL Q = Qnew;
 	for (hindex = 0; hindex < elen + flen - 2; hindex++) {
 		if ((eindex < elen) && ((findex >= flen)
 			|| ((fnow > enow) == (fnow > -enow)))) {
@@ -1139,20 +1117,19 @@ int linear_expansion_sum(int elen, REAL *e, int flen, REAL *f, REAL *h)         
 
 int linear_expansion_sum_zeroelim(int elen, REAL *e, int flen, REAL *f, REAL *h)/* h cannot be e or f. */ 
 {
-	REAL Q, q, hh;
+	REAL q, hh;
 	INEXACT REAL Qnew;
 	INEXACT REAL R;
 	INEXACT REAL bvirt;
 	REAL avirt, bround, around;
-	int eindex, findex, hindex;
+	int findex;
 	int count;
-	REAL enow, fnow;
 	REAL g0;
 
-	enow = e[0];
-	fnow = f[0];
-	eindex = findex = 0;
-	hindex = 0;
+	REAL enow = e[0];
+	REAL fnow = f[0];
+	int eindex = findex = 0;
+	int hindex = 0;
 	if ((fnow > enow) == (fnow > -enow)) {
 		g0 = enow;
 		enow = e[++eindex];
@@ -1170,7 +1147,7 @@ int linear_expansion_sum_zeroelim(int elen, REAL *e, int flen, REAL *f, REAL *h)
 		Fast_Two_Sum(fnow, g0, Qnew, q);
 		fnow = f[++findex];
 	}
-	Q = Qnew;
+	REAL Q = Qnew;
 	for (count = 2; count < elen + flen; count++) {
 		if ((eindex < elen) && ((findex >= flen)
 			|| ((fnow > enow) == (fnow > -enow)))) {
@@ -1215,7 +1192,7 @@ int scale_expansion(int elen, REAL *e, REAL b, REAL *h)            /* e and h ca
 	INEXACT REAL sum;
 	INEXACT REAL product1;
 	REAL product0;
-	int eindex, hindex;
+	int eindex;
 	REAL enow;
 	INEXACT REAL bvirt;
 	REAL avirt, bround, around;
@@ -1226,7 +1203,7 @@ int scale_expansion(int elen, REAL *e, REAL b, REAL *h)            /* e and h ca
 
 	Split(b, bhi, blo);
 	Two_Product_Presplit(e[0], b, bhi, blo, Q, h[0]);
-	hindex = 1;
+	int hindex = 1;
 	for (eindex = 1; eindex < elen; eindex++) {
 		enow = e[eindex];
 		Two_Product_Presplit(enow, b, bhi, blo, product1, product0);
@@ -1260,7 +1237,7 @@ int scale_expansion_zeroelim(int elen, REAL *e, REAL b, REAL *h)   /* e and h ca
 	REAL hh;
 	INEXACT REAL product1;
 	REAL product0;
-	int eindex, hindex;
+	int eindex;
 	REAL enow;
 	INEXACT REAL bvirt;
 	REAL avirt, bround, around;
@@ -1271,7 +1248,7 @@ int scale_expansion_zeroelim(int elen, REAL *e, REAL b, REAL *h)   /* e and h ca
 
 	Split(b, bhi, blo);
 	Two_Product_Presplit(e[0], b, bhi, blo, Q, hh);
-	hindex = 0;
+	int hindex = 0;
 	if (hh != 0) {
 		h[hindex++] = hh;
 	}
@@ -1307,15 +1284,14 @@ int scale_expansion_zeroelim(int elen, REAL *e, REAL b, REAL *h)   /* e and h ca
 
 int compress(int elen, REAL *e, REAL *h)                         /* e and h may be the same. */
 {
-	REAL Q, q;
+	REAL q;
 	INEXACT REAL Qnew;
 	int eindex, hindex;
 	INEXACT REAL bvirt;
 	REAL enow, hnow;
-	int top, bottom;
 
-	bottom = elen - 1;
-	Q = e[bottom];
+	int bottom = elen - 1;
+	REAL Q = e[bottom];
 	for (eindex = elen - 2; eindex >= 0; eindex--) {
 		enow = e[eindex];
 		Fast_Two_Sum(Q, enow, Qnew, q);
@@ -1327,7 +1303,7 @@ int compress(int elen, REAL *e, REAL *h)                         /* e and h may 
 			Q = Qnew;
 		}
 	}
-	top = 0;
+	int top = 0;
 	for (hindex = bottom + 1; hindex < elen; hindex++) {
 		hnow = h[hindex];
 		Fast_Two_Sum(hnow, Q, Qnew, q);
@@ -1350,10 +1326,9 @@ int compress(int elen, REAL *e, REAL *h)                         /* e and h may 
 
 REAL estimate(int elen, REAL *e)
 {
-	REAL Q;
 	int eindex;
 
-	Q = e[0];
+	REAL Q = e[0];
 	for (eindex = 1; eindex < elen; eindex++) {
 		Q += e[eindex];
 	}
@@ -1388,12 +1363,10 @@ REAL estimate(int elen, REAL *e)
 
 DLL_EXPORT_API REAL orient2dfast(REAL *pa, REAL *pb, REAL *pc)
 {
-	REAL acx, bcx, acy, bcy;
-
-	acx = pa[0] - pc[0];
-	bcx = pb[0] - pc[0];
-	acy = pa[1] - pc[1];
-	bcy = pb[1] - pc[1];
+	REAL acx = pa[0] - pc[0];
+	REAL bcx = pb[0] - pc[0];
+	REAL acy = pa[1] - pc[1];
+	REAL bcy = pb[1] - pc[1];
 	return acx * bcy - acy * bcx;
 }
 
@@ -1504,10 +1477,10 @@ DLL_EXPORT_API REAL orient2dadapt(REAL *pa, REAL *pb, REAL *pc, REAL detsum)
 	INEXACT REAL _i, _j;
 	REAL _0;
 
-	acx = (REAL)(pa[0] - pc[0]);
-	bcx = (REAL)(pb[0] - pc[0]);
-	acy = (REAL)(pa[1] - pc[1]);
-	bcy = (REAL)(pb[1] - pc[1]);
+	acx = pa[0] - pc[0];
+	bcx = pb[0] - pc[0];
+	acy = pa[1] - pc[1];
+	bcy = pb[1] - pc[1];
 
 	Two_Product(acx, bcy, detleft, detlefttail);
 	Two_Product(acy, bcx, detright, detrighttail);
@@ -1562,34 +1535,29 @@ DLL_EXPORT_API REAL orient2dadapt(REAL *pa, REAL *pb, REAL *pc, REAL detsum)
 
 DLL_EXPORT_API REAL orient2d(REAL *pa, REAL *pb, REAL *pc)
 {
-	REAL detleft, detright, det;
-	REAL detsum, errbound;
+	REAL detsum;
 
-	detleft = (pa[0] - pc[0]) * (pb[1] - pc[1]);
-	detright = (pa[1] - pc[1]) * (pb[0] - pc[0]);
-	det = detleft - detright;
+	REAL detleft = (pa[0] - pc[0]) * (pb[1] - pc[1]);
+	REAL detright = (pa[1] - pc[1]) * (pb[0] - pc[0]);
+	REAL det = detleft - detright;
 
 	if (detleft > 0.0) {
 		if (detright <= 0.0) {
 			return det;
 		}
-		else {
-			detsum = detleft + detright;
-		}
+		detsum = detleft + detright;
 	}
 	else if (detleft < 0.0) {
 		if (detright >= 0.0) {
 			return det;
 		}
-		else {
-			detsum = -detleft - detright;
-		}
+		detsum = -detleft - detright;
 	}
 	else {
 		return det;
 	}
 
-	errbound = ccwerrboundA * detsum;
+	REAL errbound = ccwerrboundA * detsum;
 	if ((det >= errbound) || (-det >= errbound)) {
 		return det;
 	}
@@ -1628,19 +1596,15 @@ DLL_EXPORT_API REAL orient2d(REAL *pa, REAL *pb, REAL *pc)
 
 DLL_EXPORT_API REAL orient3dfast(REAL *pa, REAL *pb, REAL *pc, REAL *pd)
 {
-	REAL adx, bdx, cdx;
-	REAL ady, bdy, cdy;
-	REAL adz, bdz, cdz;
-
-	adx = pa[0] - pd[0];
-	bdx = pb[0] - pd[0];
-	cdx = pc[0] - pd[0];
-	ady = pa[1] - pd[1];
-	bdy = pb[1] - pd[1];
-	cdy = pc[1] - pd[1];
-	adz = pa[2] - pd[2];
-	bdz = pb[2] - pd[2];
-	cdz = pc[2] - pd[2];
+	REAL adx = pa[0] - pd[0];
+	REAL bdx = pb[0] - pd[0];
+	REAL cdx = pc[0] - pd[0];
+	REAL ady = pa[1] - pd[1];
+	REAL bdy = pb[1] - pd[1];
+	REAL cdy = pc[1] - pd[1];
+	REAL adz = pa[2] - pd[2];
+	REAL bdz = pb[2] - pd[2];
+	REAL cdz = pc[2] - pd[2];
 
 	return adx * (bdy * cdz - bdz * cdy)
 		+ bdx * (cdy * adz - cdz * ady)
@@ -1869,15 +1833,15 @@ DLL_EXPORT_API REAL orient3dadapt(REAL *pa, REAL *pb, REAL *pc, REAL *pd, REAL p
 	INEXACT REAL _i, _j, _k;
 	REAL _0;
 
-	adx = (REAL)(pa[0] - pd[0]);
-	bdx = (REAL)(pb[0] - pd[0]);
-	cdx = (REAL)(pc[0] - pd[0]);
-	ady = (REAL)(pa[1] - pd[1]);
-	bdy = (REAL)(pb[1] - pd[1]);
-	cdy = (REAL)(pc[1] - pd[1]);
-	adz = (REAL)(pa[2] - pd[2]);
-	bdz = (REAL)(pb[2] - pd[2]);
-	cdz = (REAL)(pc[2] - pd[2]);
+	adx = pa[0] - pd[0];
+	bdx = pb[0] - pd[0];
+	cdx = pc[0] - pd[0];
+	ady = pa[1] - pd[1];
+	bdy = pb[1] - pd[1];
+	cdy = pc[1] - pd[1];
+	adz = pa[2] - pd[2];
+	bdz = pb[2] - pd[2];
+	cdz = pc[2] - pd[2];
 
 	Two_Product(bdx, cdy, bdxcdy1, bdxcdy0);
 	Two_Product(cdx, bdy, cdxbdy1, cdxbdy0);
@@ -2227,38 +2191,33 @@ DLL_EXPORT_API REAL orient3dadapt(REAL *pa, REAL *pb, REAL *pc, REAL *pd, REAL p
 
 DLL_EXPORT_API REAL orient3d(REAL *pa, REAL *pb, REAL *pc, REAL *pd)
 {
-	REAL adx, bdx, cdx, ady, bdy, cdy, adz, bdz, cdz;
-	REAL bdxcdy, cdxbdy, cdxady, adxcdy, adxbdy, bdxady;
-	REAL det;
-	REAL permanent, errbound;
+	REAL adx = pa[0] - pd[0];
+	REAL bdx = pb[0] - pd[0];
+	REAL cdx = pc[0] - pd[0];
+	REAL ady = pa[1] - pd[1];
+	REAL bdy = pb[1] - pd[1];
+	REAL cdy = pc[1] - pd[1];
+	REAL adz = pa[2] - pd[2];
+	REAL bdz = pb[2] - pd[2];
+	REAL cdz = pc[2] - pd[2];
 
-	adx = pa[0] - pd[0];
-	bdx = pb[0] - pd[0];
-	cdx = pc[0] - pd[0];
-	ady = pa[1] - pd[1];
-	bdy = pb[1] - pd[1];
-	cdy = pc[1] - pd[1];
-	adz = pa[2] - pd[2];
-	bdz = pb[2] - pd[2];
-	cdz = pc[2] - pd[2];
+	REAL bdxcdy = bdx * cdy;
+	REAL cdxbdy = cdx * bdy;
 
-	bdxcdy = bdx * cdy;
-	cdxbdy = cdx * bdy;
+	REAL cdxady = cdx * ady;
+	REAL adxcdy = adx * cdy;
 
-	cdxady = cdx * ady;
-	adxcdy = adx * cdy;
+	REAL adxbdy = adx * bdy;
+	REAL bdxady = bdx * ady;
 
-	adxbdy = adx * bdy;
-	bdxady = bdx * ady;
+	REAL det = adz * (bdxcdy - cdxbdy)
+	           + bdz * (cdxady - adxcdy)
+	           + cdz * (adxbdy - bdxady);
 
-	det = adz * (bdxcdy - cdxbdy)
-		+ bdz * (cdxady - adxcdy)
-		+ cdz * (adxbdy - bdxady);
-
-	permanent = (Absolute(bdxcdy) + Absolute(cdxbdy)) * Absolute(adz)
-		+ (Absolute(cdxady) + Absolute(adxcdy)) * Absolute(bdz)
-		+ (Absolute(adxbdy) + Absolute(bdxady)) * Absolute(cdz);
-	errbound = o3derrboundA * permanent;
+	REAL permanent = (Absolute(bdxcdy) + Absolute(cdxbdy)) * Absolute(adz)
+	                 + (Absolute(cdxady) + Absolute(adxcdy)) * Absolute(bdz)
+	                 + (Absolute(adxbdy) + Absolute(bdxady)) * Absolute(cdz);
+	REAL errbound = o3derrboundA * permanent;
 	if ((det > errbound) || (-det > errbound)) {
 		return det;
 	}
@@ -2294,23 +2253,19 @@ DLL_EXPORT_API REAL orient3d(REAL *pa, REAL *pb, REAL *pc, REAL *pd)
 
 DLL_EXPORT_API REAL incirclefast(REAL *pa, REAL *pb, REAL *pc, REAL *pd)
 {
-	REAL adx, ady, bdx, bdy, cdx, cdy;
-	REAL abdet, bcdet, cadet;
-	REAL alift, blift, clift;
+	REAL adx = pa[0] - pd[0];
+	REAL ady = pa[1] - pd[1];
+	REAL bdx = pb[0] - pd[0];
+	REAL bdy = pb[1] - pd[1];
+	REAL cdx = pc[0] - pd[0];
+	REAL cdy = pc[1] - pd[1];
 
-	adx = pa[0] - pd[0];
-	ady = pa[1] - pd[1];
-	bdx = pb[0] - pd[0];
-	bdy = pb[1] - pd[1];
-	cdx = pc[0] - pd[0];
-	cdy = pc[1] - pd[1];
-
-	abdet = adx * bdy - bdx * ady;
-	bcdet = bdx * cdy - cdx * bdy;
-	cadet = cdx * ady - adx * cdy;
-	alift = adx * adx + ady * ady;
-	blift = bdx * bdx + bdy * bdy;
-	clift = cdx * cdx + cdy * cdy;
+	REAL abdet = adx * bdy - bdx * ady;
+	REAL bcdet = bdx * cdy - cdx * bdy;
+	REAL cadet = cdx * ady - adx * cdy;
+	REAL alift = adx * adx + ady * ady;
+	REAL blift = bdx * bdx + bdy * bdy;
+	REAL clift = cdx * cdx + cdy * cdy;
 
 	return alift * bcdet + blift * cadet + clift * abdet;
 }
@@ -2632,12 +2587,12 @@ DLL_EXPORT_API REAL incircleadapt(REAL *pa, REAL *pb, REAL *pc, REAL *pd, REAL p
 	INEXACT REAL _i, _j;
 	REAL _0;
 
-	adx = (REAL)(pa[0] - pd[0]);
-	bdx = (REAL)(pb[0] - pd[0]);
-	cdx = (REAL)(pc[0] - pd[0]);
-	ady = (REAL)(pa[1] - pd[1]);
-	bdy = (REAL)(pb[1] - pd[1]);
-	cdy = (REAL)(pc[1] - pd[1]);
+	adx = pa[0] - pd[0];
+	bdx = pb[0] - pd[0];
+	cdx = pc[0] - pd[0];
+	ady = pa[1] - pd[1];
+	bdy = pb[1] - pd[1];
+	cdy = pc[1] - pd[1];
 
 	Two_Product(bdx, cdy, bdxcdy1, bdxcdy0);
 	Two_Product(cdx, bdy, cdxbdy1, cdxbdy0);
@@ -3143,39 +3098,33 @@ DLL_EXPORT_API REAL incircleadapt(REAL *pa, REAL *pb, REAL *pc, REAL *pd, REAL p
 
 DLL_EXPORT_API REAL incircle(REAL *pa, REAL *pb, REAL *pc, REAL *pd)
 {
-	REAL adx, bdx, cdx, ady, bdy, cdy;
-	REAL bdxcdy, cdxbdy, cdxady, adxcdy, adxbdy, bdxady;
-	REAL alift, blift, clift;
-	REAL det;
-	REAL permanent, errbound;
+	REAL adx = pa[0] - pd[0];
+	REAL bdx = pb[0] - pd[0];
+	REAL cdx = pc[0] - pd[0];
+	REAL ady = pa[1] - pd[1];
+	REAL bdy = pb[1] - pd[1];
+	REAL cdy = pc[1] - pd[1];
 
-	adx = pa[0] - pd[0];
-	bdx = pb[0] - pd[0];
-	cdx = pc[0] - pd[0];
-	ady = pa[1] - pd[1];
-	bdy = pb[1] - pd[1];
-	cdy = pc[1] - pd[1];
+	REAL bdxcdy = bdx * cdy;
+	REAL cdxbdy = cdx * bdy;
+	REAL alift = adx * adx + ady * ady;
 
-	bdxcdy = bdx * cdy;
-	cdxbdy = cdx * bdy;
-	alift = adx * adx + ady * ady;
+	REAL cdxady = cdx * ady;
+	REAL adxcdy = adx * cdy;
+	REAL blift = bdx * bdx + bdy * bdy;
 
-	cdxady = cdx * ady;
-	adxcdy = adx * cdy;
-	blift = bdx * bdx + bdy * bdy;
+	REAL adxbdy = adx * bdy;
+	REAL bdxady = bdx * ady;
+	REAL clift = cdx * cdx + cdy * cdy;
 
-	adxbdy = adx * bdy;
-	bdxady = bdx * ady;
-	clift = cdx * cdx + cdy * cdy;
+	REAL det = alift * (bdxcdy - cdxbdy)
+	           + blift * (cdxady - adxcdy)
+	           + clift * (adxbdy - bdxady);
 
-	det = alift * (bdxcdy - cdxbdy)
-		+ blift * (cdxady - adxcdy)
-		+ clift * (adxbdy - bdxady);
-
-	permanent = (Absolute(bdxcdy) + Absolute(cdxbdy)) * alift
-		+ (Absolute(cdxady) + Absolute(adxcdy)) * blift
-		+ (Absolute(adxbdy) + Absolute(bdxady)) * clift;
-	errbound = iccerrboundA * permanent;
+	REAL permanent = (Absolute(bdxcdy) + Absolute(cdxbdy)) * alift
+	                 + (Absolute(cdxady) + Absolute(adxcdy)) * blift
+	                 + (Absolute(adxbdy) + Absolute(bdxady)) * clift;
+	REAL errbound = iccerrboundA * permanent;
 	if ((det > errbound) || (-det > errbound)) {
 		return det;
 	}
@@ -3212,43 +3161,36 @@ DLL_EXPORT_API REAL incircle(REAL *pa, REAL *pb, REAL *pc, REAL *pd)
 
 DLL_EXPORT_API REAL inspherefast(REAL *pa, REAL *pb, REAL *pc, REAL *pd, REAL *pe)
 {
-	REAL aex, bex, cex, dex;
-	REAL aey, bey, cey, dey;
-	REAL aez, bez, cez, dez;
-	REAL alift, blift, clift, dlift;
-	REAL ab, bc, cd, da, ac, bd;
-	REAL abc, bcd, cda, dab;
+	REAL aex = pa[0] - pe[0];
+	REAL bex = pb[0] - pe[0];
+	REAL cex = pc[0] - pe[0];
+	REAL dex = pd[0] - pe[0];
+	REAL aey = pa[1] - pe[1];
+	REAL bey = pb[1] - pe[1];
+	REAL cey = pc[1] - pe[1];
+	REAL dey = pd[1] - pe[1];
+	REAL aez = pa[2] - pe[2];
+	REAL bez = pb[2] - pe[2];
+	REAL cez = pc[2] - pe[2];
+	REAL dez = pd[2] - pe[2];
 
-	aex = pa[0] - pe[0];
-	bex = pb[0] - pe[0];
-	cex = pc[0] - pe[0];
-	dex = pd[0] - pe[0];
-	aey = pa[1] - pe[1];
-	bey = pb[1] - pe[1];
-	cey = pc[1] - pe[1];
-	dey = pd[1] - pe[1];
-	aez = pa[2] - pe[2];
-	bez = pb[2] - pe[2];
-	cez = pc[2] - pe[2];
-	dez = pd[2] - pe[2];
+	REAL ab = aex * bey - bex * aey;
+	REAL bc = bex * cey - cex * bey;
+	REAL cd = cex * dey - dex * cey;
+	REAL da = dex * aey - aex * dey;
 
-	ab = aex * bey - bex * aey;
-	bc = bex * cey - cex * bey;
-	cd = cex * dey - dex * cey;
-	da = dex * aey - aex * dey;
+	REAL ac = aex * cey - cex * aey;
+	REAL bd = bex * dey - dex * bey;
 
-	ac = aex * cey - cex * aey;
-	bd = bex * dey - dex * bey;
+	REAL abc = aez * bc - bez * ac + cez * ab;
+	REAL bcd = bez * cd - cez * bd + dez * bc;
+	REAL cda = cez * da + dez * ac + aez * cd;
+	REAL dab = dez * ab + aez * bd + bez * da;
 
-	abc = aez * bc - bez * ac + cez * ab;
-	bcd = bez * cd - cez * bd + dez * bc;
-	cda = cez * da + dez * ac + aez * cd;
-	dab = dez * ab + aez * bd + bez * da;
-
-	alift = aex * aex + aey * aey + aez * aez;
-	blift = bex * bex + bey * bey + bez * bez;
-	clift = cex * cex + cey * cey + cez * cez;
-	dlift = dex * dex + dey * dey + dez * dez;
+	REAL alift = aex * aex + aey * aey + aez * aez;
+	REAL blift = bex * bex + bey * bey + bez * bez;
+	REAL clift = cex * cex + cey * cey + cez * cez;
+	REAL dlift = dex * dex + dey * dey + dez * dez;
 
 	return (dlift * abc - clift * dab) + (blift * cda - alift * bcd);
 }
