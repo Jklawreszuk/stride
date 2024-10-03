@@ -16,18 +16,20 @@
 // 3. This notice may not be removed or altered from any source distribution.
 //
 
-#ifndef DETOURASSERT_H
-#define DETOURASSERT_H
+#include "DetourAssert.h"
 
-// Note: This header file's only purpose is to include define assert.
-// Feel free to change the file and include your own implementation instead.
+#ifndef RC_DISABLE_ASSERTS
 
-#ifdef NDEBUG
-// From http://cnicholson.net/2009/02/stupid-c-tricks-adventures-in-assert/
-#	define dtAssert(x) do { (void)sizeof(x); } while((void)(__LINE__==-1),false)  
-#else
-#	include <assert.h> 
-#	define dtAssert assert
+static dtAssertFailFunc* sAssertFailFunc = 0;
+
+void dtAssertFailSetCustom(dtAssertFailFunc *assertFailFunc)
+{
+	sAssertFailFunc = assertFailFunc;
+}
+
+dtAssertFailFunc* dtAssertFailGetCustom()
+{
+	return sAssertFailFunc;
+}
+
 #endif
-
-#endif // DETOURASSERT_H
