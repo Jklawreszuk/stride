@@ -1,0 +1,1 @@
+CC="zig cc" CXX="zig c++" cmake -B build;
