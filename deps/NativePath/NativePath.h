@@ -54,8 +54,6 @@ typedef __PTRDIFF_TYPE__ ptrdiff_t;
 
 typedef __SIZE_TYPE__ size_t;
 
-typedef char char8_t;
-
 #define CHAR_BIT  __CHAR_BIT__
 #define INT_MAX   __INT_MAX__
 #define INT_MIN   (-__INT_MAX__  -1)

@@ -23,7 +23,7 @@
     <StrideNativeClangCommand Condition="$([MSBuild]::IsOSPlatform('Windows'))">$(MSBuildThisFileDirectory)..\..\deps\\LLVM\clang.exe</StrideNativeClangCommand>
     
     <StrideNativeClang>$(StrideNativeToolingDebug) -Wno-ignored-attributes -Wno-delete-non-virtual-dtor -Wno-macro-redefined -I&quot;$(MSBuildThisFileDirectory)..\..\deps\\NativePath&quot; -I&quot;$(MSBuildThisFileDirectory)..\..\deps\\NativePath\standard&quot;</StrideNativeClang>
-    <StrideNativeClangCPP>-std=c++11 -fno-rtti -fno-exceptions</StrideNativeClangCPP>
+    <StrideNativeClangCPP>-std=c++23 -fno-rtti -fno-exceptions</StrideNativeClangCPP>
   
     <!--<StrideNativeOutputPath>$([MSBuild]::MakeRelative('$(OutputPath)', '$(StridePackageStridePlatformBin)\'))</StrideNativeOutputPath>-->
     <AllowedOutputExtensionsInPackageBuildOutputFolder>.so; .a; $(AllowedOutputExtensionsInPackageBuildOutputFolder)</AllowedOutputExtensionsInPackageBuildOutputFolder>
