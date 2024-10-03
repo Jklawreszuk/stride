@@ -306,23 +306,6 @@ typedef struct VertexPositionNormalTexture
 } VertexPositionNormalTexture;
 #pragma pack(pop)
 
-#pragma pack(push, 8)
-typedef struct SpriteDrawInfo
-{
-	RectangleF Source;
-	RectangleF Destination;
-	Vector2 Origin;
-	float Rotation;
-	float Depth;
-	int SpriteEffects;
-	Color4 ColorScale;
-	Color4 ColorAdd;
-	int Swizzle;
-	Vector2 TextureSize;
-	int Orientation;
-} SpriteDrawInfo;
-#pragma pack(pop)
-
 #ifdef __cplusplus
 }
 #endif
