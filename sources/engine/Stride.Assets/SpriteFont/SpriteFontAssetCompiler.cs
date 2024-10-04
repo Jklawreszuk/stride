@@ -28,7 +28,8 @@ namespace Stride.Assets.SpriteFont
             UFile assetAbsolutePath = assetItem.FullPath;
             var colorSpace = context.GetColorSpace();
 
-            if (asset.FontType is SignedDistanceFieldSpriteFontType fontTypeSdf)
+            var fontTypeSdf = asset.FontType as SignedDistanceFieldSpriteFontType;
+            if (fontTypeSdf != null)
             {
                 // copy the asset and transform the source and character set file path to absolute paths
                 var assetClone = AssetCloner.Clone(asset);
@@ -41,41 +42,42 @@ namespace Stride.Assets.SpriteFont
             }
             else
                 if (asset.FontType is RuntimeRasterizedSpriteFontType)
-            {
-                UFile fontPathOnDisk = asset.FontSource.GetFontPath(result);
-                if (fontPathOnDisk == null)
                 {
-                    result.Error($"Runtime rasterized font compilation failed. Font {asset.FontSource.GetFontName()} was not found on this machine.");
+                    UFile fontPathOnDisk = asset.FontSource.GetFontPath(result);
+                    if (fontPathOnDisk == null)
+                    {
+                        result.Error($"Runtime rasterized font compilation failed. Font {asset.FontSource.GetFontName()} was not found on this machine.");
+                        result.BuildSteps = new AssetBuildStep(assetItem);
+                        result.BuildSteps.Add(new FailedFontCommand());
+                        return;
+                    }
+
+                    var fontImportLocation = FontHelper.GetFontPath(asset.FontSource.GetFontName(), asset.FontSource.Style);
+
                     result.BuildSteps = new AssetBuildStep(assetItem);
-                    result.BuildSteps.Add(new FailedFontCommand());
-                    return;
+                    result.BuildSteps.Add(new ImportStreamCommand { SourcePath = fontPathOnDisk, Location = fontImportLocation });
+                    result.BuildSteps.Add(new RuntimeRasterizedFontCommand(targetUrlInStorage, asset, assetItem.Package));
                 }
+                else
+                {
+                    var fontTypeStatic = asset.FontType as OfflineRasterizedSpriteFontType;
+                    if (fontTypeStatic == null)
+                        throw new ArgumentException("Tried to compile a non-offline rasterized sprite font with the compiler for offline resterized fonts!");
 
-                var fontImportLocation = FontHelper.GetFontPath(asset.FontSource.GetFontName(), asset.FontSource.Style);
+                    // copy the asset and transform the source and character set file path to absolute paths
+                    var assetClone = AssetCloner.Clone(asset);
+                    var assetDirectory = assetAbsolutePath.GetParent();
+                    assetClone.FontSource = asset.FontSource;
+                    fontTypeStatic.CharacterSet = !string.IsNullOrEmpty(fontTypeStatic.CharacterSet) ? UPath.Combine(assetDirectory, fontTypeStatic.CharacterSet): null;
 
-                result.BuildSteps = new AssetBuildStep(assetItem);
-                result.BuildSteps.Add(new ImportStreamCommand { SourcePath = fontPathOnDisk, Location = fontImportLocation });
-                result.BuildSteps.Add(new RuntimeRasterizedFontCommand(targetUrlInStorage, asset, assetItem.Package));
-            }
-            else
-            {
-                if (asset.FontType is not OfflineRasterizedSpriteFontType fontTypeStatic)
-                    throw new ArgumentException("Tried to compile a non-offline rasterized sprite font with the compiler for offline resterized fonts!");
-
-                // copy the asset and transform the source and character set file path to absolute paths
-                var assetClone = AssetCloner.Clone(asset);
-                var assetDirectory = assetAbsolutePath.GetParent();
-                assetClone.FontSource = asset.FontSource;
-                fontTypeStatic.CharacterSet = !string.IsNullOrEmpty(fontTypeStatic.CharacterSet) ? UPath.Combine(assetDirectory, fontTypeStatic.CharacterSet) : null;
-
-                result.BuildSteps = new AssetBuildStep(assetItem);
-                result.BuildSteps.Add(new OfflineRasterizedFontCommand(targetUrlInStorage, assetClone, colorSpace, assetItem.Package));
-            }
+                    result.BuildSteps = new AssetBuildStep(assetItem);
+                    result.BuildSteps.Add(new OfflineRasterizedFontCommand(targetUrlInStorage, assetClone, colorSpace, assetItem.Package));
+                }
         }
 
         internal class OfflineRasterizedFontCommand : AssetCommand<SpriteFontAsset>
         {
-            private readonly ColorSpace colorspace;
+            private ColorSpace colorspace;
 
             public OfflineRasterizedFontCommand(string url, SpriteFontAsset description, ColorSpace colorspace, IAssetFinder assetFinder)
                 : base(url, description, assetFinder)
@@ -86,11 +88,20 @@ namespace Stride.Assets.SpriteFont
             public override IEnumerable<ObjectUrl> GetInputFiles()
             {
                 var asset = Parameters;
-                if (asset.FontType is OfflineRasterizedSpriteFontType fontTypeStatic && File.Exists(fontTypeStatic.CharacterSet))
-                    yield return new ObjectUrl(UrlType.File, fontTypeStatic.CharacterSet);
+                var fontTypeStatic = asset.FontType as OfflineRasterizedSpriteFontType;
+                if (fontTypeStatic != null)
+                {
+                    if (File.Exists(fontTypeStatic.CharacterSet))
+                        yield return new ObjectUrl(UrlType.File, fontTypeStatic.CharacterSet);
+                }
 
-                if (asset.FontType is SignedDistanceFieldSpriteFontType fontTypeSdf && File.Exists(fontTypeSdf.CharacterSet))
-                    yield return new ObjectUrl(UrlType.File, fontTypeSdf.CharacterSet);
+                var fontTypeSdf = asset.FontType as SignedDistanceFieldSpriteFontType;
+                if (fontTypeSdf != null)
+                {
+                    if (File.Exists(fontTypeSdf.CharacterSet))
+                        yield return new ObjectUrl(UrlType.File, fontTypeSdf.CharacterSet);
+
+                }
             }
 
             protected override void ComputeParameterHash(BinarySerializationWriter writer)
