@@ -38,7 +38,7 @@ public partial class RenderDocManager
         }
 
         if (!NativeLibrary.TryGetExport(libHandle, "RENDERDOC_GetAPI", out IntPtr rdApiHandle))
-            return;    
+            return;  
 
         // Get main entry point to get other function pointers
         var getAPI = Marshal.GetDelegateForFunctionPointer<RENDERDOC_GetAPI>(rdApiHandle);
@@ -72,59 +72,54 @@ public partial class RenderDocManager
     public unsafe void Initialize(string captureFilePath = null)
     {
         var finalLogFilePath = captureFilePath ?? FindAvailablePath("RenderDoc" + Assembly.GetEntryAssembly().Location);
-        GetMethod<RENDERDOC_SetCaptureFilePathTemplate>(RenderDocAPIFunction.SetCaptureFilePathTemplate)(finalLogFilePath);
+        apiPointers..SetCaptureFilePathTemplate(finalLogFilePath);
 
         var focusToggleKey = RenderDocKeyButton.F11;
-        GetMethod<RENDERDOC_SetFocusToggleKeys>(RenderDocAPIFunction.SetFocusToggleKeys)(ref focusToggleKey, 1);
+        apiPointers..SetFocusToggleKeys(ref focusToggleKey, 1);
         var captureKey = RenderDocKeyButton.F12;
-        GetMethod<RENDERDOC_SetCaptureKeys>(RenderDocAPIFunction.SetCaptureKeys)(ref captureKey, 1);
+        apiPointers..SetCaptureKeys(ref captureKey, 1);
     }
 
     public void RemoveHooks()
     {
         if (IsInitialized)
         {
-            GetMethod<RENDERDOC_RemoveHooks>(RenderDocAPIFunction.RemoveHooks)();
+            apiPointers.RemoveHooks();
         }
     }
 
-    public void StartFrameCapture(GraphicsDevice graphicsDevice = null, IntPtr hwndPtr = 0)
+    public void StartFrameCapture(IntPtr graphicsDevice = 0, IntPtr hwndPtr = 0)
     {
-        GetMethod<RENDERDOC_StartFrameCapture>(RenderDocAPIFunction.StartFrameCapture)(GetDevicePointer(graphicsDevice), hwndPtr);
+        apiPointers.StartFrameCapture(GetDevicePointer(graphicsDevice), hwndPtr);
         isCaptureStarted = true;
     }
 
-    public void EndFrameCapture(GraphicsDevice graphicsDevice = null, IntPtr hwndPtr = 0)
+    public void EndFrameCapture(IntPtr IntPtr = 0, IntPtr hwndPtr = 0)
     {
         if (!isCaptureStarted)
             return;
 
-        GetMethod<RENDERDOC_EndFrameCapture>(RenderDocAPIFunction.EndFrameCapture)(GetDevicePointer(graphicsDevice), hwndPtr);
+        apiPointers.EndFrameCapture(GetDevicePointer(graphicsDevice), hwndPtr);
         isCaptureStarted = false;
     }
 
-    public void DiscardFrameCapture(GraphicsDevice graphicsDevice = null, IntPtr hwndPtr = 0)
+    public void DiscardFrameCapture(IntPtr IntPtr = 0, IntPtr hwndPtr = 0)
     {
         if (!isCaptureStarted)
             return;
 
-        GetMethod<RENDERDOC_DiscardFrameCapture>(RenderDocAPIFunction.DiscardFrameCapture)(GetDevicePointer(graphicsDevice), hwndPtr);
+        apiPointers..DiscardFrameCapture(GetDevicePointer(graphicsDevice), hwndPtr);
         isCaptureStarted = false;
     }
 
-    private static IntPtr GetDevicePointer(GraphicsDevice graphicsDevice)
+    private static IntPtr GetDevicePointer(IntPtr IntPtr)
     {
         var devicePointer = IntPtr.Zero;
-#if STRIDE_GRAPHICS_API_DIRECT3D11 || STRIDE_GRAPHICS_API_DIRECT3D12
-        if (graphicsDevice != null)
-            devicePointer = ((SharpDX.CppObject)SharpDXInterop.GetNativeDevice(graphicsDevice)).NativePointer;
-#endif
+// #if STRIDE_GRAPHICS_API_DIRECT3D11 || STRIDE_GRAPHICS_API_DIRECT3D12
+//         if (IntPtr != null)
+//             devicePointer = ((SharpDX.CppObject)SharpDXInterop.GetNativeDevice(IntPtr)).NativePointer;
+// #endif
         return devicePointer;
-    }
-
-    private unsafe TDelegate GetMethod<TDelegate>(RenderDocAPIFunction function)
-    {
-        return Marshal.GetDelegateForFunctionPointer<TDelegate>(apiPointers[(int)function]);
     }
 
     private static string FindAvailablePath(string logFilePath)
@@ -147,82 +142,11 @@ public partial class RenderDocManager
         return logFilePath;
     }
 
-    [Flags]
-    private enum InAppOverlay : uint
-    {
-        eOverlay_Enabled = 0x1,
-        eOverlay_FrameRate = 0x2,
-        eOverlay_FrameNumber = 0x4,
-        eOverlay_CaptureList = 0x8,
-        eOverlay_Default = (eOverlay_Enabled | eOverlay_FrameRate | eOverlay_FrameNumber | eOverlay_CaptureList),
-        eOverlay_All = 0xFFFFFFFF,
-        eOverlay_None = 0,
-    };
-
 
     // API breaking change history:
     // Version 1 -> 2 - strings changed from wchar_t* to char* (UTF-8)
-    private const int RENDERDOC_API_VERSION_1_4_0 = 10400;
+    private const int RENDERDOC_API_VERSION_1_6_0 = 10600;
 
-    //////////////////////////////////////////////////////////////////////////
-    // In-program functions
-    //////////////////////////////////////////////////////////////////////////
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    private unsafe delegate bool RENDERDOC_GetAPI(int version, ref IntPtr* apiPointers);
-}
-
-[StructLayout(LayoutKind.Sequential)]
-internal struct RenderDocPointers
-{
-     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void RENDERDOC_GetAPIVersion();
-    
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void RENDERDOC_RemoveHooks();
-
-    RENDERDOC_GetAPIVersion GetAPIVersion;
-
-    internal RENDERDOC_SetCaptureOptionU32 SetCaptureOptionU32;
-    RENDERDOC_SetCaptureOptionF32 SetCaptureOptionF32;
-
-    RENDERDOC_GetCaptureOptionU32 GetCaptureOptionU32;
-    RENDERDOC_GetCaptureOptionF32 GetCaptureOptionF32;
-
-    RENDERDOC_SetFocusToggleKeys SetFocusToggleKeys;
-    RENDERDOC_SetCaptureKeys SetCaptureKeys;
-
-    RENDERDOC_GetOverlayBits GetOverlayBits;
-    RENDERDOC_MaskOverlayBits MaskOverlayBits;
-
-    RENDERDOC_RemoveHooks RemoveHooks;
-    RENDERDOC_UnloadCrashHandler UnloadCrashHandler;
-    RENDERDOC_SetCaptureFilePathTemplate SetCaptureFilePathTemplate;
-    RENDERDOC_GetCaptureFilePathTemplate GetCaptureFilePathTemplate;
-    RENDERDOC_GetNumCaptures GetNumCaptures;
-    RENDERDOC_GetCapture GetCapture;
-
-    RENDERDOC_TriggerCapture TriggerCapture;
-    RENDERDOC_IsTargetControlConnected IsTargetControlConnected;
-    RENDERDOC_LaunchReplayUI LaunchReplayUI;
-
-    RENDERDOC_SetActiveWindow SetActiveWindow;
-
-    RENDERDOC_StartFrameCapture StartFrameCapture;
-    RENDERDOC_IsFrameCapturing IsFrameCapturing;
-    RENDERDOC_EndFrameCapture EndFrameCapture;
-
-    // new function in 1.1.0
-    RENDERDOC_TriggerMultiFrameCapture TriggerMultiFrameCapture;
-
-    // new function in 1.2.0
-    RENDERDOC_SetCaptureFileComments SetCaptureFileComments;
-
-    // new function in 1.4.0
-    RENDERDOC_DiscardFrameCapture DiscardFrameCapture;
-
-    // new function in 1.5.0
-    RENDERDOC_ShowReplayUI ShowReplayUI;
-
-    // new function in 1.6.0
-    RENDERDOC_SetCaptureTitle SetCaptureTitle;
+    private unsafe delegate bool RENDERDOC_GetAPI(int version, ref RenderDocPointers apiPointers);
 }
