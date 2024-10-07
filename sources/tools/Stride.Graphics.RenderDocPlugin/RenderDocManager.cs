@@ -10,12 +10,7 @@ namespace Stride.Graphics;
 public partial class RenderDocManager
 {
     private bool isCaptureStarted;
-    private readonly RenderDocPointers apiPointers;
-
-    public unsafe bool IsInitialized
-    {
-        get { return apiPointers != null; }
-    }
+    private readonly RenderDocAPIFunctions apiPointers;
 
     // Matching https://github.com/baldurk/renderdoc/blob/master/renderdoc/api/app/renderdoc_app.h
 
@@ -44,7 +39,7 @@ public partial class RenderDocManager
         var getAPI = Marshal.GetDelegateForFunctionPointer<RENDERDOC_GetAPI>(rdApiHandle);
 
         // API version 10600 (1.35) has 27 function pointers
-        if (!getAPI(RENDERDOC_API_VERSION_1_6_0, ref RenderDocPointers))
+        if (!getAPI(RENDERDOC_API_VERSION_1_6_0, ref apiPointers))
             return;  
     }
 
@@ -72,12 +67,12 @@ public partial class RenderDocManager
     public unsafe void Initialize(string captureFilePath = null)
     {
         var finalLogFilePath = captureFilePath ?? FindAvailablePath("RenderDoc" + Assembly.GetEntryAssembly().Location);
-        apiPointers..SetCaptureFilePathTemplate(finalLogFilePath);
+        apiPointers.SetCaptureFilePathTemplate(finalLogFilePath);
 
         var focusToggleKey = RenderDocKeyButton.F11;
-        apiPointers..SetFocusToggleKeys(ref focusToggleKey, 1);
+        apiPointers.SetFocusToggleKeys(ref focusToggleKey, 1);
         var captureKey = RenderDocKeyButton.F12;
-        apiPointers..SetCaptureKeys(ref captureKey, 1);
+        apiPointers.SetCaptureKeys(ref captureKey, 1);
     }
 
     public void RemoveHooks()
@@ -108,7 +103,7 @@ public partial class RenderDocManager
         if (!isCaptureStarted)
             return;
 
-        apiPointers..DiscardFrameCapture(GetDevicePointer(graphicsDevice), hwndPtr);
+        apiPointers.DiscardFrameCapture(GetDevicePointer(graphicsDevice), hwndPtr);
         isCaptureStarted = false;
     }
 
@@ -148,5 +143,5 @@ public partial class RenderDocManager
     private const int RENDERDOC_API_VERSION_1_6_0 = 10600;
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private unsafe delegate bool RENDERDOC_GetAPI(int version, ref RenderDocPointers apiPointers);
+    private unsafe delegate bool RENDERDOC_GetAPI(int version, ref RenderDocAPIFunctions apiPointers);
 }
