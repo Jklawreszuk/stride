@@ -19,7 +19,7 @@ namespace Stride.Core.Assets.Editor.Services
 {
     public static class VisualStudioService
     {
-        public static async Task<bool> StartOrToggleVisualStudio(SessionViewModel session, IDEInfo ideInfo)
+        public static async Task<bool> StartOrToggle(SessionViewModel session, IDEInfo ideInfo)
         {
             if (!await CheckCanOpenSolution(session))
                 return false;
@@ -70,13 +70,13 @@ namespace Stride.Core.Assets.Editor.Services
                 if (!EditorSettings.DefaultIDE.GetAcceptableValues().Contains(defaultIDEName))
                     defaultIDEName = EditorSettings.DefaultIDE.DefaultValue;
 
-                ideInfo = VisualStudioVersions.AvailableVisualStudioInstances.FirstOrDefault(x => x.DisplayName == defaultIDEName) ?? VisualStudioVersions.DefaultIDE;
+                ideInfo = VisualStudioVersions.AvailableVisualStudioInstances.FirstOrDefault(x => x.DisplayName == defaultIDEName) ?? IDEInfo.DefaultIDE;
             }
 
             // It will be null if either "Default", or if not available anymore (uninstalled?)
-            if (ideInfo.DevenvPath != null && File.Exists(ideInfo.DevenvPath))
+            if (ideInfo.ExecutablePath != null && File.Exists(ideInfo.ExecutablePath))
             {
-                startInfo.FileName = ideInfo.DevenvPath;
+                startInfo.FileName = ideInfo.ExecutablePath;
                 startInfo.Arguments = $"\"{session.SolutionPath}\"";
             }
             else

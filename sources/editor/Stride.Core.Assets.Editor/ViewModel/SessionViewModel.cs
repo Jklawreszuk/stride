@@ -1784,9 +1784,9 @@ namespace Stride.Core.Assets.Editor.ViewModel
             DeletedAssetsChanged?.Invoke(this, e);
         }
 
-        private Task OpenInIDE(IDEInfo ideInfo)
+        private async Task OpenInIDE(IDEInfo ideInfo)
         {
-            return VisualStudioService.StartOrToggleVisualStudio(this, ideInfo);
+            await ideInfo.StartOrToggle(SolutionPath);
         }
 
         private void ToggleIsRootOnSelectedAsset()

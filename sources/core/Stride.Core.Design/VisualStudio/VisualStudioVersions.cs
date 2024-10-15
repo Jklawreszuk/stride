@@ -2,10 +2,15 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Management;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.Setup.Configuration;
+using Stride.Core.Extensions;
+using Stride.Core.IO;
 
 namespace Stride.Core.VisualStudio
 {
@@ -14,33 +19,145 @@ namespace Stride.Core.VisualStudio
         /// <summary>
         /// Initializes a new instance of the <see cref="IDEInfo"/> class.
         /// </summary>
-        /// <param name="installationVersion">The version of the VS instance.</param>
+        /// <param name="currentVersion">The version of the VS instance.</param>
         /// <param name="displayName">The display name of the VS instance</param>
-        /// <param name="installationPath">The path to the installation root of the VS instance.</param>
+        /// <param name="path">The path to the installation root of the IDE instance.</param>
         /// <param name="instanceId">The unique identifier for this installation instance.</param>
         /// <param name="isComplete">Indicates whehter the VS instance is complete.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        public IDEInfo(Version installationVersion, string displayName, string installationPath, string instanceId, bool isComplete = true)
+        public IDEInfo(Version currentVersion, string displayName, string path, string instanceId, bool isComplete = true)
         {
             DisplayName = displayName ?? throw new ArgumentNullException(nameof(displayName));
-            InstallationVersion = installationVersion ?? throw new ArgumentNullException(nameof(installationVersion));
-            InstallationPath = installationPath ?? throw new ArgumentNullException(nameof(installationPath));
+            CurrentVersion = currentVersion ?? throw new ArgumentNullException(nameof(currentVersion));
+            Path = path ?? throw new ArgumentNullException(nameof(path));
             InstanceId = instanceId ?? throw new ArgumentNullException(nameof(instanceId));
             IsComplete = isComplete;
 
-            var idePath = Path.Combine(InstallationPath, "Common7", "IDE");
-            DevenvPath = Path.Combine(idePath, "devenv.exe");
-            if (!File.Exists(DevenvPath))
+            var idePath = System.IO.Path.Combine(Path, "Common7", "IDE");
+            ExecutablePath = System.IO.Path.Combine(idePath, "devenv.exe");
+            if (!File.Exists(ExecutablePath))
             {
-                DevenvPath = null;
+                ExecutablePath = null;
             }
 
-            VsixInstallerPath = Path.Combine(idePath, "VSIXInstaller.exe");
+            VsixInstallerPath = System.IO.Path.Combine(idePath, "VSIXInstaller.exe");
             if (!File.Exists(VsixInstallerPath))
             {
                 VsixInstallerPath = null;
             }
         }
+
+        public async Task<bool> StartOrToggle(UFile solutionPath)
+        {
+            if (!await CheckCanOpenSolution(solutionPath))
+                return false;
+
+            var process = await GetVisualStudio(solutionPath, true) ?? await StartVisualStudio(solutionPath);
+            return process != null;
+        }
+
+        public async Task<Process> GetVisualStudio(UFile solutionPath, bool makeActive)
+        {
+            if (!await CheckCanOpenSolution(solutionPath))
+                return null;
+
+            try
+            {
+                // Try to find an existing instance of Visual Studio with this solution open.
+                var process = FindVisualStudioInstance(solutionPath);
+
+                if (process != null && makeActive)
+                {
+                    //int style = NativeHelper.GetWindowLong(process.MainWindowHandle, NativeHelper.GWL_STYLE);
+                    //// Restore the window if it is minimized
+                    //if ((style & NativeHelper.WS_MINIMIZE) == NativeHelper.WS_MINIMIZE)
+                    //    NativeHelper.ShowWindow(process.MainWindowHandle, NativeHelper.SW_RESTORE);
+                    //NativeHelper.SetForegroundWindow(process.MainWindowHandle);
+                }
+
+                return process;
+            }
+            catch (Exception e)
+            {
+                // This operation can fail silently
+                e.Ignore();
+                return null;
+            }
+        }
+
+        public async Task<Process> StartVisualStudio(UFile solutionPath)
+        {
+            if (!await CheckCanOpenSolution(solutionPath))
+                return null;
+
+            var startInfo = new ProcessStartInfo();
+            if (false)
+            {
+                //var defaultIDEName = EditorSettings.DefaultIDE.GetValue();
+
+                //if (!EditorSettings.DefaultIDE.GetAcceptableValues().Contains(defaultIDEName))
+                //    defaultIDEName = EditorSettings.DefaultIDE.DefaultValue;
+
+                // ideInfo = VisualStudioVersions.AvailableVisualStudioInstances.FirstOrDefault(x => x.DisplayName == defaultIDEName) ?? VisualStudioVersions.DefaultIDE;
+            }
+
+            // It will be null if either "Default", or if not available anymore (uninstalled?)
+            if (ExecutablePath != null && File.Exists(ExecutablePath))
+            {
+                startInfo.FileName = ExecutablePath;
+                startInfo.Arguments = $"\"{solutionPath}\"";
+            }
+            else
+            {
+                startInfo.FileName = solutionPath.ToOSPath();
+                startInfo.UseShellExecute = true;
+            }
+            try
+            {
+                return Process.Start(startInfo);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private static async Task<bool> CheckCanOpenSolution(UFile solutionPath)
+        {
+            if (string.IsNullOrEmpty(solutionPath))
+            {
+                //await session.Dialogs.MessageBoxAsync(Tr._p("Message", "The session currently open is not a Visual Studio session."), MessageBoxButton.OK, MessageBoxImage.Information);
+                return false;
+            }
+            return true;
+        }
+
+        private static Process FindVisualStudioInstance(UFile solutionPath)
+        {
+            // NOTE: this code is very hackish and does not 100% ensure that the correct instance of VS will be activated.
+            var processes = Process.GetProcessesByName("devenv");
+            foreach (var process in processes)
+            {
+                // Get instances that have a solution with the same name currently open (The solution name is displayed in the title bar).
+                if (process.MainWindowTitle.StartsWith(solutionPath.GetFileNameWithoutExtension(), StringComparison.OrdinalIgnoreCase))
+                {
+                    // If there is a matching instance, get its command line.
+                    var query = $"SELECT CommandLine FROM Win32_Process WHERE ProcessId = {process.Id}";
+                    using var managementObjectSearcher = new ManagementObjectSearcher(query);
+
+                    var managementObject = managementObjectSearcher.Get().Cast<ManagementObject>().First();
+                    var commandLine = managementObject["CommandLine"].ToString();
+                    if (commandLine.Replace('/', '\\').Contains(solutionPath.ToString().Replace('/', '\\'), StringComparison.OrdinalIgnoreCase))
+                    {
+                        return process;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        public static IDEInfo DefaultIDE = new IDEInfo(new Version("0.0"), "Default IDE", string.Empty, string.Empty);
 
         /// <summary>Gets a value indicating whether the instance is complete.</summary>
         /// <value>Whether the instance is complete.</value>
@@ -54,16 +171,16 @@ namespace Stride.Core.VisualStudio
 
         /// <summary>Gets the version of the product installed in this instance.</summary>
         /// <value>The version of the product installed in this instance.</value>
-        public Version InstallationVersion { get; }
+        public Version CurrentVersion { get; }
 
         /// <summary>
         /// The path to the development environment executable of this IDE, or <c>null</c>.
         /// </summary>
-        public string DevenvPath { get; }
+        public string ExecutablePath { get; }
 
         /// <summary>The root installation path of this IDE.</summary>
         /// <remarks>Can be empty but not <c>null</c>./remarks>
-        public string InstallationPath { get; }
+        public string Path { get; }
 
         /// <summary>
         /// The hex code for this installation instance. It is used, for example, to create a unique folder in %LocalAppData%
@@ -79,12 +196,12 @@ namespace Stride.Core.VisualStudio
         /// The package names and versions of packages installed to this instance.
         /// </summary>
         /// <value></value>
-        public Dictionary<string, string> PackageVersions { get; } = new Dictionary<string, string>();
+        public Dictionary<string, string> PackageVersions { get; } = [];
 
         /// <summary>
         /// <c>true</c> if this IDE has a development environment; otherwise, <c>false</c>.
         /// </summary>
-        public bool HasDevenv => !string.IsNullOrEmpty(DevenvPath);
+        public bool HasDevenv => !string.IsNullOrEmpty(ExecutablePath);
 
         /// <summary>
         /// <c>true</c> if this IDE has a VSIX installer; otherwise, <c>false</c>.
@@ -95,17 +212,54 @@ namespace Stride.Core.VisualStudio
         public override string ToString() => DisplayName;
     }
 
+    public static class VSCode
+    {
+        public static IDEInfo AvailableInstance = GetAvailableInstance();
+
+        private static IDEInfo GetAvailableInstance()
+        {
+            string pathEnvVar = Environment.GetEnvironmentVariable("PATH");
+            var pathDirectories = Environment.GetEnvironmentVariable("PATH")?.Split(':') ?? Array.Empty<string>();
+
+            string toolLocation = null;
+            foreach (var directory in pathDirectories)
+            {
+                toolLocation = Path.Combine(directory, "code");
+            }
+            var ideInfo = new IDEInfo(new(), "VS Code", toolLocation, "");
+
+            return ideInfo;
+        }
+    }
+    public static class VSCodium
+    {
+        public static IDEInfo AvailableInstance = GetAvailableInstance();
+
+        private static IDEInfo GetAvailableInstance()
+        {
+            string pathEnvVar = Environment.GetEnvironmentVariable("PATH");
+            var pathDirectories = Environment.GetEnvironmentVariable("PATH")?.Split(':') ?? Array.Empty<string>();
+
+            string toolLocation = null;
+            foreach (var directory in pathDirectories)
+            {
+                toolLocation = Path.Combine(directory, "codium");
+            }
+            var ideInfo = new IDEInfo(new(), "VS Codium", toolLocation, "");
+
+            return ideInfo;
+        }
+    }
+
     public static class VisualStudioVersions
     {
         private const int REGDB_E_CLASSNOTREG = unchecked((int)0x80040154);
         private static readonly Lazy<List<IDEInfo>> IDEInfos = new Lazy<List<IDEInfo>>(BuildIDEInfos);
 
-        public static IDEInfo DefaultIDE = new IDEInfo(new Version("0.0"), "Default IDE", string.Empty, string.Empty);
-
         /// <summary>
         /// Only lists VS2019+ (previous versions are not supported due to lack of buildTransitive targets).
         /// </summary>
-        public static IEnumerable<IDEInfo> AvailableVisualStudioInstances => IDEInfos.Value.Where(x => x.InstallationVersion.Major >= 16 && x.HasDevenv);
+        public static IEnumerable<IDEInfo> AvailableVisualStudioInstances => IDEInfos.Value.Where(x => x.CurrentVersion.Major >= 16 && x.HasDevenv);
 
         private static List<IDEInfo> BuildIDEInfos()
         {
@@ -126,8 +280,7 @@ namespace Stride.Core.VisualStudio
 
                     try
                     {
-                        var setupInstance2 = inst[0] as ISetupInstance2;
-                        if (setupInstance2 == null)
+                        if (inst[0] is not ISetupInstance2 setupInstance2)
                             continue;
 
                         // Only examine VS2019+

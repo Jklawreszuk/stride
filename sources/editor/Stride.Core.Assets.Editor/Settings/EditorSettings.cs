@@ -37,12 +37,14 @@ namespace Stride.Core.Assets.Editor.Settings
             {
                 DisplayName = $"{ExternalTools}/{Tr._p("Settings", "Shader editor")}",
             };
-            DefaultIDE = new SettingsKey<string>("ExternalTools/DefaultIDE", SettingsContainer, VisualStudioVersions.DefaultIDE.DisplayName)
+            DefaultIDE = new SettingsKey<string>("ExternalTools/DefaultIDE", SettingsContainer, IDEInfo.DefaultIDE.DisplayName)
             {
                 GetAcceptableValues = () =>
                 {
-                    var names = new List<string> { VisualStudioVersions.DefaultIDE.DisplayName };
+                    List<string> names = [ IDEInfo.DefaultIDE.DisplayName ];
                     names.AddRange(VisualStudioVersions.AvailableVisualStudioInstances.Where(x => x.HasDevenv).Select(x => x.DisplayName));
+                    names.Add(VSCode.AvailableInstance.DisplayName);
+                    names.Add(VSCodium.AvailableInstance.DisplayName);
                     return names;
                 },
                 DisplayName = $"{ExternalTools}/{Tr._p("Settings", "Default IDE")}",
