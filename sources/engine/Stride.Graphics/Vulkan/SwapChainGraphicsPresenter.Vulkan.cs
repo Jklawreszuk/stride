@@ -238,13 +238,13 @@ namespace Stride.Graphics
 
             backbuffer.OnDestroyed();
 
-            foreach (var swapchainImage in swapchainImages)
+            foreach (var swapchainImage in swapchainImages ?? [])
             {
                 vk.DestroyImageView(GraphicsDevice.NativeDevice, swapchainImage.NativeColorAttachmentView, null);
             }
             swapchainImages = null;
 
-            _swapChain.DestroySwapchain(GraphicsDevice.NativeDevice, swapChain, null);
+            _swapChain?.DestroySwapchain(GraphicsDevice.NativeDevice, swapChain, null);
             swapChain = new SwapchainKHR();
         }
 
