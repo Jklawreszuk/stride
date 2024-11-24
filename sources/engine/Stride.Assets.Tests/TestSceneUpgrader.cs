@@ -7,6 +7,7 @@ using System.Text;
 using Xunit;
 using Stride.Core.Assets;
 using Stride.Core.Diagnostics;
+using Xunit.Abstractions;
 
 namespace Stride.Assets.Tests
 {
@@ -15,6 +16,12 @@ namespace Stride.Assets.Tests
     /// </summary>
     public class TestSceneUpgrader
     {
+        private readonly ITestOutputHelper testOutputHelper;
+
+        public TestSceneUpgrader(ITestOutputHelper testOutputHelper)
+        {
+            this.testOutputHelper = testOutputHelper;
+        }
 
         /// <summary>
         /// Test upgrade of scene assets from samples. This test makes sense when code has been changed but samples are not yet updated.
@@ -24,14 +31,14 @@ namespace Stride.Assets.Tests
         {
             var logger = new LoggerResult();
 
-            var samplesPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\..\samples");
+            var samplesPath = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../../samples"));
             var files = Directory.EnumerateFiles(samplesPath, "*.sdscene", SearchOption.AllDirectories);
 
             foreach (var sceneFile in files)
             {
                 logger.HasErrors = false;
                 logger.Clear();
-                Console.WriteLine($"Checking file {sceneFile}");
+                testOutputHelper.WriteLine($"Checking file {sceneFile}");
 
                 var file = new PackageLoadingAssetFile(sceneFile, Path.GetDirectoryName(sceneFile));
 
@@ -40,7 +47,7 @@ namespace Stride.Assets.Tests
 
                 foreach (var message in logger.Messages)
                 {
-                    Console.WriteLine(message);
+                    testOutputHelper.WriteLine(message.ToString());
                 }
 
                 Assert.False(logger.HasErrors);
@@ -48,7 +55,7 @@ namespace Stride.Assets.Tests
                 if (needMigration)
                 {
                     var result = Encoding.UTF8.GetString(file.AssetContent);
-                    Console.WriteLine(result);
+                    testOutputHelper.WriteLine(result);
 
                     // We cannot load the Package here, as the package can use code/scripts that are only available when you actually compile project assmeblies
                 }
