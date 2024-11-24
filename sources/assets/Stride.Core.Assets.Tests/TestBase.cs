@@ -9,7 +9,7 @@ namespace Stride.Core.Assets.Tests
 {
     public class TestBase
     {
-        public readonly string DirectoryTestBase = Path.Combine(AssemblyDirectory, @"data\");
+        public readonly string DirectoryTestBase = Path.Combine(AssemblyDirectory, "data");
 
         public static void GenerateAndCompare(string title, string outputFilePath, string referenceFilePath, Asset asset)
         {
@@ -27,9 +27,7 @@ namespace Stride.Core.Assets.Tests
             get
             {
                 string codeBase = Assembly.GetExecutingAssembly().Location;
-                UriBuilder uri = new UriBuilder(codeBase);
-                string path = Uri.UnescapeDataString(uri.Path);
-                return Path.GetDirectoryName(path);
+                return Path.GetDirectoryName(codeBase);
             }
         }
 
