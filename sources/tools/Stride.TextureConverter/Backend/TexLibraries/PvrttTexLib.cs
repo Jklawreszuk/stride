@@ -134,10 +134,12 @@ namespace Stride.TextureConverter.TexLibraries
                     {
                         for (uint k = 0; k < image.MipmapCount; ++k)
                         {
+                            var headerSize = libraryData.Texture.GetHeader().GetDataSize();
+                            
                             Unsafe.CopyBlockUnaligned(
                                 (void*)libraryData.Texture.GetDataPtr(k, j, i),
                                 (void*)image.SubImageArray[imageCount].Data,
-                                (uint)(image.SubImageArray[imageCount].DataSize * depth));
+                                (uint)(headerSize * depth));
                             imageCount += depth;
 
                             depth = depth > 1 ? depth >>= 1 : depth;

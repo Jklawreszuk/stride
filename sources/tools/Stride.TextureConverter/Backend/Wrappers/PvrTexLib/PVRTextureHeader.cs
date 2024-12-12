@@ -14,7 +14,7 @@ internal class PVRTextureHeader : IDisposable
     public IntPtr header { internal set; get; }
 
     [DllImport("PVRTexLib", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
-    private static extern IntPtr PVRTexLib_CreateTextureHeader(PVRHeaderCreateParams parameters);
+    private static extern IntPtr PVRTexLib_CreateTextureHeader(ref PVRHeaderCreateParams parameters);
 
     [DllImport("PVRTexLib", CallingConvention = CallingConvention.Cdecl), SuppressUnmanagedCodeSecurity]
     private static extern uint PVRTexLib_GetTextureWidth(IntPtr header, uint uiMipLevel);
@@ -48,12 +48,13 @@ internal class PVRTextureHeader : IDisposable
 
     public PVRTextureHeader()
     {
-        header = PVRTexLib_CreateTextureHeader(new());
+        var param = new PVRHeaderCreateParams();
+        header = PVRTexLib_CreateTextureHeader(ref param);
     }
 
     public PVRTextureHeader(ulong pixelFormat, int height=1, int width=1, int depth=1, int numMipMaps=1, int numArrayMembers=1, int numFaces=1, EPVRTColourSpace eColourSpace=EPVRTColourSpace.Linear, EPVRTVariableType eChannelType=EPVRTVariableType.UnsignedByteNorm, bool bPreMultiplied=false)
     {
-        header = PVRTexLib_CreateTextureHeader(new(){
+        PVRHeaderCreateParams param = new(){
             pixelFormat = pixelFormat,
             height = (uint)height,
             width = (uint)width,
@@ -64,7 +65,8 @@ internal class PVRTextureHeader : IDisposable
             colourSpace = eColourSpace,
             channelType = eChannelType,
             preMultiplied = bPreMultiplied
-        });
+        };
+        header = PVRTexLib_CreateTextureHeader(ref param);
     }
 
     public PVRTextureHeader(IntPtr headerPtr)

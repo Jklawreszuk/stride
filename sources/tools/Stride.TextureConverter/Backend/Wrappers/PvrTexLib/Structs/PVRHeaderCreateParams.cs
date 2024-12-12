@@ -1,5 +1,8 @@
+using System.Runtime.InteropServices;
+
 namespace Stride.TextureConverter.PvrttWrapper;
 
+[StructLayout(LayoutKind.Sequential)]
 internal struct PVRHeaderCreateParams
 {
 	///<summary>Pixel format</summary>
