@@ -94,8 +94,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stride.SpriteStudio.Runtime
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stride.Particles", "..\sources\engine\Stride.Particles\Stride.Particles.csproj", "{F32FDA80-B6DD-47A8-8681-437E2C0D3F31}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stride.Native", "..\sources\engine\Stride.Native\Stride.Native.csproj", "{1DBBC150-F085-43EF-B41D-27C72D133770}"
-EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Stride.Refactor", "..\sources\engine\Stride.Shared\Refactor\Stride.Refactor.shproj", "{B33E576F-2279-4BFC-A438-D9B84343B56B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stride.VirtualReality", "..\sources\engine\Stride.VirtualReality\Stride.VirtualReality.csproj", "{53782603-3096-40C2-ABD3-F8F311BAE4BE}"
@@ -384,18 +382,6 @@ Global
 		{F32FDA80-B6DD-47A8-8681-437E2C0D3F31}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
 		{F32FDA80-B6DD-47A8-8681-437E2C0D3F31}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
 		{F32FDA80-B6DD-47A8-8681-437E2C0D3F31}.Release|iPhoneSimulator.Deploy.0 = Release|iPhoneSimulator
-		{1DBBC150-F085-43EF-B41D-27C72D133770}.Debug|iPhone.ActiveCfg = Debug|iPhone
-		{1DBBC150-F085-43EF-B41D-27C72D133770}.Debug|iPhone.Build.0 = Debug|iPhone
-		{1DBBC150-F085-43EF-B41D-27C72D133770}.Debug|iPhone.Deploy.0 = Debug|iPhone
-		{1DBBC150-F085-43EF-B41D-27C72D133770}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
-		{1DBBC150-F085-43EF-B41D-27C72D133770}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
-		{1DBBC150-F085-43EF-B41D-27C72D133770}.Debug|iPhoneSimulator.Deploy.0 = Debug|iPhoneSimulator
-		{1DBBC150-F085-43EF-B41D-27C72D133770}.Release|iPhone.ActiveCfg = Release|iPhone
-		{1DBBC150-F085-43EF-B41D-27C72D133770}.Release|iPhone.Build.0 = Release|iPhone
-		{1DBBC150-F085-43EF-B41D-27C72D133770}.Release|iPhone.Deploy.0 = Release|iPhone
-		{1DBBC150-F085-43EF-B41D-27C72D133770}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
-		{1DBBC150-F085-43EF-B41D-27C72D133770}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
-		{1DBBC150-F085-43EF-B41D-27C72D133770}.Release|iPhoneSimulator.Deploy.0 = Release|iPhoneSimulator
 		{53782603-3096-40C2-ABD3-F8F311BAE4BE}.Debug|iPhone.ActiveCfg = Debug|iPhone
 		{53782603-3096-40C2-ABD3-F8F311BAE4BE}.Debug|iPhone.Build.0 = Debug|iPhone
 		{53782603-3096-40C2-ABD3-F8F311BAE4BE}.Debug|iPhone.Deploy.0 = Debug|iPhone
@@ -470,7 +456,6 @@ Global
 		{DD592516-B341-40FE-9100-1B0FA784A060} = {4C142567-C42B-40F5-B092-798882190209}
 		{9BC63BEC-F305-451D-BB31-262938EA964D} = {4C142567-C42B-40F5-B092-798882190209}
 		{F32FDA80-B6DD-47A8-8681-437E2C0D3F31} = {4C142567-C42B-40F5-B092-798882190209}
-		{1DBBC150-F085-43EF-B41D-27C72D133770} = {4C142567-C42B-40F5-B092-798882190209}
 		{B33E576F-2279-4BFC-A438-D9B84343B56B} = {1AC70118-C90F-4EC6-9D8B-C628BDF900F7}
 		{53782603-3096-40C2-ABD3-F8F311BAE4BE} = {4C142567-C42B-40F5-B092-798882190209}
 		{FBE1FA7B-E699-4BB2-9C8F-41F4C9F3F088} = {4C142567-C42B-40F5-B092-798882190209}
