@@ -15,7 +15,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Stride.Engine\Stride.Engine.csproj" />
-    <ProjectReference Include="..\Stride.Native\Stride.Native.csproj" />
     <ProjectReference Include="..\Stride.Games\Stride.Games.csproj" />
     <ProjectReference Include="..\Stride.Rendering\Stride.Rendering.csproj" />
   </ItemGroup>

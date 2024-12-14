@@ -13,7 +13,6 @@
       "..\\sources\\engine\\Stride.Games\\Stride.Games.csproj",
       "..\\sources\\engine\\Stride.Graphics\\Stride.Graphics.csproj",
       "..\\sources\\engine\\Stride.Input\\Stride.Input.csproj",
-      "..\\sources\\engine\\Stride.Native\\Stride.Native.csproj",
       "..\\sources\\engine\\Stride.Navigation\\Stride.Navigation.csproj",
       "..\\sources\\engine\\Stride.Particles\\Stride.Particles.csproj",
       "..\\sources\\engine\\Stride.Physics\\Stride.Physics.csproj",

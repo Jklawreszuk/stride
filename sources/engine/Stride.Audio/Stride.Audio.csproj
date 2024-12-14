@@ -23,7 +23,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Stride.Native\Stride.Native.csproj" />
     <ProjectReference Include="..\Stride\Stride.csproj" />
   </ItemGroup>
   <ItemGroup>
