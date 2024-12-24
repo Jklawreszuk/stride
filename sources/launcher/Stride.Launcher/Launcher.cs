@@ -71,7 +71,7 @@ internal static partial class Launcher
                     PrivacyPolicyHelper.EnsurePrivacyPolicyStride40();
 
                     // Install Metrics for the launcher
-                    using (Metrics = new MetricsClient(CommonApps.StrideLauncherAppId))
+                    //using (Metrics = new MetricsClient(CommonApps.StrideLauncherAppId))
                     {
                         Program.RunNewApp<App>(AppMain);
                     }

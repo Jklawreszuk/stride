@@ -26,8 +26,7 @@ public partial class MainView : UserControl
 
     private void VisualStudioDownloadPage_Button_Loaded(object? sender, RoutedEventArgs e)
     {
-        if (sender is Button button && VisualStudioVersions.AvailableVisualStudioInstances
-            .Any(ide => ide.InstallationVersion.Major == 16 || ide.InstallationVersion.Major == 17))
+        if (sender is Button button)
         {
             button.IsVisible = false;
         }

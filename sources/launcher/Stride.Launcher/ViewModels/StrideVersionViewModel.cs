@@ -201,7 +201,7 @@ public abstract class StrideVersionViewModel : PackageVersionViewModel, ICompara
 
         // Otherwise, old-style fallback
         var mainExecutableList = GetMainExecutables();
-        var fullExePath = mainExecutableList.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(x => Path.Combine(InstallPath, x)).FirstOrDefault(File.Exists);
+        var fullExePath = mainExecutableList.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(x => Path.Combine(InstallPath, x)).FirstOrDefault(File.Exists);
         if (fullExePath is null)
             throw new InvalidOperationException("Unable to locate the executable for the selected version");
 
