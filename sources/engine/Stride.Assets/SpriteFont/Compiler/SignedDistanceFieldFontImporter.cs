@@ -225,13 +225,13 @@ namespace Stride.Assets.SpriteFont.Compiler
                 // sdfPixelPerDesignUnit is hardcoded from the import in this code
                 // https://github.com/stride3d/msdfgen/blob/1af188c77822e447fe8e412420fe0fe05b782b38/ext/import-font.cpp#L126-L150
                 const float sdfPixelPerDesignUnit = 1 / 64f;      // msdf default coordinate scale
-                float boundLeft = metric.LeftSideBearing * sdfPixelPerDesignUnit;
+                float boundLeft = face.Glyph.Metrics.HorizontalBearingX.Value * sdfPixelPerDesignUnit;
                 //float boundRight = (metric.AdvanceWidth - metric.RightSideBearing) * sdfPixelPerDesignUnit;
                 //float boundTop = (metric.VerticalOriginY - metric.TopSideBearing) * sdfPixelPerDesignUnit;
-                float boundBottom = (metric.VerticalOriginY  - (metric.AdvanceHeight - metric.BottomSideBearing)) * sdfPixelPerDesignUnit;
+                float boundBottom = (face.Glyph.Metrics.HorizontalBearingY.Value - face.Glyph.Metrics.Height.Value) * sdfPixelPerDesignUnit;
 
-                float glyphWidthPx = (metric.AdvanceWidth - metric.LeftSideBearing - metric.RightSideBearing) * sdfPixelPerDesignUnit;
-                float glyphHeightPx = (metric.AdvanceHeight - metric.TopSideBearing - metric.BottomSideBearing) * sdfPixelPerDesignUnit;
+                float glyphWidthPx = face.Glyph.Metrics.Width.Value * sdfPixelPerDesignUnit;
+                float glyphHeightPx = face.Glyph.Metrics.Height.Value * sdfPixelPerDesignUnit;
 
                 // Need to scale from msdfgen's 'shape unit' into the final bitmap's space
                 float scaleX = fontWidthPx / glyphWidthPx;

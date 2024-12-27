@@ -101,17 +101,13 @@ namespace Stride.Assets.SpriteFont.Compiler
             
             var indices = fontFace.GetGlyphIndices([character]);
 
-            var metrics = fontFace.GetDesignGlyphMetrics(indices, false);
-            var metric = metrics[0];
-
             var width = (float)face.Glyph.Metrics.Width.Value / face.UnitsPerEM * fontSize;
             var height = (float)face.Glyph.Metrics.Height.Value / face.UnitsPerEM * fontSize;
 
             var xOffset = (float)face.Glyph.Metrics.HorizontalBearingX.Value / face.UnitsPerEM * fontSize;
-            var yOffset = (float)(-1)*face.Glyph.Metrics.HorizontalBearingY.Value / face.UnitsPerEM * fontSize;
+            var yOffset = (float)-face.Glyph.Metrics.HorizontalBearingY.Value / face.UnitsPerEM * fontSize;
 
             var advanceWidth = (float)face.Glyph.Metrics.HorizontalAdvance.Value / face.UnitsPerEM * fontSize;
-            //var advanceHeight = (float)metric.AdvanceHeight / face.UnitsPerEM * fontSize;
 
             var pixelWidth = (int)Math.Ceiling(width + 4);
             var pixelHeight = (int)Math.Ceiling(height + 4);
