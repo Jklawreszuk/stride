@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using Stride.Core.Assets;
+using SharpFont;
 
 namespace Stride.Assets.SpriteFont.Compiler
 {
@@ -135,15 +136,14 @@ namespace Stride.Assets.SpriteFont.Compiler
 
             msdfgenExe = msdfgen.FullPath;
 #if DEBUG
-            tempDir = $"{Environment.GetEnvironmentVariable("TEMP")}\\StrideGlyphs\\";
+            tempDir = Path.Combine(Path.GetTempPath(), "StrideGlyphs");
             Directory.CreateDirectory(tempDir);
 #endif
+            Face face = options.FontSource.GetFont();
 
             var factory = new Factory();
 
             FontFace fontFace = options.FontSource.GetFontFace();
-
-            var fontMetrics = fontFace.Metrics;
 
             // Create a bunch of GDI+ objects.
             var fontSize = options.FontType.Size;
@@ -160,20 +160,20 @@ namespace Stride.Assets.SpriteFont.Compiler
             //
             // So we are first applying a factor to the line gap:
             //     NewLineGap = LineGap * LineGapFactor
-            var lineGap = fontMetrics.LineGap * options.LineGapFactor;
+            var lineGap = (face.Height - face.Ascender + face.Descender) * options.LineGapFactor;
 
-            float pixelPerDesignUnit = fontSize / fontMetrics.DesignUnitsPerEm;
+            float pixelPerDesignUnit = fontSize / face.UnitsPerEM;
             // Store the font height.
-            LineSpacing = (lineGap + fontMetrics.Ascent + fontMetrics.Descent) * pixelPerDesignUnit;
+            LineSpacing = (lineGap + face.Ascender + Math.Abs(face.Descender)) * pixelPerDesignUnit;
 
             // And then the baseline is also changed in order to allow the linegap to be distributed between the top and the
             // bottom of the font:
             //     BaseLine = NewLineGap * LineGapBaseLineFactor
-            BaseLine = (lineGap * options.LineGapBaseLineFactor + fontMetrics.Ascent) * pixelPerDesignUnit;
+            BaseLine = (lineGap * options.LineGapBaseLineFactor + face.Ascender) * pixelPerDesignUnit;
 
             // Generate SDF bitmaps for each character in turn.
             foreach (var character in characters)
-                glyphList.Add(ImportGlyph(fontFace, character, fontMetrics, fontSize));
+                glyphList.Add(ImportGlyph(face, fontFace, character, fontSize));
 
             Glyphs = glyphList;
 
@@ -185,17 +185,16 @@ namespace Stride.Assets.SpriteFont.Compiler
         /// </summary>
         /// <param name="fontFace">FontFace, use to obtain the metrics for the glyph</param>
         /// <param name="character">The glyph's character code</param>
-        /// <param name="fontMetrics">Font metrics, used to obtain design units scale</param>
         /// <param name="fontSize">Requested font size. The bigger, the more precise the SDF image is going to be</param>
         /// <returns></returns>
-        private Glyph ImportGlyph(FontFace fontFace, char character, FontMetrics fontMetrics, float fontSize)
+        private Glyph ImportGlyph(Face face, FontFace fontFace, char character, float fontSize)
         {
             var indices = fontFace.GetGlyphIndices(new int[] { character });
 
             var metrics = fontFace.GetDesignGlyphMetrics(indices, isSideways: false);
             var metric = metrics[0];
 
-            float pixelPerDesignUnit = fontSize / fontMetrics.DesignUnitsPerEm;
+            float pixelPerDesignUnit = fontSize / face.UnitsPerEM;
             float fontWidthPx = (metric.AdvanceWidth - metric.LeftSideBearing - metric.RightSideBearing) * pixelPerDesignUnit;
             float fontHeightPx = (metric.AdvanceHeight - metric.TopSideBearing - metric.BottomSideBearing) * pixelPerDesignUnit;
 
