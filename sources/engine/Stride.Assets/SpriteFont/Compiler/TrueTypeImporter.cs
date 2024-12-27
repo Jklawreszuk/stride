@@ -127,81 +127,18 @@ namespace Stride.Assets.SpriteFont.Compiler
             }
             else
             {
-                var glyphRun = new GlyphRun
+                bitmap = new FreeImageBitmap(pixelWidth, pixelHeight, FreeImageAPI.PixelFormat.Format32bppArgb);
+
+                
+                face.LoadGlyph(index, LoadFlags.Render, LoadTarget.Normal);
+                for (var y = 0; y < face.Glyph.Bitmap.Rows; y++)
                 {
-                    FontFace = fontFace,
-                    Advances = new[] { MathF.Ceiling(advanceWidth) },
-                    FontSize = fontSize,
-                    BidiLevel = 0,
-                    Indices = indices,
-                    IsSideways = false,
-                    Offsets = new[] { new GlyphOffset() }
-                };
-
-
-                RenderingMode renderingMode;
-                if (antiAliasMode != FontAntiAliasMode.Aliased)
-                {
-                    var rtParams = new RenderingParams(factory);
-                    renderingMode = fontFace.GetRecommendedRenderingMode(fontSize, 1.0f, MeasuringMode.Natural, rtParams);
-                    rtParams.Dispose();
-                }
-                else
-                {
-                    renderingMode = RenderingMode.Aliased;
-                }
-
-                using (var runAnalysis = new GlyphRunAnalysis(factory,
-                    glyphRun,
-                    1.0f,
-                    matrix,
-                    renderingMode,
-                    MeasuringMode.Natural,
-                    0.0f,
-                    0.0f))
-                {
-
-                    var bounds = new RawRectangle(0, 0, pixelWidth, pixelHeight);
-                    bitmap = new FreeImageBitmap(pixelWidth, pixelHeight, FreeImageAPI.PixelFormat.Format32bppArgb);
-
-                    if (renderingMode == RenderingMode.Aliased)
+                    for (int x = 0; x < face.Glyph.Bitmap.Width; x++)
                     {
+                        var pixel = face.Glyph.Bitmap.BufferData[y * face.Glyph.Bitmap.Width + x];
 
-                        var texture = new byte[pixelWidth * pixelHeight];
-                        runAnalysis.CreateAlphaTexture(TextureType.Aliased1x1, bounds, texture, texture.Length);
-                        for (int y = 0; y < pixelHeight; y++)
-                        {
-                            for (int x = 0; x < pixelWidth; x++)
-                            {
-                                int correctedY = pixelHeight - 1 - y;  // Flip the Y-axis
-
-                                int pixelX = y * pixelWidth + x;
-                                var grey = texture[pixelX];
-                                var color = Color.FromArgb(grey, grey, grey);
-
-                                bitmap.SetPixel(x, correctedY, color);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        var texture = new byte[pixelWidth * pixelHeight * 3];
-                        runAnalysis.CreateAlphaTexture(TextureType.Cleartype3x1, bounds, texture, texture.Length);
-                        for (int y = 0; y < pixelHeight; y++)
-                        {
-                            for (int x = 0; x < pixelWidth; x++)
-                            {
-                                int correctedY = pixelHeight - 1 - y;  // Flip the Y-axis
-                                
-                                int pixelX = (y * pixelWidth + x) * 3;
-                                var red = LinearToGamma(texture[pixelX]);
-                                var green = LinearToGamma(texture[pixelX + 1]);
-                                var blue = LinearToGamma(texture[pixelX + 2]);
-                                var color = Color.FromArgb(red, green, blue);
-
-                                bitmap.SetPixel(x, correctedY, color);
-                            }
-                        }
+                        int correctedY = face.Glyph.Bitmap.Rows - 1 - y; // Flip the Y-axis
+                        bitmap.SetPixel(x, correctedY, Color.FromArgb(pixel, pixel, pixel));
                     }
                 }
             }
