@@ -189,14 +189,18 @@ namespace Stride.Assets.SpriteFont.Compiler
         /// <returns></returns>
         private Glyph ImportGlyph(Face face, FontFace fontFace, char character, float fontSize)
         {
+            var index = face.GetCharIndex(character);
+            face.SetPixelSizes(0, (uint)fontSize);
+            face.LoadGlyph(index, LoadFlags.NoScale, LoadTarget.Normal);
+            
             var indices = fontFace.GetGlyphIndices(new int[] { character });
 
             var metrics = fontFace.GetDesignGlyphMetrics(indices, isSideways: false);
             var metric = metrics[0];
 
             float pixelPerDesignUnit = fontSize / face.UnitsPerEM;
-            float fontWidthPx = (metric.AdvanceWidth - metric.LeftSideBearing - metric.RightSideBearing) * pixelPerDesignUnit;
-            float fontHeightPx = (metric.AdvanceHeight - metric.TopSideBearing - metric.BottomSideBearing) * pixelPerDesignUnit;
+            float fontWidthPx = face.Glyph.Metrics.Width.Value * pixelPerDesignUnit;
+            float fontHeightPx = face.Glyph.Metrics.Height.Value * pixelPerDesignUnit;
 
             float fontOffsetXPx = metric.LeftSideBearing * pixelPerDesignUnit;
             float fontOffsetYPx = (metric.TopSideBearing - metric.VerticalOriginY) * pixelPerDesignUnit;
