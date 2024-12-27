@@ -77,12 +77,12 @@ namespace Stride.Assets.SpriteFont.Compiler
             var lineGap = (face.Height - face.Ascender + face.Descender) * options.LineGapFactor;
 
             // Store the font height.
-            LineSpacing = (float)(lineGap + face.Ascender + Math.Abs(face.Descender)) / face.UnitsPerEM * fontSize;
+            LineSpacing = (lineGap + face.Ascender + Math.Abs(face.Descender)) / face.UnitsPerEM * fontSize;
 
             // And then the baseline is also changed in order to allow the linegap to be distributed between the top and the 
             // bottom of the font:
             //     BaseLine = NewLineGap * LineGapBaseLineFactor
-            BaseLine = (float)(lineGap * options.LineGapBaseLineFactor + face.Ascender) / face.UnitsPerEM * fontSize;
+            BaseLine = (lineGap * options.LineGapBaseLineFactor + face.Ascender) / face.UnitsPerEM * fontSize;
 
             // Rasterize each character in turn.
             foreach (var character in characters)
@@ -107,10 +107,10 @@ namespace Stride.Assets.SpriteFont.Compiler
             var width = (float)face.Glyph.Metrics.Width.Value / face.UnitsPerEM * fontSize;
             var height = (float)face.Glyph.Metrics.Height.Value / face.UnitsPerEM * fontSize;
 
-            var xOffset = (float)metric.LeftSideBearing / face.UnitsPerEM * fontSize;
-            var yOffset = (float)(metric.TopSideBearing - metric.VerticalOriginY) / face.UnitsPerEM * fontSize;
+            var xOffset = (float)face.Glyph.Metrics.HorizontalBearingX.Value / face.UnitsPerEM * fontSize;
+            var yOffset = (float)(-1)*face.Glyph.Metrics.HorizontalBearingY.Value / face.UnitsPerEM * fontSize;
 
-            var advanceWidth = (float)metric.AdvanceWidth / face.UnitsPerEM * fontSize;
+            var advanceWidth = (float)face.Glyph.Metrics.HorizontalAdvance.Value / face.UnitsPerEM * fontSize;
             //var advanceHeight = (float)metric.AdvanceHeight / face.UnitsPerEM * fontSize;
 
             var pixelWidth = (int)Math.Ceiling(width + 4);

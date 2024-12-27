@@ -202,10 +202,10 @@ namespace Stride.Assets.SpriteFont.Compiler
             float fontWidthPx = face.Glyph.Metrics.Width.Value * pixelPerDesignUnit;
             float fontHeightPx = face.Glyph.Metrics.Height.Value * pixelPerDesignUnit;
 
-            float fontOffsetXPx = metric.LeftSideBearing * pixelPerDesignUnit;
-            float fontOffsetYPx = (metric.TopSideBearing - metric.VerticalOriginY) * pixelPerDesignUnit;
+            float fontOffsetXPx = face.Glyph.Metrics.HorizontalBearingX.Value * pixelPerDesignUnit;
+            float fontOffsetYPx = -face.Glyph.Metrics.HorizontalBearingY.Value * pixelPerDesignUnit;
 
-            float advanceWidthPx = metric.AdvanceWidth * pixelPerDesignUnit;
+            float advanceWidthPx = face.Glyph.Metrics.HorizontalAdvance.Value * pixelPerDesignUnit;
             //var advanceHeight = metric.AdvanceHeight * pixelPerDesignUnit;
 
             const int MarginPx = 2;     // Buffer zone for the sdf image to avoid clipping
