@@ -4798,5 +4798,128 @@ namespace FreeImageAPI
 		internal static extern unsafe uint RtlCompareMemory(void* buf1, void* buf2, uint count);
 
 		#endregion
-	}
+
+        public static Bitmap GetBitmap(FIBITMAP dib, bool copyMetadata)
+        {
+            if (dib.IsNull)
+			{
+				throw new ArgumentNullException("dib");
+			}
+			if (GetImageType(dib) != FREE_IMAGE_TYPE.FIT_BITMAP)
+			{
+				throw new ArgumentException("Only bitmaps with type of FIT_BITMAP can be converted.");
+			}
+
+			var format = (System.Drawing.Imaging.PixelFormat)GetPixelFormat(dib);
+
+			if ((format == System.Drawing.Imaging.PixelFormat.Undefined) && (GetBPP(dib) == 16u))
+			{
+				throw new ArgumentException("Only 16bit 555 and 565 are supported.");
+			}
+
+			int height = (int)GetHeight(dib);
+			int width = (int)GetWidth(dib);
+			int pitch = (int)GetPitch(dib);
+
+			Bitmap result = new Bitmap(width, height, format);
+            var data =
+                // Locking the complete bitmap in writeonly mode
+                result.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly, format);
+            // Writing the bitmap data directly into the new created .NET bitmap.
+            ConvertToRawBits(data.Scan0, dib, pitch, GetBPP(dib),
+				GetRedMask(dib), GetGreenMask(dib), GetBlueMask(dib), true);
+			// Unlock the bitmap
+			result.UnlockBits(data);
+			// Apply the bitmap resolution
+            if((GetResolutionX(dib) > 0) && (GetResolutionY(dib) > 0))
+            {
+                // SetResolution will throw an exception when zero values are given on input
+                result.SetResolution(GetResolutionX(dib), GetResolutionY(dib));
+            }
+			// Check whether the bitmap has a palette
+			if (GetPalette(dib) != IntPtr.Zero)
+			{
+				// Get the bitmaps palette to apply changes
+				ColorPalette palette = result.Palette;
+				// Get the orgininal palette
+				Color[] colorPalette = new Palette(dib).ColorData;
+				// Get the maximum number of palette entries to copy
+				int entriesToCopy = Math.Min(colorPalette.Length, palette.Entries.Length);
+
+				// Check whether the bitmap is transparent
+				if (IsTransparent(dib))
+				{
+					byte[] transTable = GetTransparencyTableEx(dib);
+					int i = 0;
+					int maxEntriesWithTrans = Math.Min(entriesToCopy, transTable.Length);
+					// Copy palette entries and include transparency
+					for (; i < maxEntriesWithTrans; i++)
+					{
+						palette.Entries[i] = Color.FromArgb(transTable[i], colorPalette[i]);
+					}
+					// Copy palette entries and that have no transparancy
+					for (; i < entriesToCopy; i++)
+					{
+						palette.Entries[i] = Color.FromArgb(0xFF, colorPalette[i]);
+					}
+				}
+				else
+				{
+					for (int i = 0; i < entriesToCopy; i++)
+					{
+						palette.Entries[i] = colorPalette[i];
+					}
+				}
+
+				// Set the bitmaps palette
+				result.Palette = palette;
+			}
+			// Copy metadata
+			if (copyMetadata)
+			{
+				try
+				{
+					List<System.Drawing.Imaging.PropertyItem> list = new List<System.Drawing.Imaging.PropertyItem>();
+					// Get a list of all types
+					FITAG tag;
+					FIMETADATA mData;
+					foreach (FREE_IMAGE_MDMODEL model in FREE_IMAGE_MDMODELS)
+					{
+						// Get a unique search handle
+						mData = FindFirstMetadata(model, dib, out tag);
+						// Check if metadata exists for this type
+						if (mData.IsNull) continue;
+						do
+						{
+							var propItem = (System.Drawing.Imaging.PropertyItem)Activator.CreateInstance(typeof(System.Drawing.Imaging.PropertyItem), true);
+							propItem.Len = (int)GetTagLength(tag);
+							propItem.Id = (int)GetTagID(tag);
+							propItem.Type = (short)GetTagType(tag);
+							byte[] buffer = new byte[propItem.Len];
+
+							unsafe
+							{
+                                ref byte dst = ref buffer[0];
+                                ref byte src = ref Unsafe.AsRef<byte>((byte*) GetTagValue(tag));
+                                Unsafe.CopyBlockUnaligned(ref dst, ref src, (uint) propItem.Len);
+                            }
+
+                            propItem.Value = buffer;
+							list.Add(propItem);
+						}
+						while (FindNextMetadata(mData, out tag));
+						FindCloseMetadata(mData);
+					}
+					foreach (System.Drawing.Imaging.PropertyItem propItem in list)
+					{
+						result.SetPropertyItem(propItem);
+					}
+				}
+				catch
+				{
+				}
+			}
+			return result;
+        }
+    }
 }

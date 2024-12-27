@@ -4072,5 +4072,16 @@ namespace FreeImageAPI
 		}
 
 		#endregion
-	}
+
+        public Bitmap ToBitmap()
+        {
+            EnsureNotDisposed();
+            return FreeImage.GetBitmap(dib, true);
+        }
+
+        public FreeImageBitmap ConvertTo32Bits()
+        {
+            return new FreeImageBitmap(FreeImage.ConvertTo32Bits(dib));
+        }
+    }
 }
