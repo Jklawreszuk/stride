@@ -5,15 +5,13 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using FreeImageAPI;
 using Stride.Core.Assets;
 using SharpFont;
 
 namespace Stride.Assets.SpriteFont.Compiler
 {
     using System.Drawing;
-    using System.Drawing.Imaging;
-    using SharpDX.DirectWrite;
-    using Factory = SharpDX.DirectWrite.Factory;
 
     // This code was originally taken from DirectXTk but rewritten with DirectWrite
     // for more accuracy in font rendering
@@ -43,7 +41,7 @@ namespace Stride.Assets.SpriteFont.Compiler
         /// <param name="scaleX">Scale factor to convert from 'shape unit' to 'pixel unit' on x-axis</param>
         /// <param name="scaleY">Scale factor to convert from 'shape unit' to 'pixel unit' on y-axis</param>
         /// <returns></returns>
-        private Bitmap LoadSDFBitmap(char c, int width, int height, float offsetX, float offsetY, float scaleX, float scaleY)
+        private FreeImageBitmap LoadSDFBitmap(char c, int width, int height, float offsetX, float offsetY, float scaleX, float scaleY)
         {
             try
             {
@@ -76,7 +74,7 @@ namespace Stride.Assets.SpriteFont.Compiler
 
                 if (File.Exists(outputFilePath))
                 {
-                    var bitmap = (Bitmap)Image.FromFile(outputFilePath);
+                    var bitmap = FreeImageBitmap.FromFile(outputFilePath);
 
                     Normalize(bitmap);
 
@@ -89,7 +87,7 @@ namespace Stride.Assets.SpriteFont.Compiler
             }
 
             // If font generation failed for any reason, ignore it and return an empty glyph
-            return new Bitmap(1, 1, PixelFormat.Format32bppArgb);
+            return new FreeImageBitmap(1, 1, FreeImageAPI.PixelFormat.Format32bppArgb);
         }
 
         /// <summary>
@@ -98,7 +96,7 @@ namespace Stride.Assets.SpriteFont.Compiler
         /// Because we use offset we can easily detect if the corner pixel has negative (correct) or positive distance (incorrect)
         /// </summary>
         /// <param name="bitmap"></param>
-        private void Normalize(Bitmap bitmap)
+        private void Normalize(FreeImageBitmap bitmap)
         {
             // Case 1 - corner pixel is negative (outside), do not invert
             var firstPixel = bitmap.GetPixel(0, 0);
@@ -141,10 +139,6 @@ namespace Stride.Assets.SpriteFont.Compiler
 #endif
             Face face = options.FontSource.GetFont();
 
-            var factory = new Factory();
-
-            FontFace fontFace = options.FontSource.GetFontFace();
-
             // Create a bunch of GDI+ objects.
             var fontSize = options.FontType.Size;
 
@@ -173,30 +167,22 @@ namespace Stride.Assets.SpriteFont.Compiler
 
             // Generate SDF bitmaps for each character in turn.
             foreach (var character in characters)
-                glyphList.Add(ImportGlyph(face, fontFace, character, fontSize));
+                glyphList.Add(ImportGlyph(face, character, fontSize));
 
             Glyphs = glyphList;
-
-            factory.Dispose();
         }
 
         /// <summary>
         /// Imports a single glyph as a bitmap using the msdfgen to convert it to a signed distance field image
         /// </summary>
-        /// <param name="fontFace">FontFace, use to obtain the metrics for the glyph</param>
         /// <param name="character">The glyph's character code</param>
         /// <param name="fontSize">Requested font size. The bigger, the more precise the SDF image is going to be</param>
         /// <returns></returns>
-        private Glyph ImportGlyph(Face face, FontFace fontFace, char character, float fontSize)
+        private Glyph ImportGlyph(Face face, char character, float fontSize)
         {
             var index = face.GetCharIndex(character);
             face.SetPixelSizes(0, (uint)fontSize);
             face.LoadGlyph(index, LoadFlags.NoScale, LoadTarget.Normal);
-            
-            var indices = fontFace.GetGlyphIndices(new int[] { character });
-
-            var metrics = fontFace.GetDesignGlyphMetrics(indices, isSideways: false);
-            var metric = metrics[0];
 
             float pixelPerDesignUnit = fontSize / face.UnitsPerEM;
             float fontWidthPx = face.Glyph.Metrics.Width.Value * pixelPerDesignUnit;
@@ -215,10 +201,10 @@ namespace Stride.Assets.SpriteFont.Compiler
             float bitmapOffsetXPx = fontOffsetXPx - MarginPx;
             float bitmapOffsetYPx = fontOffsetYPx - MarginPx;
 
-            Bitmap bitmap;
+            FreeImageBitmap bitmap;
             if (char.IsWhiteSpace(character))
             {
-                bitmap = new Bitmap(1, 1, PixelFormat.Format32bppArgb);
+                bitmap = new FreeImageBitmap(1, 1, FreeImageAPI.PixelFormat.Format32bppArgb);
             }
             else
             {
@@ -245,7 +231,7 @@ namespace Stride.Assets.SpriteFont.Compiler
                 bitmap = LoadSDFBitmap(character, bitmapWidthPx, bitmapHeightPx, offsetX, offsetY, scaleX, scaleY);
             }
 
-            var glyph = new Glyph(character, bitmap)
+            var glyph = new Glyph(character, bitmap.ToBitmap())
             {
                 XOffset = bitmapOffsetXPx,
                 XAdvance = advanceWidthPx,

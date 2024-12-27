@@ -120,10 +120,10 @@ namespace Stride.Assets.SpriteFont.Compiler
                 M32 = -MathF.Floor(yOffset) + 1
             };
 
-            Bitmap bitmap;
+            FreeImageBitmap bitmap;
             if (char.IsWhiteSpace(character))
             {
-                bitmap = new Bitmap(1, 1, PixelFormat.Format32bppArgb);
+                bitmap = new FreeImageBitmap(1, 1, FreeImageAPI.PixelFormat.Format32bppArgb);
             }
             else
             {
@@ -162,7 +162,7 @@ namespace Stride.Assets.SpriteFont.Compiler
                 {
 
                     var bounds = new RawRectangle(0, 0, pixelWidth, pixelHeight);
-                    bitmap = new Bitmap(pixelWidth, pixelHeight, PixelFormat.Format32bppArgb);
+                    bitmap = new FreeImageBitmap(pixelWidth, pixelHeight, FreeImageAPI.PixelFormat.Format32bppArgb);
 
                     if (renderingMode == RenderingMode.Aliased)
                     {
@@ -173,11 +173,13 @@ namespace Stride.Assets.SpriteFont.Compiler
                         {
                             for (int x = 0; x < pixelWidth; x++)
                             {
+                                int correctedY = pixelHeight - 1 - y;  // Flip the Y-axis
+
                                 int pixelX = y * pixelWidth + x;
                                 var grey = texture[pixelX];
                                 var color = Color.FromArgb(grey, grey, grey);
 
-                                bitmap.SetPixel(x, y, color);
+                                bitmap.SetPixel(x, correctedY, color);
                             }
                         }
                     }
@@ -189,20 +191,22 @@ namespace Stride.Assets.SpriteFont.Compiler
                         {
                             for (int x = 0; x < pixelWidth; x++)
                             {
+                                int correctedY = pixelHeight - 1 - y;  // Flip the Y-axis
+                                
                                 int pixelX = (y * pixelWidth + x) * 3;
                                 var red = LinearToGamma(texture[pixelX]);
                                 var green = LinearToGamma(texture[pixelX + 1]);
                                 var blue = LinearToGamma(texture[pixelX + 2]);
                                 var color = Color.FromArgb(red, green, blue);
 
-                                bitmap.SetPixel(x, y, color);
+                                bitmap.SetPixel(x, correctedY, color);
                             }
                         }
                     }
                 }
             }
 
-            var glyph = new Glyph(character, bitmap)
+            var glyph = new Glyph(character, bitmap.ToBitmap())
             {
                 XOffset = -matrix.M31,
                 XAdvance = advanceWidth,
