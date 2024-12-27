@@ -70,6 +70,15 @@ namespace Stride.Assets.SpriteFont
 
             return new FontFace(font);
         }
+        
+        /// <inheritdoc/>
+        public override Face GetFont()
+        {
+            var library = new SharpFont.Library();
+
+            var face = new SharpFont.Face(library, GetFontPath());
+            return face;
+        }
 
         public override string GetFontPath(AssetCompilerResult result = null)
         {
