@@ -55,8 +55,6 @@ namespace Stride.Assets.SpriteFont.Compiler
             NativeLibraryHelper.PreloadLibrary("freeimage", typeof(TrueTypeImporter));
             var face = options.FontSource.GetFont();
 
-            var factory = new Factory();
-
             var fontFace = options.FontSource.GetFontFace();
 
             // Create a bunch of GDI+ objects.
