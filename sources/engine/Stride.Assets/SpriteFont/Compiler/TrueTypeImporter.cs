@@ -55,8 +55,6 @@ namespace Stride.Assets.SpriteFont.Compiler
             NativeLibraryHelper.PreloadLibrary("freeimage", typeof(TrueTypeImporter));
             var face = options.FontSource.GetFont();
 
-            var fontFace = options.FontSource.GetFontFace();
-
             // Create a bunch of GDI+ objects.
             var fontSize = options.FontType.Size;
 
@@ -84,12 +82,12 @@ namespace Stride.Assets.SpriteFont.Compiler
 
             // Rasterize each character in turn.
             foreach (var character in characters)
-                glyphList.Add(ImportGlyph(face, fontFace, character, fontSize, options.FontType.AntiAlias));
+                glyphList.Add(ImportGlyph(face, character, fontSize, options.FontType.AntiAlias));
 
             Glyphs = glyphList;
         }
         
-        private Glyph ImportGlyph(Face face, FontFace fontFace, char character, float fontSize, FontAntiAliasMode antiAliasMode)
+        private Glyph ImportGlyph(Face face, char character, float fontSize, FontAntiAliasMode antiAliasMode)
         {
             var index = face.GetCharIndex(character);
             face.SetPixelSizes(0, (uint)fontSize);
