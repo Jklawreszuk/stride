@@ -84,14 +84,12 @@ namespace Stride.Assets.SpriteFont.Compiler
 
             // Rasterize each character in turn.
             foreach (var character in characters)
-                glyphList.Add(ImportGlyph(face, factory, fontFace, character, fontSize, options.FontType.AntiAlias));
+                glyphList.Add(ImportGlyph(face, fontFace, character, fontSize, options.FontType.AntiAlias));
 
             Glyphs = glyphList;
-
-            factory.Dispose();
         }
         
-        private Glyph ImportGlyph(Face face, Factory factory, FontFace fontFace, char character, float fontSize, FontAntiAliasMode antiAliasMode)
+        private Glyph ImportGlyph(Face face, FontFace fontFace, char character, float fontSize, FontAntiAliasMode antiAliasMode)
         {
             var index = face.GetCharIndex(character);
             face.SetPixelSizes(0, (uint)fontSize);
