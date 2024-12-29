@@ -92,8 +92,6 @@ namespace Stride.Assets.SpriteFont.Compiler
             var index = face.GetCharIndex(character);
             face.SetPixelSizes(0, (uint)fontSize);
             face.LoadGlyph(index, LoadFlags.NoScale, LoadTarget.Normal);
-            
-            var indices = fontFace.GetGlyphIndices([character]);
 
             var width = (float)face.Glyph.Metrics.Width.Value / face.UnitsPerEM * fontSize;
             var height = (float)face.Glyph.Metrics.Height.Value / face.UnitsPerEM * fontSize;
