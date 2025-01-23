@@ -110,10 +110,10 @@ public partial class RenderDocManager
     private static IntPtr GetDevicePointer(IntPtr IntPtr)
     {
         var devicePointer = IntPtr.Zero;
-// #if STRIDE_GRAPHICS_API_DIRECT3D11 || STRIDE_GRAPHICS_API_DIRECT3D12
-//         if (IntPtr != null)
-//             devicePointer = ((SharpDX.CppObject)SharpDXInterop.GetNativeDevice(IntPtr)).NativePointer;
-// #endif
+#if STRIDE_GRAPHICS_API_DIRECT3D11 || STRIDE_GRAPHICS_API_DIRECT3D12
+        if (IntPtr != null)
+            devicePointer = ((SharpDX.CppObject)SharpDXInterop.GetNativeDevice(IntPtr)).NativePointer;
+#endif
         return devicePointer;
     }
 
