@@ -8,13 +8,13 @@ namespace Stride.Graphics;
 [Flags]
 internal enum RenderDocInAppOverlay : uint
 {
-    eOverlay_Enabled = 0x1,
-    eOverlay_FrameRate = 0x2,
-    eOverlay_FrameNumber = 0x4,
-    eOverlay_CaptureList = 0x8,
-    eOverlay_Default = (eOverlay_Enabled | eOverlay_FrameRate | eOverlay_FrameNumber | eOverlay_CaptureList),
-    eOverlay_All = 0xFFFFFFFF,
-    eOverlay_None = 0,
+    Enabled = 0x1,
+    FrameRate = 0x2,
+    FrameNumber = 0x4,
+    CaptureList = 0x8,
+    Default = (Enabled | FrameRate | FrameNumber | CaptureList),
+    All = 0xFFFFFFFF,
+    None = 0,
 };
 
    
