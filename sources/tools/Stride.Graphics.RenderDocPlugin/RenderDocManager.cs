@@ -27,37 +27,48 @@ namespace Stride.Graphics
 
         public unsafe RenderDocManager()
         {
-            var reg = Registry.ClassesRoot.OpenSubKey("CLSID\\" + RenderdocClsid + "\\InprocServer32");
-            if (reg == null)
-            {
-                return;
-            }
-            var path = reg.GetValue(null) != null ? reg.GetValue(null).ToString() : null;
-            if (string.IsNullOrEmpty(path) || !File.Exists(path))
-            {
-                return;
-            }
+            string path = OperatingSystem.IsWindows() ? GetRenderDocPathWindows() :
+                OperatingSystem.IsLinux() ? GetRenderDocPathLinux() : null;
 
             // Preload the library before using the UnmanagedFunctionPointerAttribute
-            var ptr = LoadLibrary(path);
-            if (ptr == IntPtr.Zero)
+            if (!NativeLibrary.TryLoad(path, out var libHandle))
             {
                 return;
             }
 
-            var getAPIAddress = GetProcAddress(ptr, nameof(RENDERDOC_GetAPI));
-            if (getAPIAddress == IntPtr.Zero)
-                return;
+            if (!NativeLibrary.TryGetExport(libHandle, "RENDERDOC_GetAPI", out IntPtr rdApiHandle))
+                return;  
 
             // Get main entry point to get other function pointers
-            var getAPI = Marshal.GetDelegateForFunctionPointer<RENDERDOC_GetAPI>(getAPIAddress);
+            var getAPI = Marshal.GetDelegateForFunctionPointer<RENDERDOC_GetAPI>(rdApiHandle);
 
             // API version 10400 has 25 function pointers
             if (!getAPI(RENDERDOC_API_VERSION, ref apiPointers))
                 return;
         }
+        
+        private string GetRenderDocPathWindows()
+        {
+            const string RenderdocClsid = "{5D6BF029-A6BA-417A-8523-120492B1DCE3}";
+            var reg = Microsoft.Win32.Registry.ClassesRoot.OpenSubKey("CLSID\\" + RenderdocClsid + "\\InprocServer32");
+            if (reg == null)
+            {
+                return null;
+            }
+            var path = reg.GetValue(null)?.ToString();
+            if (string.IsNullOrEmpty(path) || !File.Exists(path))
+            {
+                return null;
+            }
+            return path;
+        }
+        
+        private string GetRenderDocPathLinux()
+        {
+            return "/usr/lib64/renderdoc/librenderdoc.so";
+        }
 
-        public unsafe void Initialize(string captureFilePath = null)
+        public void Initialize(string captureFilePath = null)
         {
             var finalLogFilePath = captureFilePath ?? FindAvailablePath("RenderDoc" + Assembly.GetEntryAssembly().Location);
             GetMethod<RENDERDOC_SetCaptureFilePathTemplate>(RenderDocAPIFunction.SetCaptureFilePathTemplate)(finalLogFilePath);
@@ -319,11 +330,5 @@ namespace Stride.Graphics
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         private delegate bool RENDERDOC_DiscardFrameCapture(IntPtr devicePointer, IntPtr wndHandle);
-
-        [DllImport("kernel32", EntryPoint = "LoadLibrary", SetLastError = true, CharSet = CharSet.Unicode)]
-        private static extern IntPtr LoadLibrary(string lpFileName);
-
-        [DllImport("kernel32", CharSet = CharSet.Ansi, ExactSpelling = true, SetLastError = true)]
-        private static extern IntPtr GetProcAddress(IntPtr hModule, string procName);
     }
 }
