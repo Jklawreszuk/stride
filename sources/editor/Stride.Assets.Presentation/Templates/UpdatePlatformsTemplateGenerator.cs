@@ -168,7 +168,8 @@ namespace Stride.Assets.Presentation.Templates
 
         private static ProjectTemplate PrepareTemplate(PackageTemplateGeneratorParameters parameters, UFile templateRelativePath, PlatformType platformType, string currentProfile, GraphicsPlatform? graphicsPlatform, ProjectType projectType)
         {
-            ProjectTemplateGeneratorHelper.AddOption(parameters, "Platforms", parameters.GetTag(PlatformsKey).Select(x => x.Platform).ToList());
+            var version = Environment.Version;
+            ProjectTemplateGeneratorHelper.AddOption(parameters, "Platform", $"net{version.Major}.{version.Minor}");
             ProjectTemplateGeneratorHelper.AddOption(parameters, "CurrentPlatform", platformType);
             ProjectTemplateGeneratorHelper.AddOption(parameters, "CurrentProfile", currentProfile);
             ProjectTemplateGeneratorHelper.AddOption(parameters, "Orientation", parameters.GetTag(OrientationKey));

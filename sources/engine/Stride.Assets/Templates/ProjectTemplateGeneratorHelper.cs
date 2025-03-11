@@ -186,7 +186,8 @@ namespace Stride.Assets.Templates
 
         public static SolutionProject GenerateTemplate(TemplateGeneratorParameters parameters, ICollection<SelectedSolutionPlatform> platforms, UFile templateRelativePath, string projectName, PlatformType platformType, GraphicsPlatform? graphicsPlatform, ProjectType projectType, DisplayOrientation orientation, Guid? projectGuid = null)
         {
-            AddOption(parameters, "Platforms", platforms.Select(x => x.Platform).ToList());
+            var version = Environment.Version;
+            AddOption(parameters, "Platform", $"net{version.Major}.{version.Minor}");
             AddOption(parameters, "CurrentPlatform", platformType);
             AddOption(parameters, "Orientation", orientation);
 
