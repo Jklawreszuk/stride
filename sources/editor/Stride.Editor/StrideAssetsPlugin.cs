@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Windows;
+//using System.Windows;
 using Stride.Core.Assets;
 using Stride.Core.Assets.Editor.Services;
 using Stride.Core.Assets.Editor.ViewModel;
@@ -28,7 +28,7 @@ namespace Stride.Editor
         private readonly Dictionary<object, object> enumImagesDictionary = [];
         private readonly List<ITemplateProvider> templateProviderList = [];
 
-        protected virtual void RegisterResourceDictionary(ResourceDictionary dictionary)
+        protected virtual void RegisterResourceDictionary(IDictionary<object, object?> dictionary)
         {
             foreach (object entry in dictionary.Keys)
             {
@@ -38,8 +38,9 @@ namespace Stride.Editor
                 }
             }
 
-            foreach (object value in dictionary.Values)
+            foreach (object key in dictionary.Keys)
             {
+                object value = dictionary[key]; // resolve deferred items.
                 var provider = value as ITemplateProvider;
                 if (provider != null)
                 {

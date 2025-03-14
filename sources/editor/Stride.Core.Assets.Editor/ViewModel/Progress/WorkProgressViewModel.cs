@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Stride.Core.Diagnostics;
 using Stride.Core.Presentation.Commands;
 using Stride.Core.Presentation.Services;
-using Stride.Core.Presentation.ViewModel;
 using Stride.Core.Presentation.ViewModels;
 
 namespace Stride.Core.Assets.Editor.ViewModel.Progress
@@ -219,7 +218,7 @@ namespace Stride.Core.Assets.Editor.ViewModel.Progress
             }
         }
 
-        internal void NotifyWindowWillOpen()
+        public void NotifyWindowWillOpen()
         {
             if (windowWillOpen)
                 throw new InvalidOperationException("This WorkProgressViewModel is already associated to a progress window");
@@ -227,7 +226,7 @@ namespace Stride.Core.Assets.Editor.ViewModel.Progress
             windowWillOpen = true;
         }
 
-        internal void NotifyWindowClosed()
+        public void NotifyWindowClosed()
         {
             workProgressClosed.TrySetResult(0);
         }

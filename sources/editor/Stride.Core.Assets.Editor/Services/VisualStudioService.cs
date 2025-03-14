@@ -11,7 +11,7 @@ using Stride.Core.Assets.Editor.ViewModel;
 using Stride.Core.Extensions;
 using Stride.Core.IO;
 using Stride.Core.VisualStudio;
-using Stride.Core.Presentation.Interop;
+//using Stride.Core.Presentation.Interop;
 using Stride.Core.Presentation.Services;
 using Stride.Core.Translation;
 
@@ -40,11 +40,11 @@ namespace Stride.Core.Assets.Editor.Services
 
                 if (process != null && makeActive)
                 {
-                    int style = NativeHelper.GetWindowLong(process.MainWindowHandle, NativeHelper.GWL_STYLE);
-                    // Restore the window if it is minimized
-                    if ((style & NativeHelper.WS_MINIMIZE) == NativeHelper.WS_MINIMIZE)
-                        NativeHelper.ShowWindow(process.MainWindowHandle, NativeHelper.SW_RESTORE);
-                    NativeHelper.SetForegroundWindow(process.MainWindowHandle);
+//                     int style = NativeHelper.GetWindowLong(process.MainWindowHandle, NativeHelper.GWL_STYLE);
+//                     // Restore the window if it is minimized
+//                     if ((style & NativeHelper.WS_MINIMIZE) == NativeHelper.WS_MINIMIZE)
+//                         NativeHelper.ShowWindow(process.MainWindowHandle, NativeHelper.SW_RESTORE);
+//                     NativeHelper.SetForegroundWindow(process.MainWindowHandle);
                 }
 
                 return process;

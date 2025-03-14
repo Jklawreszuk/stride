@@ -7,8 +7,10 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Documents;
-using System.Windows.Media;
+// using System.Windows.Documents;
+// using System.Windows.Media;
+using Avalonia.Controls.Documents; // FIXME - this dependency needs to be moved out of this assembly.
+using Avalonia.Media;
 using Microsoft.CodeAnalysis;
 using Stride.Assets.Presentation.AssetEditors;
 using Stride.Assets.Presentation.AssetEditors.ScriptEditor;
@@ -55,8 +57,8 @@ namespace Stride.Assets.Presentation.ViewModel
             // Apply syntax highlighting for tooltips
             keywordBrush = new SolidColorBrush(ClassificationHighlightColorsDark.KeywordColor);
             typeBrush = new SolidColorBrush(ClassificationHighlightColorsDark.TypeColor);
-            keywordBrush.Freeze();
-            typeBrush.Freeze();
+//             keywordBrush.Freeze();
+//             typeBrush.Freeze();
 
             // TODO: Update with latest RoslynPad
             //SymbolDisplayPartExtensions.StyleRunFromSymbolDisplayPartKind = StyleRunFromSymbolDisplayPartKind;

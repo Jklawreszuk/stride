@@ -71,7 +71,12 @@ namespace Stride.Graphics
         /// </summary>
         public void ClearState()
         {
-            ClearStateImpl();
+#if STRIDE_GRAPHICS_API_OPENGL
+            using (GraphicsDevice.UseOpenGLCreationContext ())
+#endif            
+            {
+                ClearStateImpl();
+            }
 
             // Setup empty viewports
             for (int i = 0; i < viewports.Length; i++)
@@ -309,7 +314,12 @@ namespace Stride.Graphics
                 renderTargets[i] = renderTargetViews[i];
             }
 
-            SetRenderTargetsImpl(depthStencilBuffer, renderTargetCount, renderTargets);
+#if STRIDE_GRAPHICS_API_OPENGL
+            using (GraphicsDevice.UseOpenGLCreationContext ())
+#endif            
+            {
+                SetRenderTargetsImpl(depthStencilBuffer, renderTargetCount, renderTargets);
+            }
         }
         
         /// <summary>
@@ -351,7 +361,12 @@ namespace Stride.Graphics
                 SetViewport(new Viewport(0, 0, rtv.ViewWidth, rtv.ViewHeight));
             }
 
-            SetRenderTargetsImpl(depthStencilView, currentRenderTargetCount, renderTargetViews);
+#if STRIDE_GRAPHICS_API_OPENGL
+            using (GraphicsDevice.UseOpenGLCreationContext ())
+#endif            
+            {
+                SetRenderTargetsImpl(depthStencilView, currentRenderTargetCount, renderTargetViews);
+            }
         }
 
         unsafe partial void SetScissorRectangleImpl(ref Rectangle scissorRectangle);

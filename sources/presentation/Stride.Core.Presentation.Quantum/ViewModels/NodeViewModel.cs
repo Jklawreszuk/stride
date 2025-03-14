@@ -108,10 +108,21 @@ public class NodeViewModel : DispatcherViewModel, IDynamicMetaObjectProvider
     /// </summary>
     public string DisplayPath { get { if (Parent == null) return string.Empty; var parentPath = Parent.DisplayPath; return parentPath != string.Empty ? parentPath + '.' + DisplayName : DisplayName; } }
 
-    /// <summary>
-    /// Gets or sets the value of the nodes represented by this view model.
-    /// </summary>
-    public object NodeValue { get => GetNodeValue(); set => SetNodeValue(ConvertValue(value)); }
+        /// <summary>
+        /// Gets or sets the value of the nodes represented by this view model.
+        /// </summary>
+        public object NodeValue { get => GetNodeValue(); 
+            set
+            {
+                if (value == null)
+                {
+                    Console.WriteLine ("Warning: setting null NodeValue, possible issue with template. " + this + " [" + value + "]");
+                }
+                else
+                {
+                  SetNodeValue(ConvertValue(value)); 
+                }
+            } }
 
     /// <summary>
     /// Gets the expected type of <see cref="NodeValue"/>.
@@ -220,6 +231,10 @@ public class NodeViewModel : DispatcherViewModel, IDynamicMetaObjectProvider
     /// </summary>
     protected int? Order => NodePresenters.First().Order;
 
+    public delegate void InitializerExtensionFn (NodeViewModel nvm);
+    
+    public static InitializerExtensionFn InitializerExtension = null;
+
     public void FinishInitialization()
     {
         if (initializingChildren != null)
@@ -267,6 +282,11 @@ public class NodeViewModel : DispatcherViewModel, IDynamicMetaObjectProvider
             var values = attachedProperty.Select(x => x.Value).ToList();
             var value = values.Count == 1 ? values[0] : combiner(values);
             AddAssociatedData(attachedProperty.Key.Name, value);
+        }
+
+        if (InitializerExtension != null)
+        {
+            InitializerExtension (this);
         }
     }
 

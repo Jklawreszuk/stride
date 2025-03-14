@@ -131,7 +131,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
             // Lets give the user a chance to fix the startup session.
             if (InternalSettings.LoadingStartupSession.GetValue())
             {
-                var buttons = DialogHelper.CreateButtons(new[]
+/*                var buttons = DialogHelper.CreateButtons(new[]
                 {
                     Tr._p("Button", "Try again"),
                     Tr._p("Button", "Cancel")
@@ -139,7 +139,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
                 string message = string.Format(Tr._p("Message", "The last attempt to load the project **{0}** failed. \r\n\r\nDo you want to try to load it again?"), Path.GetFileName(initialSessionPath));
                 var result = await ServiceProvider.Get<IDialogService>().MessageBoxAsync(message, buttons, MessageBoxImage.Warning);
                 if (result != 1)
-                    return false;
+                    return false;*/
             }
 
             // Safe-guard - this will warn that the startup session makes the editor crash while loading.

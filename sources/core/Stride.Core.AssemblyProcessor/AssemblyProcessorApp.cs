@@ -112,16 +112,31 @@ public class AssemblyProcessorApp
                         File.Copy(inputFile, copiedFile, true);
                     }
 
-                    if (assemblyDefinition.MainModule.FileName != outputFile)
-                    {
-                        // Note: using FileShare.Read otherwise often had access conflict (maybe with antivirus or window ssearch?)
-                        assemblyDefinition.MainModule.Write(outputFile, new WriterParameters() { WriteSymbols = readWriteSymbols, SymbolWriterProvider = symbolWriterProvider });
+                        if (assemblyDefinition.MainModule.FileName != outputFile)
+                        {
+                            // Note: using FileShare.Read otherwise often had access conflict (maybe with antivirus or window ssearch?)
+                            assemblyDefinition.MainModule.Write(outputFile, new WriterParameters() { WriteSymbols = readWriteSymbols, SymbolWriterProvider = symbolWriterProvider });
+                        }
+                        else
+                        {
+                            bool tryAgain = true;
+                            int count = 5;
+                            while (tryAgain && (count> 0))
+                            {
+                                tryAgain = false;
+                            try
+                            {
+                            assemblyDefinition.MainModule.Write(new WriterParameters() { WriteSymbols = readWriteSymbols });
+                            }
+                            catch (System.IO.IOException e)
+                            {
+                                Console.WriteLine ("Failed, so retry: " + count);
+                                tryAgain = true;
+                                count --;
+                            }
+                            }
+                        }
                     }
-                    else
-                    {
-                        assemblyDefinition.MainModule.Write(new WriterParameters() { WriteSymbols = readWriteSymbols });
-                    }
-                }
 
                 if (serializationHash != null)
                 {

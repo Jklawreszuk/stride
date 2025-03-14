@@ -79,8 +79,8 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewMode
             BreakLinkToPrefabCommand = new AnonymousCommand(ServiceProvider, BreakLinkToPrefab);
             CreatePrefabFromSelectionCommand = new AnonymousCommand(ServiceProvider, CreatePrefabFromSelection);
             UpdateCommands();
-            debugPage = new DebugEntityHierarchyEditorUserControl(this);
-            EditorDebugTools.RegisterDebugPage(debugPage);
+//            debugPage = (IDebugPage) new DebugEntityHierarchyEditorUserControl(this);
+//            EditorDebugTools.RegisterDebugPage(debugPage);
 
             DependentProperties.Add(nameof(RootPart), [nameof(HierarchyRoot)]);
         }
@@ -157,6 +157,7 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewMode
 
         // TODO: turn private, create a service getter that accepts only IEditorGameViewModelService
         protected internal override EntityHierarchyEditorController Controller => (EntityHierarchyEditorController)base.Controller;
+        public EntityHierarchyEditorController EntityController => Controller;
 
         private IEditorGameMaterialHighlightViewModelService MaterialHighlight => Controller.GetService<IEditorGameMaterialHighlightViewModelService>();
 
@@ -495,15 +496,15 @@ namespace Stride.Assets.Presentation.AssetEditors.EntityHierarchyEditor.ViewMode
                 if (entitiesToDelete.Count > 1)
                     confirmMessage = string.Format(Tr._p("Message", "Are you sure you want to delete these {0} entities?"), entitiesToDelete.Count);
                 var checkedMessage = string.Format(Stride.Core.Assets.Editor.Settings.EditorSettings.AlwaysDeleteWithoutAsking, "entities");
-                var buttons = DialogHelper.CreateButtons(new[] { Tr._p("Button", "Delete"), Tr._p("Button", "Cancel") }, 1, 2);
-                var result = await ServiceProvider.Get<IDialogService>().CheckedMessageBoxAsync(confirmMessage, false, checkedMessage, buttons, MessageBoxImage.Question);
-                if (result.Result != 1)
-                    return;
-                if (result.IsChecked == true)
-                {
-                    SceneEditorSettings.AskBeforeDeletingEntities.SetValue(false);
-                    SceneEditorSettings.Save();
-                }
+//                 var buttons = DialogHelper.CreateButtons(new[] { Tr._p("Button", "Delete"), Tr._p("Button", "Cancel") }, 1, 2);
+//                 var result = await ServiceProvider.Get<IDialogService>().CheckedMessageBoxAsync(confirmMessage, false, checkedMessage, buttons, MessageBoxImage.Question);
+//                 if (result.Result != 1)
+//                     return;
+//                 if (result.IsChecked == true)
+//                 {
+//                     SceneEditorSettings.AskBeforeDeletingEntities.SetValue(false);
+//                     SceneEditorSettings.Save();
+//                 }
             }
 
             using (var transaction = UndoRedoService.CreateTransaction())

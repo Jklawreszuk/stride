@@ -9,7 +9,7 @@ using Stride.Core.Assets.Editor.Services;
 using Stride.Core.Assets.Editor.ViewModel.CopyPasteProcessors;
 using Stride.Core.Annotations;
 using Stride.Core.Reflection;
-using Stride.Core.Presentation.Interop;
+// using Stride.Core.Presentation.Interop;
 using Stride.Core.Presentation.Quantum.Presenters;
 
 namespace Stride.Core.Assets.Editor.Quantum.NodePresenters.Commands
@@ -40,8 +40,8 @@ namespace Stride.Core.Assets.Editor.Quantum.NodePresenters.Commands
 
                 var asset = assetNodePresenter.Asset.Asset;
 
-                if (!copyPasteService.CanPaste(SafeClipboard.GetText(), asset.GetType(), (nodePresenter as ItemNodePresenter)?.OwnerCollection.Type ?? nodePresenter.Type))
-                    return false;
+//                 if (!copyPasteService.CanPaste(SafeClipboard.GetText(), asset.GetType(), (nodePresenter as ItemNodePresenter)?.OwnerCollection.Type ?? nodePresenter.Type))
+//                     return false;
 
                 // Cannot paste into read-only collection
                 if (IsInReadOnlyCollection(nodePresenter) || IsInReadOnlyCollection((nodePresenter as ItemNodePresenter)?.OwnerCollection))
@@ -56,35 +56,35 @@ namespace Stride.Core.Assets.Editor.Quantum.NodePresenters.Commands
 
         protected async void DoPaste(INodePresenter nodePresenter, bool replace)
         {
-            var text = SafeClipboard.GetText();
-            if (string.IsNullOrEmpty(text))
-                return;
+//             var text = SafeClipboard.GetText();
+//             if (string.IsNullOrEmpty(text))
+//                 return;
 
-            var assetNodePresenter = (IAssetNodePresenter)nodePresenter;
-            var asset = assetNodePresenter.Asset;
-            var copyPasteService = asset.ServiceProvider.Get<ICopyPasteService>();
-            var result = copyPasteService.DeserializeCopiedData(text, asset.Asset, (nodePresenter as ItemNodePresenter)?.OwnerCollection.Type ?? nodePresenter.Type);
-            if (result.Items.Count == 0)
-                return;
-
-            var nodeAccessor = nodePresenter.GetNodeAccessor();
-            var targetNode = nodeAccessor.Node;
-            // If the node presenter is a virtual node without node, we cannot paste.
-            if (targetNode == null)
-                return;
-
-            var actionService = asset.UndoRedoService;
-            using (var transaction = actionService.CreateTransaction())
-            {
-                // FIXME: for now we only handle one result item
-                var item = result.Items[0];
-                if (item.Data is ICollection && !CollectionDescriptor.IsCollection(targetNode.Type))
-                    return; // cannot paste a collection to a non-collection content
-
-                var propertyContainer = new PropertyContainer { { AssetPropertyPasteProcessor.IsReplaceKey, replace } };
-                await (item.Processor?.Paste(item, asset.PropertyGraph, ref nodeAccessor, ref propertyContainer) ?? Task.CompletedTask);
-                actionService.SetName(transaction, replace ? "Replace property": "Paste property");
-            }
+//             var assetNodePresenter = (IAssetNodePresenter)nodePresenter;
+//             var asset = assetNodePresenter.Asset;
+//             var copyPasteService = asset.ServiceProvider.Get<ICopyPasteService>();
+//             var result = copyPasteService.DeserializeCopiedData(text, asset.Asset, (nodePresenter as ItemNodePresenter)?.OwnerCollection.Type ?? nodePresenter.Type);
+//             if (result.Items.Count == 0)
+//                 return;
+// 
+//             var nodeAccessor = nodePresenter.GetNodeAccessor();
+//             var targetNode = nodeAccessor.Node;
+//             // If the node presenter is a virtual node without node, we cannot paste.
+//             if (targetNode == null)
+//                 return;
+// 
+//             var actionService = asset.UndoRedoService;
+//             using (var transaction = actionService.CreateTransaction())
+//             {
+//                 // FIXME: for now we only handle one result item
+//                 var item = result.Items[0];
+//                 if (item.Data is ICollection && !CollectionDescriptor.IsCollection(targetNode.Type))
+//                     return; // cannot paste a collection to a non-collection content
+// 
+//                 var propertyContainer = new PropertyContainer { { AssetPropertyPasteProcessor.IsReplaceKey, replace } };
+//                 await (item.Processor?.Paste(item, asset.PropertyGraph, ref nodeAccessor, ref propertyContainer) ?? Task.CompletedTask);
+//                 actionService.SetName(transaction, replace ? "Replace property": "Paste property");
+//             }
         }
 
         private static bool IsInReadOnlyCollection([CanBeNull] INodePresenter nodePresenter)

@@ -106,16 +106,17 @@ public struct PoolListStruct<T> : IEnumerable<T> where T : class
         allocated.Add(oldItem);
     }
 
-    /// <summary>
-    /// Removes the object from the list
-    /// </summary>
-    /// <param name="item">The item to remove</param>
-    /// <remarks>The item is added back in the pool to be reused for the next <see cref="Add"/></remarks>
-    public void Remove(T item)
-    {
-        int removeIndex = IndexOf(item);
-        if (removeIndex == -1)
-            throw new InvalidOperationException();
+        /// <summary>
+        /// Removes the object from the list
+        /// </summary>
+        /// <param name="item">The item to remove</param>
+        /// <remarks>The item is added back in the pool to be reused for the next <see cref="Add"/></remarks>
+        public void Remove(T item)
+        {
+            int removeIndex = IndexOf(item);
+            if (removeIndex == -1) 
+                return;
+//                throw new InvalidOperationException();
 
         RemoveAt(removeIndex);
     }

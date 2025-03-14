@@ -49,7 +49,7 @@ namespace Stride.Assets.Presentation.AssetEditors.UIEditor.ViewModels
         public static readonly ILogger EditorLogger = GlobalLogger.GetLogger("UI");
 
         private UIElementViewModel activeRoot;
-        private readonly ObservableSet<IUIElementFactory> factories = new ObservableSet<IUIElementFactory>();
+        private readonly List<IUIElementFactory> factories = new List<IUIElementFactory>();
         private IReadOnlyCollection<IUIElementFactory> panelFactories;
         private UIElementViewModel lastSelectedElement;
         private readonly ObservableSet<UIElementViewModel> selectableElements = new ObservableSet<UIElementViewModel>();
@@ -102,7 +102,7 @@ namespace Stride.Assets.Presentation.AssetEditors.UIEditor.ViewModels
 
         public UIElementViewModel LastSelectedElement { get { return lastSelectedElement; } private set { SetValue(ref lastSelectedElement, value); } }
 
-        public IReadOnlyObservableCollection<IUIElementFactory> Factories => factories;
+        public List<IUIElementFactory> Factories => factories;
 
         public ILogger Logger => EditorLogger;
 
@@ -177,7 +177,7 @@ namespace Stride.Assets.Presentation.AssetEditors.UIEditor.ViewModels
         internal new UIBaseViewModel Asset => (UIBaseViewModel)base.Asset;
 
         [NotNull]
-        internal new UIEditorController Controller => (UIEditorController)base.Controller;
+        public new UIEditorController Controller => (UIEditorController)base.Controller;
 
         [NotNull]
         public ICommandBase BreakLinkToLibraryCommand { get; }
@@ -426,15 +426,15 @@ namespace Stride.Assets.Presentation.AssetEditors.UIEditor.ViewModels
                 var confirmMessage = Tr._p("Message", "Are you sure you want to delete this UI element?");
                 if (elementsToDelete.Count > 1)
                     confirmMessage = string.Format(Tr._p("Message", "Are you sure you want to delete these {0} UI elements?"), elementsToDelete.Count);
-                var buttons = DialogHelper.CreateButtons(new[] { Tr._p("Button", "Delete"), Tr._p("Button", "Cancel") }, 1, 2);
-                var result = await ServiceProvider.Get<IDialogService>().CheckedMessageBoxAsync(confirmMessage, false, DialogHelper.DontAskAgain, buttons, MessageBoxImage.Question);
-                if (result.Result != 1)
-                    return;
-                if (result.IsChecked == true)
-                {
-                    UIEditorSettings.AskBeforeDeletingUIElements.SetValue(false);
-                    UIEditorSettings.Save();
-                }
+//                 var buttons = DialogHelper.CreateButtons(new[] { Tr._p("Button", "Delete"), Tr._p("Button", "Cancel") }, 1, 2);
+//                 var result = await ServiceProvider.Get<IDialogService>().CheckedMessageBoxAsync(confirmMessage, false, DialogHelper.DontAskAgain, buttons, MessageBoxImage.Question);
+//                 if (result.Result != 1)
+//                     return;
+//                 if (result.IsChecked == true)
+//                 {
+//                     UIEditorSettings.AskBeforeDeletingUIElements.SetValue(false);
+//                     UIEditorSettings.Save();
+//                 }
             }
 
             var hadActiveRoot = elementsToDelete.Any(x => ReferenceEquals(x, ActiveRoot));
@@ -582,7 +582,8 @@ namespace Stride.Assets.Presentation.AssetEditors.UIEditor.ViewModels
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private IEnumerable<UIElementViewModel> GetElementsAtPosition(ref Vector3 worldPosition)
         {
-            return Controller.AdornerService.GetElementIdsAtPosition(ref worldPosition).Select(id => FindPartViewModel(new AbsoluteId(Asset.Id, id))).OfType<UIElementViewModel>();
+//             return Controller.AdornerService.GetElementIdsAtPosition(ref worldPosition).Select(id => FindPartViewModel(new AbsoluteId(Asset.Id, id))).OfType<UIElementViewModel>();
+return null;
         }
 
         private void GroupInto(IUIElementFactory factory)

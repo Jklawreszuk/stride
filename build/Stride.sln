@@ -80,6 +80,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "71-StrideAssets.Tests", "71
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stride.GameStudio", "..\sources\editor\Stride.GameStudio\Stride.GameStudio.csproj", "{2FCA2D8B-B10F-4DCA-9847-4221F74BA586}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stride.GameStudio.Avalonia", "..\sources\editor\Stride.GameStudio.Avalonia\Stride.GameStudio.Avalonia.csproj", "{2FCA2D8B-B10F-4DCA-9847-4221F74BA586}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stride.Engine", "..\sources\engine\Stride.Engine\Stride.Engine.csproj", "{C121A566-555E-42B9-9B0A-1696529A9088}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stride.Graphics", "..\sources\engine\Stride.Graphics\Stride.Graphics.csproj", "{FB06C76A-6BB7-40BE-9AFA-FEC13B045FB5}"

@@ -16,17 +16,19 @@ namespace Stride.Core.Assets.Editor.Components.TemplateDescriptions.ViewModels
 {
     public class NewOrOpenSessionTemplateCollectionViewModel : ProjectTemplateCollectionViewModel
     {
-        private readonly IModalDialog dialog;
+//         private readonly IModalDialog dialog;
         private readonly TemplateDescriptionGroupViewModel recentGroup;
         private readonly TemplateDescriptionGroupViewModel rootGroup;
         private string solutionName;
         private UDirectory solutionLocation;
         private bool arePropertiesValid;
 
-        public NewOrOpenSessionTemplateCollectionViewModel(IViewModelServiceProvider serviceProvider, IModalDialog dialog)
+        public NewOrOpenSessionTemplateCollectionViewModel(IViewModelServiceProvider serviceProvider/*, IModalDialog dialog*/)
             : base(serviceProvider)
         {
-            this.dialog = dialog;
+            SolutionLocation = ""; // in case no previous projects exist.
+            
+//             this.dialog = dialog;
             rootGroup = new TemplateDescriptionGroupViewModel(serviceProvider, "New project");
 
             // Add a default General group
@@ -106,7 +108,7 @@ namespace Stride.Core.Assets.Editor.Components.TemplateDescriptions.ViewModels
             if (filePath != null)
             {
                 SelectedTemplate = new ExistingProjectViewModel(ServiceProvider, filePath, RemoveExistingProjects);
-                dialog?.RequestClose(DialogResult.Ok);
+//                 dialog?.RequestClose(DialogResult.Ok);
             }
         }
     }

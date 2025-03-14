@@ -3,8 +3,8 @@
 
 using System;
 using System.Linq;
-using System.Windows.Controls;
-using System.Windows.Media.Imaging;
+// using System.Windows.Controls;
+// using System.Windows.Media.Imaging;
 using Stride.Assets.Models;
 using Stride.Assets.Presentation.Templates;
 using Stride.Core.Assets;
@@ -30,12 +30,12 @@ namespace Stride.Assets.Presentation.ViewModel
             CreateSkeletonCommand = new AnonymousCommand(ServiceProvider, CreateSkeleton);
 
             // FIXME: tooltip, icons, etc. should not be created on the view model side (see PDX-2952)
-            Dispatcher.Invoke(() => assetCommands.Add(new MenuCommandInfo(ServiceProvider, CreateSkeletonCommand)
-            {
-                DisplayName = "Create Skeleton",
-                Tooltip = "Create a skeleton asset",
-                Icon = new Image { Source = new BitmapImage(new Uri("/Stride.Assets.Presentation;component/Resources/Icons/create_skeleton-16.png", UriKind.RelativeOrAbsolute))},
-            }));
+//             Dispatcher.Invoke(() => assetCommands.Add(new MenuCommandInfo(ServiceProvider, CreateSkeletonCommand)
+//             {
+//                 DisplayName = "Create Skeleton",
+//                 Tooltip = "Create a skeleton asset",
+//                 Icon = new Image { Source = new BitmapImage(new Uri("/Stride.Assets.Presentation;component/Resources/Icons/create_skeleton-16.png", UriKind.RelativeOrAbsolute))},
+//             }));
         }
 
         public ICommandBase CreateSkeletonCommand { get; }

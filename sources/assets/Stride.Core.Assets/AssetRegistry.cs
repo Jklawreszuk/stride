@@ -472,6 +472,22 @@ public static class AssetRegistry
             return false;
         }
     }
+    
+    public static bool IsContentType(Type type)
+    {
+        lock (RegistryLock)
+        {
+            var currentType = type;
+            while (currentType != null)
+            {
+                if (RegisteredContentTypes.ContainsKey(currentType))
+                    return true;
+
+                currentType = currentType.BaseType;
+            }
+            return false;
+        }
+    }
 
     private static void RegisterEngineAssembly(Assembly assembly)
     {
