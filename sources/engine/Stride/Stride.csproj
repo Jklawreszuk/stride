@@ -31,6 +31,7 @@
     <ProjectReference Include="..\..\core\Stride.Core.Mathematics\Stride.Core.Mathematics.csproj" />
     <!-- SharpDX is needed for WIC -->
     <PackageReference Include="SharpDX.Direct2D1" Condition="'$(TargetFramework)' == '$(StrideFrameworkUWP)'" />
+    <PackageReference Include="SkiaSharp" />
     <PackageReference Include="System.Drawing.Common" Condition="'$(TargetFramework)' == '$(StrideFramework)'" />
   </ItemGroup>
 
