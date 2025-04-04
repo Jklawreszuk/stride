@@ -14,7 +14,7 @@ using Stride.Core.Assets.Editor.ViewModel;
 using Stride.Core.Serialization;
 using Stride.Assets.Effect;
 using Stride.Assets.Presentation.ViewModel;
-using Stride.ConnectionRouter;
+// using Stride.ConnectionRouter;
 using Stride.Engine.Network;
 using Stride.Shaders.Compiler;
 using Stride.Core.Presentation.Commands;
@@ -28,7 +28,7 @@ namespace Stride.Assets.Presentation
     /// Handle connection to EffectCompilerServer for a given <see cref="SessionViewModel"/>.
     /// It will let user knows that some new effects were compiled and might need to be imported in your assets.
     /// </summary>
-    class EffectCompilerServerSession : IDisposable
+    public class EffectCompilerServerSession : IDisposable
     {
         class TrackedPackage : IDisposable
         {
@@ -69,10 +69,10 @@ namespace Stride.Assets.Presentation
             this.session = session;
             this.dispatcher = session.ServiceProvider.Get<IDispatcherService>();
 
-            routerLaunchedTask = Task.Run(() =>
-            {
-                RouterHelper.EnsureRouterLaunched();
-            });
+//             routerLaunchedTask = Task.Run(() =>
+//             {
+//                 RouterHelper.EnsureRouterLaunched();
+//             });
 
             TrackPackages(session.LocalPackages);
             session.LocalPackages.CollectionChanged += LocalPackages_CollectionChanged;
@@ -91,7 +91,7 @@ namespace Stride.Assets.Presentation
             {
                 // Connect to effect compiler server
                 await routerLaunchedTask;
-                var effectCompilerServerSocket = await RouterClient.RequestServer($"/service/Stride.EffectCompilerServer/{StrideVersion.NuGetVersion}/Stride.EffectCompilerServer.exe?mode=gamestudio&packagename={package.Package.Meta.Name}");
+                var effectCompilerServerSocket = await RouterClient.RequestServer($"/service/Stride.EffectCompilerServer/{StrideVersion.NuGetVersion}/Stride.EffectCompilerServer?mode=gamestudio&packagename={package.Package.Meta.Name}");
 
                 // Cancellation by closing the socket handle
                 cancellationToken.Register(effectCompilerServerSocket.Dispose);

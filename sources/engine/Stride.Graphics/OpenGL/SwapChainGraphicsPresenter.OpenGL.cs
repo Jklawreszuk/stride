@@ -52,7 +52,11 @@ namespace Stride.Graphics
                 // On macOS, `SwapBuffers` will swap whatever framebuffer is active and in our case it is not the window provided
                 // framebuffer, and in addition if the active framebuffer is single buffered, it won't do anything. Forcing a bind
                 // will ensure the window is updated.
-                commandList.GL.BindFramebuffer(FramebufferTarget.Framebuffer, GraphicsDevice.WindowProvidedFrameBuffer);
+                using (commandList.GraphicsDevice.UseOpenGLCreationContext ())
+                {
+                    commandList.GL.BindFramebuffer(FramebufferTarget.Framebuffer, GraphicsDevice.WindowProvidedFrameBuffer);
+                }
+
                 commandList.GraphicsDevice.MainGraphicsContext.SwapBuffers();
             }
         }
@@ -68,7 +72,10 @@ namespace Stride.Graphics
             startingPresentationParameters.BackBufferWidth = width;
             startingPresentationParameters.BackBufferHeight = height;
 
-            graphicsDevice.InitDefaultRenderTarget(startingPresentationParameters);
+            using (graphicsDevice.UseOpenGLCreationContext())
+            {
+                graphicsDevice.InitDefaultRenderTarget(startingPresentationParameters);
+            }
 
             var newTextureDescrition = backBuffer.Description;
             newTextureDescrition.Width = width;

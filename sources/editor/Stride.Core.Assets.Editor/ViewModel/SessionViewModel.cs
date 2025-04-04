@@ -484,9 +484,9 @@ namespace Stride.Core.Assets.Editor.ViewModel
             Thumbnails.Destroy();
             AssetLog.Destroy();
 
-            EditorDebugTools.UnregisterDebugPage(undoRedoStackPage);
-            EditorDebugTools.UnregisterDebugPage(assetNodesDebugPage);
-            EditorDebugTools.UnregisterDebugPage(quantumDebugPage);
+//            EditorDebugTools.UnregisterDebugPage(undoRedoStackPage);
+//            EditorDebugTools.UnregisterDebugPage(assetNodesDebugPage);
+//            EditorDebugTools.UnregisterDebugPage(quantumDebugPage);
             // Unregister collection
             ServiceProvider.Get<SelectionService>().UnregisterSelectionScope(ActiveAssetView.SelectedContent);
             ActiveAssetView.SelectedAssets.CollectionChanged -= SelectedAssetsCollectionChanged;
@@ -509,7 +509,8 @@ namespace Stride.Core.Assets.Editor.ViewModel
             var documentationService = ServiceProvider.Get<UserDocumentationService>();
             foreach (var packageAssembly in LocalPackages.SelectMany(p => p.LoadedAssemblies))
             {
-                Task.Run(() => documentationService.CacheAssemblyDocumentation(packageAssembly.Assembly));
+                Console.WriteLine ("Loading documentation: " + packageAssembly);
+//                Task.Run(() => documentationService.CacheAssemblyDocumentation(packageAssembly.Assembly));
             }
         }
 
@@ -534,7 +535,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
             PluginService.RegisterSession(this, logger);
 
             // Initialize the undo/redo debug view model
-            undoRedoStackPage = EditorDebugTools.CreateUndoRedoDebugPage(undoRedoService, "Undo/redo stack");
+//            undoRedoStackPage = EditorDebugTools.CreateUndoRedoDebugPage(undoRedoService, "Undo/redo stack");
             ActionHistory = new ActionHistoryViewModel(this);
 
             // Initialize the node container used for asset properties
@@ -543,10 +544,10 @@ namespace Stride.Core.Assets.Editor.ViewModel
             // Initialize the view model that will manage the properties of the assets selected on the main asset view
             AssetViewProperties = new SessionObjectPropertiesViewModel(this);
 
-            assetNodesDebugPage = EditorDebugTools.CreateAssetNodesDebugPage(this, "Asset nodes visualizer");
+//            assetNodesDebugPage = EditorDebugTools.CreateAssetNodesDebugPage(this, "Asset nodes visualizer");
             var quantumLogger = GlobalLogger.GetLogger(GraphViewModel.DefaultLoggerName);
             quantumLogger.ActivateLog(LogMessageType.Debug);
-            quantumDebugPage = EditorDebugTools.CreateLogDebugPage(quantumLogger, "Quantum log");
+//            quantumDebugPage = EditorDebugTools.CreateLogDebugPage(quantumLogger, "Quantum log");
             ActiveProperties = AssetViewProperties;
 
             // Initialize the asset collection view model of the main asset view
@@ -701,14 +702,14 @@ namespace Stride.Core.Assets.Editor.ViewModel
 
             if (asset.IsDirty)
             {
-                var buttons = DialogHelper.CreateButtons(new[]
-                {
-                    Tr._p("Button", "Save"),
-                    Tr._p("Button", "Cancel")
-                }, 1, 2);
-                var result = await Dialogs.MessageBoxAsync(Tr._p("Message", "This asset has unsaved changes. To open it, you need to save the session first. Do you want to save now?"), buttons, MessageBoxImage.Information);
-                if (result == 1)
-                    await SaveSession();
+//                 var buttons = DialogHelper.CreateButtons(new[]
+//                 {
+//                     Tr._p("Button", "Save"),
+//                     Tr._p("Button", "Cancel")
+//                 }, 1, 2);
+//                 var result = await Dialogs.MessageBoxAsync(Tr._p("Message", "This asset has unsaved changes. To open it, you need to save the session first. Do you want to save now?"), buttons, MessageBoxImage.Information);
+//                 if (result == 1)
+//                     await SaveSession();
 
                 if (asset.IsDirty)
                     return;
@@ -740,14 +741,14 @@ namespace Stride.Core.Assets.Editor.ViewModel
 
             if (asset.IsDirty)
             {
-                var buttons = DialogHelper.CreateButtons(new[]
-                {
-                    Tr._p("Button", "Save"),
-                    Tr._p("Button", "Cancel")
-                }, 1, 2);
-                var result = await Dialogs.MessageBoxAsync(Tr._p("Message", "This asset has unsaved changes. To open it, you need to save it first. Do you want to save the session now?"), buttons, MessageBoxImage.Information);
-                if (result == 1)
-                    await SaveSession();
+//                 var buttons = DialogHelper.CreateButtons(new[]
+//                 {
+//                     Tr._p("Button", "Save"),
+//                     Tr._p("Button", "Cancel")
+//                 }, 1, 2);
+//                 var result = await Dialogs.MessageBoxAsync(Tr._p("Message", "This asset has unsaved changes. To open it, you need to save it first. Do you want to save the session now?"), buttons, MessageBoxImage.Information);
+//                 if (result == 1)
+//                     await SaveSession();
 
                 if (asset.IsDirty)
                     return;
@@ -1049,31 +1050,31 @@ namespace Stride.Core.Assets.Editor.ViewModel
             // Check if either view model is dirty, or any LocalPackage.Assets is (since some view models such as scripts don't make package dirty)
             if (HasUnsavedAssets())
             {
-                var buttons = DialogHelper.CreateButtons(new[]
-                {
-                    Tr._p("Button", "Save"),
-                    Tr._p("Button", "Don't save"),
-                    Tr._p("Button", "Cancel")
-                }, 1, 3);
-                var result = await Dialogs.MessageBoxAsync(Tr._p("Message", "The project has unsaved changes. Do you want to save it?"), buttons, MessageBoxImage.Question);
-                switch (result)
-                {
-                    case 0:
-                    case 3:
-                        // Cancel
-                        return false;
-
-                    case 1:
-                        await SaveSession();
-                        // session saving has been cancelled, aborting
-                        if (HasUnsavedAssets())
-                        {
-                            ServiceProvider.Get<IEditorDialogService>().BlockingMessageBox(Tr._p("Message", "Some assets couldn't be saved. Check the assets and try again."), MessageBoxButton.OK,
-                                MessageBoxImage.Error);
-                            return false;
-                        }
-                        break;
-                }
+//                 var buttons = DialogHelper.CreateButtons(new[]
+//                 {
+//                     Tr._p("Button", "Save"),
+//                     Tr._p("Button", "Don't save"),
+//                     Tr._p("Button", "Cancel")
+//                 }, 1, 3);
+//                 var result = await Dialogs.MessageBoxAsync(Tr._p("Message", "The project has unsaved changes. Do you want to save it?"), buttons, MessageBoxImage.Question);
+//                 switch (result)
+//                 {
+//                     case 0:
+//                     case 3:
+//                         // Cancel
+//                         return false;
+// 
+//                     case 1:
+//                         await SaveSession();
+//                         // session saving has been cancelled, aborting
+//                         if (HasUnsavedAssets())
+//                         {
+//                             ServiceProvider.Get<IEditorDialogService>().BlockingMessageBox(Tr._p("Message", "Some assets couldn't be saved. Check the assets and try again."), MessageBoxButton.OK,
+//                                 MessageBoxImage.Error);
+//                             return false;
+//                         }
+//                         break;
+//                 }
             }
 
             return true;
@@ -1561,16 +1562,16 @@ namespace Stride.Core.Assets.Editor.ViewModel
 
                 var message = $"Are you sure you want to delete {string.Join(" and ", messageParts)}?";
                 var checkedMessage = Tr._p("Settings", "Always delete without asking");
-                var buttons = DialogHelper.CreateButtons(new[] { Tr._p("Button", "Delete"), Tr._p("Button", "Cancel") }, 1, 2);
-                var result = await ServiceProvider.Get<IDialogService>().CheckedMessageBoxAsync(message, false, checkedMessage, buttons, MessageBoxImage.Question);
-                if (result.Result != 1)
-                    return false;
+//                 var buttons = DialogHelper.CreateButtons(new[] { Tr._p("Button", "Delete"), Tr._p("Button", "Cancel") }, 1, 2);
+//                 var result = await ServiceProvider.Get<IDialogService>().CheckedMessageBoxAsync(message, false, checkedMessage, buttons, MessageBoxImage.Question);
+//                 if (result.Result != 1)
+//                     return false;
 
-                if (result.IsChecked == true)
-                {
-                    EditorSettings.AskBeforeDeletingAssets.SetValue(false);
-                    EditorSettings.Save();
-                }
+//                 if (result.IsChecked == true)
+//                 {
+//                     EditorSettings.AskBeforeDeletingAssets.SetValue(false);
+//                     EditorSettings.Save();
+//                 }
             }
 
             // Collect actual assets to delete (including those from the sub directories)
@@ -1646,14 +1647,14 @@ namespace Stride.Core.Assets.Editor.ViewModel
 
                     if (!confirmationPackageDisplayed)
                     {
-                        var buttons = DialogHelper.CreateButtons(new[]
-                        {
-                            Tr._p("Button", "Delete"),
-                            Tr._p("Button", "Cancel")
-                        }, 1, 2);
-                        var result = await Dialogs.MessageBoxAsync(Tr._p("Message", "Are you sure you want to delete this package? The package files will remain on the disk."), buttons, MessageBoxImage.Question);
-                        if (result != 1)
-                            break;
+//                         var buttons = DialogHelper.CreateButtons(new[]
+//                         {
+//                             Tr._p("Button", "Delete"),
+//                             Tr._p("Button", "Cancel")
+//                         }, 1, 2);
+//                         var result = await Dialogs.MessageBoxAsync(Tr._p("Message", "Are you sure you want to delete this package? The package files will remain on the disk."), buttons, MessageBoxImage.Question);
+//                         if (result != 1)
+//                             break;
                     }
                     confirmationPackageDisplayed = true;
                     message = $"Delete package '{selectedPackage.Name}'";
@@ -1677,14 +1678,14 @@ namespace Stride.Core.Assets.Editor.ViewModel
                 {
                     if (!confirmationDependencyDisplayed)
                     {
-                        var buttons = DialogHelper.CreateButtons(new[]
-                        {
-                            Tr._p("Button", "Delete"),
-                            Tr._p("Button", "Cancel")
-                        }, 1, 2);
-                        var result = await Dialogs.MessageBoxAsync(Tr._p("Message", "Are you sure you want to delete this dependency?"), buttons, MessageBoxImage.Question);
-                        if (result != 1)
-                            break;
+//                         var buttons = DialogHelper.CreateButtons(new[]
+//                         {
+//                             Tr._p("Button", "Delete"),
+//                             Tr._p("Button", "Cancel")
+//                         }, 1, 2);
+//                         var result = await Dialogs.MessageBoxAsync(Tr._p("Message", "Are you sure you want to delete this dependency?"), buttons, MessageBoxImage.Question);
+//                         if (result != 1)
+//                             break;
                     }
                     confirmationDependencyDisplayed = true;
                     message = $"Delete dependency '{selectedDependency.Name}'";
@@ -1731,14 +1732,14 @@ namespace Stride.Core.Assets.Editor.ViewModel
                 {
                     if (!confirmationProjectDisplayed)
                     {
-                        var buttons = DialogHelper.CreateButtons(new[]
-                        {
-                            Tr._p("Button", "Delete"),
-                            Tr._p("Button", "Cancel")
-                        }, 1, 2);
-                        var result = await Dialogs.MessageBoxAsync(Tr._p("Message", "Are you sure you want to delete these projects?"), buttons, MessageBoxImage.Question);
-                        if (result != 1)
-                            break;
+//                         var buttons = DialogHelper.CreateButtons(new[]
+//                         {
+//                             Tr._p("Button", "Delete"),
+//                             Tr._p("Button", "Cancel")
+//                         }, 1, 2);
+//                         var result = await Dialogs.MessageBoxAsync(Tr._p("Message", "Are you sure you want to delete these projects?"), buttons, MessageBoxImage.Question);
+//                         if (result != 1)
+//                             break;
                     }
                     confirmationProjectDisplayed = true;
                     message = $"Delete project '{project.Name}'";

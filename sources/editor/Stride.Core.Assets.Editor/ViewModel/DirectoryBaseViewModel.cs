@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Stride.Core.Assets.Editor.View.Behaviors;
+//using Stride.Core.Assets.Editor.View.Behaviors;
 using Stride.Core.Annotations;
 using Stride.Core.Extensions;
 using Stride.Core.Presentation.Collections;
@@ -206,8 +206,8 @@ namespace Stride.Core.Assets.Editor.ViewModel
             {
                 if (child is MountPointViewModel mountPoint)
                 {
-                    message = DragDropBehavior.InvalidDropAreaMessage;
-                    return false;
+//                     message = DragDropBehavior.InvalidDropAreaMessage;
+//                     return false;
                 }
                 if (child is DirectoryViewModel directory)
                 {

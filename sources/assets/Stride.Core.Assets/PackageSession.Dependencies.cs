@@ -54,7 +54,10 @@ partial class PackageSession
                 project.TargetPath = msProject.GetPropertyValue("TargetPath");
                 project.AssemblyProcessorSerializationHashFile = msProject.GetProperty("StrideAssemblyProcessorSerializationHashFile")?.EvaluatedValue;
                 if (project.AssemblyProcessorSerializationHashFile != null)
+                {
+                    project.AssemblyProcessorSerializationHashFile = project.AssemblyProcessorSerializationHashFile.Replace ("\\", "/");
                     project.AssemblyProcessorSerializationHashFile = Path.Combine(Path.GetDirectoryName(project.FullPath), project.AssemblyProcessorSerializationHashFile);
+                }
                 package.Meta.Name = (msProject.GetProperty("PackageId") ?? msProject.GetProperty("AssemblyName"))?.EvaluatedValue ?? package.Meta.Name;
 
                 var outputType = msProject.GetPropertyValue("OutputType");

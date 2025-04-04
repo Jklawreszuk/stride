@@ -114,8 +114,9 @@ public struct PoolListStruct<T> : IEnumerable<T> where T : class
     public void Remove(T item)
     {
         int removeIndex = IndexOf(item);
-        if (removeIndex == -1)
-            throw new InvalidOperationException();
+        if (removeIndex == -1) 
+                return;
+//            throw new InvalidOperationException();
 
         RemoveAt(removeIndex);
     }

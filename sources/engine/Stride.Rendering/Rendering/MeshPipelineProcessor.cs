@@ -65,9 +65,6 @@ namespace Stride.Rendering
 
             pipelineState.RasterizerState.CullMode = cullMode;
 
-            if (renderMesh.MaterialInfo.DepthFunction is {} newDepthFunction)
-                pipelineState.DepthStencilState.DepthBufferFunction = newDepthFunction;
-
             if (isMultisample)
             {
                 pipelineState.RasterizerState.MultisampleCount = output.MultisampleCount;

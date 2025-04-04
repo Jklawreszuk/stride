@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
+//using System.Windows;
 using Stride.Core.Assets;
 using Stride.Core.Assets.Analysis;
 using Stride.Core.Assets.Compiler;
@@ -32,11 +32,13 @@ namespace Stride.Editor.Preview
         private readonly SessionViewModel session;
 
         private readonly AutoResetEvent initializationSignal = new AutoResetEvent(false);
-        private readonly GameEngineHost host;
+        private readonly GameEngineHostInterface host;
         private readonly IDebugPage loggerDebugPage;
         private IAssetPreview currentPreview;
         private IntPtr windowHandle;
-        private EmbeddedGameForm gameForm;
+        private object windowWindow;
+        
+//         private EmbeddedGameForm gameForm;
         private object previewView;
 
         private AssetViewModel previewBuildQueue;
@@ -72,12 +74,19 @@ namespace Stride.Editor.Preview
             previewCompileContext.CompilationContext = typeof(PreviewCompilationContext);
 
             previewGameThread = new Thread(SafeAction.Wrap(StrideUIThread)) { IsBackground = true, Name = "PreviewGame Thread" };
-            previewGameThread.SetApartmentState(ApartmentState.STA);
+            try
+            {
+                previewGameThread.SetApartmentState(ApartmentState.STA);
+            }
+            catch (PlatformNotSupportedException ex)
+            {
+                // Not available on Linux.
+            }                
             previewGameThread.Start();
 
             // Wait for the window handle to be generated on the proper thread
             initializationSignal.WaitOne();
-            host = new GameEngineHost(windowHandle);
+            host = new GameEngineHostBase(windowHandle, windowWindow).GetHost ();
 
             session.AssetPropertiesChanged += OnAssetPropertyChanged;
             gameSettingsProvider.GameSettingsChanged += OnGameSettingsChanged;
@@ -132,13 +141,17 @@ namespace Stride.Editor.Preview
 
         private void StrideUIThread()
         {
-            gameForm = new EmbeddedGameForm { TopLevel = false, Visible = false };
-            windowHandle = gameForm.Handle;
-
-            initializationSignal.Set();
+//            gameForm = new EmbeddedGameForm { TopLevel = false, Visible = false };
+//            windowHandle = gameForm.Handle;
 
             PreviewGame = new PreviewGame(AssetBuilderService.EffectCompiler);
-            var context = new GameContextWinforms(gameForm) { InitializeDatabase = false };
+//            var context = new GameContextWinforms(gameForm) { InitializeDatabase = false };
+            var context = GameContextFactory.NewGameContext(AppContextType.DesktopSDL);
+            context.InitializeDatabase = false;
+            windowHandle = ((GameContextSDL)context).Control.Handle;
+            windowWindow = ((GameContextSDL)context).Control;
+            
+            initializationSignal.Set();
 
             // Wait for shaders to be loaded
             AssetBuilderService.WaitForShaders();
@@ -147,9 +160,9 @@ namespace Stride.Editor.Preview
             // Ideally, we should try to recreate the game.
             if (!DisablePreview)
             {
-                PreviewGame.GraphicsDeviceManager.DeviceCreated += GraphicsDeviceManagerDeviceCreated;
-                PreviewGame.Run(context);
-                PreviewGame.Dispose();
+               PreviewGame.GraphicsDeviceManager.DeviceCreated += GraphicsDeviceManagerDeviceCreated;
+               PreviewGame.Run(context);
+               PreviewGame.Dispose();
             }
         }
 
@@ -199,7 +212,7 @@ namespace Stride.Editor.Preview
             return previewCompiler.Prepare(previewCompileContext, asset);
         }
 
-        public FrameworkElement GetStrideView()
+        public object GetStrideView()
         {
             return !IsDisposed ? host : null;
         }

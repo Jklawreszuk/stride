@@ -261,7 +261,7 @@ public partial class DirectoryWatcher
         watcher.Renamed += OnModified;
         watcher.Error += WatcherOnError;
 
-        watcher.EnableRaisingEvents = true;
+//             watcher.EnableRaisingEvents = true;
 
         //Console.WriteLine("Watcher created {0}", directory);
         return watcher;

@@ -1,7 +1,5 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
-
-using System;
 using System.Collections.Generic;
 using Stride.Core.Assets;
 using Stride.Core.Assets.Analysis;
@@ -13,7 +11,7 @@ using Stride.Core.Serialization.Contents;
 using Stride.Animations;
 using Stride.Assets.Models;
 using Stride.Assets.Presentation.Resources.Thumbnails;
-using Stride.Assets.Presentation.ViewModel.Preview;
+// using Stride.Assets.Presentation.ViewModel.Preview;
 using Stride.Editor.Resources;
 using Stride.Editor.Thumbnails;
 using Stride.Engine;
@@ -40,19 +38,19 @@ namespace Stride.Assets.Presentation.Thumbnails
         protected override void CompileThumbnail(ThumbnailCompilerContext context, string thumbnailStorageUrl, AssetItem assetItem, Package originalPackage, AssetCompilerResult result)
         {
             // A model asset should have been generated during CompileWithDependencies()
-            var modelAssetItem = AnimationPreviewViewModel.FindModelForPreview(assetItem);
-
-            if (modelAssetItem != null)
-            {
-                result.BuildSteps.Add(new ThumbnailBuildStep(new AnimationThumbnailBuildCommand(context, thumbnailStorageUrl, assetItem, modelAssetItem, originalPackage,
-                    new ThumbnailCommandParameters(assetItem.Asset, thumbnailStorageUrl, context.ThumbnailResolution))));
-            }
-            else
-            {
-                // If no model could be found, uses default thumbnail instead
-                var gameSettings = context.GetGameSettingsAsset();
-                result.BuildSteps.Add(new StaticThumbnailCommand<AnimationAsset>(thumbnailStorageUrl, StaticThumbnails.AnimationThumbnail, context.ThumbnailResolution, gameSettings.GetOrCreate<RenderingSettings>().ColorSpace == ColorSpace.Linear, assetItem.Package));
-            }
+//             var modelAssetItem = AnimationPreviewViewModel.FindModelForPreview(assetItem);
+// 
+//             if (modelAssetItem != null)
+//             {
+//                 result.BuildSteps.Add(new ThumbnailBuildStep(new AnimationThumbnailBuildCommand(context, thumbnailStorageUrl, assetItem, modelAssetItem, originalPackage,
+//                     new ThumbnailCommandParameters(assetItem.Asset, thumbnailStorageUrl, context.ThumbnailResolution))));
+//             }
+//             else
+//             {
+//                 // If no model could be found, uses default thumbnail instead
+//                 var gameSettings = context.GetGameSettingsAsset();
+//                 result.BuildSteps.Add(new StaticThumbnailCommand<AnimationAsset>(thumbnailStorageUrl, StaticThumbnails.AnimationThumbnail, context.ThumbnailResolution, gameSettings.GetOrCreate<RenderingSettings>().ColorSpace == ColorSpace.Linear, assetItem.Package));
+//             }
         }
 
         /// <summary>
@@ -100,7 +98,7 @@ namespace Stride.Assets.Presentation.Thumbnails
                 }
             }
 
-            protected override unsafe void CustomizeThumbnail(Image image)
+            protected override void CustomizeThumbnail(Image image)
             {
                 base.CustomizeThumbnail(image);
 
@@ -132,7 +130,7 @@ namespace Stride.Assets.Presentation.Thumbnails
                     thumbnailBuilderHelper.GraphicsDevice.ColorSpace = oldColorSpace;
 
                     // Read back result to image
-                    thumbnailBuilderHelper.RenderTarget.GetData(thumbnailBuilderHelper.GraphicsContext.CommandList, thumbnailBuilderHelper.RenderTargetStaging, new Span<byte>((void*)image.PixelBuffer[0].DataPointer, image.PixelBuffer[0].BufferStride));
+                    thumbnailBuilderHelper.RenderTarget.GetData(thumbnailBuilderHelper.GraphicsContext.CommandList, thumbnailBuilderHelper.RenderTargetStaging, new DataPointer(image.PixelBuffer[0].DataPointer, image.PixelBuffer[0].BufferStride));
                     image.Description.Format = thumbnailBuilderHelper.RenderTarget.Format; // In case channels are swapped
                 }
             }

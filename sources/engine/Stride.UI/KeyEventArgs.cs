@@ -8,7 +8,7 @@ namespace Stride.UI
     /// <summary>
     /// The arguments associated to an key event.
     /// </summary>
-    public class KeyEventArgs : RoutedEventArgs
+    internal class KeyEventArgs : RoutedEventArgs
     {
         /// <summary>
         /// The key that triggered the event.

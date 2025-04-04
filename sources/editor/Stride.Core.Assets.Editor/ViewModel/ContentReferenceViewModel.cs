@@ -3,7 +3,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Stride.Core.Assets.Editor.Quantum.NodePresenters.Commands;
-using Stride.Core.Serialization;
 
 namespace Stride.Core.Assets.Editor.ViewModel
 {

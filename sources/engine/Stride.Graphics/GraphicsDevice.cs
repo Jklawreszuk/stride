@@ -62,6 +62,24 @@ namespace Stride.Graphics
 
         public string RendererName => GetRendererName();
 
+        public delegate IDisposable CreateLockContext (GraphicsDevice d);
+        public static CreateLockContext createLockContext = null;
+        private class NullDisposable : IDisposable
+        {
+            public void Dispose() {}
+        }
+        public IDisposable LockContext ()
+        {
+            if (createLockContext != null)
+            {
+                return createLockContext (this);
+            }
+            else
+            {
+                return new NullDisposable ();
+            }
+        }
+        
         /// <summary>
         ///     Initializes a new instance of the <see cref="GraphicsDevice" /> class.
         /// </summary>

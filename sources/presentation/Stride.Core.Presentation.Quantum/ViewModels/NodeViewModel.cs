@@ -220,6 +220,10 @@ public class NodeViewModel : DispatcherViewModel, IDynamicMetaObjectProvider
     /// </summary>
     protected int? Order => NodePresenters.First().Order;
 
+        public delegate void InitializerExtensionFn (NodeViewModel nvm);
+        
+        public static InitializerExtensionFn InitializerExtension = null;
+        
     public void FinishInitialization()
     {
         if (initializingChildren != null)
@@ -268,6 +272,11 @@ public class NodeViewModel : DispatcherViewModel, IDynamicMetaObjectProvider
             var value = values.Count == 1 ? values[0] : combiner(values);
             AddAssociatedData(attachedProperty.Key.Name, value);
         }
+            
+            if (InitializerExtension != null)
+            {
+                InitializerExtension (this);
+            }
     }
 
     /// <summary>

@@ -5,11 +5,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Windows.Media.Imaging;
+//using System.Windows.Media.Imaging;
 using Stride.Core.Assets.Templates;
 using Stride.Core.Extensions;
 using Stride.Core.IO;
 using Stride.Core.Presentation.ViewModels;
+
+using BitmapImage = object;
 
 namespace Stride.Core.Assets.Editor.Components.TemplateDescriptions.ViewModels
 {
@@ -31,6 +33,9 @@ namespace Stride.Core.Assets.Editor.Components.TemplateDescriptions.ViewModels
 
         }
 
+        public delegate BitmapImage loadFunction (string path);
+        public static loadFunction bitmapLoadFunction = null;
+        
         public string Name => Template.Name;
 
         public string Description => Template.Description;
@@ -45,9 +50,9 @@ namespace Stride.Core.Assets.Editor.Components.TemplateDescriptions.ViewModels
 
         public string DefaultOutputName => Template.DefaultOutputName;
 
-        public BitmapImage Icon { get; }
+       public BitmapImage Icon { get; }
 
-        public IEnumerable<BitmapImage> Screenshots { get; }
+       public IEnumerable<BitmapImage> Screenshots { get; }
 
         public TemplateDescription GetTemplate()
         {
@@ -61,19 +66,11 @@ namespace Stride.Core.Assets.Editor.Components.TemplateDescriptions.ViewModels
 
         private static BitmapImage LoadImage(string path)
         {
-            try
+            if (bitmapLoadFunction != null)
             {
-                if (!path.StartsWith("pack:", StringComparison.Ordinal) && !File.Exists(path))
-                {
-                    return null;
-                }
-
-                return new BitmapImage(new Uri(path));
+                return bitmapLoadFunction (path);
             }
-            catch (Exception)
-            {
-                return null;
-            }
+            return null;
         }
     }
 }

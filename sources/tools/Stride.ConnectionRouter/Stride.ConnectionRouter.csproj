@@ -9,7 +9,7 @@
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
     <StrideAssemblyProcessorOptions>--auto-module-initializer</StrideAssemblyProcessorOptions>
     <StrideNuGetResolverUI>true</StrideNuGetResolverUI>
-    <UseWindowsForms>true</UseWindowsForms>
+    <StrideSkipAutoPack>true</StrideSkipAutoPack>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <UseVSHostingProcess>false</UseVSHostingProcess>

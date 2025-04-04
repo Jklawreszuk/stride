@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using System;
 using Stride.Games;
 
 namespace Stride.Graphics
@@ -87,7 +86,7 @@ namespace Stride.Graphics
                 if (isUnorderedAccess)
                     bufferFlags |= BufferFlags.UnorderedAccess;
 
-                return Buffer.New(device, (ReadOnlySpan<T>)value, bufferFlags);
+                return Buffer.New(device, value, bufferFlags);
             }
 
             /// <summary>
@@ -98,25 +97,6 @@ namespace Stride.Graphics
             /// <param name="elementSize">Size of the element.</param>
             /// <param name="isUnorderedAccess">if set to <c>true</c> this buffer supports unordered access (RW in HLSL).</param>
             /// <returns>A Structured buffer</returns>
-            public static Buffer New(GraphicsDevice device, ReadOnlySpan<byte> value, int elementSize, bool isUnorderedAccess = false)
-            {
-                var bufferFlags = BufferFlags.StructuredBuffer | BufferFlags.ShaderResource;
-
-                if (isUnorderedAccess)
-                    bufferFlags |= BufferFlags.UnorderedAccess;
-
-                return Buffer.New(device, value, elementSize, bufferFlags);
-            }
-
-            /// <summary>
-            /// Creates a new Structured buffer <see cref="GraphicsResourceUsage.Default" /> usage.
-            /// </summary>
-            /// <param name="device">The <see cref="GraphicsDevice"/>.</param>
-            /// <param name="value">The value to initialize the Structured buffer.</param>
-            /// <param name="elementSize">Size of the element.</param>
-            /// <param name="isUnorderedAccess">if set to <c>true</c> this buffer supports unordered access (RW in HLSL).</param>
-            /// <returns>A Structured buffer</returns>
-            [Obsolete("Use span instead")]
             public static Buffer New(GraphicsDevice device, DataPointer value, int elementSize, bool isUnorderedAccess = false)
             {
                 var bufferFlags = BufferFlags.StructuredBuffer | BufferFlags.ShaderResource;
@@ -172,7 +152,7 @@ namespace Stride.Graphics
             public static Buffer<T> New<T>(GraphicsDevice device, T[] value) where T : unmanaged
             {
                 const BufferFlags BufferFlags = BufferFlags.StructuredAppendBuffer | BufferFlags.ShaderResource | BufferFlags.UnorderedAccess;
-                return Buffer.New(device, (ReadOnlySpan<T>)value, BufferFlags);
+                return Buffer.New(device, value, BufferFlags);
             }
 
             /// <summary>
@@ -182,20 +162,6 @@ namespace Stride.Graphics
             /// <param name="value">The value to initialize the StructuredAppend buffer.</param>
             /// <param name="elementSize">Size of the element.</param>
             /// <returns>A StructuredAppend buffer</returns>
-            public static Buffer New(GraphicsDevice device, ReadOnlySpan<byte> value, int elementSize)
-            {
-                const BufferFlags BufferFlags = BufferFlags.StructuredAppendBuffer | BufferFlags.ShaderResource | BufferFlags.UnorderedAccess;
-                return Buffer.New(device, value, elementSize, BufferFlags);
-            }
-
-            /// <summary>
-            /// Creates a new StructuredAppend buffer <see cref="GraphicsResourceUsage.Default" /> usage.
-            /// </summary>
-            /// <param name="device">The <see cref="GraphicsDevice"/>.</param>
-            /// <param name="value">The value to initialize the StructuredAppend buffer.</param>
-            /// <param name="elementSize">Size of the element.</param>
-            /// <returns>A StructuredAppend buffer</returns>
-            [Obsolete("Use span instead")]
             public static Buffer New(GraphicsDevice device, DataPointer value, int elementSize)
             {
                 const BufferFlags BufferFlags = BufferFlags.StructuredAppendBuffer | BufferFlags.ShaderResource | BufferFlags.UnorderedAccess;
@@ -247,7 +213,7 @@ namespace Stride.Graphics
             public static Buffer New<T>(GraphicsDevice device, T[] value) where T : unmanaged
             {
                 const BufferFlags BufferFlags = BufferFlags.StructuredCounterBuffer | BufferFlags.ShaderResource | BufferFlags.UnorderedAccess;
-                return Buffer.New(device, (ReadOnlySpan<T>)value, BufferFlags);
+                return Buffer.New(device, value, BufferFlags);
             }
 
             /// <summary>
@@ -257,20 +223,6 @@ namespace Stride.Graphics
             /// <param name="value">The value to initialize the StructuredCounter buffer.</param>
             /// <param name="elementSize">Size of the element.</param>
             /// <returns>A StructuredCounter buffer</returns>
-            public static Buffer New(GraphicsDevice device, ReadOnlySpan<byte> value, int elementSize)
-            {
-                const BufferFlags BufferFlags = BufferFlags.StructuredCounterBuffer | BufferFlags.ShaderResource | BufferFlags.UnorderedAccess;
-                return Buffer.New(device, value, elementSize, BufferFlags);
-            }
-
-            /// <summary>
-            /// Creates a new StructuredCounter buffer <see cref="GraphicsResourceUsage.Default" /> usage.
-            /// </summary>
-            /// <param name="device">The <see cref="GraphicsDevice"/>.</param>
-            /// <param name="value">The value to initialize the StructuredCounter buffer.</param>
-            /// <param name="elementSize">Size of the element.</param>
-            /// <returns>A StructuredCounter buffer</returns>
-            [Obsolete("Use span instead")]
             public static Buffer New(GraphicsDevice device, DataPointer value, int elementSize)
             {
                 const BufferFlags BufferFlags = BufferFlags.StructuredCounterBuffer | BufferFlags.ShaderResource | BufferFlags.UnorderedAccess;

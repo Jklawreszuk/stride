@@ -44,11 +44,6 @@ namespace Stride.Rendering
         public CullMode? CullMode;
 
         /// <summary>
-        /// Overrides depth clip for this material.
-        /// </summary>
-        public CompareFunction? DepthFunction;
-
-        /// <summary>
         /// Overrides the blend state for this material.
         /// </summary>
         public BlendStateDescription? BlendState;

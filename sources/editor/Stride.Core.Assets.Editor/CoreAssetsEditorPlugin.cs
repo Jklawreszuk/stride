@@ -3,7 +3,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Windows;
+// using System.Windows;
+using Avalonia.Controls;
 using Stride.Core.Assets.Editor.Services;
 using Stride.Core.Assets.Editor.ViewModel;
 using Stride.Core.Assets.Editor.ViewModel.CopyPasteProcessors;
@@ -21,7 +22,7 @@ internal sealed class CoreAssetsEditorPlugin : AssetsEditorPlugin
     /// <inheritdoc />
     public override void InitializePlugin(ILogger logger)
     {
-        imageDictionary ??= (ResourceDictionary)Application.LoadComponent(new Uri("/Stride.Core.Assets.Editor;component/View/ImageDictionary.xaml", UriKind.RelativeOrAbsolute));
+//        imageDictionary ??= (ResourceDictionary)Application.LoadComponent(new Uri("/Stride.Core.Assets.Editor;component/View/ImageDictionary.xaml", UriKind.RelativeOrAbsolute));
     }
 
     /// <inheritdoc />

@@ -8,8 +8,8 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using ICSharpCode.AvalonEdit.Document;
-using ICSharpCode.AvalonEdit.Utils;
+// using ICSharpCode.AvalonEdit.Document;
+// using ICSharpCode.AvalonEdit.Utils;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using RoslynPad.Editor;
@@ -24,7 +24,11 @@ using Stride.Core.Diagnostics;
 using Stride.Core.Presentation.Services;
 using Stride.Core.Presentation.Windows;
 using Stride.Core.Translation;
-using TextDocument = ICSharpCode.AvalonEdit.Document.TextDocument;
+// using TextDocument = ICSharpCode.AvalonEdit.Document.TextDocument;
+
+using AvaloniaEdit.Document;
+using AvaloniaEdit.Utils;
+using TextDocument = AvaloniaEdit.Document.TextDocument;
 
 namespace Stride.Assets.Presentation.ViewModel
 {
@@ -219,7 +223,7 @@ namespace Stride.Assets.Presentation.ViewModel
 
         private void UndoStackOnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (!IsDestroyed && !textReloading && e.PropertyName == nameof(UndoStack.IsOriginalFile))
+//             if (!IsDestroyed && !textReloading && e.PropertyName == nameof(UndoStack.IsOriginalFile))
             {
                 UpdateDirtiness();
             }
@@ -263,7 +267,12 @@ namespace Stride.Assets.Presentation.ViewModel
                     cancellationToken.Token.ThrowIfCancellationRequested();
 
                     // Wait for project to be available
-                    project = workspace.CurrentSolution.Projects.FirstOrDefault(x => x.FilePath == sourceProject);
+//                    project = workspace.CurrentSolution.Projects.FirstOrDefault(x => x.FilePath == sourceProject);
+                    // FIXME: This produces an infinite loop, for assets in some projects.
+                    // These projects never get loaded, because they don't seem to have assemblies when loaded.
+                    // This seems to be because they are executable, rather than libraries. Maybe an issue with
+                    // project loading?
+                    project = workspace.CurrentSolution.Projects.FirstOrDefault();
                     if (project != null)
                         break;
                     await Task.Delay(10);
@@ -351,34 +360,34 @@ namespace Stride.Assets.Presentation.ViewModel
             else
             {
                 // Ask user
-                var buttons = DialogHelper.CreateButtons(new[]
-                {
-                    "Yes", "Yes to all", "No", "No to all"
-                });
-                var message = string.Format(
-                            Tr._p("Message", "{0}\r\n\r\nThis file has been changed externally and has unsaved changes inside the editor.\r\nDo you want to reload it and lose your changes?"),
-                            newDocument.FilePath);
-                var dialogResult = ServiceProvider.Get<IDialogService2>().BlockingMessageBox(message, buttons, MessageBoxImage.Question);
-
-                switch (dialogResult)
-                {
-                    case 1:
-                        reloadAllowed = true;
-                        break;
-
-                    case 2:
-                        reloadState.AutoReloadDirty = reloadAllowed = true;
-                        break;
-
-                    case 3:
-                        reloadAllowed = false;
-                        break;
-
-                    case 0:
-                    case 4:
-                        reloadState.AutoReloadDirty = reloadAllowed = false;
-                        break;
-                }
+//                 var buttons = DialogHelper.CreateButtons(new[]
+//                 {
+//                     "Yes", "Yes to all", "No", "No to all"
+//                 });
+//                 var message = string.Format(
+//                             Tr._p("Message", "{0}\r\n\r\nThis file has been changed externally and has unsaved changes inside the editor.\r\nDo you want to reload it and lose your changes?"),
+//                             newDocument.FilePath);
+//                 var dialogResult = ServiceProvider.Get<IDialogService2>().BlockingMessageBox(message, buttons, MessageBoxImage.Question);
+// 
+//                 switch (dialogResult)
+//                 {
+//                     case 1:
+//                         reloadAllowed = true;
+//                         break;
+// 
+//                     case 2:
+//                         reloadState.AutoReloadDirty = reloadAllowed = true;
+//                         break;
+// 
+//                     case 3:
+//                         reloadAllowed = false;
+//                         break;
+// 
+//                     case 0:
+//                     case 4:
+//                         reloadState.AutoReloadDirty = reloadAllowed = false;
+//                         break;
+//                 }
             }
 
             // Mark the document as dirty since we didn't update to external changed

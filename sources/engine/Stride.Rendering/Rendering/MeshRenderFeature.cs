@@ -225,7 +225,7 @@ namespace Stride.Rendering
 
                 commandList.SetPipelineState(renderEffect.PipelineState);
                 commandList.SetDescriptorSets(0, descriptorSetsLocal);
-                
+            
                 // Draw
                 if (drawData.IndexBuffer == null)
                 {

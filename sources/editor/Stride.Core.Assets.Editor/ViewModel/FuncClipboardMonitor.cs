@@ -2,7 +2,7 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
 using Stride.Core.Annotations;
-using Stride.Core.Presentation.Interop;
+//using Stride.Core.Presentation.Interop;
 
 namespace Stride.Core.Assets.Editor.ViewModel
 {
@@ -13,7 +13,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
 
         public FuncClipboardMonitor()
         {
-            ClipboardMonitor.ClipboardTextChanged += OnClipboardTextChanged;
+//            ClipboardMonitor.ClipboardTextChanged += OnClipboardTextChanged;
         }
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
         /// <inheritdoc />
         public void Destroy()
         {
-            ClipboardMonitor.ClipboardTextChanged -= OnClipboardTextChanged;
+//            ClipboardMonitor.ClipboardTextChanged -= OnClipboardTextChanged;
         }
     }
 }

@@ -7,12 +7,18 @@ using System.Diagnostics;
 using System.IO;
 using Stride.Core.Assets;
 
+using SkiaSharp;
+using Bitmap = SkiaSharp.SKBitmap;
+using Rectangle = SkiaSharp.SKRect;
+using Color = SkiaSharp.SKColor;
+
 namespace Stride.Assets.SpriteFont.Compiler
 {
-    using System.Drawing;
-    using System.Drawing.Imaging;
-    using SharpDX.DirectWrite;
-    using Factory = SharpDX.DirectWrite.Factory;
+//     using System.Drawing;
+//     using System.Drawing.Imaging;
+    using System.Reflection;
+//     using SharpDX.DirectWrite;
+//     using Factory = SharpDX.DirectWrite.Factory;
 
     // This code was originally taken from DirectXTk but rewritten with DirectWrite
     // for more accuracy in font rendering
@@ -44,51 +50,51 @@ namespace Stride.Assets.SpriteFont.Compiler
         /// <returns></returns>
         private Bitmap LoadSDFBitmap(char c, int width, int height, float offsetX, float offsetY, float scaleX, float scaleY)
         {
-            try
-            {
-                var characterCodeArg = "0x" + Convert.ToUInt32(c).ToString("x4");
-#if DEBUG
-                var outputFilePath = $"{tempDir}{characterCodeArg}_{Guid.NewGuid()}.bmp";
-#else
-                var outputFilePath = Path.GetTempFileName();
-#endif
-                var exportSizeArg = $"-size {width} {height}";
-                var translateArg = $"-translate {offsetX} {offsetY}";
-                var scaleArg = $"-ascale {scaleX} {scaleY}";
-
-                var startInfo = new ProcessStartInfo
-                {
-                    FileName = msdfgenExe,
-                    Arguments = $"msdf -font \"{fontSource}\" {characterCodeArg} -o \"{outputFilePath}\" -format bmp {exportSizeArg} {translateArg} {scaleArg}",
-                    CreateNoWindow = true,
-                    WindowStyle = ProcessWindowStyle.Hidden,
-                    RedirectStandardError = true,
-                    RedirectStandardOutput = true,
-                    UseShellExecute = false
-                };
-                var msdfgenProcess = Process.Start(startInfo);
-
-                if (msdfgenProcess == null)
-                    return null;
-
-                msdfgenProcess.WaitForExit();
-
-                if (File.Exists(outputFilePath))
-                {
-                    var bitmap = (Bitmap)Image.FromFile(outputFilePath);
-
-                    Normalize(bitmap);
-
-                    return bitmap;
-                }
-            }
-            catch
-            {
-                // ignore exception
-            }
+//             try
+//             {
+//                 var characterCodeArg = "0x" + Convert.ToUInt32(c).ToString("x4");
+// #if DEBUG
+//                 var outputFilePath = $"{tempDir}{characterCodeArg}_{Guid.NewGuid()}.bmp";
+// #else
+//                 var outputFilePath = Path.GetTempFileName();
+// #endif
+//                 var exportSizeArg = $"-size {width} {height}";
+//                 var translateArg = $"-translate {offsetX} {offsetY}";
+//                 var scaleArg = $"-ascale {scaleX} {scaleY}";
+// 
+//                 var startInfo = new ProcessStartInfo
+//                 {
+//                     FileName = msdfgenExe,
+//                     Arguments = $"msdf -font \"{fontSource}\" {characterCodeArg} -o \"{outputFilePath}\" -format bmp {exportSizeArg} {translateArg} {scaleArg}",
+//                     CreateNoWindow = true,
+//                     WindowStyle = ProcessWindowStyle.Hidden,
+//                     RedirectStandardError = true,
+//                     RedirectStandardOutput = true,
+//                     UseShellExecute = false
+//                 };
+//                 var msdfgenProcess = Process.Start(startInfo);
+// 
+//                 if (msdfgenProcess == null)
+//                     return null;
+// 
+//                 msdfgenProcess.WaitForExit();
+// 
+//                 if (File.Exists(outputFilePath))
+//                 {
+//                     var bitmap = (Bitmap)Image.FromFile(outputFilePath);
+// 
+//                     Normalize(bitmap);
+// 
+//                     return bitmap;
+//                 }
+//             }
+//             catch
+//             {
+//                 // ignore exception
+//             }
 
             // If font generation failed for any reason, ignore it and return an empty glyph
-            return new Bitmap(1, 1, PixelFormat.Format32bppArgb);
+            return new Bitmap(1, 1, SKColorType.Rgba8888, SKAlphaType.Opaque);
         }
 
         /// <summary>
@@ -102,9 +108,9 @@ namespace Stride.Assets.SpriteFont.Compiler
             // Case 1 - corner pixel is negative (outside), do not invert
             var firstPixel = bitmap.GetPixel(0, 0);
             var colorChannels = 0;
-            if (firstPixel.R > 0) colorChannels++;
-            if (firstPixel.G > 0) colorChannels++;
-            if (firstPixel.B > 0) colorChannels++;
+            if (firstPixel.Red > 0) colorChannels++;
+            if (firstPixel.Green > 0) colorChannels++;
+            if (firstPixel.Blue > 0) colorChannels++;
             if (colorChannels <= 1)
                 return;
 
@@ -114,10 +120,11 @@ namespace Stride.Assets.SpriteFont.Compiler
                 {
                     var pixel = bitmap.GetPixel(i, j);
 
-                    int invertR = ((int)255 - pixel.R);
-                    int invertG = ((int)255 - pixel.G);
-                    int invertB = ((int)255 - pixel.B);
-                    var invertedPixel = Color.FromArgb((invertR << 16) + (invertG << 8) + (invertB));
+                    int invertR = ((int)255 - pixel.Red);
+                    int invertG = ((int)255 - pixel.Green);
+                    int invertB = ((int)255 - pixel.Blue);
+//                     var invertedPixel = Color.FromArgb((invertR << 16) + (invertG << 8) + (invertB));
+                    var invertedPixel = new Color((byte) invertR, (byte) invertG, (byte) invertB);
 
                     bitmap.SetPixel(i, j, invertedPixel);
                 }
@@ -127,21 +134,18 @@ namespace Stride.Assets.SpriteFont.Compiler
         public void Import(SpriteFontAsset options, List<char> characters)
         {
             fontSource = options.FontSource.GetFontPath();
-            if (string.IsNullOrEmpty(fontSource))
-                return;
+//             if (string.IsNullOrEmpty(fontSource))
+//                 return;
 
-            // Get the msdfgen.exe location
-            var msdfgen = ToolLocator.LocateTool("msdfgen") ?? throw new AssetException("Failed to compile a font asset, msdfgen was not found.");
+//             // Get the msdfgen.exe location
+//             var msdfgen = ToolLocator.LocateTool("msdfgen") ?? throw new AssetException("Failed to compile a font asset, msdfgen was not found.");
+// 
+//             msdfgenExe = msdfgen.FullPath;
+//             tempDir = $"{Environment.GetEnvironmentVariable("TEMP")}\\";
+// 
+//             var factory = new Factory();
 
-            msdfgenExe = msdfgen.FullPath;
-#if DEBUG
-            tempDir = $"{Environment.GetEnvironmentVariable("TEMP")}\\StrideGlyphs\\";
-            Directory.CreateDirectory(tempDir);
-#endif
-
-            var factory = new Factory();
-
-            FontFace fontFace = options.FontSource.GetFontFace();
+            SKFont fontFace = options.FontSource.GetFontFace();
 
             var fontMetrics = fontFace.Metrics;
 
@@ -160,24 +164,27 @@ namespace Stride.Assets.SpriteFont.Compiler
             //
             // So we are first applying a factor to the line gap:
             //     NewLineGap = LineGap * LineGapFactor
-            var lineGap = fontMetrics.LineGap * options.LineGapFactor;
+            var lineGap = fontMetrics.Leading * options.LineGapFactor;
 
-            float pixelPerDesignUnit = fontSize / fontMetrics.DesignUnitsPerEm;
+//             float pixelPerDesignUnit = fontSize / fontMetrics.DesignUnitsPerEm;
             // Store the font height.
-            LineSpacing = (lineGap + fontMetrics.Ascent + fontMetrics.Descent) * pixelPerDesignUnit;
+            float fontMetricsDesignUnitsPerEm = 1.0f;
+            LineSpacing = (float)(lineGap - fontMetrics.Ascent + fontMetrics.Descent) / fontMetricsDesignUnitsPerEm * fontSize;
+//             LineSpacing = (lineGap + fontMetrics.Ascent + fontMetrics.Descent) * pixelPerDesignUnit;
 
             // And then the baseline is also changed in order to allow the linegap to be distributed between the top and the
             // bottom of the font:
+            BaseLine = (float)(lineGap * options.LineGapBaseLineFactor - fontMetrics.Ascent) / fontMetricsDesignUnitsPerEm * fontSize;
             //     BaseLine = NewLineGap * LineGapBaseLineFactor
-            BaseLine = (lineGap * options.LineGapBaseLineFactor + fontMetrics.Ascent) * pixelPerDesignUnit;
+//             BaseLine = (lineGap * options.LineGapBaseLineFactor + fontMetrics.Ascent) * pixelPerDesignUnit;
 
             // Generate SDF bitmaps for each character in turn.
             foreach (var character in characters)
                 glyphList.Add(ImportGlyph(fontFace, character, fontMetrics, fontSize));
 
             Glyphs = glyphList;
-
-            factory.Dispose();
+// 
+//             factory.Dispose();
         }
 
         /// <summary>
@@ -188,67 +195,96 @@ namespace Stride.Assets.SpriteFont.Compiler
         /// <param name="fontMetrics">Font metrics, used to obtain design units scale</param>
         /// <param name="fontSize">Requested font size. The bigger, the more precise the SDF image is going to be</param>
         /// <returns></returns>
-        private Glyph ImportGlyph(FontFace fontFace, char character, FontMetrics fontMetrics, float fontSize)
+        private Glyph ImportGlyph(SKFont fontFace, char character, SKFontMetrics fontMetrics, float fontSize)
         {
-            var indices = fontFace.GetGlyphIndices(new int[] { character });
+            SKPaint textPaint = new SKPaint { Color = SKColors.White, TextSize = fontSize, TextAlign = SKTextAlign.Center };
+            SKRect rect = new SKRect ();
+            textPaint.MeasureText ("" + character, ref rect);
+            int width = (int) rect.Width;
+            int height = (int) rect.Height;
 
-            var metrics = fontFace.GetDesignGlyphMetrics(indices, isSideways: false);
-            var metric = metrics[0];
+            int yOffset = (int) (fontSize * ((rect.Top + rect.Bottom) / 22.0f));
+            yOffset = (int) (-4 * fontSize) + (int) (rect.Top - ((rect.Top + rect.Bottom) / 2) / 2.0f); // not sure why the -4, fits text onto gizmo camera, will have to explore further.
 
-            float pixelPerDesignUnit = fontSize / fontMetrics.DesignUnitsPerEm;
-            float fontWidthPx = (metric.AdvanceWidth - metric.LeftSideBearing - metric.RightSideBearing) * pixelPerDesignUnit;
-            float fontHeightPx = (metric.AdvanceHeight - metric.TopSideBearing - metric.BottomSideBearing) * pixelPerDesignUnit;
+            var advanceWidth = 2 + (int) textPaint.GetGlyphWidths ("" + character)[0];
 
-            float fontOffsetXPx = metric.LeftSideBearing * pixelPerDesignUnit;
-            float fontOffsetYPx = (metric.TopSideBearing - metric.VerticalOriginY) * pixelPerDesignUnit;
-
-            float advanceWidthPx = metric.AdvanceWidth * pixelPerDesignUnit;
-            //var advanceHeight = metric.AdvanceHeight * pixelPerDesignUnit;
-
-            const int MarginPx = 2;     // Buffer zone for the sdf image to avoid clipping
-            int bitmapWidthPx = (int)Math.Ceiling(fontWidthPx) + (2 * MarginPx);
-            int bitmapHeightPx = (int)Math.Ceiling(fontHeightPx) + (2 * MarginPx);
-
-            float bitmapOffsetXPx = fontOffsetXPx - MarginPx;
-            float bitmapOffsetYPx = fontOffsetYPx - MarginPx;
+            var pixelWidth = width + 10;
+            var pixelHeight = height + 10;
+//             var metrics = fontFace.GetDesignGlyphMetrics(indices, isSideways: false);
+//             var metric = metrics[0];
+// 
+//             float pixelPerDesignUnit = fontSize / fontMetrics.DesignUnitsPerEm;
+//             float fontWidthPx = (metric.AdvanceWidth - metric.LeftSideBearing - metric.RightSideBearing) * pixelPerDesignUnit;
+//             float fontHeightPx = (metric.AdvanceHeight - metric.TopSideBearing - metric.BottomSideBearing) * pixelPerDesignUnit;
+// 
+//             float fontOffsetXPx = metric.LeftSideBearing * pixelPerDesignUnit;
+//             float fontOffsetYPx = (metric.TopSideBearing - metric.VerticalOriginY) * pixelPerDesignUnit;
+// 
+//             float advanceWidthPx = metric.AdvanceWidth * pixelPerDesignUnit;
+//             //var advanceHeight = metric.AdvanceHeight * pixelPerDesignUnit;
+// 
+//             const int MarginPx = 2;     // Buffer zone for the sdf image to avoid clipping
+//             int bitmapWidthPx = (int)Math.Ceiling(fontWidthPx) + (2 * MarginPx);
+//             int bitmapHeightPx = (int)Math.Ceiling(fontHeightPx) + (2 * MarginPx);
+// 
+//             float bitmapOffsetXPx = fontOffsetXPx - MarginPx;
+//             float bitmapOffsetYPx = fontOffsetYPx - MarginPx;
 
             Bitmap bitmap;
             if (char.IsWhiteSpace(character))
             {
-                bitmap = new Bitmap(1, 1, PixelFormat.Format32bppArgb);
+                bitmap = new Bitmap(1, 1, SKColorType.Rgba8888, SKAlphaType.Opaque);
             }
             else
             {
-                // sdfPixelPerDesignUnit is hardcoded from the import in this code
-                // https://github.com/stride3d/msdfgen/blob/1af188c77822e447fe8e412420fe0fe05b782b38/ext/import-font.cpp#L126-L150
-                const float sdfPixelPerDesignUnit = 1 / 64f;      // msdf default coordinate scale
-                float boundLeft = metric.LeftSideBearing * sdfPixelPerDesignUnit;
-                //float boundRight = (metric.AdvanceWidth - metric.RightSideBearing) * sdfPixelPerDesignUnit;
-                //float boundTop = (metric.VerticalOriginY - metric.TopSideBearing) * sdfPixelPerDesignUnit;
-                float boundBottom = (metric.VerticalOriginY  - (metric.AdvanceHeight - metric.BottomSideBearing)) * sdfPixelPerDesignUnit;
+                bitmap = new Bitmap(pixelWidth, pixelHeight, SKColorType.Rgba8888, SKAlphaType.Opaque);
+                SKBitmap texture =  new SKBitmap (pixelWidth, pixelHeight);
+                SKCanvas bitmapCanvas = new SKCanvas(texture);
+                bitmapCanvas.Clear(new SKColor(1, 1, 1)); // Bug in skiasharp seems to not clear if using perfect black.
+                bitmapCanvas.DrawText("" + character, pixelWidth / 2, (pixelHeight - (rect.Bottom + rect.Top)) / 2, textPaint);
+                for (int y = 0; y < pixelHeight; y++)
+                {
+                    for (int x = 0; x < pixelWidth; x++)
+                    {
+                        SKColor col = texture.GetPixel (x, y);
+//                         var color = Color.FromArgb(col.Red, col.Green, col.Blue);
+                        var color = new Color(col.Red, col.Green, col.Blue);
 
-                float glyphWidthPx = (metric.AdvanceWidth - metric.LeftSideBearing - metric.RightSideBearing) * sdfPixelPerDesignUnit;
-                float glyphHeightPx = (metric.AdvanceHeight - metric.TopSideBearing - metric.BottomSideBearing) * sdfPixelPerDesignUnit;
-
-                // Need to scale from msdfgen's 'shape unit' into the final bitmap's space
-                float scaleX = fontWidthPx / glyphWidthPx;
-                float scaleY = fontHeightPx / glyphHeightPx;
-
-                // Note: msdfgen uses coordinates from bottom-left corner
-                // so offsetY needs to calculate the offset such that it snaps to the top side of the bitmap (+ margin space)
-                float offsetX = (MarginPx / scaleX) - boundLeft;
-                float offsetY = ((bitmapHeightPx - MarginPx) / scaleY) - glyphHeightPx - boundBottom;
-
-                bitmap = LoadSDFBitmap(character, bitmapWidthPx, bitmapHeightPx, offsetX, offsetY, scaleX, scaleY);
+                        bitmap.SetPixel(x, y, color);
+                    }
+                }
+//                 // sdfPixelPerDesignUnit is hardcoded from the import in this code
+//                 // https://github.com/stride3d/msdfgen/blob/1af188c77822e447fe8e412420fe0fe05b782b38/ext/import-font.cpp#L126-L150
+//                 const float sdfPixelPerDesignUnit = 1 / 64f;      // msdf default coordinate scale
+//                 float boundLeft = metric.LeftSideBearing * sdfPixelPerDesignUnit;
+//                 //float boundRight = (metric.AdvanceWidth - metric.RightSideBearing) * sdfPixelPerDesignUnit;
+//                 //float boundTop = (metric.VerticalOriginY - metric.TopSideBearing) * sdfPixelPerDesignUnit;
+//                 float boundBottom = (metric.VerticalOriginY  - (metric.AdvanceHeight - metric.BottomSideBearing)) * sdfPixelPerDesignUnit;
+// 
+//                 float glyphWidthPx = (metric.AdvanceWidth - metric.LeftSideBearing - metric.RightSideBearing) * sdfPixelPerDesignUnit;
+//                 float glyphHeightPx = (metric.AdvanceHeight - metric.TopSideBearing - metric.BottomSideBearing) * sdfPixelPerDesignUnit;
+// 
+//                 // Need to scale from msdfgen's 'shape unit' into the final bitmap's space
+//                 float scaleX = fontWidthPx / glyphWidthPx;
+//                 float scaleY = fontHeightPx / glyphHeightPx;
+// 
+//                 // Note: msdfgen uses coordinates from bottom-left corner
+//                 // so offsetY needs to calculate the offset such that it snaps to the top side of the bitmap (+ margin space)
+//                 float offsetX = (MarginPx / scaleX) - boundLeft;
+//                 float offsetY = ((bitmapHeightPx - MarginPx) / scaleY) - glyphHeightPx - boundBottom;
+// 
+//                 bitmap = LoadSDFBitmap(character, bitmapWidthPx, bitmapHeightPx, offsetX, offsetY, scaleX, scaleY);
             }
 
             var glyph = new Glyph(character, bitmap)
             {
-                XOffset = bitmapOffsetXPx,
-                XAdvance = advanceWidthPx,
-                YOffset = bitmapOffsetYPx,
+                XOffset = 0,
+                XAdvance = advanceWidth,
+                YOffset = yOffset,
+//                 XOffset = bitmapOffsetXPx,
+//                 XAdvance = advanceWidthPx,
+//                 YOffset = bitmapOffsetYPx,
             };
-
             return glyph;
         }
 

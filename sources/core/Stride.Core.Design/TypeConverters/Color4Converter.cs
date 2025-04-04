@@ -59,6 +59,8 @@ namespace Stride.Core.TypeConverters;
 /// </summary>
 public class Color4Converter : BaseConverter
 {
+        public static BaseConverter extension = null;
+        
     /// <summary>
     /// Initializes a new instance of the <see cref="Color4Converter"/> class.
     /// </summary>
@@ -117,12 +119,17 @@ public class Color4Converter : BaseConverter
     /// <inheritdoc/>
     public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
     {
-        return sourceType == typeof(Color) || sourceType == typeof(Color3) || base.CanConvertFrom(context, sourceType);
+        return sourceType == typeof(Color) || sourceType == typeof(Color3) || base.CanConvertFrom(context, sourceType) || (bool) extension?.CanConvertFrom (context, sourceType);
     }
 
     /// <inheritdoc/>
     public override object? ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object value)
     {
+        if ((bool) extension?.CanConvertFrom (context, value.GetType ()))
+        {
+            return extension?.ConvertFrom (context, culture, value);
+        }
+
         switch (value)
         {
             case Color color2:

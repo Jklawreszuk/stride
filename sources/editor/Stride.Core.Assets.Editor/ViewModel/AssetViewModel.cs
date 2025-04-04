@@ -7,8 +7,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Windows.Media.Imaging;
+//using System.Windows.Controls;
+//using System.Windows.Media.Imaging;
 using Stride.Core.Assets.Analysis;
 using Stride.Core.Assets.Editor.Components.Properties;
 using Stride.Core.Assets.Editor.Quantum;
@@ -78,7 +78,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
         private string name;
         private DirectoryBaseViewModel directory;
         private bool updatingUrl;
-        private ThumbnailData thumbnailData;
+        private IThumbnailData thumbnailData;
         private AssetItem assetItem;
         private IAssetEditorViewModel editor;
         /// <summary>
@@ -114,12 +114,12 @@ namespace Stride.Core.Assets.Editor.ViewModel
                 assetCommands.Add(new MenuCommandInfo(ServiceProvider, createDerivedAssetCommand)
                 {
                     DisplayName = "Create derived asset",
-                    Icon = new Image { Source = new BitmapImage(new Uri("/Stride.Core.Assets.Editor;component/Resources/Icons/copy_link-32.png", UriKind.RelativeOrAbsolute)) },
+//                     Icon = new Image { Source = new BitmapImage(new Uri("/Stride.Core.Assets.Editor;component/Resources/Icons/copy_link-32.png", UriKind.RelativeOrAbsolute)) },
                 });
                 assetCommands.Add(new MenuCommandInfo(ServiceProvider, clearArchetypeCommand)
                 {
                     DisplayName = "Clear archetype",
-                    Icon = new Image { Source = new BitmapImage(new Uri("/Stride.Core.Assets.Editor;component/Resources/Icons/delete_link-32.png", UriKind.RelativeOrAbsolute)) },
+//                     Icon = new Image { Source = new BitmapImage(new Uri("/Stride.Core.Assets.Editor;component/Resources/Icons/delete_link-32.png", UriKind.RelativeOrAbsolute)) },
                 });
             }).Forget();
             NodeContainer = parameters.Container;
@@ -187,7 +187,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
         /// <summary>
         /// Gets the <see cref="ThumbnailData"/> associated to this <see cref="AssetViewModel"/>.
         /// </summary>
-        public ThumbnailData ThumbnailData { get => thumbnailData; private set => SetValueUncancellable(ref thumbnailData, value); }
+        public IThumbnailData ThumbnailData { get => thumbnailData; private set => SetValueUncancellable(ref thumbnailData, value); }
 
         /// <summary>
         /// Gets the display name of the type of this asset.
@@ -308,7 +308,7 @@ namespace Stride.Core.Assets.Editor.ViewModel
             return initialLocation.Root.Package.MountPoints.FirstOrDefault(x => x.AcceptAssetType(assetType) && x.Package.IsEditable);
         }
 
-        internal void SetThumbnailData(ThumbnailData data)
+        internal void SetThumbnailData(IThumbnailData data)
         {
             ClearThumbnail();
             ThumbnailData = data;
