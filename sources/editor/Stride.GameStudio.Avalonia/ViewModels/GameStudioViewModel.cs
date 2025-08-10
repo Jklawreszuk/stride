@@ -16,9 +16,9 @@ using Stride.Core.MostRecentlyUsedFiles;
 using Stride.Core.Presentation.Commands;
 using Stride.Core.Presentation.Services;
 using Stride.Core.Translation;
-using Stride.Core.VisualStudio;
 using Stride.Assets.Effect;
 using Stride.Assets.Presentation.ViewModel;
+using Stride.Core.CodeEditorSupport;
 using Stride.GameStudio.Avalonia.Services;
 using Stride.GameStudio.Avalonia.Helpers;
 using Stride.Core.Presentation.ViewModels;
@@ -35,9 +35,9 @@ namespace Stride.GameStudio.Avalonia.ViewModels
         public GameStudioViewModel([NotNull] IViewModelServiceProvider serviceProvider, MostRecentlyUsedFileCollection mru)
             : base(serviceProvider, mru, StrideGameStudio.EditorName, StrideGameStudio.EditorVersionMajor)
         {
-           Panels = new EditionPanelViewModel(ServiceProvider);
-            availableIDEs = new List<IDEInfo> { VisualStudioVersions.DefaultIDE };
-            availableIDEs.AddRange(VisualStudioVersions.AvailableVisualStudioInstances);
+            Panels = new EditionPanelViewModel(ServiceProvider);
+            availableIDEs = [IDEInfo.DefaultIDE];
+            availableIDEs.AddRange(IDEInfoVersions.AvailableIDEs());
             NewSessionCommand = new AnonymousCommand(serviceProvider, RestartAndCreateNewSession);
             OpenAboutPageCommand = new AnonymousCommand(serviceProvider, OpenAboutPage);
             OpenSessionCommand = new AnonymousTaskCommand<UFile>(serviceProvider, RestartAndOpenSession);

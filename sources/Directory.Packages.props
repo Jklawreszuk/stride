@@ -47,10 +47,10 @@
     <PackageVersion Include="Microsoft.Build" Version="17.0.0" />
     <PackageVersion Include="Microsoft.Build.Locator" Version="1.6.10" />
     <PackageVersion Include="Microsoft.Build.Utilities.Core" Version="17.0.0" />
-    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Features" Version="3.8.0" />
-    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="3.8.0" />
-    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.8.0" />
-    <PackageVersion Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="3.8.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Features" Version="4.8.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.8.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.8.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="4.8.0" />
     <PackageVersion Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageVersion Include="Microsoft.Extensions.DependencyModel" Version="8.0.0" />
     <PackageVersion Include="Microsoft.VisualStudio.Setup.Configuration.Interop" Version="3.8.2112" />
@@ -119,7 +119,7 @@
   </ItemGroup>
   <!-- Avalonia dependencies -->
   <PropertyGroup>
-    <AvaloniaVersion>11.0.6</AvaloniaVersion>
+    <AvaloniaVersion>11.0.9</AvaloniaVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Avalonia" Version="$(AvaloniaVersion)" />
@@ -151,15 +151,15 @@
     <PackageVersion Include="Stride.GraphX.WPF.Controls" Version="2.4.0" />
     <PackageVersion Include="Stride.Metrics" Version="1.0.3" />
     <PackageVersion Include="RoslynPad.Editor.Windows" Version="1.2.0" />
-    <PackageVersion Include="RoslynPad.Editor.Avalonia" Version="1.2.0" />
-    <PackageVersion Include="RoslynPad.Roslyn" Version="3.6.0" />
-    <PackageVersion Include="RoslynPad.Roslyn.Windows" Version="3.6.0" />
-    <PackageVersion Include="RoslynPad.Roslyn.Avalonia" Version="3.6.0" />
+    <PackageVersion Include="RoslynPad.Editor.Avalonia" Version="4.8.0" />
+    <PackageVersion Include="RoslynPad.Roslyn" Version="4.8.0" />
+    <PackageVersion Include="RoslynPad.Roslyn.Windows" Version="4.8.0" />
+    <PackageVersion Include="RoslynPad.Roslyn.Avalonia" Version="4.8.0" />
     <PackageVersion Include="GraphX" Version="3.0.0" />
   </ItemGroup>
   <!-- Analyzers -->
   <ItemGroup>
     <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" PrivateAssets="all" />
-    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.7.0" PrivateAssets="all" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0" PrivateAssets="all" />
   </ItemGroup>
 </Project>
