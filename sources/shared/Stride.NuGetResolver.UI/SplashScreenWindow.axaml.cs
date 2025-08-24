@@ -56,8 +56,15 @@ public sealed partial class SplashScreenWindow : Window
 
 public static class NugetResolverApp
 {
+    //!FIX-ME
+    private static bool hasStarted;
+
     public static void Run(AppBuilder.AppMainDelegate AppMain)
     {
+        if (!hasStarted)
+            return;
+        
+        hasStarted = true;
         AppBuilder.Configure<Application>()
             .UsePlatformDetect()
             .Start(AppMain, []);
