@@ -101,9 +101,7 @@ namespace Stride.Navigation
         public static void BuildPlanePoints(ref Plane plane, float size, out Vector3[] points, out int[] inds)
         {
             Vector3 up = plane.Normal;
-            Vector3 right;
-            Vector3 forward;
-            GenerateTangentBinormal(up, out right, out forward);
+            GenerateTangentBinormal(up, out var right, out var forward);
 
             points = new Vector3[4];
             points[0] = -forward * size - right * size + up * plane.D;

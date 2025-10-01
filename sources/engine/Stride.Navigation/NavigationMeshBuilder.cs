@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
+using DotRecast.Detour;
 using Stride.Core.Diagnostics;
 using Stride.Core.Extensions;
 using Stride.Core.Mathematics;
@@ -357,7 +358,7 @@ namespace Stride.Navigation
 
                 unsafe
                 {
-                    var builder = Navigation.CreateBuilder();
+                    var builder = new NavigationBuilder();
 
                     // Turn build settings into native structure format
                     Navigation.BuildSettings internalBuildSettings = new Navigation.BuildSettings
@@ -384,38 +385,35 @@ namespace Stride.Navigation
                         AgentMaxSlope = agentSettings.MaxSlope.Degrees,
                     };
 
-                    Navigation.SetSettings(builder, &internalBuildSettings);
-                    Navigation.GeneratedData* generatedDataPtr;
-                    fixed (Vector3* fInputVertices = inputVertices)
-                    fixed (int* fInputIndices = inputIndices)
-                        generatedDataPtr = Navigation.Build(builder, fInputVertices, inputVertices?.Length ?? 0, fInputIndices, inputIndices?.Length ?? 0);
+                    builder.SetSettings(internalBuildSettings);
+                    Navigation.GeneratedData generatedData = builder.BuildNavmesh(ref inputVertices, inputVertices?.Length ?? 0, ref inputIndices, inputIndices?.Length ?? 0);
 
-                    if (generatedDataPtr->Success && generatedDataPtr->NavmeshDataLength > 0)
+                    if (generatedData.Success && generatedData.NavmeshDataLength > 0)
                     {
                         meshTile = new NavigationMeshTile
                         {
                             // Copy the generated navigationMesh data
-                            Data = new byte[generatedDataPtr->NavmeshDataLength + sizeof(long)]
+                            Data = new byte[generatedData.NavmeshDataLength + sizeof(long)]
                         };
-                        Marshal.Copy(generatedDataPtr->NavmeshData, meshTile.Data, 0, generatedDataPtr->NavmeshDataLength);
+                        
+                        generatedData.NavmeshData = MemoryMarshal.Read<DtMeshDataRaw>(meshTile.Data).FromRaw();
 
                         // Append time stamp
                         byte[] timeStamp = BitConverter.GetBytes(buildTimeStamp);
                         for (int i = 0; i < timeStamp.Length; i++)
                             meshTile.Data[meshTile.Data.Length - sizeof(long) + i] = timeStamp[i];
 
-                        List<Vector3> outputVerts = new List<Vector3>();
-                        if (generatedDataPtr->NumNavmeshVertices > 0)
+                        List<Vector3> outputVerts = [];
+                        if (generatedData.NumNavmeshVertices > 0)
                         {
-                            Vector3* navmeshVerts = (Vector3*)generatedDataPtr->NavmeshVertices;
-                            for (int j = 0; j < generatedDataPtr->NumNavmeshVertices; j++)
+                            Vector3* navmeshVerts = (Vector3*)generatedData.NavmeshVertices;
+                            for (int j = 0; j < generatedData.NumNavmeshVertices; j++)
                             {
                                 outputVerts.Add(navmeshVerts[j]);
                             }
                         }
 
                     }
-                    Navigation.DestroyBuilder(builder);
                 }
             }
 
@@ -707,6 +705,32 @@ namespace Stride.Navigation
             if (desc is not ColliderShapeAssetDesc asset)
                 throw new Exception("Invalid collider shape description");
             return asset.Shape.Descriptions.First() as TColliderType;
+        }
+    }
+
+    internal struct DtMeshDataRaw
+    {
+        public DtMeshHeader header;
+        public float[] verts;
+        public DtPoly[] polys;
+        public DtPolyDetail[] detailMeshes;
+        public float[] detailVerts;
+        public int[] detailTris;
+        public DtBVNode[] bvTree;
+        public DtOffMeshConnection[] offMeshCons;
+        public DtMeshData FromRaw()
+        {
+            return new DtMeshData()
+            {
+                header = header,
+                verts = verts,
+                polys = polys,
+                detailMeshes = detailMeshes,
+                detailVerts = detailVerts,
+                detailTris = detailTris,
+                bvTree = bvTree,
+                offMeshCons = offMeshCons,
+            };
         }
     }
 }

@@ -162,10 +162,7 @@ namespace Stride.Navigation
             List<BoundingBox> boundingBoxes = new List<BoundingBox>();
             foreach (var boundingBox in boundingBoxProcessor.BoundingBoxes)
             {
-                Vector3 scale;
-                Quaternion rotation;
-                Vector3 translation;
-                boundingBox.Entity.Transform.WorldMatrix.Decompose(out scale, out rotation, out translation);
+                boundingBox.Entity.Transform.WorldMatrix.Decompose(out var scale, out Quaternion _, out var translation);
                 boundingBoxes.Add(new BoundingBox(translation - boundingBox.Size * scale, translation + boundingBox.Size * scale));
             }
 
@@ -224,7 +221,7 @@ namespace Stride.Navigation
                 builder = new NavigationMeshBuilder();
             }
 
-            // Set the currect scene
+            // Set the correct scene
             currentSceneInstance = newSceneInstance;
 
             if (currentSceneInstance != null)

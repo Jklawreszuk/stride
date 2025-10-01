@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using DotRecast.Detour;
 using Stride.Core;
 using Stride.Core.Mathematics;
 
@@ -13,39 +15,31 @@ namespace Stride.Navigation.Processors
     /// <summary>
     /// Recast native navigation mesh wrapper
     /// </summary>
-    public unsafe class RecastNavigationMesh : IDisposable
+    public unsafe class RecastNavigationMesh
     {
-        private readonly Navigation.NavMeshHandle navmesh;
-        private readonly HashSet<Point> tileCoordinates = new();
+        private readonly NavigationMesh navmesh;
+        private readonly HashSet<Point> tileCoordinates = [];
 
         public RecastNavigationMesh(NavigationMesh navigationMesh)
         {
             navmesh = Navigation.CreateNavmesh(navigationMesh.TileSize * navigationMesh.CellSize);
         }
-
-        public void Dispose()
-        {
-            Navigation.DestroyNavmesh(navmesh);
-        }
-
+        
         /// <summary>
         /// Adds or replaces a tile in the navigation mesh
         /// </summary>
         /// <remarks>The coordinate of the tile is embedded inside the tile data header</remarks>
         public bool AddOrReplaceTile(byte[] data)
         {
-            fixed (byte* dataPtr = data)
-            {
-                Debug.Assert(Unsafe.SizeOf<Navigation.TileHeader>() <= (data?.Length ?? 0));
-                Navigation.TileHeader* header = (Navigation.TileHeader*)dataPtr;
-                var coord = new Point(header->X, header->Y);
+            Debug.Assert(Unsafe.SizeOf<DtMeshDataRaw>() <= (data?.Length ?? 0));
+            DtMeshData meshData = MemoryMarshal.Read<DtMeshDataRaw>(data).FromRaw();
+            var coord = new Point(meshData.header.x, meshData.header.y);
 
-                // Remove old tile if it exists
-                RemoveTile(coord);
+            // Remove old tile if it exists
+            RemoveTile(coord);
 
-                tileCoordinates.Add(coord);
-                return Navigation.AddTile(navmesh, dataPtr, data.Length);
-            }
+            tileCoordinates.Add(coord);
+            return navmesh.LoadTile(meshData);
         }
 
         /// <summary>
@@ -58,7 +52,7 @@ namespace Stride.Navigation.Processors
                 return false;
 
             tileCoordinates.Remove(coord);
-            return Navigation.RemoveTile(navmesh, coord);
+            return navmesh.RemoveTile(coord);
         }
 
         /// <summary>
@@ -70,23 +64,19 @@ namespace Stride.Navigation.Processors
         /// <returns>The found raycast hit if <see cref="NavigationRaycastResult.Hit"/> is true</returns>
         public NavigationRaycastResult Raycast(Vector3 start, Vector3 end, NavigationQuerySettings querySettings)
         {
-            Navigation.RaycastQuery query = new()
+            RaycastQuery query = new()
             {
                 Source = start,
                 Target = end,
                 MaxPathPoints = querySettings.MaxPathPoints,
                 FindNearestPolyExtent = querySettings.FindNearestPolyExtent
             };
-            Navigation.DoRaycastQuery(navmesh, query, out var queryResult);
+
+            navmesh.DoRaycastQuery(query, out var queryResult);
             if (!queryResult.Hit)
                 return new() { Hit = false };
 
-            return new()
-            {
-                Hit = true,
-                Position = queryResult.Position,
-                Normal = queryResult.Normal
-            };
+            return queryResult with { Hit = true };
         }
 
         /// <summary>
@@ -104,17 +94,17 @@ namespace Stride.Navigation.Processors
             if (navmesh == default)
                 return false;
 
-            Navigation.PathFindQuery query;
+            PathFindQuery query;
             query.Source = start;
             query.Target = end;
             query.MaxPathPoints = querySettings.MaxPathPoints;
             query.FindNearestPolyExtent = querySettings.FindNearestPolyExtent;
-            Navigation.PathFindResult queryResult = default;
+            PathFindResult queryResult = default;
             Vector3[] generatedPathPoints = new Vector3[querySettings.MaxPathPoints];
             fixed (Vector3* generatedPathPointsPtr = generatedPathPoints)
             {
                 queryResult.PathPoints = (nint)generatedPathPointsPtr;
-                Navigation.DoPathFindQuery(navmesh, query, ref queryResult);
+                navmesh.DoPathFindQuery(query, ref queryResult);
                 if (!queryResult.PathFound)
                     return false;
             }

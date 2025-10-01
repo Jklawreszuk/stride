@@ -32,8 +32,7 @@ namespace Stride.Navigation
         /// <returns>The found tile or null</returns>
         public NavigationMeshTile FindTile(Point tileCoordinate)
         {
-            NavigationMeshTile foundTile;
-            if (TilesInternal.TryGetValue(tileCoordinate, out foundTile))
+            if (TilesInternal.TryGetValue(tileCoordinate, out var foundTile))
                 return foundTile;
             return null;
         }
