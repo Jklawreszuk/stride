@@ -107,15 +107,13 @@ namespace Stride.Navigation.Processors
                     var loadedGroup = data.LoadedGroups[oldGroupKey];
 
                     // See if this layer was updated
-                    NavigationMeshLayerUpdateInfo layerUpdateInfo;
-                    if (!updatedLayers.TryGetValue(oldGroupKey, out layerUpdateInfo))
+                    if (!updatedLayers.TryGetValue(oldGroupKey, out var layerUpdateInfo))
                         continue;
 
                     // Check if the new navigation mesh contains this layer
                     //  if it does not, that means it was removed completely and we
                     //  will remove all the loaded tiles in the loop below
-                    NavigationMeshLayer newLayer = null;
-                    newNavigationMesh.Layers.TryGetValue(oldGroupKey, out newLayer);
+                    newNavigationMesh.Layers.TryGetValue(oldGroupKey, out var newLayer);
 
                     foreach (var updatedTileCoord in layerUpdateInfo.UpdatedTiles)
                     {
@@ -207,8 +205,7 @@ namespace Stride.Navigation.Processors
             if (mesh == null || groupId == Guid.Empty)
                 return null;
 
-            NavigationMeshData data;
-            if (!loadedNavigationMeshes.TryGetValue(mesh, out data))
+            if (!loadedNavigationMeshes.TryGetValue(mesh, out var data))
             {
                 loadedNavigationMeshes.Add(mesh, data = new NavigationMeshData
                 {
@@ -216,11 +213,9 @@ namespace Stride.Navigation.Processors
                 });
             }
 
-            NavigationMeshGroupData groupData;
-            if (!data.LoadedGroups.TryGetValue(groupId, out groupData))
+            if (!data.LoadedGroups.TryGetValue(groupId, out var groupData))
             {
-                NavigationMeshLayer layer;
-                if (!mesh.Layers.TryGetValue(groupId, out layer))
+                if (!mesh.Layers.TryGetValue(groupId, out var layer))
                     return null; // Group not present in navigation mesh
 
                 data.LoadedGroups.Add(groupId, groupData = new NavigationMeshGroupData
@@ -262,7 +257,6 @@ namespace Stride.Navigation.Processors
                 {
                     loadedNavigationMeshes.Remove(data.NavigationMesh);
                 }
-                group.RecastNavigationMesh.Dispose();
             }
         }
 
