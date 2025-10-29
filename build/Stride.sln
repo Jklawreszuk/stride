@@ -338,7 +338,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stride.Importer.3D", "..\so
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stride.BepuPhysics.Tests", "..\sources\engine\Stride.BepuPhysics\Stride.BepuPhysics.Tests\Stride.BepuPhysics.Tests.csproj", "{7B70C783-4085-4702-B3C6-6570FD85CB8F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stride.FreeImage", "..\sources\tools\Stride.FreeImage\Stride.FreeImage.csproj", "{03695F9B-10E9-4A10-93AE-6402E46F10B5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stride.FreeImage", "..\sources\tools\Stride.FreeImage\Stride.FreeImage.csproj", "{03695F9B-10E9-4A10-93AE-6402E46F10B5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
