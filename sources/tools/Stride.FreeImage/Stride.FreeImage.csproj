@@ -15,7 +15,6 @@
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\..\core\Stride.Core\Stride.Core.csproj" />
-      <ProjectReference Include="..\..\engine\Stride.Graphics\Stride.Graphics.csproj" />
     </ItemGroup>
     <Import Project="$(StrideSdkTargets)" />
 </Project>
