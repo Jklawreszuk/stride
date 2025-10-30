@@ -107,7 +107,7 @@ namespace Stride.Graphics
             }
 
             // Save
-            bitmap.RotateFlip(RotateFlipType.Rotate180FlipX);
+            bitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
             bitmap.Save(imageStream, imageFormat);
         }
     }
