@@ -25,7 +25,7 @@ namespace Stride.Graphics
             using var memoryStream = new UnmanagedMemoryStream((byte*)pSource, size, capacity: size, access: FileAccess.Read);
             using var bitmap = FreeImageBitmap.FromStream(memoryStream);
             
-            bitmap.RotateFlip(RotateFlipType.Rotate180FlipX);
+            bitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
             bitmap.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_32_BPP);
             
             var image = Image.New2D(bitmap.Width, bitmap.Height, 1, PixelFormat.B8G8R8A8_UNorm, 1, bitmap.Line);
