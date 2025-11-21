@@ -163,8 +163,7 @@ namespace Stride.Navigation
             
             List<DtStraightPath> straightPath = new(query.MaxPathPoints);
             
-            status = _navQuery.FindStraightPath(startPoint, endPoint, 
-                polys, ref straightPath, query.MaxPathPoints, 0);
+            status = _navQuery.FindStraightPath(startPoint, endPoint, polys, ref straightPath, query.MaxPathPoints, 0);
             if (status.Failed())
                 return;
             result.PathFound = true;
