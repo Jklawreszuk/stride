@@ -184,6 +184,7 @@ namespace Stride.Navigation
             status = _navQuery.Raycast(startPoly, query.Source.AsRcVec3f(), 
                 query.Target.AsRcVec3f(), filter, 
                 out float t, out normal, ref polys);
+            result.Normal = new(normal.X, normal.Y, normal.Z);
             
             if (status.Failed())
                 return;

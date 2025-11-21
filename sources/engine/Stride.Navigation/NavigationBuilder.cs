@@ -16,8 +16,8 @@ namespace Stride.Navigation;
 internal class NavigationBuilder
 {
     private BuildSettings _buildSettings;
-    private GeneratedData _result = new();
-    private byte[] _triareas;
+    private GeneratedData _result;
+    private int[] _triareas;
     private RcHeightfield _solid;
     private RcContext _context;
     private RcCompactHeightfield _chf;
@@ -30,6 +30,20 @@ internal class NavigationBuilder
     public NavigationBuilder()
     {
         _context = new RcContext();
+    }
+    
+    private void Cleanup()
+    {
+        if(_navmeshData != null)
+        {
+            _navmeshData = null;
+            _navmeshDataLength = 0;
+        }
+        _solid = null;
+        _triareas = null;
+        _chf = null;
+        _pmesh = null;
+        _dmesh = null;
     }
 
     public GeneratedData BuildNavmesh(ref Vector3[] vertices, int numVertices, ref int[] indices, int numIndices)
@@ -67,7 +81,7 @@ internal class NavigationBuilder
 
         int maxEdgeLen = (int)(_buildSettings.EdgeMaxLen / _buildSettings.CellSize);
         float maxSimplificationError = _buildSettings.EdgeMaxError;
-        int maxVertsPerPoly = 6;
+        const int maxVertsPerPoly = 6;
         float detailSampleDist = _buildSettings.CellSize * _buildSettings.DetailSampleDist;
         float detailSampleMaxError = _buildSettings.CellHeight * _buildSettings.DetailSampleMaxError;
 
@@ -97,14 +111,13 @@ internal class NavigationBuilder
         _solid = new RcHeightfield(width, height, bmin, bmax, _buildSettings.CellSize, _buildSettings.CellHeight, borderSize);
         
         int numTriangles = numIndices / 3;
-        _triareas = new byte[numTriangles];
         
         Span<Vector3> vectorSpan = vertices.AsSpan();
         Span<float> floatSpan = MemoryMarshal.Cast<Vector3, float>(vectorSpan);
         
         // Find walkable triangles and rasterize into heightfield
-        RcCommons.MarkWalkableTriangles(_context, _buildSettings.AgentMaxSlope, floatSpan.ToArray(), indices, numTriangles, new());
-        RcRasterizations.RasterizeTriangles(_context,  floatSpan.ToArray(), indices, _triareas.Select(t => (int)t).ToArray(), numTriangles, _solid, walkableClimb);
+        _triareas = RcCommons.MarkWalkableTriangles(_context, _buildSettings.AgentMaxSlope, floatSpan.ToArray(), indices, numTriangles, new());
+        RcRasterizations.RasterizeTriangles(_context,  floatSpan.ToArray(), indices, _triareas, numTriangles, _solid, walkableClimb);
         
         // Filter walkable surfaces.
         RcFilters.FilterLowHangingWalkableObstacles(_context, walkableClimb, _solid);
@@ -206,19 +219,6 @@ internal class NavigationBuilder
         return _navmeshDataLength != 0 && _navmeshData != null;
     }
 
-    private void Cleanup()
-    {
-        if(_navmeshData != null)
-        {
-            _navmeshData = null;
-            _navmeshDataLength = 0;
-        }
-        _solid = null;
-        _triareas = null;
-        _chf = null;
-        _pmesh = null;
-        _dmesh = null;
-    }
 
     public void SetSettings(BuildSettings buildSettings)
     {

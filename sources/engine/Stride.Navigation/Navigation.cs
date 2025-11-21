@@ -96,7 +96,7 @@ namespace Stride.Navigation
             public float AgentMaxSlope;
         }
 
-        public class GeneratedData
+        public struct GeneratedData
         {
             public bool Success;
             public IntPtr NavmeshVertices;
