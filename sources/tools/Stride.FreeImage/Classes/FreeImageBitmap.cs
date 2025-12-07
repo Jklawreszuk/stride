@@ -178,23 +178,6 @@ namespace FreeImageAPI
 		/// bases on the specified image with the specified size.
 		/// </summary>
 		/// <param name="original">The original to clone from.</param>
-		/// <param name="newSize">The Size structure that represent the
-		/// size of the new <see cref="FreeImageBitmap"/>.</param>
-		/// <exception cref="Exception">The operation failed.</exception>
-		/// <exception cref="ArgumentNullException"><paramref name="original"/> is a null reference.</exception>
-		/// <exception cref="ArgumentOutOfRangeException">
-		/// <paramref name="newSize"/> are less or equal zero.
-		/// </exception>
-		public FreeImageBitmap(FreeImageBitmap original, Size newSize)
-			: this(original, newSize.Width, newSize.Height)
-		{
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="FreeImageBitmap"/> class
-		/// bases on the specified image with the specified size.
-		/// </summary>
-		/// <param name="original">The original to clone from.</param>
 		/// <param name="width">Width of the new <see cref="FreeImageBitmap"/>.</param>
 		/// <param name="height">Height of the new <see cref="FreeImageBitmap"/>.</param>
 		/// <exception cref="Exception">The operation failed.</exception>
@@ -227,69 +210,6 @@ namespace FreeImageAPI
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="FreeImageBitmap"/> class
-		/// bases on the specified stream.
-		/// </summary>
-		/// <param name="stream">Stream to read from.</param>
-		/// <param name="useIcm">Ignored.</param>
-		/// <exception cref="Exception">The operation failed.</exception>
-		/// <exception cref="ArgumentNullException"><paramref name="stream"/> is a null reference.</exception>
-		/// <remarks>
-		/// You must keep the stream open for the lifetime of the <see cref="FreeImageBitmap"/>.
-		/// </remarks>
-		public FreeImageBitmap(Stream stream, bool useIcm)
-			: this(stream)
-		{
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="FreeImageBitmap"/> class
-		/// bases on the specified stream.
-		/// </summary>
-		/// <param name="stream">Stream to read from.</param>
-		/// <exception cref="Exception">The operation failed.</exception>
-		/// <exception cref="ArgumentNullException"><paramref name="stream"/> is a null reference.</exception>
-		/// <remarks>
-		/// You must keep the stream open for the lifetime of the <see cref="FreeImageBitmap"/>.
-		/// </remarks>
-		public FreeImageBitmap(Stream stream)
-			: this(stream, FREE_IMAGE_FORMAT.FIF_UNKNOWN, FREE_IMAGE_LOAD_FLAGS.DEFAULT)
-		{
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="FreeImageBitmap"/> class
-		/// bases on the specified stream in the specified format.
-		/// </summary>
-		/// <param name="stream">Stream to read from.</param>
-		/// <param name="format">Format of the image.</param>
-		/// <exception cref="Exception">The operation failed.</exception>
-		/// <exception cref="ArgumentNullException"><paramref name="stream"/> is a null reference.</exception>
-		/// <remarks>
-		/// You must keep the stream open for the lifetime of the <see cref="FreeImageBitmap"/>.
-		/// </remarks>
-		public FreeImageBitmap(Stream stream, FREE_IMAGE_FORMAT format)
-			: this(stream, format, FREE_IMAGE_LOAD_FLAGS.DEFAULT)
-		{
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="FreeImageBitmap"/> class
-		/// bases on the specified stream with the specified loading flags.
-		/// </summary>
-		/// <param name="stream">Stream to read from.</param>
-		/// <param name="flags">Flags to enable or disable plugin-features.</param>
-		/// <exception cref="Exception">The operation failed.</exception>
-		/// <exception cref="ArgumentNullException"><paramref name="stream"/> is a null reference.</exception>
-		/// <remarks>
-		/// You must keep the stream open for the lifetime of the <see cref="FreeImageBitmap"/>.
-		/// </remarks>
-		public FreeImageBitmap(Stream stream, FREE_IMAGE_LOAD_FLAGS flags)
-			: this(stream, FREE_IMAGE_FORMAT.FIF_UNKNOWN, flags)
-		{
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="FreeImageBitmap"/> class
 		/// bases on the specified stream in the specified format
 		/// with the specified loading flags.
 		/// </summary>
@@ -301,7 +221,7 @@ namespace FreeImageAPI
 		/// <remarks>
 		/// You must keep the stream open for the lifetime of the <see cref="FreeImageBitmap"/>.
 		/// </remarks>
-		public FreeImageBitmap(Stream stream, FREE_IMAGE_FORMAT format, FREE_IMAGE_LOAD_FLAGS flags)
+		public FreeImageBitmap(Stream stream, FREE_IMAGE_FORMAT format = FREE_IMAGE_FORMAT.FIF_UNKNOWN, FREE_IMAGE_LOAD_FLAGS flags = FREE_IMAGE_LOAD_FLAGS.DEFAULT)
 		{
 			if (stream == null)
 			{
@@ -310,59 +230,6 @@ namespace FreeImageAPI
 			this.stream = stream;
 			disposeStream = false;
 			LoadFromStream(stream, format, flags);
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="FreeImageBitmap"/> class bases on the specified file.
-		/// </summary>
-		/// <param name="filename">The complete name of the file to load.</param>
-		/// <exception cref="Exception">The operation failed.</exception>
-		/// <exception cref="ArgumentNullException"><paramref name="filename"/> is a null reference.</exception>
-		/// <exception cref="FileNotFoundException"><paramref name="filename"/> does not exist.</exception>
-		public FreeImageBitmap(string filename)
-			: this(filename, FREE_IMAGE_LOAD_FLAGS.DEFAULT)
-		{
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="FreeImageBitmap"/> class bases on the specified file.
-		/// </summary>
-		/// <param name="filename">The complete name of the file to load.</param>
-		/// <param name="useIcm">Ignored.</param>
-		/// <exception cref="Exception">The operation failed.</exception>
-		/// <exception cref="ArgumentNullException"><paramref name="filename"/> is a null reference.</exception>
-		/// <exception cref="FileNotFoundException"><paramref name="filename"/> does not exist.</exception>
-		public FreeImageBitmap(string filename, bool useIcm)
-			: this(filename)
-		{
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="FreeImageBitmap"/> class bases on the specified file
-		/// with the specified loading flags.
-		/// </summary>
-		/// <param name="filename">The complete name of the file to load.</param>
-		/// <param name="flags">Flags to enable or disable plugin-features.</param>
-		/// <exception cref="Exception">The operation failed.</exception>
-		/// <exception cref="ArgumentNullException"><paramref name="filename"/> is a null reference.</exception>
-		/// <exception cref="FileNotFoundException"><paramref name="filename"/> does not exist.</exception>
-		public FreeImageBitmap(string filename, FREE_IMAGE_LOAD_FLAGS flags)
-			: this(filename, FREE_IMAGE_FORMAT.FIF_UNKNOWN, flags)
-		{
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="FreeImageBitmap"/> class bases on the specified file
-		/// in the specified format.
-		/// </summary>
-		/// <param name="filename">The complete name of the file to load.</param>
-		/// <param name="format">Format of the image.</param>
-		/// <exception cref="Exception">The operation failed.</exception>
-		/// <exception cref="ArgumentNullException"><paramref name="filename"/> is a null reference.</exception>
-		/// <exception cref="FileNotFoundException"><paramref name="filename"/> does not exist.</exception>
-		public FreeImageBitmap(string filename, FREE_IMAGE_FORMAT format)
-			: this(filename, format, FREE_IMAGE_LOAD_FLAGS.DEFAULT)
-		{
 		}
 
 		/// <summary>
@@ -375,7 +242,7 @@ namespace FreeImageAPI
 		/// <exception cref="Exception">The operation failed.</exception>
 		/// <exception cref="ArgumentNullException"><paramref name="filename"/> is a null reference.</exception>
 		/// <exception cref="FileNotFoundException"><paramref name="filename"/> does not exist.</exception>
-		public FreeImageBitmap(string filename, FREE_IMAGE_FORMAT format, FREE_IMAGE_LOAD_FLAGS flags)
+		public FreeImageBitmap(string filename, FREE_IMAGE_FORMAT format = FREE_IMAGE_FORMAT.FIF_UNKNOWN, FREE_IMAGE_LOAD_FLAGS flags = FREE_IMAGE_LOAD_FLAGS.DEFAULT)
 		{
 			if (filename == null)
 			{
@@ -3428,16 +3295,6 @@ namespace FreeImageAPI
 		public static FreeImageBitmap FromFile(string filename)
 		{
 			return new FreeImageBitmap(filename);
-		}
-
-		/// <summary>
-		/// Creates a <see cref="FreeImageBitmap"/> from the specified data stream.
-		/// </summary>
-		/// <param name="stream">A <see cref="Stream"/> that contains the data for this <see cref="FreeImageBitmap"/>.</param>
-		/// <returns>The <see cref="FreeImageBitmap"/> this method creates.</returns>
-		public static FreeImageBitmap FromStream(Stream stream)
-		{
-			return new FreeImageBitmap(stream);
 		}
 
 		/// <summary>

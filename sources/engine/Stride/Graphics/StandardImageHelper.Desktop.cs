@@ -23,7 +23,7 @@ namespace Stride.Graphics
         public static unsafe Image LoadFromMemory(IntPtr pSource, int size, bool makeACopy, GCHandle? handle)
         {
             using var memoryStream = new UnmanagedMemoryStream((byte*)pSource, size, capacity: size, access: FileAccess.Read);
-            using var bitmap = FreeImageBitmap.FromStream(memoryStream);
+            using var bitmap = new FreeImageBitmap(memoryStream);
             
             bitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
             bitmap.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_32_BPP);
