@@ -58,7 +58,7 @@ namespace FreeImageAPI.Metadata
 		/// The metadata model of <see cref="tag"/>.
 		/// </summary>
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private FREE_IMAGE_MDMODEL model;
+		private FreeImageMetadataModel model;
 
 		/// <summary>
 		/// Indicates whether this instance has already been disposed.
@@ -77,13 +77,13 @@ namespace FreeImageAPI.Metadata
 		/// List linking metadata-model and Type.
 		/// </summary>
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private static readonly Dictionary<FREE_IMAGE_MDTYPE, Type> idList;
+		private static readonly Dictionary<FreeImageMdType, Type> idList;
 
 		/// <summary>
 		/// List linking Type and metadata-model.
 		/// </summary>
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private static readonly Dictionary<Type, FREE_IMAGE_MDTYPE> typeList;
+		private static readonly Dictionary<Type, FreeImageMdType> typeList;
 
 		/// <summary>
 		/// Initializes a new instance of this class.
@@ -96,13 +96,13 @@ namespace FreeImageAPI.Metadata
 		/// Initializes a new instance of this class.
 		/// </summary>
 		/// <param name="model">The new model the tag should be of.</param>
-		public MetadataTag(FREE_IMAGE_MDMODEL model)
+		public MetadataTag(FreeImageMetadataModel model)
 		{
 			this.model = model;
 			tag = FreeImage.CreateTag();
 			selfCreated = true;
 
-			if (model == FREE_IMAGE_MDMODEL.FIMD_XMP)
+			if (model == FreeImageMetadataModel.Xmp)
 			{
 				Key = "XMLPacket";
 			}
@@ -127,7 +127,7 @@ namespace FreeImageAPI.Metadata
 			model = GetModel(dib, tag);
 			selfCreated = false;
 
-			if (model == FREE_IMAGE_MDMODEL.FIMD_XMP)
+			if (model == FreeImageMetadataModel.Xmp)
 			{
 				Key = "XMLPacket";
 			}
@@ -138,7 +138,7 @@ namespace FreeImageAPI.Metadata
 		/// </summary>
 		/// <param name="tag">The <see cref="FITAG"/> to represent.</param>
 		/// <param name="model">The model of <paramref name="tag"/>.</param>
-		public MetadataTag(FITAG tag, FREE_IMAGE_MDMODEL model)
+		public MetadataTag(FITAG tag, FreeImageMetadataModel model)
 		{
 			if (tag.IsNull)
 			{
@@ -148,7 +148,7 @@ namespace FreeImageAPI.Metadata
 			this.model = model;
 			selfCreated = false;
 
-			if (model == FREE_IMAGE_MDMODEL.FIMD_XMP)
+			if (model == FreeImageMetadataModel.Xmp)
 			{
 				Key = "XMLPacket";
 			}
@@ -156,45 +156,45 @@ namespace FreeImageAPI.Metadata
 
 		static MetadataTag()
 		{
-			idList = new Dictionary<FREE_IMAGE_MDTYPE, Type>();
-			idList.Add(FREE_IMAGE_MDTYPE.FIDT_BYTE, typeof(byte));
-			idList.Add(FREE_IMAGE_MDTYPE.FIDT_SHORT, typeof(ushort));
-			idList.Add(FREE_IMAGE_MDTYPE.FIDT_LONG, typeof(uint));
-			idList.Add(FREE_IMAGE_MDTYPE.FIDT_RATIONAL, typeof(FIURational));
-			idList.Add(FREE_IMAGE_MDTYPE.FIDT_SBYTE, typeof(sbyte));
-			idList.Add(FREE_IMAGE_MDTYPE.FIDT_UNDEFINED, typeof(byte));
-			idList.Add(FREE_IMAGE_MDTYPE.FIDT_SSHORT, typeof(short));
-			idList.Add(FREE_IMAGE_MDTYPE.FIDT_SLONG, typeof(int));
-			idList.Add(FREE_IMAGE_MDTYPE.FIDT_SRATIONAL, typeof(FIRational));
-			idList.Add(FREE_IMAGE_MDTYPE.FIDT_FLOAT, typeof(float));
-			idList.Add(FREE_IMAGE_MDTYPE.FIDT_DOUBLE, typeof(double));
-			idList.Add(FREE_IMAGE_MDTYPE.FIDT_IFD, typeof(uint));
-			idList.Add(FREE_IMAGE_MDTYPE.FIDT_PALETTE, typeof(RGBQUAD));
+			idList = new Dictionary<FreeImageMdType, Type>();
+			idList.Add(FreeImageMdType.Byte, typeof(byte));
+			idList.Add(FreeImageMdType.Short, typeof(ushort));
+			idList.Add(FreeImageMdType.Long, typeof(uint));
+			idList.Add(FreeImageMdType.Rational, typeof(FIURational));
+			idList.Add(FreeImageMdType.SByte, typeof(sbyte));
+			idList.Add(FreeImageMdType.Undefined, typeof(byte));
+			idList.Add(FreeImageMdType.SShort, typeof(short));
+			idList.Add(FreeImageMdType.SLong, typeof(int));
+			idList.Add(FreeImageMdType.SRational, typeof(FIRational));
+			idList.Add(FreeImageMdType.Float, typeof(float));
+			idList.Add(FreeImageMdType.Double, typeof(double));
+			idList.Add(FreeImageMdType.Ifd, typeof(uint));
+			idList.Add(FreeImageMdType.Palette, typeof(RGBQUAD));
 
-			typeList = new Dictionary<Type, FREE_IMAGE_MDTYPE>();
-			typeList.Add(typeof(ushort), FREE_IMAGE_MDTYPE.FIDT_SHORT);
-			typeList.Add(typeof(ushort[]), FREE_IMAGE_MDTYPE.FIDT_SHORT);
-			typeList.Add(typeof(string), FREE_IMAGE_MDTYPE.FIDT_ASCII);
-			typeList.Add(typeof(uint), FREE_IMAGE_MDTYPE.FIDT_LONG);
-			typeList.Add(typeof(uint[]), FREE_IMAGE_MDTYPE.FIDT_LONG);
-			typeList.Add(typeof(FIURational), FREE_IMAGE_MDTYPE.FIDT_RATIONAL);
-			typeList.Add(typeof(FIURational[]), FREE_IMAGE_MDTYPE.FIDT_RATIONAL);
-			typeList.Add(typeof(sbyte), FREE_IMAGE_MDTYPE.FIDT_SBYTE);
-			typeList.Add(typeof(sbyte[]), FREE_IMAGE_MDTYPE.FIDT_SBYTE);
-			typeList.Add(typeof(byte), FREE_IMAGE_MDTYPE.FIDT_BYTE);
-			typeList.Add(typeof(byte[]), FREE_IMAGE_MDTYPE.FIDT_BYTE);
-			typeList.Add(typeof(short), FREE_IMAGE_MDTYPE.FIDT_SSHORT);
-			typeList.Add(typeof(short[]), FREE_IMAGE_MDTYPE.FIDT_SSHORT);
-			typeList.Add(typeof(int), FREE_IMAGE_MDTYPE.FIDT_SLONG);
-			typeList.Add(typeof(int[]), FREE_IMAGE_MDTYPE.FIDT_SLONG);
-			typeList.Add(typeof(FIRational), FREE_IMAGE_MDTYPE.FIDT_SRATIONAL);
-			typeList.Add(typeof(FIRational[]), FREE_IMAGE_MDTYPE.FIDT_SRATIONAL);
-			typeList.Add(typeof(float), FREE_IMAGE_MDTYPE.FIDT_FLOAT);
-			typeList.Add(typeof(float[]), FREE_IMAGE_MDTYPE.FIDT_FLOAT);
-			typeList.Add(typeof(double), FREE_IMAGE_MDTYPE.FIDT_DOUBLE);
-			typeList.Add(typeof(double[]), FREE_IMAGE_MDTYPE.FIDT_DOUBLE);
-			typeList.Add(typeof(RGBQUAD), FREE_IMAGE_MDTYPE.FIDT_PALETTE);
-			typeList.Add(typeof(RGBQUAD[]), FREE_IMAGE_MDTYPE.FIDT_PALETTE);
+			typeList = new Dictionary<Type, FreeImageMdType>();
+			typeList.Add(typeof(ushort), FreeImageMdType.Short);
+			typeList.Add(typeof(ushort[]), FreeImageMdType.Short);
+			typeList.Add(typeof(string), FreeImageMdType.Ascii);
+			typeList.Add(typeof(uint), FreeImageMdType.Long);
+			typeList.Add(typeof(uint[]), FreeImageMdType.Long);
+			typeList.Add(typeof(FIURational), FreeImageMdType.Rational);
+			typeList.Add(typeof(FIURational[]), FreeImageMdType.Rational);
+			typeList.Add(typeof(sbyte), FreeImageMdType.SByte);
+			typeList.Add(typeof(sbyte[]), FreeImageMdType.SByte);
+			typeList.Add(typeof(byte), FreeImageMdType.Byte);
+			typeList.Add(typeof(byte[]), FreeImageMdType.Byte);
+			typeList.Add(typeof(short), FreeImageMdType.SShort);
+			typeList.Add(typeof(short[]), FreeImageMdType.SShort);
+			typeList.Add(typeof(int), FreeImageMdType.SLong);
+			typeList.Add(typeof(int[]), FreeImageMdType.SLong);
+			typeList.Add(typeof(FIRational), FreeImageMdType.SRational);
+			typeList.Add(typeof(FIRational[]), FreeImageMdType.SRational);
+			typeList.Add(typeof(float), FreeImageMdType.Float);
+			typeList.Add(typeof(float[]), FreeImageMdType.Float);
+			typeList.Add(typeof(double), FreeImageMdType.Double);
+			typeList.Add(typeof(double[]), FreeImageMdType.Double);
+			typeList.Add(typeof(RGBQUAD), FreeImageMdType.Palette);
+			typeList.Add(typeof(RGBQUAD[]), FreeImageMdType.Palette);
 		}
 
 		/// <summary>
@@ -269,10 +269,10 @@ namespace FreeImageAPI.Metadata
 			return value.tag;
 		}
 
-		private static FREE_IMAGE_MDMODEL GetModel(FIBITMAP dib, FITAG tag)
+		private static FreeImageMetadataModel GetModel(FIBITMAP dib, FITAG tag)
 		{
 			FITAG value;
-			foreach (FREE_IMAGE_MDMODEL model in FreeImage.FREE_IMAGE_MDMODELS)
+			foreach (FreeImageMetadataModel model in FreeImage.FREE_IMAGE_MDMODELS)
 			{
 				FIMETADATA mData = FreeImage.FindFirstMetadata(model, dib, out value);
 				if (mData.IsNull)
@@ -304,7 +304,7 @@ namespace FreeImageAPI.Metadata
 		/// <summary>
 		/// Gets the model of the metadata.
 		/// </summary>
-		public FREE_IMAGE_MDMODEL Model
+		public FreeImageMetadataModel Model
 		{
 			get { CheckDisposed(); return model; }
 		}
@@ -318,7 +318,7 @@ namespace FreeImageAPI.Metadata
 			set
 			{
 				CheckDisposed();
-				if ((model != FREE_IMAGE_MDMODEL.FIMD_XMP) || (value == "XMLPacket"))
+				if ((model != FreeImageMetadataModel.Xmp) || (value == "XMLPacket"))
 				{
 					FreeImage.SetTagKey(tag, value);
 				}
@@ -346,7 +346,7 @@ namespace FreeImageAPI.Metadata
 		/// <summary>
 		/// Gets the type of the metadata.
 		/// </summary>
-		public FREE_IMAGE_MDTYPE Type
+		public FreeImageMdType Type
 		{
 			get { CheckDisposed(); return FreeImage.GetTagType(tag); }
 			internal set { FreeImage.SetTagType(tag, value); }
@@ -394,7 +394,7 @@ namespace FreeImageAPI.Metadata
 					CheckDisposed();
 					int cnt = (int)Count;
 
-					if (Type == FREE_IMAGE_MDTYPE.FIDT_ASCII)
+					if (Type == FreeImageMdType.Ascii)
 					{
 						byte* value = (byte*)FreeImage.GetTagValue(tag);
 						StringBuilder sb = new StringBuilder();
@@ -404,7 +404,7 @@ namespace FreeImageAPI.Metadata
 						}
 						return sb.ToString();
 					}
-					else if (Type == FREE_IMAGE_MDTYPE.FIDT_NOTYPE)
+					else if (Type == FreeImageMdType.NoType)
 					{
 						return null;
 					}
@@ -426,8 +426,8 @@ namespace FreeImageAPI.Metadata
 
 		/// <summary>
 		/// Sets the value of the metadata.
-		/// <para> In case value is of byte or byte[] <see cref="FREE_IMAGE_MDTYPE.FIDT_UNDEFINED"/> is assumed.</para>
-		/// <para> In case value is of uint or uint[] <see cref="FREE_IMAGE_MDTYPE.FIDT_LONG"/> is assumed.</para>
+		/// <para> In case value is of byte or byte[] <see cref="FreeImageMdType.Undefined"/> is assumed.</para>
+		/// <para> In case value is of uint or uint[] <see cref="FreeImageMdType.Long"/> is assumed.</para>
 		/// </summary>
 		/// <param name="value">New data of the metadata.</param>
 		/// <returns>True on success, false on failure.</returns>
@@ -457,7 +457,7 @@ namespace FreeImageAPI.Metadata
 		/// <paramref name="value"/> is null.</exception>
 		/// <exception cref="ArgumentException">
 		/// <paramref name="value"/> and <paramref name="type"/> to not fit.</exception>
-		public bool SetValue(object value, FREE_IMAGE_MDTYPE type)
+		public bool SetValue(object value, FreeImageMdType type)
 		{
 			CheckDisposed();
 			if ((!value.GetType().IsArray) && (value is not string))
@@ -486,7 +486,7 @@ namespace FreeImageAPI.Metadata
 		/// <paramref name="value"/> is not Array.</exception>
 		/// <exception cref="NotSupportedException">
 		/// <paramref name="type"/> is FIDT_NOTYPE.</exception>
-		private unsafe bool SetArrayValue(object value, FREE_IMAGE_MDTYPE type)
+		private unsafe bool SetArrayValue(object value, FreeImageMdType type)
 		{
 			if (value == null)
 			{
@@ -495,7 +495,7 @@ namespace FreeImageAPI.Metadata
 
 			byte[] data = null;
 
-			if (type == FREE_IMAGE_MDTYPE.FIDT_ASCII)
+			if (type == FreeImageMdType.Ascii)
 			{
 				if (value is not string tempValue)
 				{
@@ -510,7 +510,7 @@ namespace FreeImageAPI.Metadata
 					data[i] = (byte)tempValue[i];
 				}
 			}
-			else if (type == FREE_IMAGE_MDTYPE.FIDT_NOTYPE)
+			else if (type == FreeImageMdType.NoType)
 			{
 				throw new NotSupportedException("type is not supported.");
 			}
@@ -539,40 +539,40 @@ namespace FreeImageAPI.Metadata
 			return FreeImage.SetTagValue(tag, data);
 		}
 
-		private static bool CheckType(Type dataType, FREE_IMAGE_MDTYPE type)
+		private static bool CheckType(Type dataType, FreeImageMdType type)
 		{
 			if (dataType != null)
 				switch (type)
 				{
-					case FREE_IMAGE_MDTYPE.FIDT_ASCII:
+					case FreeImageMdType.Ascii:
 						return dataType == typeof(string);
-					case FREE_IMAGE_MDTYPE.FIDT_BYTE:
+					case FreeImageMdType.Byte:
 						return dataType == typeof(byte);
-					case FREE_IMAGE_MDTYPE.FIDT_DOUBLE:
+					case FreeImageMdType.Double:
 						return dataType == typeof(double);
-					case FREE_IMAGE_MDTYPE.FIDT_FLOAT:
+					case FreeImageMdType.Float:
 						return dataType == typeof(float);
-					case FREE_IMAGE_MDTYPE.FIDT_IFD:
+					case FreeImageMdType.Ifd:
 						return dataType == typeof(uint);
-					case FREE_IMAGE_MDTYPE.FIDT_LONG:
+					case FreeImageMdType.Long:
 						return dataType == typeof(uint);
-					case FREE_IMAGE_MDTYPE.FIDT_NOTYPE:
+					case FreeImageMdType.NoType:
 						return false;
-					case FREE_IMAGE_MDTYPE.FIDT_PALETTE:
+					case FreeImageMdType.Palette:
 						return dataType == typeof(RGBQUAD);
-					case FREE_IMAGE_MDTYPE.FIDT_RATIONAL:
+					case FreeImageMdType.Rational:
 						return dataType == typeof(FIURational);
-					case FREE_IMAGE_MDTYPE.FIDT_SBYTE:
+					case FreeImageMdType.SByte:
 						return dataType == typeof(sbyte);
-					case FREE_IMAGE_MDTYPE.FIDT_SHORT:
+					case FreeImageMdType.Short:
 						return dataType == typeof(ushort);
-					case FREE_IMAGE_MDTYPE.FIDT_SLONG:
+					case FreeImageMdType.SLong:
 						return dataType == typeof(int);
-					case FREE_IMAGE_MDTYPE.FIDT_SRATIONAL:
+					case FreeImageMdType.SRational:
 						return dataType == typeof(FIRational);
-					case FREE_IMAGE_MDTYPE.FIDT_SSHORT:
+					case FreeImageMdType.SShort:
 						return dataType == typeof(short);
-					case FREE_IMAGE_MDTYPE.FIDT_UNDEFINED:
+					case FreeImageMdType.Undefined:
 						return dataType == typeof(byte);
 				}
 			return false;
@@ -607,7 +607,7 @@ namespace FreeImageAPI.Metadata
 			{
 				return false;
 			}
-			FREE_IMAGE_MDMODEL _model = Model;
+			FreeImageMetadataModel _model = Model;
 			string _key = Key;
 			selfCreated = false;
 			FreeImage.DeleteTag(tag);

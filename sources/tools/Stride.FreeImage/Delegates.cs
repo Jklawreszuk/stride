@@ -49,7 +49,7 @@ namespace FreeImageAPI
 	/// <param name="message">The errormessage.</param>
 	// DLL_API is missing in the definition of the callbackfuntion.
 	[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi, ThrowOnUnmappableChar = false)]
-	public delegate void OutputMessageFunction(FREE_IMAGE_FORMAT fif, string message);
+	public delegate void OutputMessageFunction(FreeImageFormat fif, string message);
 }
 
 namespace FreeImageAPI.IO
@@ -176,7 +176,7 @@ namespace FreeImageAPI.Plugins
 	/// Delegate to a function that returns whether the plugin can handle the
 	/// specified image type.
 	/// </summary>
-	public delegate bool SupportsExportTypeProc(FREE_IMAGE_TYPE type);
+	public delegate bool SupportsExportTypeProc(FreeImageType type);
 
 	/// <summary>
 	/// Delegate to a function that returns whether the plugin can handle

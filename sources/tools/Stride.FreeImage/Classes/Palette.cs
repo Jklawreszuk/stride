@@ -28,7 +28,7 @@ namespace FreeImageAPI
 		/// <param name="dib">Handle to a FreeImage bitmap.</param>
 		/// <exception cref="ArgumentNullException"><paramref name="dib"/> is null.</exception>
 		/// <exception cref="ArgumentException"><paramref name="dib"/> is not
-		/// <see cref="FREE_IMAGE_TYPE.FIT_BITMAP"/><para/>-or-<para/>
+		/// <see cref="FreeImageType.Bitmap"/><para/>-or-<para/>
 		/// <paramref name="dib"/> has more than 8bpp.</exception>
 		public Palette(FIBITMAP dib)
 			: base(FreeImage.GetPalette(dib), (int)FreeImage.GetColorsUsed(dib))
@@ -37,7 +37,7 @@ namespace FreeImageAPI
 			{
 				throw new ArgumentNullException("dib");
 			}
-			if (FreeImage.GetImageType(dib) != FREE_IMAGE_TYPE.FIT_BITMAP)
+			if (FreeImage.GetImageType(dib) != FreeImageType.Bitmap)
 			{
 				throw new ArgumentException("dib");
 			}
@@ -54,11 +54,11 @@ namespace FreeImageAPI
 		/// <param name="tag">The tag containing the palette.</param>
 		/// <exception cref="ArgumentNullException"><paramref name="tag"/> is null.</exception>
 		/// <exception cref="ArgumentException"><paramref name="tag"/> is not
-		/// <see cref="FREE_IMAGE_MDTYPE.FIDT_PALETTE"/>.</exception>
+		/// <see cref="FreeImageMdType.Palette"/>.</exception>
 		public Palette(FITAG tag)
 			: base(FreeImage.GetTagValue(tag), (int)FreeImage.GetTagCount(tag))
 		{
-			if (FreeImage.GetTagType(tag) != FREE_IMAGE_MDTYPE.FIDT_PALETTE)
+			if (FreeImage.GetTagType(tag) != FreeImageMdType.Palette)
 			{
 				throw new ArgumentException("tag");
 			}
@@ -70,11 +70,11 @@ namespace FreeImageAPI
 		/// </summary>
 		/// <param name="tag">The tag containing the palette.</param>
 		/// <exception cref="ArgumentException"><paramref name="tag"/> is not
-		/// <see cref="FREE_IMAGE_MDTYPE.FIDT_PALETTE"/>.</exception>
+		/// <see cref="FreeImageMdType.Palette"/>.</exception>
 		public Palette(MetadataTag tag)
 			: base(FreeImage.GetTagValue(tag.tag), (int)tag.Count)
 		{
-			if (FreeImage.GetTagType(tag) != FREE_IMAGE_MDTYPE.FIDT_PALETTE)
+			if (FreeImage.GetTagType(tag) != FreeImageMdType.Palette)
 			{
 				throw new ArgumentException("tag");
 			}

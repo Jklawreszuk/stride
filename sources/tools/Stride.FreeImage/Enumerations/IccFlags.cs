@@ -29,40 +29,25 @@
 // ==========================================================
 // CVS
 // $Revision: 1.1 $
-// $Date: 2007/11/28 15:33:40 $
-// $Id: FREE_IMAGE_COLOR_TYPE.cs,v 1.1 2007/11/28 15:33:40 cklein05 Exp $
+// $Date: 2007/11/28 15:33:38 $
+// $Id: ICC_FLAGS.cs,v 1.1 2007/11/28 15:33:38 cklein05 Exp $
 // ==========================================================
 
 namespace FreeImageAPI
 {
 	/// <summary>
-	/// Image color types used in FreeImage.
+	/// Flags for ICC profiles.
 	/// </summary>
-	public enum FREE_IMAGE_COLOR_TYPE
+	[System.Flags]
+	public enum IccFlags : ushort
 	{
 		/// <summary>
-		/// min value is white
+		/// Default value.
 		/// </summary>
-		FIC_MINISWHITE = 0,
+		Default = 0x00,
 		/// <summary>
-		/// min value is black
+		/// The color is CMYK.
 		/// </summary>
-		FIC_MINISBLACK = 1,
-		/// <summary>
-		/// RGB color model
-		/// </summary>
-		FIC_RGB = 2,
-		/// <summary>
-		/// color map indexed
-		/// </summary>
-		FIC_PALETTE = 3,
-		/// <summary>
-		/// RGB color model with alpha channel
-		/// </summary>
-		FIC_RGBALPHA = 4,
-		/// <summary>
-		/// CMYK color model
-		/// </summary>
-		FIC_CMYK = 5
+		ColorIsCmyk = 0x01
 	}
 }

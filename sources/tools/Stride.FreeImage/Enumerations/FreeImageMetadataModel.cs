@@ -30,27 +30,63 @@
 // CVS
 // $Revision: 1.1 $
 // $Date: 2007/11/28 15:33:39 $
-// $Id: FREE_IMAGE_TMO.cs,v 1.1 2007/11/28 15:33:39 cklein05 Exp $
+// $Id: FREE_IMAGE_MDMODEL.cs,v 1.1 2007/11/28 15:33:39 cklein05 Exp $
 // ==========================================================
 
 namespace FreeImageAPI
 {
 	/// <summary>
-	/// Tone mapping operators. Constants used in FreeImage_ToneMapping.
+	/// Metadata models supported by FreeImage.
 	/// </summary>
-	public enum FREE_IMAGE_TMO
+	public enum FreeImageMetadataModel
 	{
 		/// <summary>
-		/// Adaptive logarithmic mapping (F. Drago, 2003)
+		/// No data
 		/// </summary>
-		FITMO_DRAGO03 = 0,
+		NoData = -1,
 		/// <summary>
-		/// Dynamic range reduction inspired by photoreceptor physiology (E. Reinhard, 2005)
+		/// single comment or keywords
 		/// </summary>
-		FITMO_REINHARD05 = 1,
+		Comments = 0,
 		/// <summary>
-		/// Gradient domain high dynamic range compression (R. Fattal, 2002)
+		/// Exif-TIFF metadata
 		/// </summary>
-		FITMO_FATTAL02
+		ExifMain = 1,
+		/// <summary>
+		/// Exif-specific metadata
+		/// </summary>
+		ExifExif = 2,
+		/// <summary>
+		/// Exif GPS metadata
+		/// </summary>
+		ExifGps = 3,
+		/// <summary>
+		/// Exif maker note metadata
+		/// </summary>
+		ExifMakerNote = 4,
+		/// <summary>
+		/// Exif interoperability metadata
+		/// </summary>
+		ExifInterop = 5,
+		/// <summary>
+		/// IPTC/NAA metadata
+		/// </summary>
+		Iptc = 6,
+		/// <summary>
+		/// Adobe XMP metadata
+		/// </summary>
+		Xmp = 7,
+		/// <summary>
+		/// GeoTIFF metadata
+		/// </summary>
+		GeoTiff = 8,
+		/// <summary>
+		/// Animation metadata
+		/// </summary>
+		Animation = 9,
+		/// <summary>
+		/// Used to attach other metadata types to a dib
+		/// </summary>
+		Custom = 10
 	}
 }

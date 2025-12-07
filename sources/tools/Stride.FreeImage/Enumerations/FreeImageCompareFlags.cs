@@ -30,28 +30,36 @@
 // CVS
 // $Revision: 1.1 $
 // $Date: 2007/11/28 15:33:40 $
-// $Id: MD_SEARCH_FLAGS.cs,v 1.1 2007/11/28 15:33:40 cklein05 Exp $
+// $Id: FREE_IMAGE_COMPARE_FLAGS.cs,v 1.1 2007/11/28 15:33:40 cklein05 Exp $
 // ==========================================================
 
 namespace FreeImageAPI
 {
 	/// <summary>
-	/// List different search modes.
+	/// List of combinable compare modes.
 	/// </summary>
 	[System.Flags]
-	public enum MD_SEARCH_FLAGS
+	public enum FreeImageCompareFlags
 	{
 		/// <summary>
-		/// The key of the metadata.
+		/// Compare headers.
 		/// </summary>
-		KEY = 0x1,
+		Header = 0x1,
 		/// <summary>
-		/// The description of the metadata
+		/// Compare palettes.
 		/// </summary>
-		DESCRIPTION = 0x2,
+		Palette = 0x2,
 		/// <summary>
-		/// The ToString value of the metadata
+		/// Compare pixel data.
 		/// </summary>
-		TOSTRING = 0x4,
+		Data = 0x4,
+		/// <summary>
+		/// Compare meta data.
+		/// </summary>
+		Metadata = 0x8,
+		/// <summary>
+		/// Compare everything.
+		/// </summary>
+		Complete = (Header | Palette | Data | Metadata)
 	}
 }

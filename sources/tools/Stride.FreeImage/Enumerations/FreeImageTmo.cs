@@ -30,27 +30,27 @@
 // CVS
 // $Revision: 1.1 $
 // $Date: 2007/11/28 15:33:39 $
-// $Id: FREE_IMAGE_METADATA_COPY.cs,v 1.1 2007/11/28 15:33:39 cklein05 Exp $
+// $Id: FREE_IMAGE_TMO.cs,v 1.1 2007/11/28 15:33:39 cklein05 Exp $
 // ==========================================================
 
 namespace FreeImageAPI
 {
 	/// <summary>
-	/// Flags for copying data from a bitmap to another.
+	/// Tone mapping operators. Constants used in FreeImage_ToneMapping.
 	/// </summary>
-	public enum FREE_IMAGE_METADATA_COPY
+	public enum FreeImageTmo
 	{
 		/// <summary>
-		/// Exisiting metadata will remain unchanged.
+		/// Adaptive logarithmic mapping (F. Drago, 2003)
 		/// </summary>
-		KEEP_EXISITNG = 0x0,
+		Drago03 = 0,
 		/// <summary>
-		/// Existing metadata will be cleared.
+		/// Dynamic range reduction inspired by photoreceptor physiology (E. Reinhard, 2005)
 		/// </summary>
-		CLEAR_EXISTING = 0x1,
+		Reinhard05 = 1,
 		/// <summary>
-		/// Existing metadata will be overwritten.
+		/// Gradient domain high dynamic range compression (R. Fattal, 2002)
 		/// </summary>
-		REPLACE_EXISTING = 0x2
+		Fattal02
 	}
 }

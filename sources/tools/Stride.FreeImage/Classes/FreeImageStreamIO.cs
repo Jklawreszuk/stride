@@ -58,7 +58,7 @@ namespace FreeImageAPI.IO
 	{
 		/// <summary>
 		/// <see cref="FreeImageAPI.IO.FreeImageIO"/> structure that can be used to read from streams via
-		/// <see cref="FreeImageAPI.FreeImage.LoadFromHandle(FREE_IMAGE_FORMAT, ref FreeImageIO, fi_handle, FREE_IMAGE_LOAD_FLAGS)"/>.
+		/// <see cref="FreeImageAPI.FreeImage.LoadFromHandle(FreeImageFormat, ref FreeImageIO, fi_handle, FreeImageLoadFlags)"/>.
 		/// </summary>
 		public static readonly FreeImageIO io;
 

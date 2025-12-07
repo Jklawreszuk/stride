@@ -29,37 +29,25 @@
 // ==========================================================
 // CVS
 // $Revision: 1.1 $
-// $Date: 2007/11/28 15:33:40 $
-// $Id: FREE_IMAGE_COMPARE_FLAGS.cs,v 1.1 2007/11/28 15:33:40 cklein05 Exp $
+// $Date: 2007/11/28 15:33:39 $
+// $Id: FREE_IMAGE_QUANTIZE.cs,v 1.1 2007/11/28 15:33:39 cklein05 Exp $
 // ==========================================================
 
 namespace FreeImageAPI
 {
 	/// <summary>
-	/// List of combinable compare modes.
+	/// Color quantization algorithms.
+	/// Constants used in FreeImage_ColorQuantize.
 	/// </summary>
-	[System.Flags]
-	public enum FREE_IMAGE_COMPARE_FLAGS
+	public enum FreeImageQuantize
 	{
 		/// <summary>
-		/// Compare headers.
+		/// Xiaolin Wu color quantization algorithm
 		/// </summary>
-		HEADER = 0x1,
+		WuQuant = 0,
 		/// <summary>
-		/// Compare palettes.
+		/// NeuQuant neural-net quantization algorithm by Anthony Dekker
 		/// </summary>
-		PALETTE = 0x2,
-		/// <summary>
-		/// Compare pixel data.
-		/// </summary>
-		DATA = 0x4,
-		/// <summary>
-		/// Compare meta data.
-		/// </summary>
-		METADATA = 0x8,
-		/// <summary>
-		/// Compare everything.
-		/// </summary>
-		COMPLETE = (HEADER | PALETTE | DATA | METADATA)
+		NNQuant = 1
 	}
 }

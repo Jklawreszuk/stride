@@ -33,7 +33,7 @@ namespace FreeImageAPI
 		/// <summary>
 		/// Internal callback
 		/// </summary>
-		private static void OnMessage(FREE_IMAGE_FORMAT fif, string message)
+		private static void OnMessage(FreeImageFormat fif, string message)
 		{
 			// Get a local copy of the multicast-delegate
 			OutputMessageFunction m = Message;

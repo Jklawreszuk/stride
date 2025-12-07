@@ -30,24 +30,76 @@
 // CVS
 // $Revision: 1.1 $
 // $Date: 2007/11/28 15:33:39 $
-// $Id: FREE_IMAGE_QUANTIZE.cs,v 1.1 2007/11/28 15:33:39 cklein05 Exp $
+// $Id: FREE_IMAGE_MDTYPE.cs,v 1.1 2007/11/28 15:33:39 cklein05 Exp $
 // ==========================================================
 
 namespace FreeImageAPI
 {
 	/// <summary>
-	/// Color quantization algorithms.
-	/// Constants used in FreeImage_ColorQuantize.
+	/// Tag data type information (based on TIFF specifications)
+	/// Note: RATIONALs are the ratio of two 32-bit integer values.
 	/// </summary>
-	public enum FREE_IMAGE_QUANTIZE
+	public enum FreeImageMdType
 	{
 		/// <summary>
-		/// Xiaolin Wu color quantization algorithm
+		/// placeholder
 		/// </summary>
-		FIQ_WUQUANT = 0,
+		NoType = 0,
 		/// <summary>
-		/// NeuQuant neural-net quantization algorithm by Anthony Dekker
+		/// 8-bit unsigned integer
 		/// </summary>
-		FIQ_NNQUANT = 1
+		Byte = 1,
+		/// <summary>
+		/// 8-bit bytes w/ last byte null
+		/// </summary>
+		Ascii = 2,
+		/// <summary>
+		/// 16-bit unsigned integer
+		/// </summary>
+		Short = 3,
+		/// <summary>
+		/// 32-bit unsigned integer
+		/// </summary>
+		Long = 4,
+		/// <summary>
+		/// 64-bit unsigned fraction
+		/// </summary>
+		Rational = 5,
+		/// <summary>
+		/// 8-bit signed integer
+		/// </summary>
+		SByte = 6,
+		/// <summary>
+		/// 8-bit untyped data
+		/// </summary>
+		Undefined = 7,
+		/// <summary>
+		/// 16-bit signed integer
+		/// </summary>
+		SShort = 8,
+		/// <summary>
+		/// 32-bit signed integer
+		/// </summary>
+		SLong = 9,
+		/// <summary>
+		/// 64-bit signed fraction
+		/// </summary>
+		SRational = 10,
+		/// <summary>
+		/// 32-bit IEEE floating point
+		/// </summary>
+		Float = 11,
+		/// <summary>
+		/// 64-bit IEEE floating point
+		/// </summary>
+		Double = 12,
+		/// <summary>
+		/// 32-bit unsigned integer (offset)
+		/// </summary>
+		Ifd = 13,
+		/// <summary>
+		/// 32-bit RGBQUAD
+		/// </summary>
+		Palette = 14
 	}
 }

@@ -252,7 +252,7 @@ namespace FreeImageAPI.Plugins
 		/// <summary>
 		/// Function that can be implemented.
 		/// </summary>
-		protected virtual bool SupportsExportTypeProc(FREE_IMAGE_TYPE type) { return false; }
+		protected virtual bool SupportsExportTypeProc(FreeImageType type) { return false; }
 		/// <summary>
 		/// Function that can be implemented.
 		/// </summary>
@@ -333,7 +333,7 @@ namespace FreeImageAPI.Plugins
 			initProc = new InitProc(RegisterProc);
 
 			// Register the plugin. The result will be saved and can be accessed later.
-			Registered = FreeImage.RegisterLocalPlugin(initProc, null, null, null, null) != FREE_IMAGE_FORMAT.FIF_UNKNOWN;
+			Registered = FreeImage.RegisterLocalPlugin(initProc, null, null, null, null) != FreeImageFormat.Unknown;
 			if (Registered)
 			{
 				PluginRepository.RegisterLocalPlugin(this);
@@ -345,7 +345,7 @@ namespace FreeImageAPI.Plugins
 			// Copy the function pointers
 			plugin = this.plugin;
 			// Retrieve the format if assigned to this plugin by FreeImage.
-			Format = (FREE_IMAGE_FORMAT)format_id;
+			Format = (FreeImageFormat)format_id;
 		}
 
 		/// <summary>
@@ -383,9 +383,9 @@ namespace FreeImageAPI.Plugins
 
 		/// <summary>
 		/// The format id assiged to the plugin.
-		/// Gets the <see cref="FREE_IMAGE_FORMAT"/> FreeImage assigned to this plugin.
+		/// Gets the <see cref="FreeImageFormat"/> FreeImage assigned to this plugin.
 		/// </summary>
-		public FREE_IMAGE_FORMAT Format { get; protected set; } = FREE_IMAGE_FORMAT.FIF_UNKNOWN;
+		public FreeImageFormat Format { get; protected set; } = FreeImageFormat.Unknown;
 
 		/// <summary>
 		/// Reads from an unmanaged stream.

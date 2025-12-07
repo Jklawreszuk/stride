@@ -42,7 +42,7 @@ namespace FreeImageAPI.Metadata
 {
 	/// <summary>
 	/// Represents a collection of all tags contained in the metadata model
-	/// <see cref="FREE_IMAGE_MDMODEL.FIMD_ANIMATION"/>.
+	/// <see cref="FreeImageMetadataModel.Animation"/>.
 	/// </summary>
 	public class MDM_ANIMATION : MetadataModel
 	{
@@ -55,9 +55,9 @@ namespace FreeImageAPI.Metadata
 		/// <summary>
 		/// Retrieves the datamodel that this instance represents.
 		/// </summary>
-		public override FREE_IMAGE_MDMODEL Model
+		public override FreeImageMetadataModel Model
 		{
-			get { return FREE_IMAGE_MDMODEL.FIMD_ANIMATION; }
+			get { return FreeImageMetadataModel.Animation; }
 		}
 
 		/// <summary>
@@ -319,7 +319,7 @@ namespace FreeImageAPI.Metadata
 
 	/// <summary>
 	/// Represents a collection of all tags contained in the metadata model
-	/// <see cref="FREE_IMAGE_MDMODEL.FIMD_COMMENTS"/>.
+	/// <see cref="FreeImageMetadataModel.Comments"/>.
 	/// </summary>
 	public class MDM_COMMENTS : MetadataModel
 	{
@@ -332,9 +332,9 @@ namespace FreeImageAPI.Metadata
 		/// <summary>
 		/// Retrieves the datamodel that this instance represents.
 		/// </summary>
-		public override FREE_IMAGE_MDMODEL Model
+		public override FreeImageMetadataModel Model
 		{
-			get { return FREE_IMAGE_MDMODEL.FIMD_COMMENTS; }
+			get { return FreeImageMetadataModel.Comments; }
 		}
 
 		/// <summary>
@@ -365,7 +365,7 @@ namespace FreeImageAPI.Metadata
 
 	/// <summary>
 	/// Represents a collection of all tags contained in the metadata model
-	/// <see cref="FREE_IMAGE_MDMODEL.FIMD_CUSTOM"/>.
+	/// <see cref="FreeImageMetadataModel.Custom"/>.
 	/// </summary>
 	public class MDM_CUSTOM : MetadataModel
 	{
@@ -378,15 +378,15 @@ namespace FreeImageAPI.Metadata
 		/// <summary>
 		/// Retrieves the datamodel that this instance represents.
 		/// </summary>
-		public override FREE_IMAGE_MDMODEL Model
+		public override FreeImageMetadataModel Model
 		{
-			get { return FREE_IMAGE_MDMODEL.FIMD_CUSTOM; }
+			get { return FreeImageMetadataModel.Custom; }
 		}
 	}
 
 	/// <summary>
 	/// Represents a collection of all tags contained in the metadata model
-	/// <see cref="FREE_IMAGE_MDMODEL.FIMD_EXIF_EXIF"/>.
+	/// <see cref="FreeImageMetadataModel.ExifExif"/>.
 	/// </summary>
 	public class MDM_EXIF_EXIF : MetadataModel
 	{
@@ -399,9 +399,9 @@ namespace FreeImageAPI.Metadata
 		/// <summary>
 		/// Retrieves the datamodel that this instance represents.
 		/// </summary>
-		public override FREE_IMAGE_MDMODEL Model
+		public override FreeImageMetadataModel Model
 		{
-			get { return FREE_IMAGE_MDMODEL.FIMD_EXIF_EXIF; }
+			get { return FreeImageMetadataModel.ExifExif; }
 		}
 
 		/// <summary>
@@ -2450,7 +2450,7 @@ namespace FreeImageAPI.Metadata
 
 	/// <summary>
 	/// Represents a collection of all tags contained in the metadata model
-	/// <see cref="FREE_IMAGE_MDMODEL.FIMD_EXIF_GPS"/>.
+	/// <see cref="FreeImageMetadataModel.ExifGps"/>.
 	/// </summary>
 	public class MDM_EXIF_GPS : MetadataModel
 	{
@@ -2463,9 +2463,9 @@ namespace FreeImageAPI.Metadata
 		/// <summary>
 		/// Retrieves the datamodel that this instance represents.
 		/// </summary>
-		public override FREE_IMAGE_MDMODEL Model
+		public override FreeImageMetadataModel Model
 		{
-			get { return FREE_IMAGE_MDMODEL.FIMD_EXIF_GPS; }
+			get { return FreeImageMetadataModel.ExifGps; }
 		}
 
 		/// <summary>
@@ -3452,7 +3452,7 @@ namespace FreeImageAPI.Metadata
 
 	/// <summary>
 	/// Represents a collection of all tags contained in the metadata model
-	/// <see cref="FREE_IMAGE_MDMODEL.FIMD_EXIF_INTEROP"/>.
+	/// <see cref="FreeImageMetadataModel.ExifInterop"/>.
 	/// </summary>
 	public class MDM_INTEROP : MetadataModel
 	{
@@ -3465,9 +3465,9 @@ namespace FreeImageAPI.Metadata
 		/// <summary>
 		/// Retrieves the datamodel that this instance represents.
 		/// </summary>
-		public override FREE_IMAGE_MDMODEL Model
+		public override FreeImageMetadataModel Model
 		{
-			get { return FREE_IMAGE_MDMODEL.FIMD_EXIF_INTEROP; }
+			get { return FreeImageMetadataModel.ExifInterop; }
 		}
 
 		/// <summary>
@@ -3497,7 +3497,7 @@ namespace FreeImageAPI.Metadata
 
 	/// <summary>
 	/// Represents a collection of all tags contained in the metadata model
-	/// <see cref="FREE_IMAGE_MDMODEL.FIMD_EXIF_MAIN"/>.
+	/// <see cref="FreeImageMetadataModel.ExifMain"/>.
 	/// </summary>
 	public class MDM_EXIF_MAIN : MetadataModel
 	{
@@ -3510,9 +3510,9 @@ namespace FreeImageAPI.Metadata
 		/// <summary>
 		/// Retrieves the datamodel that this instance represents.
 		/// </summary>
-		public override FREE_IMAGE_MDMODEL Model
+		public override FreeImageMetadataModel Model
 		{
-			get { return FREE_IMAGE_MDMODEL.FIMD_EXIF_MAIN; }
+			get { return FreeImageMetadataModel.ExifMain; }
 		}
 
 		/// <summary>
@@ -4517,7 +4517,7 @@ namespace FreeImageAPI.Metadata
 
 	/// <summary>
 	/// Represents a collection of all tags contained in the metadata model
-	/// <see cref="FREE_IMAGE_MDMODEL.FIMD_EXIF_MAKERNOTE"/>.
+	/// <see cref="FreeImageMetadataModel.ExifMakerNote"/>.
 	/// </summary>
 	public class MDM_MAKERNOTE : MetadataModel
 	{
@@ -4530,15 +4530,15 @@ namespace FreeImageAPI.Metadata
 		/// <summary>
 		/// Retrieves the datamodel that this instance represents.
 		/// </summary>
-		public override FREE_IMAGE_MDMODEL Model
+		public override FreeImageMetadataModel Model
 		{
-			get { return FREE_IMAGE_MDMODEL.FIMD_EXIF_MAKERNOTE; }
+			get { return FreeImageMetadataModel.ExifMakerNote; }
 		}
 	}
 
 	/// <summary>
 	/// Represents a collection of all tags contained in the metadata model
-	/// <see cref="FREE_IMAGE_MDMODEL.FIMD_GEOTIFF"/>.
+	/// <see cref="FreeImageMetadataModel.GeoTiff"/>.
 	/// </summary>
 	public class MDM_GEOTIFF : MetadataModel
 	{
@@ -4551,9 +4551,9 @@ namespace FreeImageAPI.Metadata
 		/// <summary>
 		/// Retrieves the datamodel that this instance represents.
 		/// </summary>
-		public override FREE_IMAGE_MDMODEL Model
+		public override FreeImageMetadataModel Model
 		{
-			get { return FREE_IMAGE_MDMODEL.FIMD_GEOTIFF; }
+			get { return FreeImageMetadataModel.GeoTiff; }
 		}
 
 		/// <summary>
@@ -4933,7 +4933,7 @@ namespace FreeImageAPI.Metadata
 
 	/// <summary>
 	/// Represents a collection of all tags contained in the metadata model
-	/// <see cref="FREE_IMAGE_MDMODEL.FIMD_IPTC"/>.
+	/// <see cref="FreeImageMetadataModel.Iptc"/>.
 	/// </summary>
 	public class MDM_IPTC : MetadataModel
 	{
@@ -4955,9 +4955,9 @@ namespace FreeImageAPI.Metadata
 		/// Setting this property's value to a null reference deletes the
 		/// metadata tag from the metadata model.
 		/// </remarks>
-		public override FREE_IMAGE_MDMODEL Model
+		public override FreeImageMetadataModel Model
 		{
-			get { return FREE_IMAGE_MDMODEL.FIMD_IPTC; }
+			get { return FreeImageMetadataModel.Iptc; }
 		}
 
 		/// <summary>
@@ -6597,7 +6597,7 @@ namespace FreeImageAPI.Metadata
 
 	/// <summary>
 	/// Represents a collection of all tags contained in the metadata model
-	/// <see cref="FREE_IMAGE_MDMODEL.FIMD_NODATA"/>.
+	/// <see cref="FreeImageMetadataModel.NoData"/>.
 	/// </summary>
 	public class MDM_NODATA : MetadataModel
 	{
@@ -6610,15 +6610,15 @@ namespace FreeImageAPI.Metadata
 		/// <summary>
 		/// Retrieves the datamodel that this instance represents.
 		/// </summary>
-		public override FREE_IMAGE_MDMODEL Model
+		public override FreeImageMetadataModel Model
 		{
-			get { return FREE_IMAGE_MDMODEL.FIMD_NODATA; }
+			get { return FreeImageMetadataModel.NoData; }
 		}
 	}
 
 	/// <summary>
 	/// Represents a collection of all tags contained in the metadata model
-	/// <see cref="FREE_IMAGE_MDMODEL.FIMD_XMP"/>.
+	/// <see cref="FreeImageMetadataModel.Xmp"/>.
 	/// </summary>
 	public class MDM_XMP : MetadataModel
 	{
@@ -6631,9 +6631,9 @@ namespace FreeImageAPI.Metadata
 		/// <summary>
 		/// Retrieves the datamodel that this instance represents.
 		/// </summary>
-		public override FREE_IMAGE_MDMODEL Model
+		public override FreeImageMetadataModel Model
 		{
-			get { return FREE_IMAGE_MDMODEL.FIMD_XMP; }
+			get { return FreeImageMetadataModel.Xmp; }
 		}
 
 		/// <summary>

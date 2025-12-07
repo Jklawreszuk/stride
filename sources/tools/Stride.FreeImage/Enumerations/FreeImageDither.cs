@@ -29,64 +29,45 @@
 // ==========================================================
 // CVS
 // $Revision: 1.1 $
-// $Date: 2007/11/28 15:33:39 $
-// $Id: FREE_IMAGE_MDMODEL.cs,v 1.1 2007/11/28 15:33:39 cklein05 Exp $
+// $Date: 2007/11/28 15:33:40 $
+// $Id: FREE_IMAGE_DITHER.cs,v 1.1 2007/11/28 15:33:40 cklein05 Exp $
 // ==========================================================
 
 namespace FreeImageAPI
 {
 	/// <summary>
-	/// Metadata models supported by FreeImage.
+	/// Dithering algorithms.
+	/// Constants used in FreeImage_Dither.
 	/// </summary>
-	public enum FREE_IMAGE_MDMODEL
+	public enum FreeImageDither
 	{
 		/// <summary>
-		/// No data
+		/// Floyd and Steinberg error diffusion
 		/// </summary>
-		FIMD_NODATA = -1,
+		Fs = 0,
 		/// <summary>
-		/// single comment or keywords
+		/// Bayer ordered dispersed dot dithering (order 2 dithering matrix)
 		/// </summary>
-		FIMD_COMMENTS = 0,
+		Bayer4X4 = 1,
 		/// <summary>
-		/// Exif-TIFF metadata
+		/// Bayer ordered dispersed dot dithering (order 3 dithering matrix)
 		/// </summary>
-		FIMD_EXIF_MAIN = 1,
+		Bayer8X8 = 2,
 		/// <summary>
-		/// Exif-specific metadata
+		/// Ordered clustered dot dithering (order 3 - 6x6 matrix)
 		/// </summary>
-		FIMD_EXIF_EXIF = 2,
+		Cluster6X6 = 3,
 		/// <summary>
-		/// Exif GPS metadata
+		/// Ordered clustered dot dithering (order 4 - 8x8 matrix)
 		/// </summary>
-		FIMD_EXIF_GPS = 3,
+		Cluster8X8 = 4,
 		/// <summary>
-		/// Exif maker note metadata
+		/// Ordered clustered dot dithering (order 8 - 16x16 matrix)
 		/// </summary>
-		FIMD_EXIF_MAKERNOTE = 4,
+		Cluster16X16 = 5,
 		/// <summary>
-		/// Exif interoperability metadata
+		/// Bayer ordered dispersed dot dithering (order 4 dithering matrix)
 		/// </summary>
-		FIMD_EXIF_INTEROP = 5,
-		/// <summary>
-		/// IPTC/NAA metadata
-		/// </summary>
-		FIMD_IPTC = 6,
-		/// <summary>
-		/// Abobe XMP metadata
-		/// </summary>
-		FIMD_XMP = 7,
-		/// <summary>
-		/// GeoTIFF metadata
-		/// </summary>
-		FIMD_GEOTIFF = 8,
-		/// <summary>
-		/// Animation metadata
-		/// </summary>
-		FIMD_ANIMATION = 9,
-		/// <summary>
-		/// Used to attach other metadata types to a dib
-		/// </summary>
-		FIMD_CUSTOM = 10
+		Bayer16X16 = 6
 	}
 }

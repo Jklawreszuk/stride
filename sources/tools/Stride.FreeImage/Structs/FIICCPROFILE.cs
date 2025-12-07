@@ -83,7 +83,7 @@ namespace FreeImageAPI
 		/// <summary>
 		/// Info flag of the profile.
 		/// </summary>
-		public ICC_FLAGS Flags { get; }
+		public IccFlags Flags { get; }
 
 		/// <summary>
 		/// Profile's size measured in bytes.
@@ -120,7 +120,7 @@ namespace FreeImageAPI
 		{
 			get
 			{
-				return ((Flags & ICC_FLAGS.FIICC_COLOR_IS_CMYK) != 0);
+				return ((Flags & IccFlags.ColorIsCmyk) != 0);
 			}
 		}
 	}

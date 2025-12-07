@@ -30,39 +30,27 @@
 // CVS
 // $Revision: 1.1 $
 // $Date: 2007/11/28 15:33:39 $
-// $Id: FREE_IMAGE_FILTER.cs,v 1.1 2007/11/28 15:33:39 cklein05 Exp $
+// $Id: FREE_IMAGE_METADATA_COPY.cs,v 1.1 2007/11/28 15:33:39 cklein05 Exp $
 // ==========================================================
 
 namespace FreeImageAPI
 {
 	/// <summary>
-	/// Upsampling / downsampling filters. Constants used in FreeImage_Rescale.
+	/// Flags for copying data from a bitmap to another.
 	/// </summary>
-	public enum FREE_IMAGE_FILTER
+	public enum FreeImageMetadataCopy
 	{
 		/// <summary>
-		/// Box, pulse, Fourier window, 1st order (constant) b-spline
+		/// Existing metadata will remain unchanged.
 		/// </summary>
-		FILTER_BOX = 0,
+		KeepExisitng = 0x0,
 		/// <summary>
-		/// Mitchell and Netravali's two-param cubic filter
+		/// Existing metadata will be cleared.
 		/// </summary>
-		FILTER_BICUBIC = 1,
+		ClearExisting = 0x1,
 		/// <summary>
-		/// Bilinear filter
+		/// Existing metadata will be overwritten.
 		/// </summary>
-		FILTER_BILINEAR = 2,
-		/// <summary>
-		/// 4th order (cubic) b-spline
-		/// </summary>
-		FILTER_BSPLINE = 3,
-		/// <summary>
-		/// Catmull-Rom spline, Overhauser spline
-		/// </summary>
-		FILTER_CATMULLROM = 4,
-		/// <summary>
-		/// Lanczos3 filter
-		/// </summary>
-		FILTER_LANCZOS3 = 5
+		ReplaceExisting = 0x2
 	}
 }

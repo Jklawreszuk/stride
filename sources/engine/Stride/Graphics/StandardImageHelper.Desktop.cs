@@ -26,7 +26,7 @@ namespace Stride.Graphics
             using var bitmap = new FreeImageBitmap(memoryStream);
             
             bitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
-            bitmap.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_32_BPP);
+            bitmap.ConvertColorDepth(FreeImageColorDepth.Bpp32);
             
             var image = Image.New2D(bitmap.Width, bitmap.Height, 1, PixelFormat.B8G8R8A8_UNorm, 1, bitmap.Line);
 
@@ -49,27 +49,27 @@ namespace Stride.Graphics
 
         public static void SaveGifFromMemory(PixelBuffer[] pixelBuffers, int count, ImageDescription description, Stream imageStream)
         {
-            SaveFromMemory(pixelBuffers, description, imageStream, FREE_IMAGE_FORMAT.FIF_GIF);
+            SaveFromMemory(pixelBuffers, description, imageStream, FreeImageFormat.Gif);
         }
 
         public static void SaveTiffFromMemory(PixelBuffer[] pixelBuffers, int count, ImageDescription description, Stream imageStream)
         {
-            SaveFromMemory(pixelBuffers, description, imageStream, FREE_IMAGE_FORMAT.FIF_TIFF);
+            SaveFromMemory(pixelBuffers, description, imageStream, FreeImageFormat.Tiff);
         }
 
         public static void SaveBmpFromMemory(PixelBuffer[] pixelBuffers, int count, ImageDescription description, Stream imageStream)
         {
-            SaveFromMemory(pixelBuffers, description, imageStream, FREE_IMAGE_FORMAT.FIF_BMP);
+            SaveFromMemory(pixelBuffers, description, imageStream, FreeImageFormat.Bmp);
         }
 
         public static void SaveJpgFromMemory(PixelBuffer[] pixelBuffers, int count, ImageDescription description, Stream imageStream)
         {
-            SaveFromMemory(pixelBuffers, description, imageStream, FREE_IMAGE_FORMAT.FIF_JPEG);
+            SaveFromMemory(pixelBuffers, description, imageStream, FreeImageFormat.Jpeg);
         }
 
         public static void SavePngFromMemory(PixelBuffer[] pixelBuffers, int count, ImageDescription description, Stream imageStream)
         {
-            SaveFromMemory(pixelBuffers, description, imageStream, FREE_IMAGE_FORMAT.FIF_PNG);
+            SaveFromMemory(pixelBuffers, description, imageStream, FreeImageFormat.Png);
         }
 
         public static void SaveWmpFromMemory(PixelBuffer[] pixelBuffers, int count, ImageDescription description, Stream imageStream)
@@ -77,10 +77,10 @@ namespace Stride.Graphics
             throw new NotImplementedException();
         }
 
-        private static unsafe void SaveFromMemory(PixelBuffer[] pixelBuffers, ImageDescription description, Stream imageStream, FREE_IMAGE_FORMAT imageFormat)
+        private static unsafe void SaveFromMemory(PixelBuffer[] pixelBuffers, ImageDescription description, Stream imageStream, FreeImageFormat imageFormat)
         {
             using var bitmap = new FreeImageBitmap(description.Width, description.Height);
-            bitmap.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_32_BPP);
+            bitmap.ConvertColorDepth(FreeImageColorDepth.Bpp32);
 
             // Copy memory
             var format = description.Format;

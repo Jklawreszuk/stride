@@ -94,7 +94,7 @@ namespace FreeImageAPI.Metadata
 		/// </summary>
 		/// <param name="model">Type of the model.</param>
 		/// <returns>The <see cref="FreeImageAPI.Metadata.MetadataModel"/> object of the specified type.</returns>
-		public MetadataModel this[FREE_IMAGE_MDMODEL model]
+		public MetadataModel this[FreeImageMetadataModel model]
 		{
 			get
 			{

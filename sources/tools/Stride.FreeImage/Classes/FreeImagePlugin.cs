@@ -14,7 +14,7 @@ namespace FreeImageAPI.Plugins
 		/// Initializes a new instance of this class.
 		/// </summary>
 		/// <param name="fif">The FreeImage format to wrap.</param>
-		internal FreeImagePlugin(FREE_IMAGE_FORMAT fif)
+		internal FreeImagePlugin(FreeImageFormat fif)
 		{
 			this.FIFormat = fif;
 		}
@@ -22,7 +22,7 @@ namespace FreeImageAPI.Plugins
 		/// <summary>
 		/// Gets the format of this instance.
 		/// </summary>
-		public FREE_IMAGE_FORMAT FIFormat { get; }
+		public FreeImageFormat FIFormat { get; }
 
 		/// <summary>
 		/// Gets or sets whether this plugin is enabled.
@@ -114,7 +114,7 @@ namespace FreeImageAPI.Plugins
 		/// </summary>
 		/// <param name="type">The desired image type.</param>
 		/// <returns>True if this plugin can save bitmaps as the desired type, else false.</returns>
-		public bool SupportsExportType(FREE_IMAGE_TYPE type)
+		public bool SupportsExportType(FreeImageType type)
 		{
 			return FreeImage.FIFSupportsExportType(FIFormat, type);
 		}

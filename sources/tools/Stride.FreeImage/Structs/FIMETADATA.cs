@@ -43,7 +43,7 @@ namespace FreeImageAPI
 	/// </summary>
 	/// <remarks>
 	/// The <b>FIMETADATA</b> structure is usually returned by the
-	/// <see cref="FreeImageAPI.FreeImage.FindFirstMetadata(FREE_IMAGE_MDMODEL, FIBITMAP, out FITAG)"/>
+	/// <see cref="FreeImageAPI.FreeImage.FindFirstMetadata(FreeImageMetadataModel, FIBITMAP, out FITAG)"/>
 	/// function and then used on subsequent calls to
 	/// <see cref="FreeImageAPI.FreeImage.FindNextMetadata(FIMETADATA, out FITAG)"/>.
 	/// When the <b>FIMETADATA</b> handle is no longer used, it needs to be freed by the

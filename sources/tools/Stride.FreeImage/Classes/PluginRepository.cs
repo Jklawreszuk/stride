@@ -24,7 +24,7 @@ namespace FreeImageAPI.Plugins
 			localPlugins = new List<FreeImagePlugin>(0);
 			for (int i = 0; i < plugins.Capacity; i++)
 			{
-				plugins.Add(new FreeImagePlugin((FREE_IMAGE_FORMAT)i));
+				plugins.Add(new FreeImagePlugin((FreeImageFormat)i));
 			}
 		}
 
@@ -44,7 +44,7 @@ namespace FreeImageAPI.Plugins
 		/// </summary>
 		/// <param name="fif">The representing format.</param>
 		/// <returns>An instance of <see cref="FreeImageAPI.Plugins.FreeImagePlugin"/>.</returns>
-		public static FreeImagePlugin Plugin(FREE_IMAGE_FORMAT fif)
+		public static FreeImagePlugin Plugin(FreeImageFormat fif)
 		{
 			return Plugin((int)fif);
 		}

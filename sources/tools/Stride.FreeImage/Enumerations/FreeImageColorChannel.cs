@@ -29,48 +29,56 @@
 // ==========================================================
 // CVS
 // $Revision: 1.1 $
-// $Date: 2007/11/28 15:33:38 $
-// $Id: FREE_IMAGE_JPEG_OPERATION.cs,v 1.1 2007/11/28 15:33:38 cklein05 Exp $
+// $Date: 2007/11/28 15:33:40 $
+// $Id: FREE_IMAGE_COLOR_CHANNEL.cs,v 1.1 2007/11/28 15:33:40 cklein05 Exp $
 // ==========================================================
 
 namespace FreeImageAPI
 {
 	/// <summary>
-	/// Lossless JPEG transformations constants used in FreeImage_JPEGTransform.
+	/// Color channels. Constants used in color manipulation routines.
 	/// </summary>
-	public enum FREE_IMAGE_JPEG_OPERATION
+	public enum FreeImageColorChannel
 	{
 		/// <summary>
-		/// no transformation
+		/// Use red, green and blue channels
 		/// </summary>
-		FIJPEG_OP_NONE = 0,
+		Rgb = 0,
 		/// <summary>
-		/// horizontal flip
+		/// Use red channel
 		/// </summary>
-		FIJPEG_OP_FLIP_H = 1,
+		Red = 1,
 		/// <summary>
-		/// vertical flip
+		/// Use green channel
 		/// </summary>
-		FIJPEG_OP_FLIP_V = 2,
+		Green = 2,
 		/// <summary>
-		/// transpose across UL-to-LR axis
+		/// Use blue channel
 		/// </summary>
-		FIJPEG_OP_TRANSPOSE = 3,
+		Blue = 3,
 		/// <summary>
-		/// transpose across UR-to-LL axis
+		/// Use alpha channel
 		/// </summary>
-		FIJPEG_OP_TRANSVERSE = 4,
+		Alpha = 4,
 		/// <summary>
-		/// 90-degree clockwise rotation
+		/// Use black channel
 		/// </summary>
-		FIJPEG_OP_ROTATE_90 = 5,
+		Black = 5,
 		/// <summary>
-		/// 180-degree rotation
+		/// Complex images: use real part
 		/// </summary>
-		FIJPEG_OP_ROTATE_180 = 6,
+		Real = 6,
 		/// <summary>
-		/// 270-degree clockwise (or 90 ccw)
+		/// Complex images: use imaginary part
 		/// </summary>
-		FIJPEG_OP_ROTATE_270 = 7
+		Imag = 7,
+		/// <summary>
+		/// Complex images: use magnitude
+		/// </summary>
+		Mag = 8,
+		/// <summary>
+		/// Complex images: use phase
+		/// </summary>
+		Phase = 9
 	}
 }

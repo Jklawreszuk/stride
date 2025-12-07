@@ -66,7 +66,7 @@ namespace Stride.TextureConverter.TexLibraries
 
             libraryData.Bitmaps = new FIBITMAP[image.SubImageArray.Length];
 
-            FREE_IMAGE_TYPE type;
+            FreeImageType type;
             uint bpp, redMask, greenMask, blueMask;
             if (!GetFormatParameters(image.Format, out type, out bpp, out redMask, out greenMask, out blueMask))
             {
@@ -146,14 +146,14 @@ namespace Stride.TextureConverter.TexLibraries
                 case RequestType.Loading:
                     {
                         LoadingRequest loader = (LoadingRequest)request;
-                        FREE_IMAGE_FORMAT format = FreeImage.GetFIFFromFilename(loader.FilePath);
-                        return format != FREE_IMAGE_FORMAT.FIF_UNKNOWN && format != FREE_IMAGE_FORMAT.FIF_DDS; // FreeImage can load DDS texture, but can't handle their mipmaps..
+                        FreeImageFormat format = FreeImage.GetFIFFromFilename(loader.FilePath);
+                        return format != FreeImageFormat.Unknown && format != FreeImageFormat.Dds; // FreeImage can load DDS texture, but can't handle their mipmaps..
                     }
                 case RequestType.Export:
                     {
                         ExportRequest export = (ExportRequest)request;
-                        FREE_IMAGE_FORMAT format = FreeImage.GetFIFFromFilename(export.FilePath);
-                        return format != FREE_IMAGE_FORMAT.FIF_UNKNOWN && format != FREE_IMAGE_FORMAT.FIF_DDS;
+                        FreeImageFormat format = FreeImage.GetFIFFromFilename(export.FilePath);
+                        return format != FreeImageFormat.Unknown && format != FreeImageFormat.Dds;
                     }
                 case RequestType.Rescaling:
                     RescalingRequest rescale = (RescalingRequest)request;
@@ -226,7 +226,7 @@ namespace Stride.TextureConverter.TexLibraries
             Log.Verbose("Loading " + loader.FilePath + " ...");
 
             FIBITMAP temp;
-            FREE_IMAGE_FORMAT fileFormat = FREE_IMAGE_FORMAT.FIF_UNKNOWN;
+            FreeImageFormat fileFormat = FreeImageFormat.Unknown;
             try
             {
                 temp = FreeImage.LoadEx(loader.FilePath, ref fileFormat);
@@ -319,7 +319,7 @@ namespace Stride.TextureConverter.TexLibraries
                 {
                     for (int i = 0; i < image.Depth; ++i)
                     {
-                        newTab[ct] = FreeImage.Rescale(libraryData.Bitmaps[i + j * nbSubImageWithMipMapPerArrayMemeber], width, height, (FREE_IMAGE_FILTER)rescale.Filter);
+                        newTab[ct] = FreeImage.Rescale(libraryData.Bitmaps[i + j * nbSubImageWithMipMapPerArrayMemeber], width, height, (FreeImageFilter)rescale.Filter);
                         ++ct;
                     }
                 }
@@ -330,7 +330,7 @@ namespace Stride.TextureConverter.TexLibraries
                 int ct = 0;
                 for (int i = 0; i < libraryData.Bitmaps.Length; i += image.MipmapCount)
                 {
-                    newTab[ct] = FreeImage.Rescale(libraryData.Bitmaps[i], width, height, (FREE_IMAGE_FILTER)rescale.Filter);
+                    newTab[ct] = FreeImage.Rescale(libraryData.Bitmaps[i], width, height, (FreeImageFilter)rescale.Filter);
                     ++ct;
                 }
             }
@@ -372,10 +372,10 @@ namespace Stride.TextureConverter.TexLibraries
 
             for (int i = 0; i < libraryData.Bitmaps.Length; ++i)
             {
-                FIBITMAP blueChannel = FreeImage.GetChannel(libraryData.Bitmaps[i], FREE_IMAGE_COLOR_CHANNEL.FICC_BLUE);
-                FIBITMAP redChannel = FreeImage.GetChannel(libraryData.Bitmaps[i], FREE_IMAGE_COLOR_CHANNEL.FICC_RED);
-                FreeImage.SetChannel(libraryData.Bitmaps[i], redChannel, FREE_IMAGE_COLOR_CHANNEL.FICC_BLUE);
-                FreeImage.SetChannel(libraryData.Bitmaps[i], blueChannel, FREE_IMAGE_COLOR_CHANNEL.FICC_RED);
+                FIBITMAP blueChannel = FreeImage.GetChannel(libraryData.Bitmaps[i], FreeImageColorChannel.Blue);
+                FIBITMAP redChannel = FreeImage.GetChannel(libraryData.Bitmaps[i], FreeImageColorChannel.Red);
+                FreeImage.SetChannel(libraryData.Bitmaps[i], redChannel, FreeImageColorChannel.Blue);
+                FreeImage.SetChannel(libraryData.Bitmaps[i], blueChannel, FreeImageColorChannel.Red);
                 FreeImage.Unload(blueChannel);
                 FreeImage.Unload(redChannel);
             }
@@ -577,7 +577,7 @@ namespace Stride.TextureConverter.TexLibraries
             return count;
         }
 
-        private static int GetAlphaDepth(FREE_IMAGE_FORMAT fileFormat, FIBITMAP bitmap)
+        private static int GetAlphaDepth(FreeImageFormat fileFormat, FIBITMAP bitmap)
         {
             uint bpp = FreeImage.GetBPP(bitmap);
             uint rbit = GetBitCount(FreeImage.GetRedMask(bitmap));
@@ -585,13 +585,13 @@ namespace Stride.TextureConverter.TexLibraries
             uint bbit = GetBitCount(FreeImage.GetBlueMask(bitmap));
             switch (fileFormat)
             {
-                case FREE_IMAGE_FORMAT.FIF_PNG:
-                case FREE_IMAGE_FORMAT.FIF_TIFF:
-                case FREE_IMAGE_FORMAT.FIF_TARGA:
-                case FREE_IMAGE_FORMAT.FIF_GIF:
-                case FREE_IMAGE_FORMAT.FIF_BMP:
-                case FREE_IMAGE_FORMAT.FIF_ICO:
-                case FREE_IMAGE_FORMAT.FIF_PSD:
+                case FreeImageFormat.Png:
+                case FreeImageFormat.Tiff:
+                case FreeImageFormat.Targa:
+                case FreeImageFormat.Gif:
+                case FreeImageFormat.Bmp:
+                case FreeImageFormat.Ico:
+                case FreeImageFormat.Psd:
                     switch (bpp)
                     {
                         case 32:
@@ -625,14 +625,14 @@ namespace Stride.TextureConverter.TexLibraries
 		/// </returns>
 		private static bool GetFormatParameters(
 			StridePixelFormat format,
-			out FREE_IMAGE_TYPE type,
+			out FreeImageType type,
 			out uint bpp,
 			out uint redMask,
 			out uint greenMask,
 			out uint blueMask)
 		{
 			var result = true;
-			type = FREE_IMAGE_TYPE.FIT_UNKNOWN;
+			type = FreeImageType.Unknown;
 			bpp = 0;
 			redMask = 0;
 			greenMask = 0;
@@ -641,11 +641,11 @@ namespace Stride.TextureConverter.TexLibraries
 			switch (format)
 			{
 				case StridePixelFormat.R32G32B32A32_Float:
-					type = FREE_IMAGE_TYPE.FIT_RGBAF;
+					type = FreeImageType.RgbaF;
 					bpp = 128;
 					break;
 				case StridePixelFormat.R32G32B32_Float:
-					type = FREE_IMAGE_TYPE.FIT_RGBF;
+					type = FreeImageType.RgbF;
 					bpp = 96;
 					break;
 				case StridePixelFormat.R16G16B16A16_Typeless:
@@ -654,32 +654,32 @@ namespace Stride.TextureConverter.TexLibraries
 				case StridePixelFormat.R16G16B16A16_UInt:
 				case StridePixelFormat.R16G16B16A16_SNorm:
 				case StridePixelFormat.R16G16B16A16_SInt:
-					type = FREE_IMAGE_TYPE.FIT_RGBA16;
+					type = FreeImageType.Rgba16;
 					bpp = 64;
 					break;
 				case StridePixelFormat.D32_Float:
 				case StridePixelFormat.R32_Float:
-					type = FREE_IMAGE_TYPE.FIT_FLOAT;
+					type = FreeImageType.Float;
 					bpp = 32;
 					break;
 				case StridePixelFormat.R32_SInt:
-					type = FREE_IMAGE_TYPE.FIT_INT32;
+					type = FreeImageType.Int32;
 					bpp = 32;
 					break;
 				case StridePixelFormat.R32_UInt:
-					type = FREE_IMAGE_TYPE.FIT_UINT32;
+					type = FreeImageType.UInt32;
 					bpp = 32;
 					break;
 				case StridePixelFormat.R16_SInt:
-					type = FREE_IMAGE_TYPE.FIT_INT16;
+					type = FreeImageType.Int16;
 					bpp = 16;
 					break;
 				case StridePixelFormat.R16_UInt:
-					type = FREE_IMAGE_TYPE.FIT_UINT16;
+					type = FreeImageType.UInt16;
 					bpp = 16;
 					break;
 				case StridePixelFormat.R32_Typeless:
-					type = FREE_IMAGE_TYPE.FIT_BITMAP;
+					type = FreeImageType.Bitmap;
 					bpp = 32;
 					break;
 				case StridePixelFormat.R8G8B8A8_Typeless:
@@ -688,7 +688,7 @@ namespace Stride.TextureConverter.TexLibraries
 				case StridePixelFormat.R8G8B8A8_UInt:
 				case StridePixelFormat.R8G8B8A8_SNorm:
 				case StridePixelFormat.R8G8B8A8_SInt:
-					type = FREE_IMAGE_TYPE.FIT_BITMAP;
+					type = FreeImageType.Bitmap;
 					bpp = 32;
 					redMask = FreeImage.FI_RGBA_RED_MASK;
 					greenMask = FreeImage.FI_RGBA_GREEN_MASK;
@@ -700,7 +700,7 @@ namespace Stride.TextureConverter.TexLibraries
 				case StridePixelFormat.R16G16_UInt:
 				case StridePixelFormat.R16G16_SNorm:
 				case StridePixelFormat.R16G16_SInt:
-					type = FREE_IMAGE_TYPE.FIT_BITMAP;
+					type = FreeImageType.Bitmap;
 					bpp = 32;
 					redMask = 0xFFFF0000;
 					greenMask = 0x0000FFFF;
@@ -711,7 +711,7 @@ namespace Stride.TextureConverter.TexLibraries
 				case StridePixelFormat.B8G8R8X8_UNorm_SRgb:
 				case StridePixelFormat.B8G8R8A8_UNorm:
 				case StridePixelFormat.B8G8R8X8_UNorm:
-					type = FREE_IMAGE_TYPE.FIT_BITMAP;
+					type = FreeImageType.Bitmap;
 					bpp = 32;
 					redMask = FreeImage.FI_RGBA_BLUE_MASK;
 					greenMask = FreeImage.FI_RGBA_GREEN_MASK;
@@ -719,14 +719,14 @@ namespace Stride.TextureConverter.TexLibraries
 					break;
 
 				case StridePixelFormat.B5G6R5_UNorm:
-					type = FREE_IMAGE_TYPE.FIT_BITMAP;
+					type = FreeImageType.Bitmap;
 					bpp = 16;
 					redMask = FreeImage.FI16_565_RED_MASK;
 					greenMask = FreeImage.FI16_565_GREEN_MASK;
 					blueMask = FreeImage.FI16_565_BLUE_MASK;
 					break;
 				case StridePixelFormat.B5G5R5A1_UNorm:
-					type = FREE_IMAGE_TYPE.FIT_BITMAP;
+					type = FreeImageType.Bitmap;
 					bpp = 16;
 					redMask = FreeImage.FI16_555_RED_MASK;
 					greenMask = FreeImage.FI16_555_GREEN_MASK;
@@ -737,7 +737,7 @@ namespace Stride.TextureConverter.TexLibraries
 				case StridePixelFormat.D16_UNorm:
 				case StridePixelFormat.R16_UNorm:
 				case StridePixelFormat.R16_SNorm:
-					type = FREE_IMAGE_TYPE.FIT_UINT16;
+					type = FreeImageType.UInt16;
 					bpp = 16;
 					break;
 				case StridePixelFormat.R8G8_Typeless:
@@ -745,7 +745,7 @@ namespace Stride.TextureConverter.TexLibraries
 				case StridePixelFormat.R8G8_UInt:
 				case StridePixelFormat.R8G8_SNorm:
 				case StridePixelFormat.R8G8_SInt:
-					type = FREE_IMAGE_TYPE.FIT_BITMAP;
+					type = FreeImageType.Bitmap;
 					bpp = 16;
 					redMask = 0xFF00;
 					greenMask= 0x00FF;
@@ -756,11 +756,11 @@ namespace Stride.TextureConverter.TexLibraries
 				case StridePixelFormat.R8_SNorm:
 				case StridePixelFormat.R8_SInt:
 				case StridePixelFormat.A8_UNorm:
-					type = FREE_IMAGE_TYPE.FIT_BITMAP;
+					type = FreeImageType.Bitmap;
 					bpp = 8;
 					break;
 				case StridePixelFormat.R1_UNorm:
-					type = FREE_IMAGE_TYPE.FIT_BITMAP;
+					type = FreeImageType.Bitmap;
 					bpp = 1;
 					break;
 				default:

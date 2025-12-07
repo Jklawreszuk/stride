@@ -98,7 +98,7 @@ namespace FreeImageAPI
 		{
 			switch (FreeImage.GetTagType(tag))
 			{
-				case FREE_IMAGE_MDTYPE.FIDT_SRATIONAL:
+				case FreeImageMdType.SRational:
 					int* value = (int*)FreeImage.GetTagValue(tag);
 					numerator = (int)value[0];
 					denominator = (int)value[1];

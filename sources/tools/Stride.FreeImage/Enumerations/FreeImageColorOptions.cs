@@ -29,56 +29,40 @@
 // ==========================================================
 // CVS
 // $Revision: 1.1 $
-// $Date: 2007/11/28 15:33:40 $
-// $Id: FREE_IMAGE_COLOR_CHANNEL.cs,v 1.1 2007/11/28 15:33:40 cklein05 Exp $
+// $Date: 2009/09/15 11:44:24 $
+// $Id: FREE_IMAGE_COLOR_OPTIONS.cs,v 1.1 2009/09/15 11:44:24 cklein05 Exp $
 // ==========================================================
 
 namespace FreeImageAPI
 {
 	/// <summary>
-	/// Color channels. Constants used in color manipulation routines.
+	/// Constants used in color filling routines.
 	/// </summary>
-	public enum FREE_IMAGE_COLOR_CHANNEL
+	public enum FreeImageColorOptions
 	{
 		/// <summary>
-		/// Use red, green and blue channels
+		/// Default value.
 		/// </summary>
-		FICC_RGB = 0,
+		Default = 0x0,
 		/// <summary>
-		/// Use red channel
+		/// <see cref="RGBQUAD"/> color is RGB color (contains no valid alpha channel).
 		/// </summary>
-		FICC_RED = 1,
+		Rgb = 0x0,
 		/// <summary>
-		/// Use green channel
+		/// <see cref="RGBQUAD"/> color is RGBA color (contains a valid alpha channel).
 		/// </summary>
-		FICC_GREEN = 2,
+		Rgba = 0x1,
 		/// <summary>
-		/// Use blue channel
+		/// Lookup nearest RGB color from palette.
 		/// </summary>
-		FICC_BLUE = 3,
+		NearestColor = 0x0,
 		/// <summary>
-		/// Use alpha channel
+		/// Lookup equal RGB color from palette.
 		/// </summary>
-		FICC_ALPHA = 4,
+		EqualColor = 0x2,
 		/// <summary>
-		/// Use black channel
+		/// <see cref="RGBQUAD.rgbReserved"/> contains the palette index to be used.
 		/// </summary>
-		FICC_BLACK = 5,
-		/// <summary>
-		/// Complex images: use real part
-		/// </summary>
-		FICC_REAL = 6,
-		/// <summary>
-		/// Complex images: use imaginary part
-		/// </summary>
-		FICC_IMAG = 7,
-		/// <summary>
-		/// Complex images: use magnitude
-		/// </summary>
-		FICC_MAG = 8,
-		/// <summary>
-		/// Complex images: use phase
-		/// </summary>
-		FICC_PHASE = 9
+		AlphaIsIndex = 0x4,
 	}
 }

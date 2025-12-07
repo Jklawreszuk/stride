@@ -111,7 +111,7 @@ namespace FreeImageAPI
 		/// Format of the sourceimage.
 		/// </summary>
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		private FREE_IMAGE_FORMAT originalFormat = FREE_IMAGE_FORMAT.FIF_UNKNOWN;
+		private FreeImageFormat originalFormat = FreeImageFormat.Unknown;
 
 		/// <summary>
 		/// Handle to the encapsulated FreeImage-bitmap.
@@ -199,7 +199,7 @@ namespace FreeImageAPI
 				throw new ArgumentOutOfRangeException("height");
 			}
 			original.EnsureNotDisposed();
-			dib = FreeImage.Rescale(original.dib, width, height, FREE_IMAGE_FILTER.FILTER_BICUBIC);
+			dib = FreeImage.Rescale(original.dib, width, height, FreeImageFilter.Bicubic);
 			if (dib.IsNull)
 			{
 				throw new Exception(ErrorLoadingBitmap);
@@ -221,7 +221,7 @@ namespace FreeImageAPI
 		/// <remarks>
 		/// You must keep the stream open for the lifetime of the <see cref="FreeImageBitmap"/>.
 		/// </remarks>
-		public FreeImageBitmap(Stream stream, FREE_IMAGE_FORMAT format = FREE_IMAGE_FORMAT.FIF_UNKNOWN, FREE_IMAGE_LOAD_FLAGS flags = FREE_IMAGE_LOAD_FLAGS.DEFAULT)
+		public FreeImageBitmap(Stream stream, FreeImageFormat format = FreeImageFormat.Unknown, FreeImageLoadFlags flags = FreeImageLoadFlags.Default)
 		{
 			if (stream == null)
 			{
@@ -242,7 +242,7 @@ namespace FreeImageAPI
 		/// <exception cref="Exception">The operation failed.</exception>
 		/// <exception cref="ArgumentNullException"><paramref name="filename"/> is a null reference.</exception>
 		/// <exception cref="FileNotFoundException"><paramref name="filename"/> does not exist.</exception>
-		public FreeImageBitmap(string filename, FREE_IMAGE_FORMAT format = FREE_IMAGE_FORMAT.FIF_UNKNOWN, FREE_IMAGE_LOAD_FLAGS flags = FREE_IMAGE_LOAD_FLAGS.DEFAULT)
+		public FreeImageBitmap(string filename, FreeImageFormat format = FreeImageFormat.Unknown, FreeImageLoadFlags flags = FreeImageLoadFlags.Default)
 		{
 			if (filename == null)
 			{
@@ -347,7 +347,7 @@ namespace FreeImageAPI
 		/// <exception cref="ArgumentException"><paramref name="type"/> is invalid.</exception>
 		/// <exception cref="ArgumentOutOfRangeException">
 		/// <paramref name="width"/> or <paramref name="height"/> are less or equal zero.</exception>
-		public FreeImageBitmap(int width, int height, FREE_IMAGE_TYPE type)
+		public FreeImageBitmap(int width, int height, FreeImageType type)
 		{
 			if (width <= 0)
 			{
@@ -357,7 +357,7 @@ namespace FreeImageAPI
 			{
 				throw new ArgumentOutOfRangeException("height");
 			}
-			if ((type == FREE_IMAGE_TYPE.FIT_BITMAP) || (type == FREE_IMAGE_TYPE.FIT_UNKNOWN))
+			if ((type == FreeImageType.Bitmap) || (type == FreeImageType.Unknown))
 			{
 				throw new ArgumentException("type is invalid.");
 			}
@@ -500,7 +500,7 @@ namespace FreeImageAPI
 		/// <exception cref="ArgumentException"> is invalid.</exception>
 		/// <exception cref="ArgumentOutOfRangeException">
 		/// <paramref name="width"/> or <paramref name="height"/> are less or equal zero.</exception>
-		public FreeImageBitmap(int width, int height, int stride, int bpp, FREE_IMAGE_TYPE type, IntPtr scan0)
+		public FreeImageBitmap(int width, int height, int stride, int bpp, FreeImageType type, IntPtr scan0)
 		{
 			if (width <= 0)
 			{
@@ -548,7 +548,7 @@ namespace FreeImageAPI
 		/// <exception cref="ArgumentOutOfRangeException">
 		/// <paramref name="width"/> or <paramref name="height"/> are less or equal zero.</exception>
 		/// <exception cref="ArgumentNullException"><paramref name="bits"/> is null</exception>
-		public FreeImageBitmap(int width, int height, int stride, int bpp, FREE_IMAGE_TYPE type, byte[] bits)
+		public FreeImageBitmap(int width, int height, int stride, int bpp, FreeImageType type, byte[] bits)
 		{
 			if (width <= 0)
 			{
@@ -594,7 +594,7 @@ namespace FreeImageAPI
 				if (data is { Length: > 0 })
 				{
 					MemoryStream memory = new MemoryStream(data);
-					FREE_IMAGE_FORMAT format = FREE_IMAGE_FORMAT.FIF_TIFF;
+					FreeImageFormat format = FreeImageFormat.Tiff;
 					dib = FreeImage.LoadFromStream(memory, ref format);
 
 					if (dib.IsNull)
@@ -645,7 +645,7 @@ namespace FreeImageAPI
 
 			left.EnsureNotDisposed();
 			right.EnsureNotDisposed();
-			return FreeImage.Compare(left.dib, right.dib, FREE_IMAGE_COMPARE_FLAGS.COMPLETE);
+			return FreeImage.Compare(left.dib, right.dib, FreeImageCompareFlags.Complete);
 		}
 
 		/// <summary>
@@ -668,7 +668,7 @@ namespace FreeImageAPI
 		/// <summary>
 		/// Type of the bitmap.
 		/// </summary>
-		public FREE_IMAGE_TYPE ImageType
+		public FreeImageType ImageType
 		{
 			get
 			{
@@ -866,7 +866,7 @@ namespace FreeImageAPI
 		/// Investigates the color type of this <see cref="FreeImageBitmap"/>
 		/// by reading the bitmaps pixel bits and analysing them.
 		/// </summary>
-		public FREE_IMAGE_COLOR_TYPE ColorType
+		public FreeImageColorType ColorType
 		{
 			get
 			{
@@ -1104,20 +1104,20 @@ namespace FreeImageAPI
 					result += (int)ImageFlags.ColorSpaceRgb;
 				}
 
-				if (FreeImage.GetColorType(dib) == FREE_IMAGE_COLOR_TYPE.FIC_MINISBLACK ||
-					FreeImage.GetColorType(dib) == FREE_IMAGE_COLOR_TYPE.FIC_MINISWHITE)
+				if (FreeImage.GetColorType(dib) == FreeImageColorType.MinIsBlack ||
+					FreeImage.GetColorType(dib) == FreeImageColorType.MinIsWhite)
 				{
 					result += (int)ImageFlags.ColorSpaceGray;
 				}
 
-				if (originalFormat == FREE_IMAGE_FORMAT.FIF_BMP ||
-					originalFormat == FREE_IMAGE_FORMAT.FIF_FAXG3 ||
-					originalFormat == FREE_IMAGE_FORMAT.FIF_ICO ||
-					originalFormat == FREE_IMAGE_FORMAT.FIF_JPEG ||
-					originalFormat == FREE_IMAGE_FORMAT.FIF_PCX ||
-					originalFormat == FREE_IMAGE_FORMAT.FIF_PNG ||
-					originalFormat == FREE_IMAGE_FORMAT.FIF_PSD ||
-					originalFormat == FREE_IMAGE_FORMAT.FIF_TIFF)
+				if (originalFormat == FreeImageFormat.Bmp ||
+					originalFormat == FreeImageFormat.FaxG3 ||
+					originalFormat == FreeImageFormat.Ico ||
+					originalFormat == FreeImageFormat.Jpeg ||
+					originalFormat == FreeImageFormat.Pcx ||
+					originalFormat == FreeImageFormat.Png ||
+					originalFormat == FreeImageFormat.Psd ||
+					originalFormat == FreeImageFormat.Tiff)
 				{
 					result += (int)ImageFlags.HasRealDpi;
 				}
@@ -1324,7 +1324,7 @@ namespace FreeImageAPI
 		/// Gets the format of the original image in case
 		/// this <see cref="FreeImageBitmap"/> was loaded from a file or stream.
 		/// </summary>
-		public FREE_IMAGE_FORMAT ImageFormat
+		public FreeImageFormat ImageFormat
 		{
 			get
 			{
@@ -1395,7 +1395,7 @@ namespace FreeImageAPI
 			EnsureNotDisposed();
 			FreeImageBitmap result = null;
 			FIBITMAP newDib = FreeImage.Rescale(
-				dib, thumbWidth, thumbHeight, FREE_IMAGE_FILTER.FILTER_BICUBIC);
+				dib, thumbWidth, thumbHeight, FreeImageFilter.Bicubic);
 			if (!newDib.IsNull)
 			{
 				result = new FreeImageBitmap(newDib);
@@ -1437,25 +1437,25 @@ namespace FreeImageAPI
 		/// List of return-types of <b>T</b>:<para/>
 		/// <list type="table">
 		/// <listheader><term>Color Depth / Type</term><description><see cref="Type">Result Type</see></description></listheader>
-		/// <item><term>1 (<see cref="FREE_IMAGE_TYPE.FIT_BITMAP"/>)</term><description><see cref="FI1BIT"/></description></item>
-		/// <item><term>4 (<see cref="FREE_IMAGE_TYPE.FIT_BITMAP"/>)</term><description><see cref="FI4BIT"/></description></item>
-		/// <item><term>8 (<see cref="FREE_IMAGE_TYPE.FIT_BITMAP"/>)</term><description><see cref="Byte"/></description></item>
-		/// <item><term>16 (<see cref="FREE_IMAGE_TYPE.FIT_BITMAP"/>)</term><description><see cref="UInt16"/></description></item>
-		/// <item><term>16 - 555 (<see cref="FREE_IMAGE_TYPE.FIT_BITMAP"/>)</term><description><see cref="FI16RGB555"/></description></item>
-		/// <item><term>16 - 565 (<see cref="FREE_IMAGE_TYPE.FIT_BITMAP"/>)</term><description><see cref="FI16RGB565"/></description></item>
-		/// <item><term>24 (<see cref="FREE_IMAGE_TYPE.FIT_BITMAP"/>)</term><description><see cref="RGBTRIPLE"/></description></item>
-		/// <item><term>32 (<see cref="FREE_IMAGE_TYPE.FIT_BITMAP"/>)</term><description><see cref="RGBQUAD"/></description></item>
-		/// <item><term><see cref="FREE_IMAGE_TYPE.FIT_COMPLEX"/></term><description><see cref="FICOMPLEX"/></description></item>
-		/// <item><term><see cref="FREE_IMAGE_TYPE.FIT_DOUBLE"/></term><description><see cref="Double"/></description></item>
-		/// <item><term><see cref="FREE_IMAGE_TYPE.FIT_FLOAT"/></term><description><see cref="Single"/></description></item>
-		/// <item><term><see cref="FREE_IMAGE_TYPE.FIT_INT16"/></term><description><see cref="Int16"/></description></item>
-		/// <item><term><see cref="FREE_IMAGE_TYPE.FIT_INT32"/></term><description><see cref="Int32"/></description></item>
-		/// <item><term><see cref="FREE_IMAGE_TYPE.FIT_RGB16"/></term><description><see cref="FIRGB16"/></description></item>
-		/// <item><term><see cref="FREE_IMAGE_TYPE.FIT_RGBA16"/></term><description><see cref="FIRGBA16"/></description></item>
-		/// <item><term><see cref="FREE_IMAGE_TYPE.FIT_RGBAF"/></term><description><see cref="FIRGBAF"/></description></item>
-		/// <item><term><see cref="FREE_IMAGE_TYPE.FIT_RGBF"/></term><description><see cref="FIRGBF"/></description></item>
-		/// <item><term><see cref="FREE_IMAGE_TYPE.FIT_UINT16"/></term><description><see cref="UInt16"/></description></item>
-		/// <item><term><see cref="FREE_IMAGE_TYPE.FIT_UINT32"/></term><description><see cref="UInt32"/></description></item>
+		/// <item><term>1 (<see cref="FreeImageType.Bitmap"/>)</term><description><see cref="FI1BIT"/></description></item>
+		/// <item><term>4 (<see cref="FreeImageType.Bitmap"/>)</term><description><see cref="FI4BIT"/></description></item>
+		/// <item><term>8 (<see cref="FreeImageType.Bitmap"/>)</term><description><see cref="Byte"/></description></item>
+		/// <item><term>16 (<see cref="FreeImageType.Bitmap"/>)</term><description><see cref="UInt16"/></description></item>
+		/// <item><term>16 - 555 (<see cref="FreeImageType.Bitmap"/>)</term><description><see cref="FI16RGB555"/></description></item>
+		/// <item><term>16 - 565 (<see cref="FreeImageType.Bitmap"/>)</term><description><see cref="FI16RGB565"/></description></item>
+		/// <item><term>24 (<see cref="FreeImageType.Bitmap"/>)</term><description><see cref="RGBTRIPLE"/></description></item>
+		/// <item><term>32 (<see cref="FreeImageType.Bitmap"/>)</term><description><see cref="RGBQUAD"/></description></item>
+		/// <item><term><see cref="FreeImageType.Complex"/></term><description><see cref="FICOMPLEX"/></description></item>
+		/// <item><term><see cref="FreeImageType.Double"/></term><description><see cref="Double"/></description></item>
+		/// <item><term><see cref="FreeImageType.Float"/></term><description><see cref="Single"/></description></item>
+		/// <item><term><see cref="FreeImageType.Int16"/></term><description><see cref="Int16"/></description></item>
+		/// <item><term><see cref="FreeImageType.Int32"/></term><description><see cref="Int32"/></description></item>
+		/// <item><term><see cref="FreeImageType.Rgb16"/></term><description><see cref="FIRGB16"/></description></item>
+		/// <item><term><see cref="FreeImageType.Rgba16"/></term><description><see cref="FIRGBA16"/></description></item>
+		/// <item><term><see cref="FreeImageType.RgbaF"/></term><description><see cref="FIRGBAF"/></description></item>
+		/// <item><term><see cref="FreeImageType.RgbF"/></term><description><see cref="FIRGBF"/></description></item>
+		/// <item><term><see cref="FreeImageType.UInt16"/></term><description><see cref="UInt16"/></description></item>
+		/// <item><term><see cref="FreeImageType.UInt32"/></term><description><see cref="UInt32"/></description></item>
 		/// </list>
 		/// </remarks>
 		/// <example>
@@ -1496,25 +1496,25 @@ namespace FreeImageAPI
 		/// List of return-types of <b>T</b>:<para/>
 		/// <list type="table">
 		/// <listheader><term>Color Depth / Type</term><description><see cref="Type">Result Type</see></description></listheader>
-		/// <item><term>1 (<see cref="FREE_IMAGE_TYPE.FIT_BITMAP"/>)</term><description><see cref="FI1BIT"/></description></item>
-		/// <item><term>4 (<see cref="FREE_IMAGE_TYPE.FIT_BITMAP"/>)</term><description><see cref="FI4BIT"/></description></item>
-		/// <item><term>8 (<see cref="FREE_IMAGE_TYPE.FIT_BITMAP"/>)</term><description><see cref="Byte"/></description></item>
-		/// <item><term>16 (<see cref="FREE_IMAGE_TYPE.FIT_BITMAP"/>)</term><description><see cref="UInt16"/></description></item>
-		/// <item><term>16 - 555 (<see cref="FREE_IMAGE_TYPE.FIT_BITMAP"/>)</term><description><see cref="FI16RGB555"/></description></item>
-		/// <item><term>16 - 565 (<see cref="FREE_IMAGE_TYPE.FIT_BITMAP"/>)</term><description><see cref="FI16RGB565"/></description></item>
-		/// <item><term>24 (<see cref="FREE_IMAGE_TYPE.FIT_BITMAP"/>)</term><description><see cref="RGBTRIPLE"/></description></item>
-		/// <item><term>32 (<see cref="FREE_IMAGE_TYPE.FIT_BITMAP"/>)</term><description><see cref="RGBQUAD"/></description></item>
-		/// <item><term><see cref="FREE_IMAGE_TYPE.FIT_COMPLEX"/></term><description><see cref="FICOMPLEX"/></description></item>
-		/// <item><term><see cref="FREE_IMAGE_TYPE.FIT_DOUBLE"/></term><description><see cref="Double"/></description></item>
-		/// <item><term><see cref="FREE_IMAGE_TYPE.FIT_FLOAT"/></term><description><see cref="Single"/></description></item>
-		/// <item><term><see cref="FREE_IMAGE_TYPE.FIT_INT16"/></term><description><see cref="Int16"/></description></item>
-		/// <item><term><see cref="FREE_IMAGE_TYPE.FIT_INT32"/></term><description><see cref="Int32"/></description></item>
-		/// <item><term><see cref="FREE_IMAGE_TYPE.FIT_RGB16"/></term><description><see cref="FIRGB16"/></description></item>
-		/// <item><term><see cref="FREE_IMAGE_TYPE.FIT_RGBA16"/></term><description><see cref="FIRGBA16"/></description></item>
-		/// <item><term><see cref="FREE_IMAGE_TYPE.FIT_RGBAF"/></term><description><see cref="FIRGBAF"/></description></item>
-		/// <item><term><see cref="FREE_IMAGE_TYPE.FIT_RGBF"/></term><description><see cref="FIRGBF"/></description></item>
-		/// <item><term><see cref="FREE_IMAGE_TYPE.FIT_UINT16"/></term><description><see cref="UInt16"/></description></item>
-		/// <item><term><see cref="FREE_IMAGE_TYPE.FIT_UINT32"/></term><description><see cref="UInt32"/></description></item>
+		/// <item><term>1 (<see cref="FreeImageType.Bitmap"/>)</term><description><see cref="FI1BIT"/></description></item>
+		/// <item><term>4 (<see cref="FreeImageType.Bitmap"/>)</term><description><see cref="FI4BIT"/></description></item>
+		/// <item><term>8 (<see cref="FreeImageType.Bitmap"/>)</term><description><see cref="Byte"/></description></item>
+		/// <item><term>16 (<see cref="FreeImageType.Bitmap"/>)</term><description><see cref="UInt16"/></description></item>
+		/// <item><term>16 - 555 (<see cref="FreeImageType.Bitmap"/>)</term><description><see cref="FI16RGB555"/></description></item>
+		/// <item><term>16 - 565 (<see cref="FreeImageType.Bitmap"/>)</term><description><see cref="FI16RGB565"/></description></item>
+		/// <item><term>24 (<see cref="FreeImageType.Bitmap"/>)</term><description><see cref="RGBTRIPLE"/></description></item>
+		/// <item><term>32 (<see cref="FreeImageType.Bitmap"/>)</term><description><see cref="RGBQUAD"/></description></item>
+		/// <item><term><see cref="FreeImageType.Complex"/></term><description><see cref="FICOMPLEX"/></description></item>
+		/// <item><term><see cref="FreeImageType.Double"/></term><description><see cref="Double"/></description></item>
+		/// <item><term><see cref="FreeImageType.Float"/></term><description><see cref="Single"/></description></item>
+		/// <item><term><see cref="FreeImageType.Int16"/></term><description><see cref="Int16"/></description></item>
+		/// <item><term><see cref="FreeImageType.Int32"/></term><description><see cref="Int32"/></description></item>
+		/// <item><term><see cref="FreeImageType.Rgb16"/></term><description><see cref="FIRGB16"/></description></item>
+		/// <item><term><see cref="FreeImageType.Rgba16"/></term><description><see cref="FIRGBA16"/></description></item>
+		/// <item><term><see cref="FreeImageType.RgbaF"/></term><description><see cref="FIRGBAF"/></description></item>
+		/// <item><term><see cref="FreeImageType.RgbF"/></term><description><see cref="FIRGBF"/></description></item>
+		/// <item><term><see cref="FreeImageType.UInt16"/></term><description><see cref="UInt16"/></description></item>
+		/// <item><term><see cref="FreeImageType.UInt32"/></term><description><see cref="UInt32"/></description></item>
 		/// </list>
 		/// </remarks>
 		/// <example>
@@ -1544,7 +1544,7 @@ namespace FreeImageAPI
 
 			switch (FreeImage.GetImageType(dib))
 			{
-				case FREE_IMAGE_TYPE.FIT_BITMAP:
+				case FreeImageType.Bitmap:
 
 					switch (FreeImage.GetBPP(dib))
 					{
@@ -1575,18 +1575,18 @@ namespace FreeImageAPI
 					}
 					break;
 
-				case FREE_IMAGE_TYPE.FIT_COMPLEX: result = new Scanline<FICOMPLEX>(dib, scanline, width); break;
-				case FREE_IMAGE_TYPE.FIT_DOUBLE: result = new Scanline<Double>(dib, scanline, width); break;
-				case FREE_IMAGE_TYPE.FIT_FLOAT: result = new Scanline<Single>(dib, scanline, width); break;
-				case FREE_IMAGE_TYPE.FIT_INT16: result = new Scanline<Int16>(dib, scanline, width); break;
-				case FREE_IMAGE_TYPE.FIT_INT32: result = new Scanline<Int32>(dib, scanline, width); break;
-				case FREE_IMAGE_TYPE.FIT_RGB16: result = new Scanline<FIRGB16>(dib, scanline, width); break;
-				case FREE_IMAGE_TYPE.FIT_RGBA16: result = new Scanline<FIRGBA16>(dib, scanline, width); break;
-				case FREE_IMAGE_TYPE.FIT_RGBAF: result = new Scanline<FIRGBAF>(dib, scanline, width); break;
-				case FREE_IMAGE_TYPE.FIT_RGBF: result = new Scanline<FIRGBF>(dib, scanline, width); break;
-				case FREE_IMAGE_TYPE.FIT_UINT16: result = new Scanline<UInt16>(dib, scanline, width); break;
-				case FREE_IMAGE_TYPE.FIT_UINT32: result = new Scanline<UInt32>(dib, scanline, width); break;
-				case FREE_IMAGE_TYPE.FIT_UNKNOWN:
+				case FreeImageType.Complex: result = new Scanline<FICOMPLEX>(dib, scanline, width); break;
+				case FreeImageType.Double: result = new Scanline<Double>(dib, scanline, width); break;
+				case FreeImageType.Float: result = new Scanline<Single>(dib, scanline, width); break;
+				case FreeImageType.Int16: result = new Scanline<Int16>(dib, scanline, width); break;
+				case FreeImageType.Int32: result = new Scanline<Int32>(dib, scanline, width); break;
+				case FreeImageType.Rgb16: result = new Scanline<FIRGB16>(dib, scanline, width); break;
+				case FreeImageType.Rgba16: result = new Scanline<FIRGBA16>(dib, scanline, width); break;
+				case FreeImageType.RgbaF: result = new Scanline<FIRGBAF>(dib, scanline, width); break;
+				case FreeImageType.RgbF: result = new Scanline<FIRGBF>(dib, scanline, width); break;
+				case FreeImageType.UInt16: result = new Scanline<UInt16>(dib, scanline, width); break;
+				case FreeImageType.UInt32: result = new Scanline<UInt32>(dib, scanline, width); break;
+				case FreeImageType.Unknown:
 				default: throw new ArgumentException("Type is not supported.");
 			}
 
@@ -1616,25 +1616,25 @@ namespace FreeImageAPI
 		/// List of return-types of <b>T</b>:<para/>
 		/// <list type="table">
 		/// <listheader><term>Color Depth / Type</term><description><see cref="Type">Result Type of IEnmuerable&lt;Scanline&lt;T&gt;&gt;</see></description></listheader>
-		/// <item><term>1 (<see cref="FREE_IMAGE_TYPE.FIT_BITMAP"/>)</term><description><see cref="FI1BIT"/></description></item>
-		/// <item><term>4 (<see cref="FREE_IMAGE_TYPE.FIT_BITMAP"/>)</term><description><see cref="FI4BIT"/></description></item>
-		/// <item><term>8 (<see cref="FREE_IMAGE_TYPE.FIT_BITMAP"/>)</term><description><see cref="Byte"/></description></item>
-		/// <item><term>16 (<see cref="FREE_IMAGE_TYPE.FIT_BITMAP"/>)</term><description><see cref="UInt16"/></description></item>
-		/// <item><term>16 - 555 (<see cref="FREE_IMAGE_TYPE.FIT_BITMAP"/>)</term><description><see cref="FI16RGB555"/></description></item>
-		/// <item><term>16 - 565 (<see cref="FREE_IMAGE_TYPE.FIT_BITMAP"/>)</term><description><see cref="FI16RGB565"/></description></item>
-		/// <item><term>24 (<see cref="FREE_IMAGE_TYPE.FIT_BITMAP"/>)</term><description><see cref="RGBTRIPLE"/></description></item>
-		/// <item><term>32 (<see cref="FREE_IMAGE_TYPE.FIT_BITMAP"/>)</term><description><see cref="RGBQUAD"/></description></item>
-		/// <item><term><see cref="FREE_IMAGE_TYPE.FIT_COMPLEX"/></term><description><see cref="FICOMPLEX"/></description></item>
-		/// <item><term><see cref="FREE_IMAGE_TYPE.FIT_DOUBLE"/></term><description><see cref="Double"/></description></item>
-		/// <item><term><see cref="FREE_IMAGE_TYPE.FIT_FLOAT"/></term><description><see cref="Single"/></description></item>
-		/// <item><term><see cref="FREE_IMAGE_TYPE.FIT_INT16"/></term><description><see cref="Int16"/></description></item>
-		/// <item><term><see cref="FREE_IMAGE_TYPE.FIT_INT32"/></term><description><see cref="Int32"/></description></item>
-		/// <item><term><see cref="FREE_IMAGE_TYPE.FIT_RGB16"/></term><description><see cref="FIRGB16"/></description></item>
-		/// <item><term><see cref="FREE_IMAGE_TYPE.FIT_RGBA16"/></term><description><see cref="FIRGBA16"/></description></item>
-		/// <item><term><see cref="FREE_IMAGE_TYPE.FIT_RGBAF"/></term><description><see cref="FIRGBAF"/></description></item>
-		/// <item><term><see cref="FREE_IMAGE_TYPE.FIT_RGBF"/></term><description><see cref="FIRGBF"/></description></item>
-		/// <item><term><see cref="FREE_IMAGE_TYPE.FIT_UINT16"/></term><description><see cref="UInt16"/></description></item>
-		/// <item><term><see cref="FREE_IMAGE_TYPE.FIT_UINT32"/></term><description><see cref="UInt32"/></description></item>
+		/// <item><term>1 (<see cref="FreeImageType.Bitmap"/>)</term><description><see cref="FI1BIT"/></description></item>
+		/// <item><term>4 (<see cref="FreeImageType.Bitmap"/>)</term><description><see cref="FI4BIT"/></description></item>
+		/// <item><term>8 (<see cref="FreeImageType.Bitmap"/>)</term><description><see cref="Byte"/></description></item>
+		/// <item><term>16 (<see cref="FreeImageType.Bitmap"/>)</term><description><see cref="UInt16"/></description></item>
+		/// <item><term>16 - 555 (<see cref="FreeImageType.Bitmap"/>)</term><description><see cref="FI16RGB555"/></description></item>
+		/// <item><term>16 - 565 (<see cref="FreeImageType.Bitmap"/>)</term><description><see cref="FI16RGB565"/></description></item>
+		/// <item><term>24 (<see cref="FreeImageType.Bitmap"/>)</term><description><see cref="RGBTRIPLE"/></description></item>
+		/// <item><term>32 (<see cref="FreeImageType.Bitmap"/>)</term><description><see cref="RGBQUAD"/></description></item>
+		/// <item><term><see cref="FreeImageType.Complex"/></term><description><see cref="FICOMPLEX"/></description></item>
+		/// <item><term><see cref="FreeImageType.Double"/></term><description><see cref="Double"/></description></item>
+		/// <item><term><see cref="FreeImageType.Float"/></term><description><see cref="Single"/></description></item>
+		/// <item><term><see cref="FreeImageType.Int16"/></term><description><see cref="Int16"/></description></item>
+		/// <item><term><see cref="FreeImageType.Int32"/></term><description><see cref="Int32"/></description></item>
+		/// <item><term><see cref="FreeImageType.Rgb16"/></term><description><see cref="FIRGB16"/></description></item>
+		/// <item><term><see cref="FreeImageType.Rgba16"/></term><description><see cref="FIRGBA16"/></description></item>
+		/// <item><term><see cref="FreeImageType.RgbaF"/></term><description><see cref="FIRGBAF"/></description></item>
+		/// <item><term><see cref="FreeImageType.RgbF"/></term><description><see cref="FIRGBF"/></description></item>
+		/// <item><term><see cref="FreeImageType.UInt16"/></term><description><see cref="UInt16"/></description></item>
+		/// <item><term><see cref="FreeImageType.UInt32"/></term><description><see cref="UInt32"/></description></item>
 		/// </list>
 		/// </remarks>
 		public IList GetScanlines()
@@ -1646,7 +1646,7 @@ namespace FreeImageAPI
 
 			switch (FreeImage.GetImageType(dib))
 			{
-				case FREE_IMAGE_TYPE.FIT_BITMAP:
+				case FreeImageType.Bitmap:
 
 					switch (FreeImage.GetBPP(dib))
 					{
@@ -1673,18 +1673,18 @@ namespace FreeImageAPI
 					}
 					break;
 
-				case FREE_IMAGE_TYPE.FIT_COMPLEX: list = new List<Scanline<FICOMPLEX>>(height); break;
-				case FREE_IMAGE_TYPE.FIT_DOUBLE: list = new List<Scanline<Double>>(height); break;
-				case FREE_IMAGE_TYPE.FIT_FLOAT: list = new List<Scanline<Single>>(height); break;
-				case FREE_IMAGE_TYPE.FIT_INT16: list = new List<Scanline<Int16>>(height); break;
-				case FREE_IMAGE_TYPE.FIT_INT32: list = new List<Scanline<Int32>>(height); break;
-				case FREE_IMAGE_TYPE.FIT_RGB16: list = new List<Scanline<FIRGB16>>(height); break;
-				case FREE_IMAGE_TYPE.FIT_RGBA16: list = new List<Scanline<FIRGBA16>>(height); break;
-				case FREE_IMAGE_TYPE.FIT_RGBAF: list = new List<Scanline<FIRGBAF>>(height); break;
-				case FREE_IMAGE_TYPE.FIT_RGBF: list = new List<Scanline<FIRGBF>>(height); break;
-				case FREE_IMAGE_TYPE.FIT_UINT16: list = new List<Scanline<UInt16>>(height); break;
-				case FREE_IMAGE_TYPE.FIT_UINT32: list = new List<Scanline<UInt32>>(height); break;
-				case FREE_IMAGE_TYPE.FIT_UNKNOWN:
+				case FreeImageType.Complex: list = new List<Scanline<FICOMPLEX>>(height); break;
+				case FreeImageType.Double: list = new List<Scanline<Double>>(height); break;
+				case FreeImageType.Float: list = new List<Scanline<Single>>(height); break;
+				case FreeImageType.Int16: list = new List<Scanline<Int16>>(height); break;
+				case FreeImageType.Int32: list = new List<Scanline<Int32>>(height); break;
+				case FreeImageType.Rgb16: list = new List<Scanline<FIRGB16>>(height); break;
+				case FreeImageType.Rgba16: list = new List<Scanline<FIRGBA16>>(height); break;
+				case FreeImageType.RgbaF: list = new List<Scanline<FIRGBAF>>(height); break;
+				case FreeImageType.RgbF: list = new List<Scanline<FIRGBF>>(height); break;
+				case FreeImageType.UInt16: list = new List<Scanline<UInt16>>(height); break;
+				case FreeImageType.UInt32: list = new List<Scanline<UInt32>>(height); break;
+				case FreeImageType.Unknown:
 				default: throw new ArgumentException("Type is not supported.");
 			}
 
@@ -1805,7 +1805,7 @@ namespace FreeImageAPI
 		/// <exception cref="ArgumentNullException">
 		/// <paramref name="bitmap"/> is a null reference.
 		/// </exception>
-		public void CloneMetadataFrom(FreeImageBitmap bitmap, FREE_IMAGE_METADATA_COPY flags)
+		public void CloneMetadataFrom(FreeImageBitmap bitmap, FreeImageMetadataCopy flags)
 		{
 			if (bitmap == null)
 			{
@@ -1822,11 +1822,11 @@ namespace FreeImageAPI
 		/// </summary>
 		/// <param name="filename">A string that contains the name of the file to which
 		/// to save this <see cref="FreeImageBitmap"/>.</param>
-		/// <param name="format">An <see cref="FREE_IMAGE_FORMAT"/> that specifies the format of the saved image.</param>
+		/// <param name="format">An <see cref="FreeImageFormat"/> that specifies the format of the saved image.</param>
 		/// <param name="flags">Flags to enable or disable plugin-features.</param>
 		/// <exception cref="ArgumentException"><paramref name="filename"/> is null or empty.</exception>
 		/// <exception cref="Exception">Saving the image failed.</exception>
-		public void Save(string filename, FREE_IMAGE_FORMAT format = FREE_IMAGE_FORMAT.FIF_UNKNOWN, FREE_IMAGE_SAVE_FLAGS flags = FREE_IMAGE_SAVE_FLAGS.DEFAULT)
+		public void Save(string filename, FreeImageFormat format = FreeImageFormat.Unknown, FreeImageSaveFlags flags = FreeImageSaveFlags.Default)
 		{
 			EnsureNotDisposed();
 			if (string.IsNullOrEmpty(filename))
@@ -1848,11 +1848,11 @@ namespace FreeImageAPI
 		/// using the specified saving flags.
 		/// </summary>
 		/// <param name="stream">The stream where this <see cref="FreeImageBitmap"/> will be saved.</param>
-		/// <param name="format">An <see cref="FREE_IMAGE_FORMAT"/> that specifies the format of the saved image.</param>
+		/// <param name="format">An <see cref="FreeImageFormat"/> that specifies the format of the saved image.</param>
 		/// <param name="flags">Flags to enable or disable plugin-features.</param>
 		/// <exception cref="ArgumentNullException"><paramref name="stream"/> is a null reference.</exception>
 		/// <exception cref="Exception">Saving the image failed.</exception>
-		public void Save(Stream stream, FREE_IMAGE_FORMAT format, FREE_IMAGE_SAVE_FLAGS flags = FREE_IMAGE_SAVE_FLAGS.DEFAULT)
+		public void Save(Stream stream, FreeImageFormat format, FreeImageSaveFlags flags = FreeImageSaveFlags.Default)
 		{
 			EnsureNotDisposed();
 			if (stream == null)
@@ -1973,9 +1973,9 @@ namespace FreeImageAPI
 		/// <exception cref="Exception">Saving the image has failed.</exception>
 		public void SaveAdd(
 			string filename,
-			FREE_IMAGE_FORMAT format,
-			FREE_IMAGE_LOAD_FLAGS loadFlags,
-			FREE_IMAGE_SAVE_FLAGS saveFlags)
+			FreeImageFormat format,
+			FreeImageLoadFlags loadFlags,
+			FreeImageSaveFlags saveFlags)
 		{
 			SaveAdd(
 				filename,
@@ -2000,9 +2000,9 @@ namespace FreeImageAPI
 		public void SaveAdd(
 			string filename,
 			int insertPosition,
-			FREE_IMAGE_FORMAT format,
-			FREE_IMAGE_LOAD_FLAGS loadFlags,
-			FREE_IMAGE_SAVE_FLAGS saveFlags)
+			FreeImageFormat format,
+			FreeImageLoadFlags loadFlags,
+			FreeImageSaveFlags saveFlags)
 		{
 			SaveAdd(
 				filename,
@@ -2037,7 +2037,7 @@ namespace FreeImageAPI
 					throw new InvalidOperationException("No source available.");
 				}
 
-				FREE_IMAGE_FORMAT format = originalFormat;
+				FreeImageFormat format = originalFormat;
 				FIMULTIBITMAP mdib = FreeImage.OpenMultiBitmapFromStream(stream, ref format, saveInformation.loadFlags);
 				if (mdib.IsNull)
 					throw new Exception(ErrorLoadingBitmap);
@@ -2095,7 +2095,7 @@ namespace FreeImageAPI
 		public unsafe Color GetPixel(int x, int y)
 		{
 			EnsureNotDisposed();
-			if (FreeImage.GetImageType(dib) == FREE_IMAGE_TYPE.FIT_BITMAP)
+			if (FreeImage.GetImageType(dib) == FreeImageType.Bitmap)
 			{
 				if (ColorDepth is 16 or 24 or 32)
 				{
@@ -2153,7 +2153,7 @@ namespace FreeImageAPI
 		public unsafe void SetPixel(int x, int y, Color color)
 		{
 			EnsureNotDisposed();
-			if (FreeImage.GetImageType(dib) == FREE_IMAGE_TYPE.FIT_BITMAP)
+			if (FreeImage.GetImageType(dib) == FreeImageType.Bitmap)
 			{
 				if (ColorDepth is 16 or 24 or 32)
 				{
@@ -2203,24 +2203,24 @@ namespace FreeImageAPI
 		/// Converts this <see cref="FreeImageBitmap"/> into a different color depth.
 		/// The parameter <paramref name="bpp"/> specifies color depth, greyscale conversion
 		/// and palette reorder.
-		/// <para>Adding the <see cref="FREE_IMAGE_COLOR_DEPTH.FICD_FORCE_GREYSCALE"/> flag
+		/// <para>Adding the <see cref="FreeImageColorDepth.FICD_FORCE_GREYSCALE"/> flag
 		/// will first perform a convesion to greyscale. This can be done with any target
 		/// color depth.</para>
-		/// <para>Adding the <see cref="FREE_IMAGE_COLOR_DEPTH.FICD_REORDER_PALETTE"/> flag
+		/// <para>Adding the <see cref="FreeImageColorDepth.FICD_REORDER_PALETTE"/> flag
 		/// will allow the algorithm to reorder the palette. This operation will not be performed to
 		/// non-greyscale images to prevent data loss by mistake.</para>
 		/// </summary>
 		/// <param name="bpp">A bitfield containing information about the conversion
 		/// to perform.</param>
 		/// <returns>Returns true on success, false on failure.</returns>
-		public bool ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH bpp)
+		public bool ConvertColorDepth(FreeImageColorDepth bpp)
 		{
 			EnsureNotDisposed();
 			return ReplaceDib(FreeImage.ConvertColorDepth(dib, bpp));
 		}
 
 		/// <summary>
-		/// Converts this <see cref="FreeImageBitmap"/> <see cref="FREE_IMAGE_TYPE"/> to
+		/// Converts this <see cref="FreeImageBitmap"/> <see cref="FreeImageType"/> to
 		/// <paramref name="type"/> initializing a new instance.
 		/// In case source and destination type are the same, the operation fails.
 		/// An error message can be catched using the 'Message' event.
@@ -2228,7 +2228,7 @@ namespace FreeImageAPI
 		/// <param name="type">Destination type.</param>
 		/// <param name="scaleLinear">True to scale linear, else false.</param>
 		/// <returns>Returns true on success, false on failure.</returns>
-		public bool ConvertType(FREE_IMAGE_TYPE type, bool scaleLinear)
+		public bool ConvertType(FreeImageType type, bool scaleLinear)
 		{
 			EnsureNotDisposed();
 			return (ImageType != type) && ReplaceDib(FreeImage.ConvertToType(dib, type, scaleLinear));
@@ -2242,7 +2242,7 @@ namespace FreeImageAPI
 		/// <param name="type">Destination type.</param>
 		/// <param name="scaleLinear">True to scale linear, else false.</param>
 		/// <returns>The converted instance.</returns>
-		public FreeImageBitmap GetTypeConvertedInstance(FREE_IMAGE_TYPE type, bool scaleLinear)
+		public FreeImageBitmap GetTypeConvertedInstance(FreeImageType type, bool scaleLinear)
 		{
 			EnsureNotDisposed();
 			FreeImageBitmap result = null;
@@ -2262,16 +2262,16 @@ namespace FreeImageAPI
 		/// a new instance.
 		/// The parameter <paramref name="bpp"/> specifies color depth, greyscale conversion
 		/// and palette reorder.
-		/// <para>Adding the <see cref="FREE_IMAGE_COLOR_DEPTH.FICD_FORCE_GREYSCALE"/> flag will
+		/// <para>Adding the <see cref="FreeImageColorDepth.FICD_FORCE_GREYSCALE"/> flag will
 		/// first perform a convesion to greyscale. This can be done with any target color depth.</para>
-		/// <para>Adding the <see cref="FREE_IMAGE_COLOR_DEPTH.FICD_REORDER_PALETTE"/> flag will
+		/// <para>Adding the <see cref="FreeImageColorDepth.FICD_REORDER_PALETTE"/> flag will
 		/// allow the algorithm to reorder the palette. This operation will not be performed to
 		/// non-greyscale images to prevent data loss by mistake.</para>
 		/// </summary>
 		/// <param name="bpp">A bitfield containing information about the conversion
 		/// to perform.</param>
 		/// <returns>The converted instance.</returns>
-		public FreeImageBitmap GetColorConvertedInstance(FREE_IMAGE_COLOR_DEPTH bpp)
+		public FreeImageBitmap GetColorConvertedInstance(FreeImageColorDepth bpp)
 		{
 			EnsureNotDisposed();
 			FreeImageBitmap result = null;
@@ -2295,7 +2295,7 @@ namespace FreeImageAPI
 		/// <param name="height">Height of the new <see cref="FreeImageBitmap"/>.</param>
 		/// <param name="filter">Filter to use for resizing.</param>
 		/// <returns>Returns true on success, false on failure.</returns>
-		public bool Rescale(int width, int height, FREE_IMAGE_FILTER filter)
+		public bool Rescale(int width, int height, FreeImageFilter filter)
 		{
 			EnsureNotDisposed();
 			return ReplaceDib(FreeImage.Rescale(dib, width, height, filter));
@@ -2309,7 +2309,7 @@ namespace FreeImageAPI
 		/// <param name="height">Height of the new <see cref="FreeImageBitmap"/>.</param>
 		/// <param name="filter">Filter to use for resizing.</param>
 		/// <returns>The rescaled instance.</returns>
-		public FreeImageBitmap GetScaledInstance(int width, int height, FREE_IMAGE_FILTER filter)
+		public FreeImageBitmap GetScaledInstance(int width, int height, FreeImageFilter filter)
 		{
 			EnsureNotDisposed();
 			FreeImageBitmap result = null;
@@ -2339,7 +2339,7 @@ namespace FreeImageAPI
 		/// <returns><c>true</c> on success, <c>false</c> on failure.</returns>
 		public bool EnlargeCanvas<T>(int left, int top, int right, int bottom, T? color) where T : struct
 		{
-			return EnlargeCanvas(left, top, right, bottom, color, FREE_IMAGE_COLOR_OPTIONS.FICO_DEFAULT);
+			return EnlargeCanvas(left, top, right, bottom, color, FreeImageColorOptions.Default);
 		}
 
 		/// <summary>
@@ -2360,7 +2360,7 @@ namespace FreeImageAPI
 		/// <param name="options">Options that affect the color search process for palletized images.</param>
 		/// <returns><c>true</c> on success, <c>false</c> on failure.</returns>
 		public bool EnlargeCanvas<T>(int left, int top, int right, int bottom,
-			T? color, FREE_IMAGE_COLOR_OPTIONS options) where T : struct
+			T? color, FreeImageColorOptions options) where T : struct
 		{
 			EnsureNotDisposed();
 			return ReplaceDib(FreeImage.EnlargeCanvas(dib, left, top, right, bottom, color, options));
@@ -2385,7 +2385,7 @@ namespace FreeImageAPI
 		public FreeImageBitmap GetEnlargedInstance<T>(int left, int top, int right, int bottom,
 			T? color) where T : struct
 		{
-			return GetEnlargedInstance(left, top, right, bottom, color, FREE_IMAGE_COLOR_OPTIONS.FICO_DEFAULT);
+			return GetEnlargedInstance(left, top, right, bottom, color, FreeImageColorOptions.Default);
 		}
 
 		/// <summary>
@@ -2406,7 +2406,7 @@ namespace FreeImageAPI
 		/// <param name="options">Options that affect the color search process for palletized images.</param>
 		/// <returns>The enlarged instance.</returns>
 		public FreeImageBitmap GetEnlargedInstance<T>(int left, int top, int right, int bottom,
-			T? color, FREE_IMAGE_COLOR_OPTIONS options) where T : struct
+			T? color, FreeImageColorOptions options) where T : struct
 		{
 			EnsureNotDisposed();
 			FreeImageBitmap result = null;
@@ -2426,7 +2426,7 @@ namespace FreeImageAPI
 		/// <param name="algorithm">The color reduction algorithm to be used.</param>
 		/// <param name="paletteSize">Size of the desired output palette.</param>
 		/// <returns>Returns true on success, false on failure.</returns>
-		public bool Quantize(FREE_IMAGE_QUANTIZE algorithm, int paletteSize)
+		public bool Quantize(FreeImageQuantize algorithm, int paletteSize)
 		{
 			return Quantize(algorithm, paletteSize, 0, (RGBQUAD[])null);
 		}
@@ -2442,7 +2442,7 @@ namespace FreeImageAPI
 		/// <param name="paletteSize">Size of the desired output palette.</param>
 		/// <param name="reservePalette">The provided palette.</param>
 		/// <returns>Returns true on success, false on failure.</returns>
-		public bool Quantize(FREE_IMAGE_QUANTIZE algorithm, int paletteSize, Palette reservePalette)
+		public bool Quantize(FreeImageQuantize algorithm, int paletteSize, Palette reservePalette)
 		{
 			return Quantize(algorithm, paletteSize, reservePalette.Length, reservePalette.Data);
 		}
@@ -2459,7 +2459,7 @@ namespace FreeImageAPI
 		/// <param name="reserveSize">Size of the provided palette of ReservePalette.</param>
 		/// <param name="reservePalette">The provided palette.</param>
 		/// <returns>Returns true on success, false on failure.</returns>
-		public bool Quantize(FREE_IMAGE_QUANTIZE algorithm, int paletteSize, int reserveSize, Palette reservePalette)
+		public bool Quantize(FreeImageQuantize algorithm, int paletteSize, int reserveSize, Palette reservePalette)
 		{
 			return Quantize(algorithm, paletteSize, reserveSize, reservePalette.Data);
 		}
@@ -2476,7 +2476,7 @@ namespace FreeImageAPI
 		/// <param name="reserveSize">Size of the provided palette of ReservePalette.</param>
 		/// <param name="reservePalette">The provided palette.</param>
 		/// <returns>Returns true on success, false on failure.</returns>
-		public bool Quantize(FREE_IMAGE_QUANTIZE algorithm, int paletteSize, int reserveSize, RGBQUAD[] reservePalette)
+		public bool Quantize(FreeImageQuantize algorithm, int paletteSize, int reserveSize, RGBQUAD[] reservePalette)
 		{
 			EnsureNotDisposed();
 			return ReplaceDib(FreeImage.ColorQuantizeEx(dib, algorithm, paletteSize, reserveSize, reservePalette));
@@ -2490,7 +2490,7 @@ namespace FreeImageAPI
 		/// <param name="algorithm">The color reduction algorithm to be used.</param>
 		/// <param name="paletteSize">Size of the desired output palette.</param>
 		/// <returns>The quantized instance.</returns>
-		public FreeImageBitmap GetQuantizedInstance(FREE_IMAGE_QUANTIZE algorithm, int paletteSize)
+		public FreeImageBitmap GetQuantizedInstance(FreeImageQuantize algorithm, int paletteSize)
 		{
 			return GetQuantizedInstance(algorithm, paletteSize, 0, (RGBQUAD[])null);
 		}
@@ -2504,7 +2504,7 @@ namespace FreeImageAPI
 		/// <param name="paletteSize">Size of the desired output palette.</param>
 		/// <param name="reservePalette">The provided palette.</param>
 		/// <returns>The quantized instance.</returns>
-		public FreeImageBitmap GetQuantizedInstance(FREE_IMAGE_QUANTIZE algorithm, int paletteSize, Palette reservePalette)
+		public FreeImageBitmap GetQuantizedInstance(FreeImageQuantize algorithm, int paletteSize, Palette reservePalette)
 		{
 			return GetQuantizedInstance(algorithm, paletteSize, reservePalette.Length, reservePalette);
 		}
@@ -2520,7 +2520,7 @@ namespace FreeImageAPI
 		/// <param name="reserveSize">Size of the provided palette.</param>
 		/// <param name="reservePalette">The provided palette.</param>
 		/// <returns>The quantized instance.</returns>
-		public FreeImageBitmap GetQuantizedInstance(FREE_IMAGE_QUANTIZE algorithm, int paletteSize, int reserveSize, Palette reservePalette)
+		public FreeImageBitmap GetQuantizedInstance(FreeImageQuantize algorithm, int paletteSize, int reserveSize, Palette reservePalette)
 		{
 			return GetQuantizedInstance(algorithm, paletteSize, reserveSize, reservePalette.Data);
 		}
@@ -2536,7 +2536,7 @@ namespace FreeImageAPI
 		/// <param name="reserveSize">Size of the provided palette.</param>
 		/// <param name="reservePalette">The provided palette.</param>
 		/// <returns>The quantized instance.</returns>
-		public FreeImageBitmap GetQuantizedInstance(FREE_IMAGE_QUANTIZE algorithm, int paletteSize, int reserveSize, RGBQUAD[] reservePalette)
+		public FreeImageBitmap GetQuantizedInstance(FreeImageQuantize algorithm, int paletteSize, int reserveSize, RGBQUAD[] reservePalette)
 		{
 			EnsureNotDisposed();
 			FreeImageBitmap result = null;
@@ -2742,7 +2742,7 @@ namespace FreeImageAPI
 		/// It's size is assumed to be 256 in length.</param>
 		/// <param name="channel">The color channel to be transformed.</param>
 		/// <returns>Returns true on success, false on failure.</returns>
-		public bool AdjustCurve(byte[] lookUpTable, FREE_IMAGE_COLOR_CHANNEL channel)
+		public bool AdjustCurve(byte[] lookUpTable, FreeImageColorChannel channel)
 		{
 			EnsureNotDisposed();
 			return FreeImage.AdjustCurve(dib, lookUpTable, channel);
@@ -2800,7 +2800,7 @@ namespace FreeImageAPI
 		/// <param name="channel">Channel to compute from.</param>
 		/// <param name="histogram">Array of integers containing the histogram.</param>
 		/// <returns>Returns true on success, false on failure.</returns>
-		public bool GetHistogram(FREE_IMAGE_COLOR_CHANNEL channel, out int[] histogram)
+		public bool GetHistogram(FreeImageColorChannel channel, out int[] histogram)
 		{
 			EnsureNotDisposed();
 			histogram = new int[256];
@@ -2812,7 +2812,7 @@ namespace FreeImageAPI
 		/// </summary>
 		/// <param name="channel">The color channel to extract.</param>
 		/// <returns>The color channel in a new instance.</returns>
-		public FreeImageBitmap GetChannel(FREE_IMAGE_COLOR_CHANNEL channel)
+		public FreeImageBitmap GetChannel(FreeImageColorChannel channel)
 		{
 			EnsureNotDisposed();
 			FreeImageBitmap result = null;
@@ -2831,7 +2831,7 @@ namespace FreeImageAPI
 		/// <param name="bitmap">The <see cref="FreeImageBitmap"/> to insert.</param>
 		/// <param name="channel">The color channel to replace.</param>
 		/// <returns>Returns true on success, false on failure.</returns>
-		public bool SetChannel(FreeImageBitmap bitmap, FREE_IMAGE_COLOR_CHANNEL channel)
+		public bool SetChannel(FreeImageBitmap bitmap, FreeImageColorChannel channel)
 		{
 			EnsureNotDisposed();
 			bitmap.EnsureNotDisposed();
@@ -2843,7 +2843,7 @@ namespace FreeImageAPI
 		/// </summary>
 		/// <param name="channel">The color channel to extract.</param>
 		/// <returns>The color channel in a new instance.</returns>
-		public FreeImageBitmap GetComplexChannel(FREE_IMAGE_COLOR_CHANNEL channel)
+		public FreeImageBitmap GetComplexChannel(FreeImageColorChannel channel)
 		{
 			EnsureNotDisposed();
 			FreeImageBitmap result = null;
@@ -2862,7 +2862,7 @@ namespace FreeImageAPI
 		/// <param name="bitmap">The <see cref="FreeImageBitmap"/> to insert.</param>
 		/// <param name="channel">The color channel to replace.</param>
 		/// <returns>Returns true on success, false on failure.</returns>
-		public bool SetComplexChannel(FreeImageBitmap bitmap, FREE_IMAGE_COLOR_CHANNEL channel)
+		public bool SetComplexChannel(FreeImageBitmap bitmap, FreeImageColorChannel channel)
 		{
 			EnsureNotDisposed();
 			bitmap.EnsureNotDisposed();
@@ -3109,7 +3109,7 @@ namespace FreeImageAPI
 		/// <returns><c>true</c> on success, <c>false</c> on failure.</returns>
 		public bool FillBackground<T>(T color) where T : struct
 		{
-			return FillBackground(color, FREE_IMAGE_COLOR_OPTIONS.FICO_DEFAULT);
+			return FillBackground(color, FreeImageColorOptions.Default);
 		}
 
 		/// <summary>
@@ -3120,7 +3120,7 @@ namespace FreeImageAPI
 		/// <param name="color">The color to fill this <see cref="FreeImageBitmap"/> with.</param>
 		/// <param name="options">Options that affect the color search process for palletized images.</param>
 		/// <returns><c>true</c> on success, <c>false</c> on failure.</returns>
-		public bool FillBackground<T>(T color, FREE_IMAGE_COLOR_OPTIONS options) where T : struct
+		public bool FillBackground<T>(T color, FreeImageColorOptions options) where T : struct
 		{
 			EnsureNotDisposed();
 			return FreeImage.FillBackground(dib, color, options);
@@ -3232,7 +3232,7 @@ namespace FreeImageAPI
 		/// <param name="operation">The operation to apply.</param>
 		/// <param name="perfect">To avoid lossy transformation, you can set the perfect parameter to true.</param>
 		/// <returns>Returns true on success, false on failure.</returns>
-		public static bool JPEGTransform(string source, string destination, FREE_IMAGE_JPEG_OPERATION operation, bool perfect)
+		public static bool JPEGTransform(string source, string destination, FreeImageJpegOperation operation, bool perfect)
 		{
 			return FreeImage.JPEGTransform(source, destination, operation, perfect);
 		}
@@ -3357,9 +3357,9 @@ namespace FreeImageAPI
 		public static void SaveAdd(
 			string filename,
 			FreeImageBitmap bitmap,
-			FREE_IMAGE_FORMAT format = FREE_IMAGE_FORMAT.FIF_UNKNOWN,
-			FREE_IMAGE_LOAD_FLAGS loadFlags = FREE_IMAGE_LOAD_FLAGS.DEFAULT,
-			FREE_IMAGE_SAVE_FLAGS saveFlags = FREE_IMAGE_SAVE_FLAGS.DEFAULT)
+			FreeImageFormat format = FreeImageFormat.Unknown,
+			FreeImageLoadFlags loadFlags = FreeImageLoadFlags.Default,
+			FreeImageSaveFlags saveFlags = FreeImageSaveFlags.Default)
 		{
 			if (filename == null)
 			{
@@ -3411,9 +3411,9 @@ namespace FreeImageAPI
 			string filename,
 			FreeImageBitmap bitmap,
 			int insertPosition,
-			FREE_IMAGE_FORMAT format = FREE_IMAGE_FORMAT.FIF_UNKNOWN,
-			FREE_IMAGE_LOAD_FLAGS loadFlags = FREE_IMAGE_LOAD_FLAGS.DEFAULT,
-			FREE_IMAGE_SAVE_FLAGS saveFlags = FREE_IMAGE_SAVE_FLAGS.DEFAULT)
+			FreeImageFormat format = FreeImageFormat.Unknown,
+			FreeImageLoadFlags loadFlags = FreeImageLoadFlags.Default,
+			FreeImageSaveFlags saveFlags = FreeImageSaveFlags.Default)
 		{
 			if (filename == null)
 			{
@@ -3527,7 +3527,7 @@ namespace FreeImageAPI
 		/// Opens the stream and reads the number of available pages.
 		/// Then loads the first page to this instance.
 		/// </summary>
-		private void LoadFromStream(Stream stream, FREE_IMAGE_FORMAT format, FREE_IMAGE_LOAD_FLAGS flags)
+		private void LoadFromStream(Stream stream, FreeImageFormat format, FreeImageLoadFlags flags)
 		{
 			FIMULTIBITMAP mdib = FreeImage.OpenMultiBitmapFromStream(stream, ref format, flags);
 			if (mdib.IsNull)
@@ -3567,9 +3567,9 @@ namespace FreeImageAPI
 		private sealed class SaveInformation : ICloneable
 		{
 			public string filename;
-			public FREE_IMAGE_FORMAT format = FREE_IMAGE_FORMAT.FIF_UNKNOWN;
-			public FREE_IMAGE_LOAD_FLAGS loadFlags = FREE_IMAGE_LOAD_FLAGS.DEFAULT;
-			public FREE_IMAGE_SAVE_FLAGS saveFlags = FREE_IMAGE_SAVE_FLAGS.DEFAULT;
+			public FreeImageFormat format = FreeImageFormat.Unknown;
+			public FreeImageLoadFlags loadFlags = FreeImageLoadFlags.Default;
+			public FreeImageSaveFlags saveFlags = FreeImageSaveFlags.Default;
 
 			public object Clone()
 			{
@@ -3657,7 +3657,7 @@ namespace FreeImageAPI
 		{
 			EnsureNotDisposed();
 			using MemoryStream memory = new MemoryStream(DataSize);
-			if (!FreeImage.SaveToStream(ref dib, memory, FREE_IMAGE_FORMAT.FIF_TIFF, FREE_IMAGE_SAVE_FLAGS.TIFF_LZW))
+			if (!FreeImage.SaveToStream(ref dib, memory, FreeImageFormat.Tiff, FreeImageSaveFlags.TiffLzw))
 			{
 				throw new SerializationException();
 			}

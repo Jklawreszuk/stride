@@ -74,7 +74,7 @@ namespace FreeImageAPI.Metadata
 		/// <summary>
 		/// Retrieves the datamodel that this instance represents.
 		/// </summary>
-		public abstract FREE_IMAGE_MDMODEL Model
+		public abstract FreeImageMetadataModel Model
 		{
 			get;
 		}
@@ -299,7 +299,7 @@ namespace FreeImageAPI.Metadata
 		/// <paramref name="searchPattern"/> is null.</exception>
 		/// <exception cref="ArgumentException">
 		/// <paramref name="searchPattern"/> is empty.</exception>
-		public List<MetadataTag> RegexSearch(string searchPattern, MD_SEARCH_FLAGS flags)
+		public List<MetadataTag> RegexSearch(string searchPattern, MdSearchFlags flags)
 		{
 			if (searchPattern == null)
 			{
@@ -314,17 +314,17 @@ namespace FreeImageAPI.Metadata
 			List<MetadataTag> list = List;
 			foreach (MetadataTag tag in list)
 			{
-				if (((flags & MD_SEARCH_FLAGS.KEY) > 0) && regex.Match(tag.Key).Success)
+				if (((flags & MdSearchFlags.Key) > 0) && regex.Match(tag.Key).Success)
 				{
 					result.Add(tag);
 					continue;
 				}
-				if (((flags & MD_SEARCH_FLAGS.DESCRIPTION) > 0) && regex.Match(tag.Description).Success)
+				if (((flags & MdSearchFlags.Description) > 0) && regex.Match(tag.Description).Success)
 				{
 					result.Add(tag);
 					continue;
 				}
-				if (((flags & MD_SEARCH_FLAGS.TOSTRING) > 0) && regex.Match(tag.ToString()).Success)
+				if (((flags & MdSearchFlags.String) > 0) && regex.Match(tag.ToString()).Success)
 				{
 					result.Add(tag);
 					continue;
@@ -501,7 +501,7 @@ namespace FreeImageAPI.Metadata
 				{
 					tag = new MetadataTag(Model);
 					tag.Key = key;
-					tag.SetValue(value, FREE_IMAGE_MDTYPE.FIDT_UNDEFINED);
+					tag.SetValue(value, FreeImageMdType.Undefined);
 					AddTag(tag);
 				}
 				else

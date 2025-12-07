@@ -29,40 +29,77 @@
 // ==========================================================
 // CVS
 // $Revision: 1.1 $
-// $Date: 2009/09/15 11:44:24 $
-// $Id: FREE_IMAGE_COLOR_OPTIONS.cs,v 1.1 2009/09/15 11:44:24 cklein05 Exp $
+// $Date: 2007/11/28 15:33:39 $
+// $Id: FREE_IMAGE_COLOR_DEPTH.cs,v 1.1 2007/11/28 15:33:39 cklein05 Exp $
 // ==========================================================
 
 namespace FreeImageAPI
 {
 	/// <summary>
-	/// Constants used in color filling routines.
+	/// Enumeration used for color conversions.
+	/// FREE_IMAGE_COLOR_DEPTH contains several colors to convert to.
+	/// The default value 'FICD_AUTO'.
 	/// </summary>
-	public enum FREE_IMAGE_COLOR_OPTIONS
+	[System.Flags]
+	public enum FreeImageColorDepth
 	{
 		/// <summary>
-		/// Default value.
+		/// Unknown.
 		/// </summary>
-		FICO_DEFAULT = 0x0,
+		FICD_UNKNOWN = 0,
 		/// <summary>
-		/// <see cref="RGBQUAD"/> color is RGB color (contains no valid alpha channel).
+		/// Auto selected by the used algorithm.
 		/// </summary>
-		FICO_RGB = 0x0,
+		FICD_AUTO = FICD_UNKNOWN,
 		/// <summary>
-		/// <see cref="RGBQUAD"/> color is RGBA color (contains a valid alpha channel).
+		/// 1-bit.
 		/// </summary>
-		FICO_RGBA = 0x1,
+		FICD_01_BPP = 1,
 		/// <summary>
-		/// Lookup nearest RGB color from palette.
+		/// 1-bit using dithering.
 		/// </summary>
-		FICO_NEAREST_COLOR = 0x0,
+		FICD_01_BPP_DITHER = FICD_01_BPP,
 		/// <summary>
-		/// Lookup equal RGB color from palette.
+		/// 1-bit using threshold.
 		/// </summary>
-		FICO_EQUAL_COLOR = 0x2,
+		FICD_01_BPP_THRESHOLD = FICD_01_BPP | 2,
 		/// <summary>
-		/// <see cref="RGBQUAD.rgbReserved"/> contains the palette index to be used.
+		/// 4-bit.
 		/// </summary>
-		FICO_ALPHA_IS_INDEX = 0x4,
+		FICD_04_BPP = 4,
+		/// <summary>
+		/// 8-bit.
+		/// </summary>
+		FICD_08_BPP = 8,
+		/// <summary>
+		/// 16-bit 555 (1 bit remains unused).
+		/// </summary>
+		FICD_16_BPP_555 = FICD_16_BPP | 2,
+		/// <summary>
+		/// 16-bit 565 (all bits are used).
+		/// </summary>
+		FICD_16_BPP = 16,
+		/// <summary>
+		/// 24-bit.
+		/// </summary>
+		FICD_24_BPP = 24,
+		/// <summary>
+		/// 32-bit.
+		/// </summary>
+		Bpp32 = 32,
+		/// <summary>
+		/// Reorder palette (make it linear). Only affects 1-, 4- and 8-bit images.
+		/// <para>The palette is only reordered in case the image is greyscale
+		/// (all palette entries have the same red, green and blue value).</para>
+		/// </summary>
+		FICD_REORDER_PALETTE = 1024,
+		/// <summary>
+		/// Converts the image to greyscale.
+		/// </summary>
+		FICD_FORCE_GREYSCALE = 2048,
+		/// <summary>
+		/// Flag to mask out all non color depth flags.
+		/// </summary>
+		FICD_COLOR_MASK = FICD_01_BPP | FICD_04_BPP | FICD_08_BPP | FICD_16_BPP | FICD_24_BPP | Bpp32
 	}
 }

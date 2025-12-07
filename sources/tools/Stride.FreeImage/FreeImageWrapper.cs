@@ -59,8 +59,8 @@ namespace FreeImageAPI
 		/// <summary>
 		/// Array containing all 'FREE_IMAGE_MDMODEL's.
 		/// </summary>
-		public static readonly FREE_IMAGE_MDMODEL[] FREE_IMAGE_MDMODELS =
-			(FREE_IMAGE_MDMODEL[])Enum.GetValues(typeof(FREE_IMAGE_MDMODEL));
+		public static readonly FreeImageMetadataModel[] FREE_IMAGE_MDMODELS =
+			(FreeImageMetadataModel[])Enum.GetValues(typeof(FreeImageMetadataModel));
 
 		/// <summary>
 		/// Stores handles used to read from streams.
@@ -223,7 +223,7 @@ namespace FreeImageAPI
 		/// <param name="bpp">Bit depth of the new Bitmap.
 		/// Supported pixel depth: 1-, 4-, 8-, 16-, 24-, 32-bit per pixel for standard bitmap</param>
 		/// <returns>Handle to a FreeImage bitmap.</returns>
-		public static FIBITMAP AllocateT(FREE_IMAGE_TYPE type, int width, int height, int bpp)
+		public static FIBITMAP AllocateT(FreeImageType type, int width, int height, int bpp)
 		{
 			return AllocateT(type, width, height, bpp, 0, 0, 0);
 		}
@@ -267,14 +267,14 @@ namespace FreeImageAPI
 		/// However, specifying a palette is not necesarily needed, even for palletized images. This
 		/// function is capable of implicitly creating a palette, if <paramref name="palette"/> is <c>null</c>.
 		/// If the specified background color is a greyscale value (red = green = blue) or if option
-		/// <see cref="FREE_IMAGE_COLOR_OPTIONS.FICO_ALPHA_IS_INDEX"/> is specified, a greyscale palette
+		/// <see cref="FreeImageColorOptions.AlphaIsIndex"/> is specified, a greyscale palette
 		/// is created. For a 1-bit image, only if the specified background color is either black or white,
 		/// a monochrome palette, consisting of black and white only is created. In any case, the darker
 		/// colors are stored at the smaller palette indices.
 		/// <para/>
 		/// If the specified background color is not a greyscale value, or is neither black nor white
 		/// for a 1-bit image, solely this specified color is injected into the otherwise black-initialized
-		/// palette. For this operation, option <see cref="FREE_IMAGE_COLOR_OPTIONS.FICO_ALPHA_IS_INDEX"/>
+		/// palette. For this operation, option <see cref="FreeImageColorOptions.AlphaIsIndex"/>
 		/// is implicit, so the specified <paramref name="color"/> is applied to the palette entry,
 		/// specified by the background color's <see cref="RGBQUAD.rgbReserved"/> field.
 		/// The image is then filled with this palette index.
@@ -283,13 +283,13 @@ namespace FreeImageAPI
 		/// parameters <paramref name="color"/> and <paramref name="palette"/> are <c>null</c>.
 		/// If only <paramref name="color"/> is <c>null</c>, the palette pointed to by
 		/// parameter <paramref name="palette"/> is initially set for the new image, if a palletized
-		/// image of type <see cref="FREE_IMAGE_TYPE.FIT_BITMAP"/> is created.
+		/// image of type <see cref="FreeImageType.Bitmap"/> is created.
 		/// However, in the latter case, this function returns an image, whose
 		/// pixels are all initialized with zeros so, the image will be filled with the color of the
 		/// first palette entry.
 		/// </remarks>
 		public static FIBITMAP AllocateEx(int width, int height, int bpp,
-			RGBQUAD? color, FREE_IMAGE_COLOR_OPTIONS options, RGBQUAD[] palette,
+			RGBQUAD? color, FreeImageColorOptions options, RGBQUAD[] palette,
 			uint red_mask = 0, uint green_mask = 0, uint blue_mask = 0)
 		{
 			if ((palette != null) && (bpp <= 8) && (palette.Length < (1 << bpp)))
@@ -348,7 +348,7 @@ namespace FreeImageAPI
 		/// documentation of <see cref="FillBackground&lt;T&gt;"/> to learn more about parameters color and options.
 		/// <para/>
 		/// The palette specified through parameter palette is only copied to the newly created
-		/// image, if its image type is <see cref="FREE_IMAGE_TYPE.FIT_BITMAP"/> and the desired bit
+		/// image, if its image type is <see cref="FreeImageType.Bitmap"/> and the desired bit
 		/// depth is smaller than or equal to 8 bits per pixel. In other words, the <paramref name="palette"/>
 		/// palette is only taken into account for palletized images. However, if the preceding conditions
 		/// match and if <paramref name="palette"/> is not <c>null</c>, the palette is assumed to be at
@@ -359,14 +359,14 @@ namespace FreeImageAPI
 		/// However, specifying a palette is not necesarily needed, even for palletized images. This
 		/// function is capable of implicitly creating a palette, if <paramref name="palette"/> is <c>null</c>.
 		/// If the specified background color is a greyscale value (red = green = blue) or if option
-		/// <see cref="FREE_IMAGE_COLOR_OPTIONS.FICO_ALPHA_IS_INDEX"/> is specified, a greyscale palette
+		/// <see cref="FreeImageColorOptions.AlphaIsIndex"/> is specified, a greyscale palette
 		/// is created. For a 1-bit image, only if the specified background color is either black or white,
 		/// a monochrome palette, consisting of black and white only is created. In any case, the darker
 		/// colors are stored at the smaller palette indices.
 		/// <para/>
 		/// If the specified background color is not a greyscale value, or is neither black nor white
 		/// for a 1-bit image, solely this specified color is injected into the otherwise black-initialized
-		/// palette. For this operation, option <see cref="FREE_IMAGE_COLOR_OPTIONS.FICO_ALPHA_IS_INDEX"/>
+		/// palette. For this operation, option <see cref="FreeImageColorOptions.AlphaIsIndex"/>
 		/// is implicit, so the specified color is applied to the palette entry, specified by the
 		/// background color's <see cref="RGBQUAD.rgbReserved"/> field. The image is then filled with
 		/// this palette index.
@@ -375,13 +375,13 @@ namespace FreeImageAPI
 		/// parameters <paramref name="color"/> and <paramref name="palette"/> are <c>null</c>.
 		/// If only <paramref name="color"/> is <c>null</c>, the palette pointed to by
 		/// parameter <paramref name="palette"/> is initially set for the new image, if a palletized
-		/// image of type <see cref="FREE_IMAGE_TYPE.FIT_BITMAP"/> is created.
+		/// image of type <see cref="FreeImageType.Bitmap"/> is created.
 		/// However, in the latter case, this function returns an image, whose
 		/// pixels are all initialized with zeros so, the image will be filled with the color of the
 		/// first palette entry.
 		/// </remarks>
-		public static FIBITMAP AllocateExT<T>(FREE_IMAGE_TYPE type, int width, int height, int bpp,
-			T? color, FREE_IMAGE_COLOR_OPTIONS options, RGBQUAD[] palette,
+		public static FIBITMAP AllocateExT<T>(FreeImageType type, int width, int height, int bpp,
+			T? color, FreeImageColorOptions options, RGBQUAD[] palette,
 			uint red_mask = 0, uint green_mask = 0, uint blue_mask = 0) where T : struct
 		{
 			if ((palette != null) && (bpp <= 8) && (palette.Length < (1 << bpp)))
@@ -432,7 +432,7 @@ namespace FreeImageAPI
 		/// <returns>Handle to a FreeImage bitmap.</returns>
 		public static unsafe FIBITMAP ConvertFromRawBits(
 			byte[] bits,
-			FREE_IMAGE_TYPE type,
+			FreeImageType type,
 			int width,
 			int height,
 			int pitch,
@@ -479,7 +479,7 @@ namespace FreeImageAPI
 		/// <returns>Handle to a FreeImage bitmap.</returns>
 		public static unsafe FIBITMAP ConvertFromRawBits(
 			IntPtr bits,
-			FREE_IMAGE_TYPE type,
+			FreeImageType type,
 			int width,
 			int height,
 			int pitch,
@@ -536,27 +536,27 @@ namespace FreeImageAPI
 		/// <paramref name="filename"/> does not exists.</exception>
 		public static FIBITMAP LoadEx(string filename)
 		{
-			FREE_IMAGE_FORMAT format = FREE_IMAGE_FORMAT.FIF_UNKNOWN;
+			FreeImageFormat format = FreeImageFormat.Unknown;
 			return LoadEx(filename, ref format);
 		}
 
 		/// <summary>
 		/// Loads a FreeImage bitmap.
-		/// In case the loading format is <see cref="FREE_IMAGE_FORMAT.FIF_UNKNOWN"/> the files
+		/// In case the loading format is <see cref="FreeImageFormat.Unknown"/> the files
 		/// real format is being analysed. If no plugin can read the file, format remains
-		/// <see cref="FREE_IMAGE_FORMAT.FIF_UNKNOWN"/> and 0 is returned.
+		/// <see cref="FreeImageFormat.Unknown"/> and 0 is returned.
 		/// Load flags can be provided by the flags parameter.
 		/// </summary>
 		/// <param name="filename">The complete name of the file to load.</param>
 		/// <param name="flags">Flags to enable or disable plugin-features.</param>
 		/// <param name="format">Format of the image. If the format is unknown use
-		/// <see cref="FREE_IMAGE_FORMAT.FIF_UNKNOWN"/>.
+		/// <see cref="FreeImageFormat.Unknown"/>.
 		/// In case a suitable format was found by LoadEx it will be returned in format.
 		/// </param>
 		/// <returns>Handle to a FreeImage bitmap.</returns>
 		/// <exception cref="FileNotFoundException">
 		/// <paramref name="filename"/> does not exists.</exception>
-		public static FIBITMAP LoadEx(string filename, ref FREE_IMAGE_FORMAT format, FREE_IMAGE_LOAD_FLAGS flags = FREE_IMAGE_LOAD_FLAGS.DEFAULT)
+		public static FIBITMAP LoadEx(string filename, ref FreeImageFormat format, FreeImageLoadFlags flags = FreeImageLoadFlags.Default)
 		{
 			// check that the file exists
 			if (!File.Exists(filename))
@@ -565,11 +565,11 @@ namespace FreeImageAPI
 			}
 
 			// try to find the file format by querying FreeImage plugins
-			if (format == FREE_IMAGE_FORMAT.FIF_UNKNOWN)
+			if (format == FreeImageFormat.Unknown)
 			{
 				format = GetFileType(filename, 0);
 			}
-			if (format == FREE_IMAGE_FORMAT.FIF_UNKNOWN) // fall-back try to identify the file format using the extension if still unknown
+			if (format == FreeImageFormat.Unknown) // fall-back try to identify the file format using the extension if still unknown
 			{
 				format = GetFileTypeFromExtension(filename);
 			}
@@ -583,20 +583,20 @@ namespace FreeImageAPI
 			return dib;
 		}
 
-		private static FREE_IMAGE_FORMAT GetFileTypeFromExtension(string filename)
+		private static FreeImageFormat GetFileTypeFromExtension(string filename)
 		{
 			if(string.IsNullOrEmpty(filename) || !filename.Contains("."))
-				return FREE_IMAGE_FORMAT.FIF_UNKNOWN;
+				return FreeImageFormat.Unknown;
 
 			var extention = filename.Substring(filename.LastIndexOf('.'));
 			return extention switch
 			{
-				".tga" => FREE_IMAGE_FORMAT.FIF_TARGA,
-				".png" => FREE_IMAGE_FORMAT.FIF_PNG,
-				".bmp" => FREE_IMAGE_FORMAT.FIF_BMP,
-				".tiff" or ".tif" => FREE_IMAGE_FORMAT.FIF_TIFF,
-				".jpg" or ".jpeg" => FREE_IMAGE_FORMAT.FIF_JPEG,
-				_ => FREE_IMAGE_FORMAT.FIF_UNKNOWN,// Note: other format met so far seems to be properly handled by "GetFileType".
+				".tga" => FreeImageFormat.Targa,
+				".png" => FreeImageFormat.Png,
+				".bmp" => FreeImageFormat.Bmp,
+				".tiff" or ".tif" => FreeImageFormat.Tiff,
+				".jpg" or ".jpeg" => FreeImageFormat.Jpeg,
+				_ => FreeImageFormat.Unknown,// Note: other format met so far seems to be properly handled by "GetFileType".
 												   //  -> no need to add the extension/format association here.
 			};
 		}
@@ -616,12 +616,12 @@ namespace FreeImageAPI
 
 		/// <summary>
 		/// Saves a previously loaded FreeImage bitmap to a file.
-		/// In case the loading format is <see cref="FREE_IMAGE_FORMAT.FIF_UNKNOWN"/>
+		/// In case the loading format is <see cref="FreeImageFormat.Unknown"/>
 		/// the format is taken off the filename.
 		/// If no suitable format was found false will be returned.
 		/// Save flags can be provided by the flags parameter.
 		/// The bitmaps color depth can be set by 'colorDepth'.
-		/// If set to <see cref="FREE_IMAGE_COLOR_DEPTH.FICD_AUTO"/> a suitable color depth
+		/// If set to <see cref="FreeImageColorDepth.FICD_AUTO"/> a suitable color depth
 		/// will be taken if available.
 		/// </summary>
 		/// <param name="dib">Handle to a FreeImage bitmap.</param>
@@ -629,10 +629,10 @@ namespace FreeImageAPI
 		/// The extension will be corrected if it is no valid extension for the
 		/// selected format or if no extension was specified.</param>
 		/// <param name="format">Format of the image. If the format should be taken from the
-		/// filename use <see cref="FREE_IMAGE_FORMAT.FIF_UNKNOWN"/>.</param>
+		/// filename use <see cref="FreeImageFormat.Unknown"/>.</param>
 		/// <param name="flags">Flags to enable or disable plugin-features.</param>
 		/// <param name="colorDepth">The new color depth of the bitmap.
-		/// Set to <see cref="FREE_IMAGE_COLOR_DEPTH.FICD_AUTO"/> if Save should take the
+		/// Set to <see cref="FreeImageColorDepth.FICD_AUTO"/> if Save should take the
 		/// best suitable color depth.
 		/// If a color depth is selected that the provided format cannot write an
 		/// error-message will be thrown.</param>
@@ -646,9 +646,9 @@ namespace FreeImageAPI
 		public static bool SaveEx(
 			ref FIBITMAP dib,
 			string filename,
-			FREE_IMAGE_FORMAT format = FREE_IMAGE_FORMAT.FIF_UNKNOWN,
-			FREE_IMAGE_SAVE_FLAGS flags = FREE_IMAGE_SAVE_FLAGS.DEFAULT,
-			FREE_IMAGE_COLOR_DEPTH colorDepth = FREE_IMAGE_COLOR_DEPTH.FICD_AUTO,
+			FreeImageFormat format = FreeImageFormat.Unknown,
+			FreeImageSaveFlags flags = FreeImageSaveFlags.Default,
+			FreeImageColorDepth colorDepth = FreeImageColorDepth.FICD_AUTO,
 			bool unloadSource = false)
 		{
 			if (dib.IsNull)
@@ -661,11 +661,11 @@ namespace FreeImageAPI
 			}
 			bool result = false;
 			// Gets format from filename if the format is unknown
-			if (format == FREE_IMAGE_FORMAT.FIF_UNKNOWN)
+			if (format == FreeImageFormat.Unknown)
 			{
 				format = GetFIFFromFilename(filename);
 			}
-			if (format != FREE_IMAGE_FORMAT.FIF_UNKNOWN)
+			if (format != FreeImageFormat.Unknown)
 			{
 				// Checks writing support
 				if (FIFSupportsWriting(format) && FIFSupportsExportType(format, GetImageType(dib)))
@@ -712,20 +712,20 @@ namespace FreeImageAPI
 		/// <paramref name="stream"/> is not capable of reading.</exception>
 		public static FIBITMAP LoadFromStream(Stream stream)
 		{
-			FREE_IMAGE_FORMAT format = FREE_IMAGE_FORMAT.FIF_UNKNOWN;
+			FreeImageFormat format = FreeImageFormat.Unknown;
 			return LoadFromStream(stream, ref format);
 		}
 
 		/// <summary>
 		/// Loads a FreeImage bitmap.
-		/// In case the loading format is <see cref="FREE_IMAGE_FORMAT.FIF_UNKNOWN"/>
+		/// In case the loading format is <see cref="FreeImageFormat.Unknown"/>
 		/// the bitmaps real format is being analysed.
 		/// The stream must be set to the correct position before calling LoadFromStream.
 		/// </summary>
 		/// <param name="stream">The stream to read from.</param>
 		/// <param name="flags">Flags to enable or disable plugin-features.</param>
 		/// <param name="format">Format of the image. If the format is unknown use
-		/// <see cref="FREE_IMAGE_FORMAT.FIF_UNKNOWN"/>.
+		/// <see cref="FreeImageFormat.Unknown"/>.
 		/// In case a suitable format was found by LoadFromStream it will be returned in format.</param>
 		/// <returns>Handle to a FreeImage bitmap.</returns>
 		/// <exception cref="ArgumentNullException">
@@ -734,8 +734,8 @@ namespace FreeImageAPI
 		/// <paramref name="stream"/> is not capable of reading.</exception>
 		public static FIBITMAP LoadFromStream(
 			Stream stream,
-			ref FREE_IMAGE_FORMAT format,
-            FREE_IMAGE_LOAD_FLAGS flags = FREE_IMAGE_LOAD_FLAGS.DEFAULT)
+			ref FreeImageFormat format,
+            FreeImageLoadFlags flags = FreeImageLoadFlags.Default)
 		{
 			if (stream == null)
 			{
@@ -749,7 +749,7 @@ namespace FreeImageAPI
 			stream = (stream.CanSeek) ? stream : new StreamWrapper(stream, true);
 
 			stream.Position = 0L;
-			if (format == FREE_IMAGE_FORMAT.FIF_UNKNOWN)
+			if (format == FreeImageFormat.Unknown)
 			{
 				// Get the format of the bitmap
 				format = GetFileTypeFromStream(stream);
@@ -776,7 +776,7 @@ namespace FreeImageAPI
 		/// <param name="format">Format of the image.</param>
 		/// <param name="flags">Flags to enable or disable plugin-features.</param>
 		/// <param name="colorDepth">The new color depth of the bitmap.
-		/// Set to <see cref="FREE_IMAGE_COLOR_DEPTH.FICD_AUTO"/> if SaveToStream should
+		/// Set to <see cref="FreeImageColorDepth.FICD_AUTO"/> if SaveToStream should
 		/// take the best suitable color depth.
 		/// If a color depth is selected that the provided format cannot write an
 		/// error-message will be thrown.</param>
@@ -789,9 +789,9 @@ namespace FreeImageAPI
 		public static bool SaveToStream(
 			ref FIBITMAP dib,
 			Stream stream,
-			FREE_IMAGE_FORMAT format = FREE_IMAGE_FORMAT.FIF_UNKNOWN,
-			FREE_IMAGE_SAVE_FLAGS flags = FREE_IMAGE_SAVE_FLAGS.DEFAULT,
-			FREE_IMAGE_COLOR_DEPTH colorDepth = FREE_IMAGE_COLOR_DEPTH.FICD_AUTO,
+			FreeImageFormat format = FreeImageFormat.Unknown,
+			FreeImageSaveFlags flags = FreeImageSaveFlags.Default,
+			FreeImageColorDepth colorDepth = FreeImageColorDepth.FICD_AUTO,
 			bool unloadSource = false)
 		{
 			if (dib.IsNull)
@@ -851,7 +851,7 @@ namespace FreeImageAPI
 		/// <returns>True if the extension is valid for the given format, false otherwise.</returns>
 		/// <exception cref="ArgumentNullException">
 		/// <paramref name="extension"/> is null.</exception>
-		public static bool IsExtensionValidForFIF(FREE_IMAGE_FORMAT fif, string extension)
+		public static bool IsExtensionValidForFIF(FreeImageFormat fif, string extension)
 		{
 			return IsExtensionValidForFIF(fif, extension, StringComparison.CurrentCultureIgnoreCase);
 		}
@@ -865,7 +865,7 @@ namespace FreeImageAPI
 		/// <returns>True if the extension is valid for the given format, false otherwise.</returns>
 		/// <exception cref="ArgumentNullException">
 		/// <paramref name="extension"/> is null.</exception>
-		public static bool IsExtensionValidForFIF(FREE_IMAGE_FORMAT fif, string extension, StringComparison comparisonType)
+		public static bool IsExtensionValidForFIF(FreeImageFormat fif, string extension, StringComparison comparisonType)
 		{
 			if (extension == null)
 			{
@@ -897,7 +897,7 @@ namespace FreeImageAPI
 		/// <returns>True if the filename is valid for the given format, false otherwise.</returns>
 		/// <exception cref="ArgumentNullException">
 		/// <paramref name="filename"/> is null.</exception>
-		public static bool IsFilenameValidForFIF(FREE_IMAGE_FORMAT fif, string filename)
+		public static bool IsFilenameValidForFIF(FreeImageFormat fif, string filename)
 		{
 			return IsFilenameValidForFIF(fif, filename, StringComparison.CurrentCultureIgnoreCase);
 		}
@@ -911,7 +911,7 @@ namespace FreeImageAPI
 		/// <returns>True if the filename is valid for the given format, false otherwise.</returns>
 		/// <exception cref="ArgumentNullException">
 		/// <paramref name="filename"/> is null.</exception>
-		public static bool IsFilenameValidForFIF(FREE_IMAGE_FORMAT fif, string filename, StringComparison comparisonType)
+		public static bool IsFilenameValidForFIF(FreeImageFormat fif, string filename, StringComparison comparisonType)
 		{
 			if (filename == null)
 			{
@@ -935,7 +935,7 @@ namespace FreeImageAPI
 		/// That assumes, that the plugin returns the extensions in ordered form.</summary>
 		/// <param name="fif">The image format to obtain the primary extension for.</param>
 		/// <returns>The primary extension of the specified image format.</returns>
-		public static string GetPrimaryExtensionFromFIF(FREE_IMAGE_FORMAT fif)
+		public static string GetPrimaryExtensionFromFIF(FreeImageFormat fif)
 		{
 			string result = null;
 			string extensions = GetFIFExtensionList(fif);
@@ -967,20 +967,20 @@ namespace FreeImageAPI
 		/// <paramref name="filename"/> does not exists while opening.</exception>
 		public static FIMULTIBITMAP OpenMultiBitmapEx(string filename)
 		{
-			FREE_IMAGE_FORMAT format = FREE_IMAGE_FORMAT.FIF_UNKNOWN;
+			FreeImageFormat format = FreeImageFormat.Unknown;
 			return OpenMultiBitmapEx(filename, ref format);
 		}
 
 		/// <summary>
 		/// Loads a FreeImage multi-paged bitmap.
-		/// In case the loading format is <see cref="FREE_IMAGE_FORMAT.FIF_UNKNOWN"/> the files
+		/// In case the loading format is <see cref="FreeImageFormat.Unknown"/> the files
 		/// real format is being analysed. If no plugin can read the file, format remains
-		/// <see cref="FREE_IMAGE_FORMAT.FIF_UNKNOWN"/> and 0 is returned.
+		/// <see cref="FreeImageFormat.Unknown"/> and 0 is returned.
 		/// Load flags can be provided by the flags parameter.
 		/// </summary>
 		/// <param name="filename">The complete name of the file to load.</param>
 		/// <param name="format">Format of the image. If the format is unknown use
-		/// <see cref="FREE_IMAGE_FORMAT.FIF_UNKNOWN"/>.
+		/// <see cref="FreeImageFormat.Unknown"/>.
 		/// In case a suitable format was found by LoadEx it will be returned in format.</param>
 		/// <param name="flags">Flags to enable or disable plugin-features.</param>
 		/// <param name="create_new">When true a new bitmap is created.</param>
@@ -991,8 +991,8 @@ namespace FreeImageAPI
 		/// <paramref name="filename"/> does not exists while opening.</exception>
 		public static FIMULTIBITMAP OpenMultiBitmapEx(
 			string filename,
-			ref FREE_IMAGE_FORMAT format,
-			FREE_IMAGE_LOAD_FLAGS flags = FREE_IMAGE_LOAD_FLAGS.DEFAULT,
+			ref FreeImageFormat format,
+			FreeImageLoadFlags flags = FreeImageLoadFlags.Default,
 			bool create_new = false,
 			bool read_only = false,
 			bool keep_cache_in_memory = false)
@@ -1001,7 +1001,7 @@ namespace FreeImageAPI
 			{
 				throw new FileNotFoundException(filename + " could not be found.");
 			}
-			if (format == FREE_IMAGE_FORMAT.FIF_UNKNOWN)
+			if (format == FreeImageFormat.Unknown)
 			{
 				// Check if a plugin can read the data
 				format = GetFileType(filename, 0);
@@ -1021,23 +1021,23 @@ namespace FreeImageAPI
 		/// <returns>Handle to a FreeImage multi-paged bitmap.</returns>
 		public static FIMULTIBITMAP OpenMultiBitmapFromStream(Stream stream)
 		{
-			FREE_IMAGE_FORMAT format = FREE_IMAGE_FORMAT.FIF_UNKNOWN;
-			return OpenMultiBitmapFromStream(stream, ref format, FREE_IMAGE_LOAD_FLAGS.DEFAULT);
+			FreeImageFormat format = FreeImageFormat.Unknown;
+			return OpenMultiBitmapFromStream(stream, ref format, FreeImageLoadFlags.Default);
 		}
 
 		/// <summary>
 		/// Loads a FreeImage multi-paged bitmap.
-		/// In case the loading format is <see cref="FREE_IMAGE_FORMAT.FIF_UNKNOWN"/> the files
+		/// In case the loading format is <see cref="FreeImageFormat.Unknown"/> the files
 		/// real format is being analysed. If no plugin can read the file, format remains
-		/// <see cref="FREE_IMAGE_FORMAT.FIF_UNKNOWN"/> and 0 is returned.
+		/// <see cref="FreeImageFormat.Unknown"/> and 0 is returned.
 		/// Load flags can be provided by the flags parameter.
 		/// </summary>
 		/// <param name="stream">The stream to load the bitmap from.</param>
 		/// <param name="format">Format of the image. If the format is unknown use
-		/// <see cref="FREE_IMAGE_FORMAT.FIF_UNKNOWN"/></param>.
+		/// <see cref="FreeImageFormat.Unknown"/></param>.
 		/// <param name="flags">Flags to enable or disable plugin-features.</param>
 		/// <returns>Handle to a FreeImage multi-paged bitmap.</returns>
-		public static FIMULTIBITMAP OpenMultiBitmapFromStream(Stream stream, ref FREE_IMAGE_FORMAT format, FREE_IMAGE_LOAD_FLAGS flags)
+		public static FIMULTIBITMAP OpenMultiBitmapFromStream(Stream stream, ref FreeImageFormat format, FreeImageLoadFlags flags)
 		{
 			if (stream == null)
 				return FIMULTIBITMAP.Zero;
@@ -1051,7 +1051,7 @@ namespace FreeImageAPI
 
 			try
 			{
-				if (format == FREE_IMAGE_FORMAT.FIF_UNKNOWN)
+				if (format == FreeImageFormat.Unknown)
 				{
 					format = GetFileTypeFromHandle(ref io, handle, checked((int)stream.Length));
 				}
@@ -1075,7 +1075,7 @@ namespace FreeImageAPI
 			catch
 			{
 				if (!mdib.IsNull)
-					CloseMultiBitmap(mdib, FREE_IMAGE_SAVE_FLAGS.DEFAULT);
+					CloseMultiBitmap(mdib, FreeImageSaveFlags.Default);
 
 				if (handle.IsNull == false)
 					handle.Dispose();
@@ -1090,7 +1090,7 @@ namespace FreeImageAPI
 		/// <param name="bitmap">Handle to a FreeImage multi-paged bitmap.</param>
 		/// <param name="flags">Flags to enable or disable plugin-features.</param>
 		/// <returns>Returns true on success, false on failure.</returns>
-		public static bool CloseMultiBitmap(FIMULTIBITMAP bitmap, FREE_IMAGE_SAVE_FLAGS flags)
+		public static bool CloseMultiBitmap(FIMULTIBITMAP bitmap, FreeImageSaveFlags flags)
 		{
 			if (CloseMultiBitmap_(bitmap, flags))
 			{
@@ -1114,7 +1114,7 @@ namespace FreeImageAPI
 		/// <param name="bitmap">Handle to a FreeImage multi-paged bitmap.</param>
 		/// <param name="flags">Flags to enable or disable plugin-features.</param>
 		/// <returns>Returns true on success, false on failure.</returns>
-		public static bool CloseMultiBitmapEx(ref FIMULTIBITMAP bitmap, FREE_IMAGE_SAVE_FLAGS flags = FREE_IMAGE_SAVE_FLAGS.DEFAULT)
+		public static bool CloseMultiBitmapEx(ref FIMULTIBITMAP bitmap, FreeImageSaveFlags flags = FreeImageSaveFlags.Default)
 		{
 			bool result = false;
 			if (!bitmap.IsNull)
@@ -1195,8 +1195,8 @@ namespace FreeImageAPI
 		/// <paramref name="stream"/> can not read.</exception>
 		public static FIMULTIBITMAP LoadMultiBitmapFromStream(
 			Stream stream,
-			FREE_IMAGE_FORMAT format,
-			FREE_IMAGE_LOAD_FLAGS flags,
+			FreeImageFormat format,
+			FreeImageLoadFlags flags,
 			out FIMEMORY memory)
 		{
 			if (stream == null)
@@ -1239,7 +1239,7 @@ namespace FreeImageAPI
 		/// <paramref name="stream"/> is null.</exception>
 		/// <exception cref="ArgumentException">
 		/// <paramref name="stream"/> can not read.</exception>
-		public static FREE_IMAGE_FORMAT GetFileTypeFromStream(Stream stream)
+		public static FreeImageFormat GetFileTypeFromStream(Stream stream)
 		{
 			if (stream == null)
 			{
@@ -1446,7 +1446,7 @@ namespace FreeImageAPI
 
 			PixelFormat result = PixelFormat.Undefined;
 
-			if (GetImageType(dib) == FREE_IMAGE_TYPE.FIT_BITMAP)
+			if (GetImageType(dib) == FreeImageType.Bitmap)
 			{
 				switch (GetBPP(dib))
 				{
@@ -1499,14 +1499,14 @@ namespace FreeImageAPI
 		/// </returns>
 		public static bool GetFormatParameters(
 			PixelFormat format,
-			out FREE_IMAGE_TYPE type,
+			out FreeImageType type,
 			out uint bpp,
 			out uint redMask,
 			out uint greenMask,
 			out uint blueMask)
 		{
 			bool result = false;
-			type = FREE_IMAGE_TYPE.FIT_UNKNOWN;
+			type = FreeImageType.Unknown;
 			bpp = 0;
 			redMask = 0;
 			greenMask = 0;
@@ -1514,22 +1514,22 @@ namespace FreeImageAPI
 			switch (format)
 			{
 				case PixelFormat.Format1bppIndexed:
-					type = FREE_IMAGE_TYPE.FIT_BITMAP;
+					type = FreeImageType.Bitmap;
 					bpp = 1;
 					result = true;
 					break;
 				case PixelFormat.Format4bppIndexed:
-					type = FREE_IMAGE_TYPE.FIT_BITMAP;
+					type = FreeImageType.Bitmap;
 					bpp = 4;
 					result = true;
 					break;
 				case PixelFormat.Format8bppIndexed:
-					type = FREE_IMAGE_TYPE.FIT_BITMAP;
+					type = FreeImageType.Bitmap;
 					bpp = 8;
 					result = true;
 					break;
 				case PixelFormat.Format16bppRgb565:
-					type = FREE_IMAGE_TYPE.FIT_BITMAP;
+					type = FreeImageType.Bitmap;
 					bpp = 16;
 					redMask = FI16_565_RED_MASK;
 					greenMask = FI16_565_GREEN_MASK;
@@ -1538,7 +1538,7 @@ namespace FreeImageAPI
 					break;
 				case PixelFormat.Format16bppRgb555:
 				case PixelFormat.Format16bppArgb1555:
-					type = FREE_IMAGE_TYPE.FIT_BITMAP;
+					type = FreeImageType.Bitmap;
 					bpp = 16;
 					redMask = FI16_555_RED_MASK;
 					greenMask = FI16_555_GREEN_MASK;
@@ -1546,7 +1546,7 @@ namespace FreeImageAPI
 					result = true;
 					break;
 				case PixelFormat.Format24bppRgb:
-					type = FREE_IMAGE_TYPE.FIT_BITMAP;
+					type = FreeImageType.Bitmap;
 					bpp = 24;
 					redMask = FI_RGBA_RED_MASK;
 					greenMask = FI_RGBA_GREEN_MASK;
@@ -1556,7 +1556,7 @@ namespace FreeImageAPI
 				case PixelFormat.Format32bppRgb:
 				case PixelFormat.Format32bppArgb:
 				case PixelFormat.Format32bppPArgb:
-					type = FREE_IMAGE_TYPE.FIT_BITMAP;
+					type = FreeImageType.Bitmap;
 					bpp = 32;
 					redMask = FI_RGBA_RED_MASK;
 					greenMask = FI_RGBA_GREEN_MASK;
@@ -1564,18 +1564,18 @@ namespace FreeImageAPI
 					result = true;
 					break;
 				case PixelFormat.Format16bppGrayScale:
-					type = FREE_IMAGE_TYPE.FIT_UINT16;
+					type = FreeImageType.UInt16;
 					bpp = 16;
 					result = true;
 					break;
 				case PixelFormat.Format48bppRgb:
-					type = FREE_IMAGE_TYPE.FIT_RGB16;
+					type = FreeImageType.Rgb16;
 					bpp = 48;
 					result = true;
 					break;
 				case PixelFormat.Format64bppArgb:
 				case PixelFormat.Format64bppPArgb:
-					type = FREE_IMAGE_TYPE.FIT_RGBA16;
+					type = FreeImageType.Rgba16;
 					bpp = 64;
 					result = true;
 					break;
@@ -1587,7 +1587,7 @@ namespace FreeImageAPI
 		/// Retrieves all parameters needed to create a new FreeImage bitmap from
 		/// raw bits <see cref="System.Drawing.Image"/>.
 		/// </summary>
-		/// <param name="type">The <see cref="FREE_IMAGE_TYPE"/>
+		/// <param name="type">The <see cref="FreeImageType"/>
 		/// of the data in memory.</param>
 		/// <param name="bpp">The color depth for the data.</param>
 		/// <param name="red_mask">Returns the red_mask for the data.</param>
@@ -1596,7 +1596,7 @@ namespace FreeImageAPI
 		/// <returns>True in case a matching conversion exists; else false.
 		/// </returns>
 		public static bool GetTypeParameters(
-			FREE_IMAGE_TYPE type,
+			FreeImageType type,
 			int bpp,
 			out uint red_mask,
 			out uint green_mask,
@@ -1608,7 +1608,7 @@ namespace FreeImageAPI
 			blue_mask = 0;
 			switch (type)
 			{
-				case FREE_IMAGE_TYPE.FIT_BITMAP:
+				case FreeImageType.Bitmap:
 					switch (bpp)
 					{
 						case 1:
@@ -1631,7 +1631,7 @@ namespace FreeImageAPI
 							break;
 					}
 					break;
-				case FREE_IMAGE_TYPE.FIT_UNKNOWN:
+				case FreeImageType.Unknown:
 					break;
 				default:
 					result = true;
@@ -1647,7 +1647,7 @@ namespace FreeImageAPI
 		/// <param name="dib2">The second bitmap to compare.</param>
 		/// <param name="flags">Determines which components of the bitmaps will be compared.</param>
 		/// <returns>True in case both bitmaps match the compare conditions, false otherwise.</returns>
-		public static bool Compare(FIBITMAP dib1, FIBITMAP dib2, FREE_IMAGE_COMPARE_FLAGS flags)
+		public static bool Compare(FIBITMAP dib1, FIBITMAP dib2, FreeImageCompareFlags flags)
 		{
 			// Check whether one bitmap is null
 			if (dib1.IsNull ^ dib2.IsNull)
@@ -1659,19 +1659,19 @@ namespace FreeImageAPI
 			{
 				return true;
 			}
-			if (((flags & FREE_IMAGE_COMPARE_FLAGS.HEADER) > 0) && (!CompareHeader(dib1, dib2)))
+			if (((flags & FreeImageCompareFlags.Header) > 0) && (!CompareHeader(dib1, dib2)))
 			{
 				return false;
 			}
-			if (((flags & FREE_IMAGE_COMPARE_FLAGS.PALETTE) > 0) && (!ComparePalette(dib1, dib2)))
+			if (((flags & FreeImageCompareFlags.Palette) > 0) && (!ComparePalette(dib1, dib2)))
 			{
 				return false;
 			}
-			if (((flags & FREE_IMAGE_COMPARE_FLAGS.DATA) > 0) && (!CompareData(dib1, dib2)))
+			if (((flags & FreeImageCompareFlags.Data) > 0) && (!CompareData(dib1, dib2)))
 			{
 				return false;
 			}
-			if (((flags & FREE_IMAGE_COMPARE_FLAGS.METADATA) > 0) && (!CompareMetadata(dib1, dib2)))
+			if (((flags & FreeImageCompareFlags.Metadata) > 0) && (!CompareMetadata(dib1, dib2)))
 			{
 				return false;
 			}
@@ -1727,7 +1727,7 @@ namespace FreeImageAPI
 			{
 				return false;
 			}
-			FREE_IMAGE_TYPE type = GetImageType(dib1);
+			FreeImageType type = GetImageType(dib1);
 			if (type != GetImageType(dib2))
 			{
 				return false;
@@ -1750,7 +1750,7 @@ namespace FreeImageAPI
 			int shift;
 			uint line = GetLine(dib1);
 
-			if (type == FREE_IMAGE_TYPE.FIT_BITMAP)
+			if (type == FreeImageType.Bitmap)
 			{
 				switch (bpp)
 				{
@@ -1891,7 +1891,7 @@ namespace FreeImageAPI
 		{
 			MetadataTag tag1, tag2;
 
-			foreach (FREE_IMAGE_MDMODEL metadataModel in FREE_IMAGE_MDMODELS)
+			foreach (FreeImageMetadataModel metadataModel in FREE_IMAGE_MDMODELS)
 			{
 				if (GetMetadataCount(metadataModel, dib1) !=
 					GetMetadataCount(metadataModel, dib2))
@@ -1972,7 +1972,7 @@ namespace FreeImageAPI
 		/// specified 1-, 4-, 8-, 16-, 24- or 32-bit image. This might be different from
 		/// what function FreeImage_GetColorsUsed() returns, which actually returns the
 		/// palette size for palletised images. Works for
-		/// <see cref="FREE_IMAGE_TYPE.FIT_BITMAP"/> type images only.
+		/// <see cref="FreeImageType.Bitmap"/> type images only.
 		/// </summary>
 		/// <param name="dib">Handle to a FreeImage bitmap.</param>
 		/// <returns>Returns the number of unique colors used by the image specified or
@@ -1988,7 +1988,7 @@ namespace FreeImageAPI
 
 			int result = 0;
 
-			if (GetImageType(dib) == FREE_IMAGE_TYPE.FIT_BITMAP)
+			if (GetImageType(dib) == FreeImageType.Bitmap)
 			{
 				BitArray bitArray;
 				int uniquePalEnts;
@@ -2214,9 +2214,9 @@ namespace FreeImageAPI
 		/// <param name="dib">Handle to a FreeImage bitmap.</param>
 		/// <param name="conversion">The desired output format.</param>
 		/// <param name="threshold">Threshold value when converting with
-		/// <see cref="FREE_IMAGE_COLOR_DEPTH.FICD_01_BPP_THRESHOLD"/>.</param>
+		/// <see cref="FreeImageColorDepth.FICD_01_BPP_THRESHOLD"/>.</param>
 		/// <param name="ditherMethod">Dither algorithm when converting with
-		/// <see cref="FREE_IMAGE_COLOR_DEPTH.FICD_01_BPP_DITHER"/>.</param>
+		/// <see cref="FreeImageColorDepth.FICD_01_BPP_DITHER"/>.</param>
 		/// <param name="quantizationMethod">The quantization algorithm for conversion to 8-bit color depth.</param>
 		/// <param name="unloadSource">When true the structure will be unloaded on success.</param>
 		/// <returns>Handle to a FreeImage bitmap.</returns>
@@ -2224,10 +2224,10 @@ namespace FreeImageAPI
 		/// <paramref name="dib"/> is null.</exception>
 		internal static FIBITMAP ConvertColorDepth(
 			FIBITMAP dib,
-			FREE_IMAGE_COLOR_DEPTH conversion,
+			FreeImageColorDepth conversion,
 			byte threshold = 128,
-			FREE_IMAGE_DITHER ditherMethod = FREE_IMAGE_DITHER.FID_FS,
-			FREE_IMAGE_QUANTIZE quantizationMethod = FREE_IMAGE_QUANTIZE.FIQ_WUQUANT,
+			FreeImageDither ditherMethod = FreeImageDither.Fs,
+			FreeImageQuantize quantizationMethod = FreeImageQuantize.WuQuant,
 			bool unloadSource = false)
 		{
 			if (dib.IsNull)
@@ -2238,14 +2238,14 @@ namespace FreeImageAPI
 			FIBITMAP result = new FIBITMAP();
 			FIBITMAP dibTemp = new FIBITMAP();
 			uint bpp = GetBPP(dib);
-			bool reorderPalette = ((conversion & FREE_IMAGE_COLOR_DEPTH.FICD_REORDER_PALETTE) > 0);
-			bool forceGreyscale = ((conversion & FREE_IMAGE_COLOR_DEPTH.FICD_FORCE_GREYSCALE) > 0);
+			bool reorderPalette = ((conversion & FreeImageColorDepth.FICD_REORDER_PALETTE) > 0);
+			bool forceGreyscale = ((conversion & FreeImageColorDepth.FICD_FORCE_GREYSCALE) > 0);
 
-			if (GetImageType(dib) == FREE_IMAGE_TYPE.FIT_BITMAP)
+			if (GetImageType(dib) == FreeImageType.Bitmap)
 			{
-				switch (conversion & (FREE_IMAGE_COLOR_DEPTH)0xFF)
+				switch (conversion & (FreeImageColorDepth)0xFF)
 				{
-					case FREE_IMAGE_COLOR_DEPTH.FICD_01_BPP_THRESHOLD:
+					case FreeImageColorDepth.FICD_01_BPP_THRESHOLD:
 
 						if (bpp != 1)
 						{
@@ -2271,7 +2271,7 @@ namespace FreeImageAPI
 						}
 						break;
 
-					case FREE_IMAGE_COLOR_DEPTH.FICD_01_BPP_DITHER:
+					case FreeImageColorDepth.FICD_01_BPP_DITHER:
 
 						if (bpp != 1)
 						{
@@ -2297,13 +2297,13 @@ namespace FreeImageAPI
 						}
 						break;
 
-					case FREE_IMAGE_COLOR_DEPTH.FICD_04_BPP:
+					case FreeImageColorDepth.FICD_04_BPP:
 
 						if (bpp != 4)
 						{
 							// Special case when 1bpp and FIC_PALETTE
 							if (forceGreyscale ||
-								((bpp == 1) && (GetColorType(dib) == FREE_IMAGE_COLOR_TYPE.FIC_PALETTE)))
+								((bpp == 1) && (GetColorType(dib) == FreeImageColorType.Palette)))
 							{
 								dibTemp = ConvertToGreyscale(dib);
 								result = ConvertTo4Bits(dibTemp);
@@ -2330,7 +2330,7 @@ namespace FreeImageAPI
 
 						break;
 
-					case FREE_IMAGE_COLOR_DEPTH.FICD_08_BPP:
+					case FreeImageColorDepth.FICD_08_BPP:
 
 						if (bpp != 8)
 						{
@@ -2355,7 +2355,7 @@ namespace FreeImageAPI
 						}
 						break;
 
-					case FREE_IMAGE_COLOR_DEPTH.FICD_16_BPP_555:
+					case FreeImageColorDepth.FICD_16_BPP_555:
 
 						if (forceGreyscale)
 						{
@@ -2369,7 +2369,7 @@ namespace FreeImageAPI
 						}
 						break;
 
-					case FREE_IMAGE_COLOR_DEPTH.FICD_16_BPP:
+					case FreeImageColorDepth.FICD_16_BPP:
 
 						if (forceGreyscale)
 						{
@@ -2383,7 +2383,7 @@ namespace FreeImageAPI
 						}
 						break;
 
-					case FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP:
+					case FreeImageColorDepth.FICD_24_BPP:
 
 						if (forceGreyscale)
 						{
@@ -2397,7 +2397,7 @@ namespace FreeImageAPI
 						}
 						break;
 
-					case FREE_IMAGE_COLOR_DEPTH.FICD_32_BPP:
+					case FreeImageColorDepth.Bpp32:
 
 						if (forceGreyscale)
 						{
@@ -2426,7 +2426,7 @@ namespace FreeImageAPI
 		}
 
 		/// <summary>
-		/// ColorQuantizeEx is an extension to the <see cref="ColorQuantize(FIBITMAP, FREE_IMAGE_QUANTIZE)"/>
+		/// ColorQuantizeEx is an extension to the <see cref="ColorQuantize(FIBITMAP, FreeImageQuantize)"/>
 		/// method that provides additional options used to quantize a 24-bit image to any
 		/// number of colors (up to 256), as well as quantize a 24-bit image using a
 		/// provided palette.
@@ -2438,7 +2438,7 @@ namespace FreeImageAPI
 		/// <param name="minColorDepth"><b>true</b> to create a bitmap with the smallest possible
 		/// color depth for the specified <paramref name="PaletteSize"/>.</param>
 		/// <returns>Handle to a FreeImage bitmap.</returns>
-		public static FIBITMAP ColorQuantizeEx(FIBITMAP dib, FREE_IMAGE_QUANTIZE quantize, int PaletteSize, RGBQUAD[] ReservePalette, bool minColorDepth)
+		public static FIBITMAP ColorQuantizeEx(FIBITMAP dib, FreeImageQuantize quantize, int PaletteSize, RGBQUAD[] ReservePalette, bool minColorDepth)
 		{
 			FIBITMAP result;
 			if (minColorDepth)
@@ -2460,7 +2460,7 @@ namespace FreeImageAPI
 		}
 
 		/// <summary>
-		/// ColorQuantizeEx is an extension to the <see cref="ColorQuantize(FIBITMAP, FREE_IMAGE_QUANTIZE)"/>
+		/// ColorQuantizeEx is an extension to the <see cref="ColorQuantize(FIBITMAP, FreeImageQuantize)"/>
 		/// method that provides additional options used to quantize a 24-bit image to any
 		/// number of colors (up to 256), as well as quantize a 24-bit image using a
 		/// partial or full provided palette.
@@ -2471,7 +2471,7 @@ namespace FreeImageAPI
 		/// <param name="ReservePalette">The provided palette.</param>
 		/// <param name="bpp">The desired color depth of the created image.</param>
 		/// <returns>Handle to a FreeImage bitmap.</returns>
-		public static unsafe FIBITMAP ColorQuantizeEx(FIBITMAP dib, FREE_IMAGE_QUANTIZE quantize, int PaletteSize, RGBQUAD[] ReservePalette, int bpp)
+		public static unsafe FIBITMAP ColorQuantizeEx(FIBITMAP dib, FreeImageQuantize quantize, int PaletteSize, RGBQUAD[] ReservePalette, int bpp)
 		{
 			FIBITMAP result = FIBITMAP.Zero;
 			FIBITMAP temp = FIBITMAP.Zero;
@@ -2549,7 +2549,7 @@ namespace FreeImageAPI
 		/// <returns>Returns -1 on failure else the number of copied tags.</returns>
 		/// <exception cref="ArgumentNullException">
 		/// <paramref name="src"/> or <paramref name="dst"/> is null.</exception>
-		public static int CloneMetadataEx(FIBITMAP src, FIBITMAP dst, FREE_IMAGE_METADATA_COPY flags)
+		public static int CloneMetadataEx(FIBITMAP src, FIBITMAP dst, FreeImageMetadataCopy flags)
 		{
 			if (src.IsNull)
 			{
@@ -2564,9 +2564,9 @@ namespace FreeImageAPI
 			int copied = 0;
 
 			// Clear all existing metadata
-			if ((flags & FREE_IMAGE_METADATA_COPY.CLEAR_EXISTING) > 0)
+			if ((flags & FreeImageMetadataCopy.ClearExisting) > 0)
 			{
-				foreach (FREE_IMAGE_MDMODEL model in FREE_IMAGE_MDMODELS)
+				foreach (FreeImageMetadataModel model in FREE_IMAGE_MDMODELS)
 				{
 					if (!SetMetadata(model, dst, null, tag))
 					{
@@ -2575,9 +2575,9 @@ namespace FreeImageAPI
 				}
 			}
 
-			bool keep = !((flags & FREE_IMAGE_METADATA_COPY.REPLACE_EXISTING) > 0);
+			bool keep = !((flags & FreeImageMetadataCopy.ReplaceExisting) > 0);
 
-			foreach (FREE_IMAGE_MDMODEL model in FREE_IMAGE_MDMODELS)
+			foreach (FreeImageMetadataModel model in FREE_IMAGE_MDMODELS)
 			{
 				FIMETADATA mData = FindFirstMetadata(model, src, out tag);
 				if (mData.IsNull) continue;
@@ -2614,9 +2614,9 @@ namespace FreeImageAPI
 				throw new ArgumentNullException("dib");
 			}
 			FITAG tag;
-			if (GetMetadata(FREE_IMAGE_MDMODEL.FIMD_COMMENTS, dib, "Comment", out tag))
+			if (GetMetadata(FreeImageMetadataModel.Comments, dib, "Comment", out tag))
 			{
-				MetadataTag metadataTag = new MetadataTag(tag, FREE_IMAGE_MDMODEL.FIMD_COMMENTS);
+				MetadataTag metadataTag = new MetadataTag(tag, FreeImageMetadataModel.Comments);
 				result = metadataTag.Value as string;
 			}
 			return result;
@@ -2641,14 +2641,14 @@ namespace FreeImageAPI
 			if (comment != null)
 			{
 				FITAG tag = CreateTag();
-				MetadataTag metadataTag = new MetadataTag(tag, FREE_IMAGE_MDMODEL.FIMD_COMMENTS);
+				MetadataTag metadataTag = new MetadataTag(tag, FreeImageMetadataModel.Comments);
 				metadataTag.Value = comment;
-				result = SetMetadata(FREE_IMAGE_MDMODEL.FIMD_COMMENTS, dib, "Comment", tag);
+				result = SetMetadata(FreeImageMetadataModel.Comments, dib, "Comment", tag);
 				DeleteTag(tag);
 			}
 			else
 			{
-				result = SetMetadata(FREE_IMAGE_MDMODEL.FIMD_COMMENTS, dib, "Comment", FITAG.Zero);
+				result = SetMetadata(FreeImageMetadataModel.Comments, dib, "Comment", FITAG.Zero);
 			}
 			return result;
 		}
@@ -2664,7 +2664,7 @@ namespace FreeImageAPI
 		/// <exception cref="ArgumentNullException">
 		/// <paramref name="dib"/> is null.</exception>
 		public static bool GetMetadata(
-			FREE_IMAGE_MDMODEL model,
+			FreeImageMetadataModel model,
 			FIBITMAP dib,
 			string key,
 			out MetadataTag tag)
@@ -2699,7 +2699,7 @@ namespace FreeImageAPI
 		/// <exception cref="ArgumentNullException">
 		/// <paramref name="dib"/> is null.</exception>
 		public static bool SetMetadata(
-			FREE_IMAGE_MDMODEL model,
+			FreeImageMetadataModel model,
 			FIBITMAP dib,
 			string key,
 			MetadataTag tag)
@@ -2722,7 +2722,7 @@ namespace FreeImageAPI
 		/// <exception cref="ArgumentNullException">
 		/// <paramref name="dib"/> is null.</exception>
 		public static FIMETADATA FindFirstMetadata(
-			FREE_IMAGE_MDMODEL model,
+			FreeImageMetadataModel model,
 			FIBITMAP dib,
 			out MetadataTag tag)
 		{
@@ -2783,7 +2783,7 @@ namespace FreeImageAPI
 		/// <summary>
 		/// This dictionary links FIMETADATA handles and FREE_IMAGE_MDMODEL models.
 		/// </summary>
-		private static Dictionary<FIMETADATA, FREE_IMAGE_MDMODEL> metaDataSearchHandler = new(1);
+		private static Dictionary<FIMETADATA, FreeImageMetadataModel> metaDataSearchHandler = new(1);
 
 		#endregion
 
@@ -2860,7 +2860,7 @@ namespace FreeImageAPI
 			FIBITMAP result = new FIBITMAP();
 			int ang = (int)angle;
 
-			if ((GetImageType(dib) == FREE_IMAGE_TYPE.FIT_BITMAP) &&
+			if ((GetImageType(dib) == FreeImageType.Bitmap) &&
 				(GetBPP(dib) == 4) &&
 				((ang % 90) == 0))
 			{
@@ -3008,7 +3008,7 @@ namespace FreeImageAPI
 		/// dib3 = FreeImage_EnlargeCanvas(dib, -40, 0, 30, 0, c, FREE_IMAGE_COLOR_OPTIONS.FICO_RGB);<br/>
 		/// </example>
 		public static FIBITMAP EnlargeCanvas<T>(FIBITMAP dib, int left, int top, int right, int bottom,
-			T? color, FREE_IMAGE_COLOR_OPTIONS options) where T : struct
+			T? color, FreeImageColorOptions options) where T : struct
 		{
 			if (dib.IsNull)
 				return FIBITMAP.Zero;
@@ -3054,11 +3054,11 @@ namespace FreeImageAPI
 		/// For non standard type images the underlaying structure is used.
 		/// <para/>
 		/// So, <paramref name="color"/> must be of type <see cref="Double"/>, if the image to be filled is of type
-		/// <see cref="FREE_IMAGE_TYPE.FIT_DOUBLE"/> and must be a <see cref="FIRGBF"/> structure if the
-		/// image is of type <see cref="FREE_IMAGE_TYPE.FIT_RGBF"/> and so on.
+		/// <see cref="FreeImageType.Double"/> and must be a <see cref="FIRGBF"/> structure if the
+		/// image is of type <see cref="FreeImageType.RgbF"/> and so on.
 		/// <para/>
 		/// However, the fill color is always specified through a <see cref="RGBQUAD"/> structure
-		/// for all images of type <see cref="FREE_IMAGE_TYPE.FIT_BITMAP"/>.
+		/// for all images of type <see cref="FreeImageType.Bitmap"/>.
 		/// So, for 32- and 24-bit images, the red, green and blue members of the <see cref="RGBQUAD"/>
 		/// structure are directly used for the image's red, green and blue channel respectively.
 		/// Although alpha transparent <see cref="RGBQUAD"/> colors are
@@ -3067,7 +3067,7 @@ namespace FreeImageAPI
 		/// background color, which is determined from the image's bottom-left pixel.
 		/// So, currently using alpha enabled colors, assumes the image to be unicolor before the
 		/// fill operation. However, the <see cref="RGBQUAD.rgbReserved"/> field is only taken into account,
-		/// if option <see cref="FREE_IMAGE_COLOR_OPTIONS.FICO_RGBA"/> has been specified.
+		/// if option <see cref="FreeImageColorOptions.Rgba"/> has been specified.
 		/// <para/>
 		/// For 16-bit images, the red-, green- and blue components of the specified color are
 		/// transparently translated into either the 16-bit 555 or 565 representation. This depends
@@ -3082,7 +3082,7 @@ namespace FreeImageAPI
 		/// <description>Meaning</description>
 		/// </listheader>
 		/// <item>
-		/// <term><see cref="FREE_IMAGE_COLOR_OPTIONS.FICO_DEFAULT"/></term>
+		/// <term><see cref="FreeImageColorOptions.Default"/></term>
 		/// <description>
 		/// Uses the color, that is nearest to the specified color.
 		/// This is the default behavior and should always find a
@@ -3092,21 +3092,21 @@ namespace FreeImageAPI
 		/// </description>
 		/// </item>
 		/// <item>
-		/// <term><see cref="FREE_IMAGE_COLOR_OPTIONS.FICO_EQUAL_COLOR"/></term>
+		/// <term><see cref="FreeImageColorOptions.EqualColor"/></term>
 		/// <description>
 		/// Searches the image's palette for the specified color
 		/// but only uses the returned palette index, if the specified
 		/// color exactly matches the palette entry. Of course,
 		/// depending on the image's actual palette entries, this
 		/// operation may fail. In this case, the function falls back
-		/// to option <see cref="FREE_IMAGE_COLOR_OPTIONS.FICO_ALPHA_IS_INDEX"/>
+		/// to option <see cref="FreeImageColorOptions.AlphaIsIndex"/>
 		/// and uses the RGBQUAD's rgbReserved member (or its low nibble for 4-bit images
 		/// or its least significant bit (LSB) for 1-bit images) as
 		/// the palette index used for the fill operation.
 		/// </description>
 		/// </item>
 		/// <item>
-		/// <term><see cref="FREE_IMAGE_COLOR_OPTIONS.FICO_ALPHA_IS_INDEX"/></term>
+		/// <term><see cref="FreeImageColorOptions.AlphaIsIndex"/></term>
 		/// <description>
 		/// Does not perform any color lookup from the palette, but
 		/// uses the RGBQUAD's alpha channel member rgbReserved as
@@ -3118,7 +3118,7 @@ namespace FreeImageAPI
 		/// </item>
 		/// </list>
 		/// </remarks>
-		public static bool FillBackground<T>(FIBITMAP dib, T color, FREE_IMAGE_COLOR_OPTIONS options)
+		public static bool FillBackground<T>(FIBITMAP dib, T color, FreeImageColorOptions options)
 			where T : struct
 		{
 			if (dib.IsNull)
@@ -3209,7 +3209,7 @@ namespace FreeImageAPI
 			byte[] result = null;
 			uniqueColors = 0;
 
-			if ((!dib.IsNull) && (GetImageType(dib) == FREE_IMAGE_TYPE.FIT_BITMAP) && (GetBPP(dib) <= 8))
+			if ((!dib.IsNull) && (GetImageType(dib) == FreeImageType.Bitmap) && (GetBPP(dib) <= 8))
 			{
 				int size = (int)GetColorsUsed(dib);
 				List<RGBQUAD> newPalette = new List<RGBQUAD>(size);
@@ -3269,15 +3269,15 @@ namespace FreeImageAPI
 		/// Changes a bitmaps color depth.
 		/// Used by SaveEx and SaveToStream.
 		/// </summary>
-		private static FIBITMAP PrepareBitmapColorDepth(FIBITMAP dibToSave, FREE_IMAGE_FORMAT format, FREE_IMAGE_COLOR_DEPTH colorDepth)
+		private static FIBITMAP PrepareBitmapColorDepth(FIBITMAP dibToSave, FreeImageFormat format, FreeImageColorDepth colorDepth)
 		{
-			FREE_IMAGE_TYPE type = GetImageType(dibToSave);
-			if (type == FREE_IMAGE_TYPE.FIT_BITMAP)
+			FreeImageType type = GetImageType(dibToSave);
+			if (type == FreeImageType.Bitmap)
 			{
 				int bpp = (int)GetBPP(dibToSave);
-				int targetBpp = (int)(colorDepth & FREE_IMAGE_COLOR_DEPTH.FICD_COLOR_MASK);
+				int targetBpp = (int)(colorDepth & FreeImageColorDepth.FICD_COLOR_MASK);
 
-				if (colorDepth != FREE_IMAGE_COLOR_DEPTH.FICD_AUTO)
+				if (colorDepth != FreeImageColorDepth.FICD_AUTO)
 				{
 					// A fix colordepth was chosen
 					if (FIFSupportsExportBPP(format, targetBpp))
@@ -3305,13 +3305,13 @@ namespace FreeImageAPI
 							bppUpper = GetNextColorDepth(bppUpper);
 							if (FIFSupportsExportBPP(format, bppUpper))
 							{
-								dibToSave = ConvertColorDepth(dibToSave, (FREE_IMAGE_COLOR_DEPTH)bppUpper);
+								dibToSave = ConvertColorDepth(dibToSave, (FreeImageColorDepth)bppUpper);
 								break;
 							}
 							bppLower = GetPrevousColorDepth(bppLower);
 							if (FIFSupportsExportBPP(format, bppLower))
 							{
-								dibToSave = ConvertColorDepth(dibToSave, (FREE_IMAGE_COLOR_DEPTH)bppLower);
+								dibToSave = ConvertColorDepth(dibToSave, (FreeImageColorDepth)bppLower);
 								break;
 							}
 						} while (!((bppLower == 0) && (bppUpper == 0)));
@@ -3429,23 +3429,23 @@ namespace FreeImageAPI
 			}
 		}
 
-		internal static bool CheckColorType<T>(FREE_IMAGE_TYPE imageType, T color)
+		internal static bool CheckColorType<T>(FreeImageType imageType, T color)
 		{
 			Type type = typeof(T);
 			bool result = imageType switch
 			{
-				FREE_IMAGE_TYPE.FIT_BITMAP => (type == typeof(RGBQUAD)),
-				FREE_IMAGE_TYPE.FIT_COMPLEX => (type == typeof(FICOMPLEX)),
-				FREE_IMAGE_TYPE.FIT_DOUBLE => (type == typeof(double)),
-				FREE_IMAGE_TYPE.FIT_FLOAT => (type == typeof(float)),
-				FREE_IMAGE_TYPE.FIT_INT16 => (type == typeof(Int16)),
-				FREE_IMAGE_TYPE.FIT_INT32 => (type == typeof(Int32)),
-				FREE_IMAGE_TYPE.FIT_RGB16 => (type == typeof(FIRGB16)),
-				FREE_IMAGE_TYPE.FIT_RGBA16 => (type == typeof(FIRGBA16)),
-				FREE_IMAGE_TYPE.FIT_RGBAF => (type == typeof(FIRGBAF)),
-				FREE_IMAGE_TYPE.FIT_RGBF => (type == typeof(FIRGBF)),
-				FREE_IMAGE_TYPE.FIT_UINT16 => (type == typeof(UInt16)),
-				FREE_IMAGE_TYPE.FIT_UINT32 => (type == typeof(UInt32)),
+				FreeImageType.Bitmap => (type == typeof(RGBQUAD)),
+				FreeImageType.Complex => (type == typeof(FICOMPLEX)),
+				FreeImageType.Double => (type == typeof(double)),
+				FreeImageType.Float => (type == typeof(float)),
+				FreeImageType.Int16 => (type == typeof(Int16)),
+				FreeImageType.Int32 => (type == typeof(Int32)),
+				FreeImageType.Rgb16 => (type == typeof(FIRGB16)),
+				FreeImageType.Rgba16 => (type == typeof(FIRGBA16)),
+				FreeImageType.RgbaF => (type == typeof(FIRGBAF)),
+				FreeImageType.RgbF => (type == typeof(FIRGBF)),
+				FreeImageType.UInt16 => (type == typeof(UInt16)),
+				FreeImageType.UInt32 => (type == typeof(UInt32)),
 				_ => false
 			};
 			return result;

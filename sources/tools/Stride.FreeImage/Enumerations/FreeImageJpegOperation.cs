@@ -30,24 +30,47 @@
 // CVS
 // $Revision: 1.1 $
 // $Date: 2007/11/28 15:33:38 $
-// $Id: ICC_FLAGS.cs,v 1.1 2007/11/28 15:33:38 cklein05 Exp $
+// $Id: FREE_IMAGE_JPEG_OPERATION.cs,v 1.1 2007/11/28 15:33:38 cklein05 Exp $
 // ==========================================================
 
 namespace FreeImageAPI
 {
 	/// <summary>
-	/// Flags for ICC profiles.
+	/// Lossless JPEG transformations constants used in FreeImage_JPEGTransform.
 	/// </summary>
-	[System.Flags]
-	public enum ICC_FLAGS : ushort
+	public enum FreeImageJpegOperation
 	{
 		/// <summary>
-		/// Default value.
+		/// no transformation
 		/// </summary>
-		FIICC_DEFAULT = 0x00,
+		None = 0,
 		/// <summary>
-		/// The color is CMYK.
+		/// horizontal flip
 		/// </summary>
-		FIICC_COLOR_IS_CMYK = 0x01
+		FlipH = 1,
+		/// <summary>
+		/// vertical flip
+		/// </summary>
+		FlipV = 2,
+		/// <summary>
+		/// transpose across UL-to-LR axis
+		/// </summary>
+		Transpose = 3,
+		/// <summary>
+		/// transpose across UR-to-LL axis
+		/// </summary>
+		Transverse = 4,
+		/// <summary>
+		/// 90-degree clockwise rotation
+		/// </summary>
+		Rotate90 = 5,
+		/// <summary>
+		/// 180-degree rotation
+		/// </summary>
+		Rotate180 = 6,
+		/// <summary>
+		/// 270-degree clockwise (or 90 ccw)
+		/// </summary>
+		Rotate270 = 7
 	}
 }
