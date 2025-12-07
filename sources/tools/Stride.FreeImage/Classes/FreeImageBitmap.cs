@@ -3431,47 +3431,11 @@ namespace FreeImageAPI
 		}
 
 		/// <summary>
-		/// Creates a <see cref="FreeImageBitmap"/> from the specified file
-		/// using embedded color management information in that file.
-		/// </summary>
-		/// <param name="filename">A string that contains the
-		/// name of the file from which to create the <see cref="FreeImageBitmap"/>.</param>
-		/// <param name="useEmbeddedColorManagement">Ignored.</param>
-		/// <returns>The <see cref="FreeImageBitmap"/> this method creates.</returns>
-		public static FreeImageBitmap FromFile(string filename, bool useEmbeddedColorManagement)
-		{
-			return new FreeImageBitmap(filename);
-		}
-
-		/// <summary>
 		/// Creates a <see cref="FreeImageBitmap"/> from the specified data stream.
 		/// </summary>
 		/// <param name="stream">A <see cref="Stream"/> that contains the data for this <see cref="FreeImageBitmap"/>.</param>
 		/// <returns>The <see cref="FreeImageBitmap"/> this method creates.</returns>
 		public static FreeImageBitmap FromStream(Stream stream)
-		{
-			return new FreeImageBitmap(stream);
-		}
-
-		/// <summary>
-		/// Creates a <see cref="FreeImageBitmap"/> from the specified data stream.
-		/// </summary>
-		/// <param name="stream">A <see cref="Stream"/> that contains the data for this <see cref="FreeImageBitmap"/>.</param>
-		/// <param name="useEmbeddedColorManagement">Ignored.</param>
-		/// <returns>The <see cref="FreeImageBitmap"/> this method creates.</returns>
-		public static FreeImageBitmap FromStream(Stream stream, bool useEmbeddedColorManagement)
-		{
-			return new FreeImageBitmap(stream);
-		}
-
-		/// <summary>
-		/// Creates a <see cref="FreeImageBitmap"/> from the specified data stream.
-		/// </summary>
-		/// <param name="stream">A <see cref="Stream"/> that contains the data for this <see cref="FreeImageBitmap"/>.</param>
-		/// <param name="useEmbeddedColorManagement">Ignored.</param>
-		/// <param name="validateImageData">Ignored.</param>
-		/// <returns>The <see cref="FreeImageBitmap"/> this method creates.</returns>
-		public static FreeImageBitmap FromStream(Stream stream, bool useEmbeddedColorManagement, bool validateImageData)
 		{
 			return new FreeImageBitmap(stream);
 		}
