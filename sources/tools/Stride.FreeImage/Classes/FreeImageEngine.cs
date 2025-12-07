@@ -93,7 +93,7 @@ namespace FreeImageAPI
 		{
 			get
 			{
-				return FreeImage.IsLittleEndian();
+				return BitConverter.IsLittleEndian;
 			}
 		}
 	}

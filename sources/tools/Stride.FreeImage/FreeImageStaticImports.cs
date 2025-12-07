@@ -844,13 +844,6 @@ namespace FreeImageAPI
 		#region Helper functions
 
 		/// <summary>
-		/// Returns whether the platform is using Little Endian.
-		/// </summary>
-		/// <returns>Returns true if the platform is using Litte Endian, else false.</returns>
-		[DllImport(FreeImageLibrary, EntryPoint = "FreeImage_IsLittleEndian")]
-		public static extern bool IsLittleEndian();
-
-		/// <summary>
 		/// Converts a X11 color name into a corresponding RGB value.
 		/// </summary>
 		/// <param name="szColor">Name of the color to convert.</param>
