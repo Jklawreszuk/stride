@@ -523,7 +523,7 @@ namespace Stride.TextureConverter.TexLibraries
 
                         finalName = directory + "/" + fileName + "-ind_" + i + "-mip_" + j + extension;
                         FreeImage.FlipVertical(libraryData.Bitmaps[imageCount]);
-                        if (!FreeImage.SaveEx(libraryData.Bitmaps[imageCount], finalName))
+                        if (!FreeImage.SaveEx(ref libraryData.Bitmaps[imageCount], finalName))
                         {
                             Log.Error("Export failure.");
                             throw new TextureToolsException("Export failure.");
@@ -537,7 +537,7 @@ namespace Stride.TextureConverter.TexLibraries
             else
             {
                 FreeImage.FlipVertical(libraryData.Bitmaps[0]);
-                if (!FreeImage.SaveEx(libraryData.Bitmaps[0], request.FilePath))
+                if (!FreeImage.SaveEx(ref libraryData.Bitmaps[0], request.FilePath))
                 {
                     Log.Error("Export failure.");
                     throw new TextureToolsException("Export failure.");

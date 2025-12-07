@@ -1817,31 +1817,6 @@ namespace FreeImageAPI
 		}
 
 		/// <summary>
-		/// Saves this <see cref="FreeImageBitmap"/> to the specified file.
-		/// </summary>
-		/// <param name="filename">A string that contains the name of the file to which
-		/// to save this <see cref="FreeImageBitmap"/>.</param>
-		/// <exception cref="ArgumentException"><paramref name="filename"/> is null or empty.</exception>
-		/// <exception cref="Exception">Saving the image failed.</exception>
-		public void Save(string filename)
-		{
-			Save(filename, FREE_IMAGE_FORMAT.FIF_UNKNOWN, FREE_IMAGE_SAVE_FLAGS.DEFAULT);
-		}
-
-		/// <summary>
-		/// Saves this <see cref="FreeImageBitmap"/> to the specified file in the specified format.
-		/// </summary>
-		/// <param name="filename">A string that contains the name of the file to which
-		/// to save this <see cref="FreeImageBitmap"/>.</param>
-		/// <param name="format">An <see cref="FREE_IMAGE_FORMAT"/> that specifies the format of the saved image.</param>
-		/// <exception cref="ArgumentException"><paramref name="filename"/> is null or empty.</exception>
-		/// <exception cref="Exception">Saving the image failed.</exception>
-		public void Save(string filename, FREE_IMAGE_FORMAT format)
-		{
-			Save(filename, format, FREE_IMAGE_SAVE_FLAGS.DEFAULT);
-		}
-
-		/// <summary>
 		/// Saves this <see cref="FreeImageBitmap"/> to the specified file in the specified format
 		/// using the specified saving flags.
 		/// </summary>
@@ -1851,14 +1826,14 @@ namespace FreeImageAPI
 		/// <param name="flags">Flags to enable or disable plugin-features.</param>
 		/// <exception cref="ArgumentException"><paramref name="filename"/> is null or empty.</exception>
 		/// <exception cref="Exception">Saving the image failed.</exception>
-		public void Save(string filename, FREE_IMAGE_FORMAT format, FREE_IMAGE_SAVE_FLAGS flags)
+		public void Save(string filename, FREE_IMAGE_FORMAT format = FREE_IMAGE_FORMAT.FIF_UNKNOWN, FREE_IMAGE_SAVE_FLAGS flags = FREE_IMAGE_SAVE_FLAGS.DEFAULT)
 		{
 			EnsureNotDisposed();
 			if (string.IsNullOrEmpty(filename))
 			{
 				throw new ArgumentException("filename");
 			}
-			if (!FreeImage.SaveEx(dib, filename, format, flags))
+			if (!FreeImage.SaveEx(ref dib, filename, format, flags))
 			{
 				throw new Exception("Unable to save bitmap");
 			}
@@ -1866,18 +1841,6 @@ namespace FreeImageAPI
 			saveInformation.filename = filename;
 			saveInformation.format = format;
 			saveInformation.saveFlags = flags;
-		}
-
-		/// <summary>
-		/// Saves this <see cref="FreeImageBitmap"/> to the specified stream in the specified format.
-		/// </summary>
-		/// <param name="stream">The stream where this <see cref="FreeImageBitmap"/> will be saved.</param>
-		/// <param name="format">An <see cref="FREE_IMAGE_FORMAT"/> that specifies the format of the saved image.</param>
-		/// <exception cref="ArgumentNullException"><paramref name="stream"/> is a null reference.</exception>
-		/// <exception cref="Exception">Saving the image failed.</exception>
-		public void Save(Stream stream, FREE_IMAGE_FORMAT format)
-		{
-			Save(stream, format, FREE_IMAGE_SAVE_FLAGS.DEFAULT);
 		}
 
 		/// <summary>
@@ -1889,14 +1852,14 @@ namespace FreeImageAPI
 		/// <param name="flags">Flags to enable or disable plugin-features.</param>
 		/// <exception cref="ArgumentNullException"><paramref name="stream"/> is a null reference.</exception>
 		/// <exception cref="Exception">Saving the image failed.</exception>
-		public void Save(Stream stream, FREE_IMAGE_FORMAT format, FREE_IMAGE_SAVE_FLAGS flags)
+		public void Save(Stream stream, FREE_IMAGE_FORMAT format, FREE_IMAGE_SAVE_FLAGS flags = FREE_IMAGE_SAVE_FLAGS.DEFAULT)
 		{
 			EnsureNotDisposed();
 			if (stream == null)
 			{
 				throw new ArgumentNullException("stream");
 			}
-			if (!FreeImage.SaveToStream(dib, stream, format, flags))
+			if (!FreeImage.SaveToStream(ref dib, stream, format, flags))
 			{
 				throw new Exception("Unable to save bitmap");
 			}
@@ -1981,12 +1944,7 @@ namespace FreeImageAPI
 		/// <exception cref="Exception">Saving the image has failed.</exception>
 		public void SaveAdd(string filename)
 		{
-			SaveAdd(
-				filename,
-				this,
-				FREE_IMAGE_FORMAT.FIF_UNKNOWN,
-				FREE_IMAGE_LOAD_FLAGS.DEFAULT,
-				FREE_IMAGE_SAVE_FLAGS.DEFAULT);
+			SaveAdd(filename, this);
 		}
 
 		/// <summary>
@@ -2000,13 +1958,7 @@ namespace FreeImageAPI
 		/// <exception cref="ArgumentOutOfRangeException"><paramref name="insertPosition"/> is out of range.</exception>
 		public void SaveAdd(string filename, int insertPosition)
 		{
-			SaveAdd(
-				filename,
-				this,
-				insertPosition,
-				FREE_IMAGE_FORMAT.FIF_UNKNOWN,
-				FREE_IMAGE_LOAD_FLAGS.DEFAULT,
-				FREE_IMAGE_SAVE_FLAGS.DEFAULT);
+			SaveAdd(filename, this, insertPosition);
 		}
 
 		/// <summary>
@@ -2264,7 +2216,7 @@ namespace FreeImageAPI
 		public bool ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH bpp)
 		{
 			EnsureNotDisposed();
-			return ReplaceDib(FreeImage.ConvertColorDepth(dib, bpp, false));
+			return ReplaceDib(FreeImage.ConvertColorDepth(dib, bpp));
 		}
 
 		/// <summary>
@@ -2323,7 +2275,7 @@ namespace FreeImageAPI
 		{
 			EnsureNotDisposed();
 			FreeImageBitmap result = null;
-			FIBITMAP newDib = FreeImage.ConvertColorDepth(dib, bpp, false);
+			FIBITMAP newDib = FreeImage.ConvertColorDepth(dib, bpp);
 			if (newDib == dib)
 			{
 				newDib = FreeImage.Clone(dib);
@@ -2339,19 +2291,6 @@ namespace FreeImageAPI
 		/// Rescales this <see cref="FreeImageBitmap"/> to the specified size using the
 		/// specified filter.
 		/// </summary>
-		/// <param name="newSize">The Size structure that represent the
-		/// size of the new <see cref="FreeImageBitmap"/>.</param>
-		/// <param name="filter">Filter to use for resizing.</param>
-		/// <returns>Returns true on success, false on failure.</returns>
-		public bool Rescale(Size newSize, FREE_IMAGE_FILTER filter)
-		{
-			return Rescale(newSize.Width, newSize.Height, filter);
-		}
-
-		/// <summary>
-		/// Rescales this <see cref="FreeImageBitmap"/> to the specified size using the
-		/// specified filter.
-		/// </summary>
 		/// <param name="width">Width of the new <see cref="FreeImageBitmap"/>.</param>
 		/// <param name="height">Height of the new <see cref="FreeImageBitmap"/>.</param>
 		/// <param name="filter">Filter to use for resizing.</param>
@@ -2360,19 +2299,6 @@ namespace FreeImageAPI
 		{
 			EnsureNotDisposed();
 			return ReplaceDib(FreeImage.Rescale(dib, width, height, filter));
-		}
-
-		/// <summary>
-		/// Rescales this <see cref="FreeImageBitmap"/> to the specified size using the
-		/// specified filter initializing a new instance.
-		/// </summary>
-		/// <param name="newSize">The Size structure that represent the
-		/// size of the new <see cref="FreeImageBitmap"/>.</param>
-		/// <param name="filter">Filter to use for resizing.</param>
-		/// <returns>The rescaled instance.</returns>
-		public FreeImageBitmap GetScaledInstance(Size newSize, FREE_IMAGE_FILTER filter)
-		{
-			return GetScaledInstance(newSize.Width, newSize.Height, filter);
 		}
 
 		/// <summary>
@@ -3229,7 +3155,7 @@ namespace FreeImageAPI
 			{
 				throw new ArgumentNullException("data");
 			}
-			return FreeImage.CreateICCProfileEx(dib, data, size);
+			return new FIICCPROFILE(dib, data, size);
 		}
 
 		/// <summary>
@@ -3287,17 +3213,6 @@ namespace FreeImageAPI
 		}
 		
 		/// <summary>
-		/// Creates a <see cref="FreeImageBitmap"/> from the specified file.
-		/// </summary>
-		/// <param name="filename">A string that contains the name of the file
-		/// from which to create the <see cref="FreeImageBitmap"/>.</param>
-		/// <returns>The <see cref="FreeImageBitmap"/> this method creates.</returns>
-		public static FreeImageBitmap FromFile(string filename)
-		{
-			return new FreeImageBitmap(filename);
-		}
-
-		/// <summary>
 		/// Returns the color depth, in number of bits per pixel,
 		/// of the specified pixel format.
 		/// </summary>
@@ -3320,36 +3235,6 @@ namespace FreeImageAPI
 		public static bool JPEGTransform(string source, string destination, FREE_IMAGE_JPEG_OPERATION operation, bool perfect)
 		{
 			return FreeImage.JPEGTransform(source, destination, operation, perfect);
-		}
-
-		/// <summary>
-		/// Performs a lossless crop on a JPEG file.
-		/// </summary>
-		/// <param name="source">Source filename.</param>
-		/// <param name="destination">Destination filename.</param>
-		/// <param name="rect">Specifies the cropped rectangle.</param>
-		/// <returns>Returns true on success, false on failure.</returns>
-		/// <exception cref="ArgumentNullException">
-		/// <paramref name="source"/> or <paramref name="destination"/> is null.
-		/// </exception>
-		/// <exception cref="FileNotFoundException">
-		/// <paramref name="source"/> does not exist.
-		/// </exception>
-		public static bool JPEGCrop(string source, string destination, Rectangle rect)
-		{
-			if (source == null)
-			{
-				throw new ArgumentNullException("source");
-			}
-			if (!File.Exists(source))
-			{
-				throw new FileNotFoundException("source");
-			}
-			if (destination == null)
-			{
-				throw new ArgumentNullException("destination");
-			}
-			return JPEGCrop(source, destination, rect.Left, rect.Top, rect.Right, rect.Bottom);
 		}
 
 		/// <summary>
@@ -3472,9 +3357,9 @@ namespace FreeImageAPI
 		public static void SaveAdd(
 			string filename,
 			FreeImageBitmap bitmap,
-			FREE_IMAGE_FORMAT format,
-			FREE_IMAGE_LOAD_FLAGS loadFlags,
-			FREE_IMAGE_SAVE_FLAGS saveFlags)
+			FREE_IMAGE_FORMAT format = FREE_IMAGE_FORMAT.FIF_UNKNOWN,
+			FREE_IMAGE_LOAD_FLAGS loadFlags = FREE_IMAGE_LOAD_FLAGS.DEFAULT,
+			FREE_IMAGE_SAVE_FLAGS saveFlags = FREE_IMAGE_SAVE_FLAGS.DEFAULT)
 		{
 			if (filename == null)
 			{
@@ -3526,9 +3411,9 @@ namespace FreeImageAPI
 			string filename,
 			FreeImageBitmap bitmap,
 			int insertPosition,
-			FREE_IMAGE_FORMAT format,
-			FREE_IMAGE_LOAD_FLAGS loadFlags,
-			FREE_IMAGE_SAVE_FLAGS saveFlags)
+			FREE_IMAGE_FORMAT format = FREE_IMAGE_FORMAT.FIF_UNKNOWN,
+			FREE_IMAGE_LOAD_FLAGS loadFlags = FREE_IMAGE_LOAD_FLAGS.DEFAULT,
+			FREE_IMAGE_SAVE_FLAGS saveFlags = FREE_IMAGE_SAVE_FLAGS.DEFAULT)
 		{
 			if (filename == null)
 			{
@@ -3570,16 +3455,6 @@ namespace FreeImageAPI
 
 			if (!FreeImage.CloseMultiBitmap(mpBitmap, saveFlags))
 				throw new Exception(ErrorUnloadBitmap);
-		}
-
-		/// <summary>
-		/// Returns a new instance of the <see cref="PropertyItem"/> class which
-		/// has no public accessible constructor.
-		/// </summary>
-		/// <returns>A new instace of <see cref="PropertyItem"/>.</returns>
-		public static PropertyItem CreateNewPropertyItem()
-		{
-			return FreeImage.CreatePropertyItem();
 		}
 
 		#endregion
@@ -3671,7 +3546,7 @@ namespace FreeImageAPI
 				}
 			}
 
-			dib = FreeImage.LoadFromStream(stream, flags, ref format);
+			dib = FreeImage.LoadFromStream(stream, ref format, flags);
 			if (dib.IsNull)
 			{
 				throw new Exception(ErrorLoadingBitmap);
@@ -3782,7 +3657,7 @@ namespace FreeImageAPI
 		{
 			EnsureNotDisposed();
 			using MemoryStream memory = new MemoryStream(DataSize);
-			if (!FreeImage.SaveToStream(dib, memory, FREE_IMAGE_FORMAT.FIF_TIFF, FREE_IMAGE_SAVE_FLAGS.TIFF_LZW))
+			if (!FreeImage.SaveToStream(ref dib, memory, FREE_IMAGE_FORMAT.FIF_TIFF, FREE_IMAGE_SAVE_FLAGS.TIFF_LZW))
 			{
 				throw new SerializationException();
 			}
