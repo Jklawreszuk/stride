@@ -2266,41 +2266,6 @@ namespace FreeImageAPI
 		}
 
 		/// <summary>
-		/// Creates a GDI bitmap object from this <see cref="FreeImageBitmap"/>.
-		/// </summary>
-		/// <returns>A handle to the GDI bitmap object that this method creates.</returns>
-		public IntPtr GetHbitmap()
-		{
-			EnsureNotDisposed();
-			return FreeImage.GetHbitmap(dib, IntPtr.Zero, false);
-		}
-
-		/// <summary>
-		/// Creates a GDI bitmap object from this <see cref="FreeImageBitmap"/>.
-		/// </summary>
-		/// <param name="background">A <see cref="System.Drawing.Color"/> structure that specifies the background color.
-		/// This parameter is ignored if the bitmap is totally opaque.</param>
-		/// <returns>A handle to the GDI bitmap object that this method creates.</returns>
-		public IntPtr GetHbitmap(Color background)
-		{
-			EnsureNotDisposed();
-			using FreeImageBitmap temp = new FreeImageBitmap(this);
-			temp.BackgroundColor = background;
-			return temp.GetHbitmap();
-		}
-
-		/// <summary>
-		/// Creates a GDI bitmap object from this <see cref="FreeImageBitmap"/> with the same
-		/// color depth as the primary device.
-		/// </summary>
-		/// <returns>A handle to the GDI bitmap object that this method creates.</returns>
-		public IntPtr GetHbitmapForDevice()
-		{
-			EnsureNotDisposed();
-			return FreeImage.GetBitmapForDevice(dib, IntPtr.Zero, false);
-		}
-
-		/// <summary>
 		/// Gets the <see cref="Color"/> of the specified pixel in this <see cref="FreeImageBitmap"/>.
 		/// </summary>
 		/// <param name="x">The x-coordinate of the pixel to retrieve.</param>
@@ -2413,36 +2378,6 @@ namespace FreeImageAPI
 			EnsureNotDisposed();
 			FreeImage.SetResolutionX(dib, (uint)xDpi);
 			FreeImage.SetResolutionY(dib, (uint)yDpi);
-		}
-
-		/// <summary>
-		/// This function is not yet implemented.
-		/// </summary>
-		/// <exception cref="NotImplementedException">
-		/// This method is not implemented.</exception>
-		public BitmapData LockBits(Rectangle rect, ImageLockMode flags, PixelFormat format)
-		{
-			throw new NotImplementedException();
-		}
-
-		/// <summary>
-		/// This function is not yet implemented.
-		/// </summary>
-		/// <exception cref="NotImplementedException">
-		/// This method is not implemented.</exception>
-		public BitmapData LockBits(Rectangle rect, ImageLockMode flags, PixelFormat format, BitmapData bitmapData)
-		{
-			throw new NotImplementedException();
-		}
-
-		/// <summary>
-		/// This function is not yet implemented.
-		/// </summary>
-		/// <exception cref="NotImplementedException">
-		/// This method is not implemented.</exception>
-		public void UnlockBits(BitmapData bitmapdata)
-		{
-			throw new NotImplementedException();
 		}
 
 		/// <summary>
@@ -3506,43 +3441,6 @@ namespace FreeImageAPI
 		public static FreeImageBitmap FromFile(string filename, bool useEmbeddedColorManagement)
 		{
 			return new FreeImageBitmap(filename);
-		}
-
-		/// <summary>
-		/// Creates a <see cref="FreeImageBitmap"/> from a handle to a GDI bitmap.
-		/// </summary>
-		/// <param name="hbitmap">The GDI bitmap handle from which to create the <see cref="FreeImageBitmap"/>.</param>
-		/// <returns>The <see cref="FreeImageBitmap"/> this method creates.</returns>
-		public static FreeImageBitmap FromHbitmap(IntPtr hbitmap)
-		{
-			FreeImageBitmap result = null;
-			FIBITMAP newDib = FreeImage.CreateFromHbitmap(hbitmap, IntPtr.Zero);
-			if (!newDib.IsNull)
-			{
-				result = new FreeImageBitmap(newDib);
-			}
-			return result;
-		}
-
-		/// <summary>
-		/// Creates a <see cref="FreeImageBitmap"/> from a handle to a GDI bitmap and a handle to a GDI palette.
-		/// </summary>
-		/// <param name="hbitmap">The GDI bitmap handle from which to create the <see cref="FreeImageBitmap"/>.</param>
-		/// <param name="hpalette">Ignored.</param>
-		/// <returns>The <see cref="FreeImageBitmap"/> this method creates.</returns>
-		public static FreeImageBitmap FromHbitmap(IntPtr hbitmap, IntPtr hpalette)
-		{
-			return FromHbitmap(hbitmap);
-		}
-
-		/// <summary>
-		/// Frees a bitmap handle.
-		/// </summary>
-		/// <param name="hbitmap">Handle to a bitmap.</param>
-		/// <returns><b>true</b> on success, <b>false</b> on failure.</returns>
-		public static bool FreeHbitmap(IntPtr hbitmap)
-		{
-			return FreeImage.FreeHbitmap(hbitmap);
 		}
 
 		/// <summary>
