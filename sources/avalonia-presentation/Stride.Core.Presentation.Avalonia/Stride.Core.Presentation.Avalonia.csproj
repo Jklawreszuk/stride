@@ -1,11 +1,11 @@
 ﻿<Project>
-  <Import Project="..\..\targets\Stride.props" />
+
+  <Import Project="..\..\targets\Stride.Core.props" />
 
   <PropertyGroup>
     <TargetFramework>$(StrideXplatEditorTargetFramework)</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,12 +14,11 @@
     </Compile>
   </ItemGroup>
 
-  <ItemGroup>    
-    <PackageReference Include="Avalonia" />
+  <ItemGroup>
+    <PackageReference Include="Avalonia"/>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\assets\Stride.Core.Assets\Stride.Core.Assets.csproj" />
     <ProjectReference Include="..\..\core\Stride.Core.Design\Stride.Core.Design.csproj" />
   </ItemGroup>
 

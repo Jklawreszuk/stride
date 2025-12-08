@@ -13,6 +13,13 @@
     <Design.DataContext>
         <vm:MainWindowViewModel/>
     </Design.DataContext>
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="avares://Stride.Core.Assets.Editor/View/CommonResources.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -27,6 +34,7 @@
         <Menu IsHitTestVisible="True" Grid.Row="0" FontSize="12">
             <!-- File Menu -->
             <MenuItem Header="{sd:Localize File, Context=Menu}">
+                <MenuItem Header="{sd:Localize New, Context=Menu}" Icon="{sd:Image {StaticResource ImageNewSolution}}"/>
             </MenuItem>
         </Menu>
             
