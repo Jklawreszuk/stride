@@ -1,7 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project>
+    <Import Project="..\..\targets\Stride.props" />
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net10.0</TargetFramework>
+        <TargetFramework>$(StrideXplatEditorTargetFramework)</TargetFramework>
         <Nullable>enable</Nullable>
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
         <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -28,5 +29,12 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\avalonia-presentation\Stride.Core.Translation.Presentation\Stride.Core.Translation.Presentation.csproj" />
+    </ItemGroup>
+    <Import Project="$(StrideSdkTargets)" />
+
+    <ItemGroup>
+      <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
+        <Link>Properties\SharedAssemblyInfo.cs</Link>
+      </Compile>
     </ItemGroup>
 </Project>
