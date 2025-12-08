@@ -7,12 +7,10 @@
         xmlns:sd="http://schemas.stride3d.net/xaml/presentation"
         x:Class="Stride.GameStudio.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Icon="/Assets/avalonia-logo.ico"
-        Title="Stride.GameStudio">
+        Icon="/Assets/GameStudio.ico"
+        Title="{Binding EditorTitle}" Width="1280" Height="900">
 
     <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 

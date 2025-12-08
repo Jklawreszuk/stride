@@ -1,6 +1,8 @@
-﻿namespace Stride.GameStudio.ViewModels;
+﻿using Stride.GameStudio.Helpers;
+
+namespace Stride.GameStudio.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
-    public string Greeting { get; } = "Welcome to Avalonia!";
+    public string EditorTitle { get; } = StrideGameStudio.EditorName;
 }
