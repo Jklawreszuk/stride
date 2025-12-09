@@ -20,7 +20,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\assets\Stride.Core.Assets\Stride.Core.Assets.csproj" />
+    <ProjectReference Include="..\..\avalonia-presentation\Stride.Core.Presentation.Avalonia\Stride.Core.Presentation.Avalonia.csproj" />
     <ProjectReference Include="..\..\core\Stride.Core.Design\Stride.Core.Design.csproj" />
+    <ProjectReference Include="..\..\presentation\Stride.Core.Presentation\Stride.Core.Presentation.csproj" />
   </ItemGroup>
 
   <Import Project="$(StrideSdkTargets)" />
