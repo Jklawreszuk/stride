@@ -6,12 +6,12 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         xmlns:sd="http://schemas.stride3d.net/xaml/presentation"
         x:Class="Stride.GameStudio.Views.MainWindow"
-        x:DataType="vm:MainWindowViewModel"
+        x:DataType="vm:GameStudioViewModel"
         Icon="/Assets/GameStudio.ico"
         Title="{Binding EditorTitle}" Width="1280" Height="900">
 
     <Design.DataContext>
-        <vm:MainWindowViewModel/>
+        <vm:GameStudioViewModel/>
     </Design.DataContext>
     <Window.Resources>
         <ResourceDictionary>
@@ -34,7 +34,43 @@
         <Menu IsHitTestVisible="True" Grid.Row="0" FontSize="12">
             <!-- File Menu -->
             <MenuItem Header="{sd:Localize File, Context=Menu}">
-                <MenuItem Header="{sd:Localize New, Context=Menu}" Icon="{sd:Image {StaticResource ImageNewSolution}}"/>
+                <MenuItem Header="{sd:Localize New, Context=Menu}" Command="{Binding NewSessionCommand}" Icon="{sd:Image {StaticResource ImageNewSolution}}"/>
+                <MenuItem Header="{sd:Localize Open, Context=Menu}" Command="{Binding OpenSessionCommand}" Icon="{sd:Image {StaticResource ImageOpen}}"/>
+                <MenuItem Header="{sd:Localize Open recent, Context=Menu}" Icon="{sd:Image {StaticResource ImageOpen}}" IsEnabled="{Binding MRU.MostRecentlyUsedFiles.Count, Converter={sd:NumericToBool}}">
+                    <!-- IsCheckable=True is a hack to prevent WPF from clearing the selected sub menu item -->
+                    <MenuItem ItemsSource="{Binding RecentFiles}">
+                        <MenuItem.ItemTemplate>
+                            <DataTemplate>
+                                <Grid HorizontalAlignment="Stretch" ToolTip.Tip="{Binding FilePath, Converter={sd:UFileToString}, Mode=OneWay}">
+                                    <Grid.ColumnDefinitions >
+                                        <ColumnDefinition Width="30"/>
+                                        <ColumnDefinition MaxWidth="320"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="{Binding Version}" FontWeight="Bold" />
+                                    <TextBlock Grid.Column="1">
+                                        <TextBlock.Text>
+                                            <MultiBinding>
+                                                <!-- FilePath binding -->
+                                                <Binding Path="FilePath" Mode="OneWay" Converter="{StaticResource UFileToString}" />
+
+                                                <!-- RelativeSource Self binding -->
+                                                <Binding Path="." RelativeSource="{RelativeSource Self}" />
+
+                                                <!-- TrimString converter -->
+                                                <MultiBinding.Converter>
+                                                    <sd:TrimString MaxWidth="320"
+                                                                      TextTrimming="WordEllipsis"
+                                                                      TrimmingSource="Middle"
+                                                                      WordSeparators="/\" />
+                                                </MultiBinding.Converter>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                </Grid>
+                            </DataTemplate>
+                        </MenuItem.ItemTemplate>
+                    </MenuItem>
+                </MenuItem>
             </MenuItem>
         </Menu>
             
