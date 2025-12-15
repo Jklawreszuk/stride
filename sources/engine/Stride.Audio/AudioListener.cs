@@ -115,7 +115,7 @@ namespace Stride.Audio
         /// <summary>
         /// Internal OpenAL object that represents a device context actually, this is to allow multiple listeners
         /// </summary>
-        internal AudioLayer.Listener Listener;
+        internal StrideAudioListener Listener;
 
         internal Matrix WorldTransform;
 
@@ -124,7 +124,7 @@ namespace Stride.Audio
         /// </summary>
         public void Dispose()
         {
-            if (Listener.Ptr == IntPtr.Zero) return;
+            if (Listener == null) return;
 
 #if !STRIDE_PLATFORM_IOS
             AudioLayer.ListenerDisable(Listener);
@@ -134,7 +134,7 @@ namespace Stride.Audio
 
         internal void Update()
         {
-            if (Listener.Ptr == IntPtr.Zero) return;
+            if (Listener == null) return;
             AudioLayer.ListenerPush3D(Listener, ref Position, ref forward, ref up, ref Velocity, ref WorldTransform);
         }
     }

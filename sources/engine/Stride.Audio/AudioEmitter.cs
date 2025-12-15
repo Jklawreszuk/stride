@@ -94,7 +94,7 @@ namespace Stride.Audio
             Up = new Vector3(0, 1, 0);
         }
 
-        internal void Apply3D(AudioLayer.Source source)
+        internal void Apply3D(StrideAudioSource source)
         {
             AudioLayer.SourcePush3D(source, ref Position, ref forward, ref up, ref Velocity, ref WorldTransform);
         }
