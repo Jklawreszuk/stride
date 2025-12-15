@@ -22,14 +22,6 @@ namespace Stride.Audio
 
         private readonly AudioDevice audioDevice;
 
-        static AudioEngine()
-        {
-            if (!AudioLayer.Init())
-            {
-                throw new Exception("Failed to initialize the audio native layer.");
-            }
-        }
-
         /// <summary>
         /// The logger of the audio engine.
         /// </summary>
@@ -62,15 +54,15 @@ namespace Stride.Audio
 
         private float masterVolume = 1.0f;
 
-        internal AudioLayer.Device AudioDevice;
+        internal StrideAudioDevice AudioDevice;
 
         /// <summary>
         /// Initialize audio engine
         /// </summary>
-        internal virtual void InitializeAudioEngine(AudioLayer.DeviceFlags flags)
+        internal virtual void InitializeAudioEngine(DeviceFlags flags)
         {
             AudioDevice = AudioLayer.Create(audioDevice.Name == "default" ? null : audioDevice.Name, flags);
-            if (AudioDevice.Ptr == IntPtr.Zero)
+            if (AudioDevice == null)
             {
                 State = AudioEngineState.Invalidated;
             }
@@ -83,7 +75,7 @@ namespace Stride.Audio
         /// </summary>
         internal void DestroyAudioEngine()
         {
-            if (AudioDevice.Ptr != IntPtr.Zero)
+            if (AudioDevice != null)
             {
                 AudioLayer.ListenerDestroy(DefaultListener.Listener);
                 AudioLayer.Destroy(AudioDevice);
