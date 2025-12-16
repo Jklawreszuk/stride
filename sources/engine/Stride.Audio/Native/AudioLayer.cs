@@ -10,11 +10,11 @@ namespace Stride.Audio
     /// </summary>
     public class AudioLayer
     {
-        private static readonly OpenALProvider Provider = new();
+        private static IAudioProvider Provider;
 
-        public static bool Init()
+        public static void Init()
         {
-            return Provider.Init();
+            Provider = new OpenALProvider();
         }
 
         public static StrideAudioDevice Create(string deviceName, DeviceFlags flags)

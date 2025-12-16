@@ -8,17 +8,10 @@ using Stride.Core.Mathematics;
 
 namespace Stride.Audio;
 
-internal unsafe class OpenALProvider
+internal unsafe class OpenALProvider : IAudioProvider
 {
-    private readonly ALContext alc;
-    private readonly AL al;
-    
-    public bool Init()
-    {
-        alc = ALContext.GetApi();
-        al = AL.GetApi();
-        return true;
-    }
+    private readonly ALContext alc = ALContext.GetApi();
+    private readonly AL al = AL.GetApi();
 
     public StrideAudioDevice Create(string deviceName, DeviceFlags flags)
     {
