@@ -16,7 +16,7 @@ namespace Stride.Audio
 
         public static void Init()
         {
-            Provider = new OpenALProvider();
+            Provider = new XAudio2Provider();
         }
 
         public static StrideAudioDevice Create(string deviceName, DeviceFlags flags)
