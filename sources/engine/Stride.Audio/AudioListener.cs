@@ -115,7 +115,7 @@ namespace Stride.Audio
         /// <summary>
         /// Internal OpenAL object that represents a device context actually, this is to allow multiple listeners
         /// </summary>
-        internal StrideAudioListener Listener;
+        internal IAudioListener Listener;
 
         internal Matrix WorldTransform;
 

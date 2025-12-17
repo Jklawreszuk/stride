@@ -54,8 +54,8 @@ namespace Stride.Audio
         /// </summary>
         public TaskCompletionSource<bool> Ended { get; private set; } = new TaskCompletionSource<bool>(false);
 
-        protected readonly List<StrideAudioBuffer> deviceBuffers = [];
-        protected readonly Queue<StrideAudioBuffer> freeBuffers = new(4);
+        protected readonly List<IAudioBuffer> deviceBuffers = [];
+        protected readonly Queue<IAudioBuffer> freeBuffers = new(4);
 
         /// <summary>
         /// The sound instance associated.

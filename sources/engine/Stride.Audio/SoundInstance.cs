@@ -24,7 +24,7 @@ namespace Stride.Audio
         protected bool spatialized;
         protected PlayState playState = PlayState.Stopped;
 
-        internal StrideAudioSource Source;
+        internal IAudioSource Source;
 
         internal AudioListener Listener;
 
