@@ -21,9 +21,9 @@ public unsafe class XAudio2Provider : IAudioProvider
     
     private readonly XAudio xAudio = XAudio.GetApi();
     
-    public StrideAudioDevice Create(string deviceName, DeviceFlags flags)
+    public IAudioDevice Create(string deviceName, DeviceFlags flags)
     {
-        var device = new StrideAudioDevice { Hrtf = flags == DeviceFlags.Hrtf };
+        var device = new XAudio2Device { Hrtf = flags == DeviceFlags.Hrtf };
 
         //XAudio2, no flags, processor 1
         var result = xAudio.CreateWithVersionInfo(ref device.xAudio, device.Hrtf ? XAudio.XAudio21024Quantum : 0u, XAudio.Processor1, 0);
@@ -56,66 +56,67 @@ public unsafe class XAudio2Provider : IAudioProvider
         return device;
     }
 
-    public void Destroy(StrideAudioDevice device)
+    public void Destroy(IAudioDevice device)
     {
-        device.xAudio->StopEngine();
-        device.masteringVoice->DestroyVoice();
+        XAudio2Device xAudio2Device = (XAudio2Device)device;
+        xAudio2Device.xAudio->StopEngine();
+        xAudio2Device.masteringVoice->DestroyVoice();
     }
 
-    public void Update(StrideAudioDevice device)
+    public void Update(IAudioDevice device)
     {
         
     }
 
-    public void SetMasterVolume(StrideAudioDevice device, float volume)
+    public void SetMasterVolume(IAudioDevice device, float volume)
     {
-        device.masteringVoice->SetVolume(volume,0);
+        ((XAudio2Device)device).masteringVoice->SetVolume(volume,0);
     }
 
-    public StrideAudioListener ListenerCreate(StrideAudioDevice device)
+    public IAudioListener ListenerCreate(IAudioDevice device)
     {
-        var listener = new StrideAudioListener();
-        listener.Device = device;
-        listener.XAudioListener = new X3DAUDIO_LISTENER();
+        var listener = new XAudio2Listener();
+        listener.Device = (XAudio2Device)device;
+        listener.XAudioListener = new X3DAudioListener();
         return listener;
     }
 
-    public void ListenerDestroy(StrideAudioListener listener)
+    public void ListenerDestroy(IAudioListener listener)
     {
         //nothing to destroy
     }
 
-    public bool ListenerEnable(StrideAudioListener listener)
+    public bool ListenerEnable(IAudioListener listener)
     {
         return true;
     }
 
-    public void ListenerDisable(StrideAudioListener listener)
+    public void ListenerDisable(IAudioListener listener)
     {
         //unused in XAudio2
     }
 
-    public StrideAudioSource SourceCreate(StrideAudioListener listener, int sampleRate, int maxNumberOfBuffers, bool mono, bool spatialized, bool streamed, bool hrtf, float hrtfDirectionFactor,
+    public IAudioSource SourceCreate(IAudioListener listener, int sampleRate, int maxNumberOfBuffers, bool mono, bool spatialized, bool streamed, bool hrtf, float hrtfDirectionFactor,
         HrtfEnvironment environment)
     {
-        var source = new StrideAudioSource
+        var source = new XAudio2Source
         {
-            Listener = listener,
+            Listener = (XAudio2Listener)listener,
             SampleRate = sampleRate,
             Mono = mono,
             Streamed = streamed,
-            masteringVoice = listener.Device.masteringVoice
+            masteringVoice = ((XAudio2Listener)listener).Device.masteringVoice
         };
 
         if((spatialized && !hrtf) || (hrtf && !source.Listener.Device.Hrtf))
 		{
 			//if spatialized we also need those structures to calculate 3D audio
-			source.emitter = new X3DAUDIO_EMITTER();
+			source.emitter = new();
 			source.emitter.ChannelCount = 1;
 			source.emitter.CurveDistanceScaler = 1;
 			source.emitter.DopplerScaler = 1;
 
-			source.dsp_settings = new X3DAUDIO_DSP_SETTINGS();
+			source.dsp_settings = new();
 			source.dsp_settings.SrcChannelCount = 1;
 			source.dsp_settings.DstChannelCount = AudioChannels;
             var matrix = new float[AudioChannels];
@@ -135,8 +136,7 @@ public unsafe class XAudio2Provider : IAudioProvider
         pcmWaveFormat.WBitsPerSample = 16;
 		pcmWaveFormat.NBlockAlign = (ushort)(pcmWaveFormat.NChannels * pcmWaveFormat.WBitsPerSample / 8);
         
-        var callback = XAudio2Source.CreateCallback();
-        int result = ((XAudio2Listener)listener).Device.xAudio->CreateSourceVoice(ref source.sourceVoice, &pcmWaveFormat, 0, MaxFreqRatio, callback, null, null);
+        int result = ((XAudio2Listener)listener).Device.xAudio->CreateSourceVoice(ref source.sourceVoice, &pcmWaveFormat, 0, MaxFreqRatio, null, null, null);
         if (HResult.IndicatesFailure(result))
         {
             return null;
@@ -200,26 +200,29 @@ public unsafe class XAudio2Provider : IAudioProvider
 		return source;
     }
 
-    public void SourceDestroy(StrideAudioSource source)
+    public void SourceDestroy(IAudioSource source)
     {
-        source.sourceVoice->Stop(0,0);
-        source.sourceVoice->DestroyVoice();
+        XAudio2Source sourceXAudio2Source = (XAudio2Source)source;
+        sourceXAudio2Source.sourceVoice->Stop(0,0);
+        sourceXAudio2Source.sourceVoice->DestroyVoice();
     }
 
-    public double SourceGetPosition(StrideAudioSource source)
+    public double SourceGetPosition(IAudioSource source)
     {
+        XAudio2Source sourceXAudio2Source = (XAudio2Source)source;
         VoiceState state;
-        source.sourceVoice->GetState(&state, 0);
+        sourceXAudio2Source.sourceVoice->GetState(&state, 0);
 
         if (!source.Streamed)
-            return (sourceXAudio2Source.SingleBuffer->PlayBegin + state.SamplesPlayed - (ulong)sourceXAudio2Source.SamplesAtBegin) / (float)source.SampleRate;
+            return (sourceXAudio2Source.SingleBuffer.PlayBegin + state.SamplesPlayed - (ulong)sourceXAudio2Source.SamplesAtBegin) / (float)source.SampleRate;
 			
         //things work different for streamed sources, but anyway we simply subtract the snapshotted samples at begin of the stream ( could be the begin of the loop )
-        return (state.SamplesPlayed - (ulong)source.SamplesAtBegin) / (float)source.SampleRate;
+        return (state.SamplesPlayed - (ulong)sourceXAudio2Source.SamplesAtBegin) / (float)source.SampleRate;
     }
 
-    public void SourceSetPan(StrideAudioSource source, float pan)
+    public void SourceSetPan(IAudioSource source, float pan)
     {
+        XAudio2Source sourceXAudio2Source = (XAudio2Source)source;
         float leftGain  = pan <= 0 ? 1.0f : 1.0f - pan;
         float rightGain = pan >= 0 ? 1.0f : 1.0f + pan;
         
@@ -228,76 +231,88 @@ public unsafe class XAudio2Provider : IAudioProvider
        
         fixed(float* panningPtr = &panning[0])
         {
-            source.sourceVoice->SetOutputMatrix((IXAudio2Voice*)source.masteringVoice, sourceChannels, AudioChannels, panningPtr, 0);
+            sourceXAudio2Source.sourceVoice->SetOutputMatrix((IXAudio2Voice*)sourceXAudio2Source.masteringVoice, sourceChannels, AudioChannels, panningPtr, 0);
         }
     }
 
-    public StrideAudioBuffer BufferCreate(int maxBufferSize)
+    public IAudioBuffer BufferCreate(int maxBufferSize)
     {
-        return new XAudio2Buffer(maxBufferSize);
+        var buffer = new XAudio2Buffer();
+
+        // buffer.PAudioDataIntPtr = Marshal.AllocHGlobal(maxBufferSize);
+        // buffer.Buffer.PAudioData = (byte*)buffer.PAudioDataIntPtr;
+        // buffer.MaxBufferSize = maxBufferSize;
+        return buffer;
     }
 
-    public void BufferDestroy(StrideAudioBuffer buffer)
+    public void BufferDestroy(IAudioBuffer buffer)
     {
-        ((XAudio2Buffer)buffer).Dispose();
+        // if (buffer.PAudioDataIntPtr != IntPtr.Zero)
+        // {
+        //     Marshal.FreeHGlobal(buffer.PAudioDataIntPtr);
+        //     buffer.PAudioDataIntPtr = IntPtr.Zero;
+        // }
     }
 
 
-    public void BufferFill(StrideAudioBuffer buffer, IntPtr pcm, int bufferSize, int sampleRate, bool mono)
+    public void BufferFill(IAudioBuffer buffer, IntPtr pcm, int bufferSize, int sampleRate, bool mono)
     {
         XAudio2Buffer xAudio2Buffer = (XAudio2Buffer)buffer;
-        xAudio2Buffer.Buffer->AudioBytes = (uint)bufferSize;
+        xAudio2Buffer.Buffer.AudioBytes = (uint)bufferSize;
 			
-        xAudio2Buffer.Buffer->PlayBegin = 0;
+        xAudio2Buffer.Buffer.PlayBegin = 0;
         xAudio2Buffer.Size = bufferSize / sizeof(short) / (mono ? 1 : 2);
-        xAudio2Buffer.Buffer->PlayLength = (uint)xAudio2Buffer.Size;
+        xAudio2Buffer.Buffer.PlayLength = (uint)xAudio2Buffer.Size;
         
-        Buffer.MemoryCopy(
-            pcm.ToPointer(),
-            buffer.Buffer.PAudioData,
-            buffer.MaxBufferSize,
-            bufferSize);
+        // Buffer.MemoryCopy(
+        //     pcm.ToPointer(),
+        //     xAudio2Buffer.Buffer.PAudioData,
+        //     xAudio2Buffer.MaxBufferSize,
+        //     bufferSize);
     }
 
-    public void SourceSetBuffer(StrideAudioSource source, StrideAudioBuffer buffer)
+    public void SourceSetBuffer(IAudioSource source, IAudioBuffer buffer)
     {
         //this function is called only when the audio source is actually fully cached in memory, so we deal only with the first buffer
         source.Streamed = false;
         ((XAudio2Source)source).FreeBuffers[0] = (XAudio2Buffer)buffer;
         ((XAudio2Source)source).SingleBuffer = ((XAudio2Buffer)buffer).Buffer;
-        ((XAudio2Source)source).sourceVoice->SubmitSourceBuffer(((XAudio2Source)source).SingleBuffer, null);
+        ((XAudio2Source)source).sourceVoice->SubmitSourceBuffer(in ((XAudio2Source)source).SingleBuffer, null);
     }
 
-    public void SourceFlushBuffers(StrideAudioSource source)
+    public void SourceFlushBuffers(IAudioSource source)
     {
-        source.sourceVoice->FlushSourceBuffers();
+        ((XAudio2Source)source).sourceVoice->FlushSourceBuffers();
     }
 
-    public void SourceQueueBuffer(StrideAudioSource source, StrideAudioBuffer buffer, IntPtr pcm, int bufferSize, BufferType streamType)
+    public void SourceQueueBuffer(IAudioSource source, IAudioBuffer buffer, IntPtr pcm, int bufferSize, BufferType streamType)
     {
         //used only when streaming, to fill a buffer, often..
         source.Streamed = true;
+        
+        XAudio2Source xAudio2Source = (XAudio2Source)source;
+        XAudio2Buffer xAudio2Buffer = (XAudio2Buffer)buffer;
 
         //flag the stream
-        xAudio2Buffer.Buffer->Flags = streamType == BufferType.EndOfStream ? (uint)XAudio.EndOfStream : 0;
+        xAudio2Buffer.Buffer.Flags = streamType == BufferType.EndOfStream ? (uint)XAudio.EndOfStream : 0;
         xAudio2Buffer.Type = streamType;
 			
         xAudio2Buffer.Size = bufferSize;
-        xAudio2Buffer.Buffer->AudioBytes = (uint)xAudio2Buffer.Size;
-        xAudio2Buffer.Buffer->PAudioData = (byte*)pcm.ToPointer();
-        xAudio2Source.sourceVoice->SubmitSourceBuffer(xAudio2Buffer.Buffer, null);
+        xAudio2Buffer.Buffer.AudioBytes = (uint)xAudio2Buffer.Size;
+        xAudio2Buffer.Buffer.PAudioData = (byte*)pcm.ToPointer();
+        xAudio2Source.sourceVoice->SubmitSourceBuffer(in xAudio2Buffer.Buffer, null);
     }
 
-    public StrideAudioBuffer SourceGetFreeBuffer(StrideAudioSource source)
+    public IAudioBuffer SourceGetFreeBuffer(IAudioSource source)
     {
-        XAudio2Buffer buffer;
+        XAudio2Buffer buffer = null;
         XAudio2Source xAudio2Source = (XAudio2Source)source;
         for (int i = 0; i < xAudio2Source.FreeBuffers.Count; i++)
         {
-            if (source.FreeBuffers[i] != null)
+            if (xAudio2Source.FreeBuffers[i] != null)
             {
-                buffer = source.FreeBuffers[i];
-                source.FreeBuffers[i] = null;
+                buffer = xAudio2Source.FreeBuffers[i];
+                xAudio2Source.FreeBuffers[i] = null;
                 break;
             }
         }
@@ -305,77 +320,82 @@ public unsafe class XAudio2Provider : IAudioProvider
         return buffer;
     }
 
-    public void SourcePlay(StrideAudioSource source)
+    public void SourcePlay(IAudioSource source)
     {
-        source.sourceVoice->Start(0,0);
-        source.Playing = true;
+        XAudio2Source xAudio2Source = (XAudio2Source)source;
+        xAudio2Source.sourceVoice->Start(0,0);
+        xAudio2Source.Playing = true;
 
-        if(!source.Streamed && !source.Pause)
+        if(!xAudio2Source.Streamed && !xAudio2Source.Pause)
         {
             VoiceState state = new();
-            source.sourceVoice->GetState(&state, 0);
-            source.SamplesAtBegin = (int)state.SamplesPlayed;
+            xAudio2Source.sourceVoice->GetState(&state, 0);
+            xAudio2Source.SamplesAtBegin = (int)state.SamplesPlayed;
         }
 
-        source.Pause = false;
+        xAudio2Source.Pause = false;
     }
 
-    public void SourcePause(StrideAudioSource source)
+    public void SourcePause(IAudioSource source)
     {
-        source.sourceVoice->Stop(0,0);
-        source.Playing = false;
-        source.Pause = true;
+        XAudio2Source xAudio2Source = (XAudio2Source)source;
+        xAudio2Source.sourceVoice->Stop(0,0);
+        xAudio2Source.Playing = false;
+        xAudio2Source.Pause = true;
     }
 
-    public void SourceStop(StrideAudioSource source)
+    public void SourceStop(IAudioSource source)
     {
-        source.sourceVoice->Stop(0, 0);
-        source.sourceVoice->FlushSourceBuffers();
-        source.Playing = false;
-        source.Pause = false;
+        XAudio2Source xAudio2Source = (XAudio2Source)source;
+        xAudio2Source.sourceVoice->Stop(0, 0);
+        xAudio2Source.sourceVoice->FlushSourceBuffers();
+        xAudio2Source.Playing = false;
+        xAudio2Source.Pause = false;
 
         //since we flush we also rebuffer in this case
         if (!source.Streamed)
         {
-            xAudio2Source.sourceVoice->SubmitSourceBuffer(xAudio2Source.SingleBuffer, null);
+            xAudio2Source.sourceVoice->SubmitSourceBuffer(in xAudio2Source.SingleBuffer, null);
         }
     }
 
-    public void SourceSetLooping(StrideAudioSource source, bool looped)
+    public void SourceSetLooping(IAudioSource source, bool looped)
     {
-        source.Looped = looped;
+        XAudio2Source xAudio2Source = (XAudio2Source)source;
+        xAudio2Source.Looped = looped;
 
-        if (!source.Streamed)
+        if (!xAudio2Source.Streamed)
         {
-            if (!source.Looped)
+            if (!xAudio2Source.Looped)
             {
-                xAudio2Source.SingleBuffer->LoopBegin = 0;
-                xAudio2Source.SingleBuffer->LoopLength = 0;
-                xAudio2Source.SingleBuffer->LoopCount = 0;
-                xAudio2Source.SingleBuffer->Flags = XAudio.EndOfStream;
+                xAudio2Source.SingleBuffer.LoopBegin = 0;
+                xAudio2Source.SingleBuffer.LoopLength = 0;
+                xAudio2Source.SingleBuffer.LoopCount = 0;
+                xAudio2Source.SingleBuffer.Flags = XAudio.EndOfStream;
             }
             else
             {
-                xAudio2Source.SingleBuffer->LoopBegin = xAudio2Source.SingleBuffer->PlayBegin;
-                xAudio2Source.SingleBuffer->LoopLength = xAudio2Source.SingleBuffer->PlayLength;
-                xAudio2Source.SingleBuffer->LoopCount = XAudio.LoopInfinite;
-                xAudio2Source.SingleBuffer->Flags = 0;
+                xAudio2Source.SingleBuffer.LoopBegin = xAudio2Source.SingleBuffer.PlayBegin;
+                xAudio2Source.SingleBuffer.LoopLength = xAudio2Source.SingleBuffer.PlayLength;
+                xAudio2Source.SingleBuffer.LoopCount = XAudio.LoopInfinite;
+                xAudio2Source.SingleBuffer.Flags = 0;
             }
 
             xAudio2Source.sourceVoice->FlushSourceBuffers();
-            xAudio2Source.sourceVoice->SubmitSourceBuffer(xAudio2Source.SingleBuffer, null);
+            xAudio2Source.sourceVoice->SubmitSourceBuffer(in xAudio2Source.SingleBuffer, null);
         }
     }
 
-    public void SourceSetRange(StrideAudioSource source, double startTime, double stopTime)
+    public void SourceSetRange(IAudioSource source, double startTime, double stopTime)
     {
+        XAudio2Source xAudio2Source = (XAudio2Source)source;
         if(!source.Streamed)
         {
-            var singleBuffer = source.FreeBuffers[0];
+            var singleBuffer = xAudio2Source.FreeBuffers[0];
             if(startTime == 0 && stopTime == 0)
             {
-                xAudio2Source.SingleBuffer->PlayBegin = 0;
-                xAudio2Source.SingleBuffer->PlayLength = (uint)singleBuffer.Size;
+                xAudio2Source.SingleBuffer.PlayBegin = 0;
+                xAudio2Source.SingleBuffer.PlayLength = (uint)singleBuffer.Size;
             }
             else
             {					
@@ -395,38 +415,39 @@ public unsafe class XAudio2Provider : IAudioProvider
                 uint len = (uint)(sampleStop - sampleStart);
                 if (len > 0)
                 {
-                    xAudio2Source.SingleBuffer->PlayBegin = (uint)sampleStart;
-                    xAudio2Source.SingleBuffer->PlayLength = len;
+                    xAudio2Source.SingleBuffer.PlayBegin = (uint)sampleStart;
+                    xAudio2Source.SingleBuffer.PlayLength = len;
                 }
             }
 
             //sort looping properties and re-submit buffer
-            source.sourceVoice->Stop(0,0);
-            SourceSetLooping(source, source.Looped);
+            xAudio2Source.sourceVoice->Stop(0,0);
+            SourceSetLooping(source, xAudio2Source.Looped);
         }
     }
 
-    public void SourceSetGain(StrideAudioSource source, float gain)
+    public void SourceSetGain(IAudioSource source, float gain)
     {
-        source.sourceVoice->SetVolume(gain,0);
+        ((XAudio2Source)source).sourceVoice->SetVolume(gain,0);
     }
 
-    public void SourceSetPitch(StrideAudioSource source, float pitch)
+    public void SourceSetPitch(IAudioSource source, float pitch)
     {
-        source.Pitch = pitch;
-        source.sourceVoice->SetFrequencyRatio(source.DopplerPitch * source.Pitch, 0);
+        ((XAudio2Source)source).Pitch = pitch;
+        ((XAudio2Source)source).sourceVoice->SetFrequencyRatio(((XAudio2Source)source).DopplerPitch * ((XAudio2Source)source).Pitch, 0);
     }
 
-    public void ListenerPush3D(StrideAudioListener listener, Vector3 pos, Vector3 forward, Vector3 up, Vector3 vel, Matrix worldTransform)
+    public void ListenerPush3D(IAudioListener listener, Vector3 pos, Vector3 forward, Vector3 up, Vector3 vel, Matrix worldTransform)
     {
-        listener.XAudioListener.Position = pos;
-        listener.XAudioListener.Velocity = vel;
-        listener.XAudioListener.OrientFront = forward;
-        listener.XAudioListener.OrientTop = up;
-        listener.WorldTransform = worldTransform;
+        XAudio2Listener xAudio2Listener = (XAudio2Listener)listener;
+        xAudio2Listener.XAudioListener.Position = pos;
+        xAudio2Listener.XAudioListener.Velocity = vel;
+        xAudio2Listener.XAudioListener.OrientFront = forward;
+        xAudio2Listener.XAudioListener.OrientTop = up;
+        xAudio2Listener.WorldTransform = worldTransform;
     }
 
-    public void SourcePush3D(StrideAudioSource source, Vector3 pos, Vector3 forward, Vector3 up, Vector3 vel, Matrix worldTransform)
+    public void SourcePush3D(IAudioSource source, Vector3 pos, Vector3 forward, Vector3 up, Vector3 vel, Matrix worldTransform)
     {
   //       if(source.hrtf_params != null)
 		// {
@@ -470,8 +491,8 @@ public unsafe class XAudio2Provider : IAudioProvider
 		// }
     }
 
-    public bool SourceIsPlaying(StrideAudioSource source)
+    public bool SourceIsPlaying(IAudioSource source)
     {
-        return source.Playing || source.Pause;
+        return ((XAudio2Source)source).Playing || ((XAudio2Source)source).Pause;
     }
 }
