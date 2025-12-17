@@ -27,8 +27,12 @@ public unsafe class XAudio2Source : IAudioSource
     public SpinLock apply3DLock_;
     public List<XAudio2Buffer> FreeBuffers = [];
 
-    public Buffer SingleBuffer;
+    public Buffer* SingleBuffer;
 
     public volatile int SamplesAtBegin = 0;
 
+}
+
+public class IXAPOHrtfParameters
+{
 }
