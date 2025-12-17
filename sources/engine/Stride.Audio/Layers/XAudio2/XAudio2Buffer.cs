@@ -8,7 +8,7 @@ using Buffer = Silk.NET.XAudio.Buffer;
 
 namespace Stride.Audio;
 
-public unsafe class XAudio2Buffer : IAudioBuffer, IDisposable
+public unsafe struct XAudio2Buffer : IAudioBuffer, IDisposable
 {
     public Buffer* Buffer;
     public int Size;

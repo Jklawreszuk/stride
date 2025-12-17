@@ -136,7 +136,8 @@ public unsafe class XAudio2Provider : IAudioProvider
         pcmWaveFormat.WBitsPerSample = 16;
 		pcmWaveFormat.NBlockAlign = (ushort)(pcmWaveFormat.NChannels * pcmWaveFormat.WBitsPerSample / 8);
         
-        int result = ((XAudio2Listener)listener).Device.xAudio->CreateSourceVoice(ref source.sourceVoice, &pcmWaveFormat, 0, MaxFreqRatio, null, null, null);
+        var callback = XAudio2Source.CreateCallback();
+        int result = ((XAudio2Listener)listener).Device.xAudio->CreateSourceVoice(ref source.sourceVoice, &pcmWaveFormat, 0, MaxFreqRatio, callback, null, null);
         if (HResult.IndicatesFailure(result))
         {
             return null;
@@ -296,7 +297,7 @@ public unsafe class XAudio2Provider : IAudioProvider
 
     public IAudioBuffer SourceGetFreeBuffer(IAudioSource source)
     {
-        XAudio2Buffer buffer = null;
+        XAudio2Buffer buffer;
         XAudio2Source xAudio2Source = (XAudio2Source)source;
         for (int i = 0; i < xAudio2Source.FreeBuffers.Count; i++)
         {
