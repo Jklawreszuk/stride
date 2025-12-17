@@ -59,7 +59,7 @@ namespace Stride.Audio
 
         private float masterVolume = 1.0f;
 
-        internal StrideAudioDevice AudioDevice;
+        internal IAudioDevice AudioDevice;
 
         /// <summary>
         /// Initialize audio engine

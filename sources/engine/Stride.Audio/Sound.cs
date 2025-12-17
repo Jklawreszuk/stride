@@ -27,7 +27,7 @@ namespace Stride.Audio
         internal string CompressedDataUrl { get; set; }
 
         [DataMemberIgnore]
-        internal StrideAudioBuffer PreloadedBuffer;
+        internal IAudioBuffer PreloadedBuffer;
 
         internal IVirtualFileProvider FileProvider;
 

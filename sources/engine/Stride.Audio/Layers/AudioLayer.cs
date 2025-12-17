@@ -17,148 +17,148 @@ namespace Stride.Audio
             Provider = new XAudio2Provider();
         }
 
-        public static StrideAudioDevice Create(string deviceName, DeviceFlags flags)
+        public static IAudioDevice Create(string deviceName, DeviceFlags flags)
         {
             return Provider.Create(deviceName, flags);
         }
 
-        public static void Destroy(StrideAudioDevice device)
+        public static void Destroy(IAudioDevice device)
         {
             Provider.Destroy(device);
         }
 
-        public static void Update(StrideAudioDevice device)
+        public static void Update(IAudioDevice device)
         {
             Provider.Update(device);
         }
 
-        public static void SetMasterVolume(StrideAudioDevice device, float volume)
+        public static void SetMasterVolume(IAudioDevice device, float volume)
         {
             Provider.SetMasterVolume(device, volume);
         }
 
-        public static StrideAudioListener ListenerCreate(StrideAudioDevice device)
+        public static IAudioListener ListenerCreate(IAudioDevice device)
         {
             return Provider.ListenerCreate(device);
         }
 
-        public static void ListenerDestroy(StrideAudioListener listener)
+        public static void ListenerDestroy(IAudioListener listener)
         {
             Provider.ListenerDestroy(listener);
         }
 
-        public static bool ListenerEnable(StrideAudioListener listener)
+        public static bool ListenerEnable(IAudioListener listener)
         {
             return Provider.ListenerEnable(listener);
         }
 
-        public static void ListenerDisable(StrideAudioListener listener)
+        public static void ListenerDisable(IAudioListener listener)
         {
             Provider.ListenerDisable(listener);
         }
 
-        public static StrideAudioSource SourceCreate(StrideAudioListener listener, int sampleRate, int maxNumberOfBuffers, bool mono, bool spatialized, bool streamed, bool hrtf, float hrtfDirectionFactor,
+        public static IAudioSource SourceCreate(IAudioListener listener, int sampleRate, int maxNumberOfBuffers, bool mono, bool spatialized, bool streamed, bool hrtf, float hrtfDirectionFactor,
             HrtfEnvironment environment)
         {
             return Provider.SourceCreate(listener, sampleRate, maxNumberOfBuffers, mono, spatialized, streamed, hrtf, hrtfDirectionFactor, environment);
         }
 
-        public static void SourceDestroy(StrideAudioSource source)
+        public static void SourceDestroy(IAudioSource source)
         {
             Provider.SourceDestroy(source);
         }
 
-        public static double SourceGetPosition(StrideAudioSource source)
+        public static double SourceGetPosition(IAudioSource source)
         {
             return Provider.SourceGetPosition(source);
         }
 
-        public static void SourceSetPan(StrideAudioSource source, float pan)
+        public static void SourceSetPan(IAudioSource source, float pan)
         {
             Provider.SourceSetPan(source, pan);
         }
 
-        public static StrideAudioBuffer BufferCreate(int maxBufferSizeBytes)
+        public static IAudioBuffer BufferCreate(int maxBufferSizeBytes)
         {
             return Provider.BufferCreate(maxBufferSizeBytes);
         }
 
-        public static void BufferDestroy(StrideAudioBuffer buffer)
+        public static void BufferDestroy(IAudioBuffer buffer)
         {
             Provider.BufferDestroy(buffer);
         }
 
-        public static void BufferFill(StrideAudioBuffer buffer, IntPtr pcm, int bufferSize, int sampleRate, bool mono)
+        public static void BufferFill(IAudioBuffer buffer, IntPtr pcm, int bufferSize, int sampleRate, bool mono)
         {
             Provider.BufferFill(buffer, pcm, bufferSize, sampleRate, mono);
         }
 
-        public static void SourceSetBuffer(StrideAudioSource source, StrideAudioBuffer buffer)
+        public static void SourceSetBuffer(IAudioSource source, IAudioBuffer buffer)
         {
             Provider.SourceSetBuffer(source, buffer);
         }
 
-        public static void SourceFlushBuffers(StrideAudioSource source)
+        public static void SourceFlushBuffers(IAudioSource source)
         {
             Provider.SourceFlushBuffers(source);
         }
 
-        public static void SourceQueueBuffer(StrideAudioSource source, StrideAudioBuffer buffer, IntPtr pcm, int bufferSize, BufferType streamType)
+        public static void SourceQueueBuffer(IAudioSource source, IAudioBuffer buffer, IntPtr pcm, int bufferSize, BufferType streamType)
         {
             Provider.SourceQueueBuffer(source, buffer, pcm, bufferSize, streamType);
         }
 
-        public static StrideAudioBuffer SourceGetFreeBuffer(StrideAudioSource source)
+        public static IAudioBuffer SourceGetFreeBuffer(IAudioSource source)
         {
             return Provider.SourceGetFreeBuffer(source);
         }
 
-        public static void SourcePlay(StrideAudioSource source)
+        public static void SourcePlay(IAudioSource source)
         {
             Provider.SourcePlay(source);
         }
 
-        public static void SourcePause(StrideAudioSource source)
+        public static void SourcePause(IAudioSource source)
         {
             Provider.SourcePause(source);
         }
 
-        public static void SourceStop(StrideAudioSource source)
+        public static void SourceStop(IAudioSource source)
         {
             Provider.SourceStop(source);
         }
 
-        public static void SourceSetLooping(StrideAudioSource source, bool looped)
+        public static void SourceSetLooping(IAudioSource source, bool looped)
         {
             Provider.SourceSetLooping(source, looped);
         }
 
-        public static void SourceSetRange(StrideAudioSource source, double startTime, double stopTime)
+        public static void SourceSetRange(IAudioSource source, double startTime, double stopTime)
         {
             Provider.SourceSetRange(source, startTime, stopTime);
         }
 
-        public static void SourceSetGain(StrideAudioSource source, float gain)
+        public static void SourceSetGain(IAudioSource source, float gain)
         {
             Provider.SourceSetGain(source, gain);
         }
 
-        public static void SourceSetPitch(StrideAudioSource source, float pitch)
+        public static void SourceSetPitch(IAudioSource source, float pitch)
         {
             Provider.SourceSetPitch(source, pitch);
         }
 
-        public static void ListenerPush3D(StrideAudioListener listener, ref Vector3 pos, ref Vector3 forward, ref Vector3 up, ref Vector3 vel, ref Matrix worldTransform)
+        public static void ListenerPush3D(IAudioListener listener, ref Vector3 pos, ref Vector3 forward, ref Vector3 up, ref Vector3 vel, ref Matrix worldTransform)
         {
             Provider.ListenerPush3D(listener, pos, forward, up, vel, worldTransform);
         }
 
-        public static void SourcePush3D(StrideAudioSource source, ref Vector3 pos, ref Vector3 forward, ref Vector3 up, ref Vector3 vel, ref Matrix worldTransform)
+        public static void SourcePush3D(IAudioSource source, ref Vector3 pos, ref Vector3 forward, ref Vector3 up, ref Vector3 vel, ref Matrix worldTransform)
         {
             Provider.SourcePush3D(source, pos, forward, up, vel, worldTransform);
         }
 
-        public static bool SourceIsPlaying(StrideAudioSource source)
+        public static bool SourceIsPlaying(IAudioSource source)
         {
             return Provider.SourceIsPlaying(source);
         }

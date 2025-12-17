@@ -27,22 +27,22 @@
     <ProjectReference Include="..\Stride\Stride.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Native\Celt.cpp" />
+    <None Include="Layers\Celt.cpp" />
     <None Include="Stride.Native.Libs.targets">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Native\Common.h" />
+    <None Include="Layers\Common.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Native\OpenAL.cpp" />
+    <None Include="Layers\OpenAL.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Native\OpenSLES.cpp" />
+    <None Include="Layers\OpenSLES.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Native\XAudio2.cpp" />
+    <None Include="Layers\XAudio2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Silk.NET.OpenAL" />
