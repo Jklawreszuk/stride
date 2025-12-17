@@ -2,9 +2,11 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
+using System.Runtime.InteropServices;
 using Silk.NET.Core.Native;
 using Silk.NET.XAudio;
 using Stride.Core.Mathematics;
+using Buffer = System.Buffer;
 
 namespace Stride.Audio;
 
@@ -13,6 +15,9 @@ public unsafe class XAudio2Provider : IAudioProvider
     private const int AudioChannels = 2;
     private const float MaxFreqRatio = 1024.0f;
     private const float SpeedOfSound = 343.5f;
+    private const int SpeakerFrontLeft = 1;
+    private const int SpeakerFrontRight = 2;
+    private const int SpeakerStereo = SpeakerFrontLeft | SpeakerFrontRight;
     
     private readonly XAudio xAudio = XAudio.GetApi();
     
@@ -42,7 +47,7 @@ public unsafe class XAudio2Provider : IAudioProvider
         }		
 			
         //X3DAudio
-        result = X3DAudio.X3DAudioInitialize(3, SpeedOfSound, out device.x3_audio);
+        result = X3DAudio.X3DAudioInitialize(SpeakerStereo, SpeedOfSound, out device.x3_audio);
         if (HResult.IndicatesFailure(result))
         {
             return null;
@@ -229,18 +234,22 @@ public unsafe class XAudio2Provider : IAudioProvider
     public StrideAudioBuffer BufferCreate(int maxBufferSize)
     {
         var buffer = new StrideAudioBuffer();
-        void * bufferPtr = &buffer;        
-        buffer.Buffer.PContext = bufferPtr;
-            
-        var data = stackalloc byte[maxBufferSize];
-        buffer.Buffer.PAudioData = data;
+
+        buffer.PAudioDataIntPtr = Marshal.AllocHGlobal(maxBufferSize);
+        buffer.Buffer.PAudioData = (byte*)buffer.PAudioDataIntPtr;
+        buffer.MaxBufferSize = maxBufferSize;
         return buffer;
     }
 
     public void BufferDestroy(StrideAudioBuffer buffer)
     {
-        //nothing to destroy
+        if (buffer.PAudioDataIntPtr != IntPtr.Zero)
+        {
+            Marshal.FreeHGlobal(buffer.PAudioDataIntPtr);
+            buffer.PAudioDataIntPtr = IntPtr.Zero;
+        }
     }
+
 
     public void BufferFill(StrideAudioBuffer buffer, IntPtr pcm, int bufferSize, int sampleRate, bool mono)
     {
@@ -249,8 +258,12 @@ public unsafe class XAudio2Provider : IAudioProvider
         buffer.Buffer.PlayBegin = 0;
         buffer.Size = bufferSize / sizeof(short) / (mono ? 1 : 2);
         buffer.Buffer.PlayLength = (uint)buffer.Size;
-
-        buffer.Buffer.PAudioData = (byte*)pcm.ToPointer();
+        
+        Buffer.MemoryCopy(
+            pcm.ToPointer(),
+            buffer.Buffer.PAudioData,
+            buffer.MaxBufferSize,
+            bufferSize);
     }
 
     public void SourceSetBuffer(StrideAudioSource source, StrideAudioBuffer buffer)

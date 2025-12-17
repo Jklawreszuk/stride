@@ -1,7 +1,8 @@
 ﻿// Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using Silk.NET.XAudio;
+using System;
+using Buffer = Silk.NET.XAudio.Buffer;
 
 namespace Stride.Audio;
 
@@ -21,4 +22,6 @@ public class StrideAudioBuffer
     public int LoopCount { get; set; }
     public int Flags { get; set; }
     public int PlayLength { get; set; }
+    public IntPtr PAudioDataIntPtr { get; set; }
+    public int MaxBufferSize { get; set; }
 }
