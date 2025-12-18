@@ -1,0 +1,55 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:sd="http://schemas.stride3d.net/xaml/presentation"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:views="clr-namespace:Stride.Core.Assets.Editor.Components.TemplateDescriptions.Views"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="Stride.Core.Assets.Editor.Components.TemplateDescriptions.Views.NewProjectWindow"
+        Title="{sd:Localize New package}" Height="768" Width="1024" ShowInTaskbar="True">
+  <Window.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceInclude Source="../../../View/CommonResources.axaml"/>
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+  </Window.Resources>
+  <DockPanel>
+    <Grid DockPanel.Dock="Bottom">
+      <DockPanel>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="20" DockPanel.Dock="Bottom">
+          <UniformGrid Rows="1">
+            <Button Content="{sd:Localize Select, Context=Button}" Padding="20,6" Margin="10,0,0,0"
+                    ToolTip.Tip="{sd:Localize Use the selected template, Context=ToolTip}" />
+            <Button Content="{sd:Localize Cancel, Context=Button}" Padding="20,6" Margin="10,0,0,0" IsCancel="True" ToolTip.Tip="{sd:Localize Cancel (Esc), Context=ToolTip}" />
+          </UniformGrid>
+        </StackPanel>
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+          </Grid.RowDefinitions>
+          <!-- <Grid.Resources>
+            <Style TargetType="{x:Type sd:TextBox}" BasedOn="{StaticResource {x:Type sd:TextBox}}">
+              <EventSetter Event="Validated" Handler="OnTextBoxValidated" />
+              <Setter Property="ValidateOnLostFocus" Value="True" />
+              <Setter Property="ValidateOnTextChange" Value="False" />
+              <Setter Property="ValidateWithEnter" Value="True" />
+            </Style>
+          </Grid.Resources> -->
+          
+          <TextBlock Grid.Row="0" Grid.Column="0" Text="{sd:Localize Name:}" Margin="20,0" VerticalAlignment="Center"/>
+          <TextBox Grid.Row="0" Grid.Column="1" Margin="2" />
+
+        </Grid>
+      </DockPanel>
+    </Grid>
+
+    <views:TemplateBrowserUserControl Margin="10"/>
+  </DockPanel>
+</Window>
