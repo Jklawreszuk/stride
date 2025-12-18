@@ -4,6 +4,9 @@ using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
 using System.Linq;
 using Avalonia.Markup.Xaml;
+using Stride.Core.Assets.Editor;
+using Stride.Core.Assets.Editor.Components.TemplateDescriptions.ViewModels;
+using Stride.Core.Assets.Editor.Components.TemplateDescriptions.Views;
 using Stride.GameStudio.ViewModels;
 using Stride.GameStudio.Views;
 
@@ -23,7 +26,7 @@ public partial class App : Application
             // Avoid duplicate validations from both Avalonia and the CommunityToolkit. 
             // More info: https://docs.avaloniaui.net/docs/guides/development-guides/data-validation#manage-validationplugins
             DisableAvaloniaDataAnnotationValidation();
-            desktop.MainWindow = new MainWindow { DataContext = new GameStudioViewModel(), };
+            desktop.MainWindow = new NewProjectWindow { DataContext = new NewProjectTemplateCollectionViewModel(), };
         }
 
         base.OnFrameworkInitializationCompleted();
