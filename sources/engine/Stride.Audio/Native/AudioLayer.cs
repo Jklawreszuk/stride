@@ -10,7 +10,26 @@ namespace Stride.Audio
     /// </summary>
     public class AudioLayer
     {
-        private static readonly OpenALProvider Provider = new();
+        private static readonly IAudioProvider Provider;
+
+        static AudioLayer()
+        {
+            // Set as default provider
+            Provider = new OpenALProvider();
+
+            if (OperatingSystem.IsLinux() || OperatingSystem.IsMacOS() || OperatingSystem.IsIOS())
+            {
+                Provider = new OpenALProvider();
+            }
+            if (OperatingSystem.IsWindows())
+            {
+                Provider = new XAudioProvider();
+            }
+            if (OperatingSystem.IsAndroid())
+            {
+                Provider = new OpenSLESProvider();
+            }
+        }
 
         public static StrideAudioDevice Create(string deviceName, DeviceFlags flags)
         {

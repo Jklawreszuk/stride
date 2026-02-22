@@ -8,7 +8,7 @@ using Stride.Core.Mathematics;
 
 namespace Stride.Audio;
 
-internal unsafe class OpenALProvider
+internal unsafe class OpenALProvider : IAudioProvider
 {
     private readonly ALContext alc;
     private readonly AL al;
