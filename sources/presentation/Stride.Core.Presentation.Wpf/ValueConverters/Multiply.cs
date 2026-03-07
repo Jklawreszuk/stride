@@ -68,7 +68,7 @@ namespace Stride.Core.Presentation.ValueConverters
                 return System.Convert.ChangeType(scalar / param, targetType);
             }
 
-            return DependencyProperty.UnsetValue;
+            return AvaloniaProperty.UnsetValue;
         }
     }
 }

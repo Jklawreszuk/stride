@@ -22,7 +22,7 @@ namespace Stride.Core.Assets.Editor.View.ValueConverters
             var entry = values[0] as AbstractNodeEntry;
             var value = values[1];
 
-            return entry != null && entry.IsMatchingValue(value) ? ReturnValue : DependencyProperty.UnsetValue;
+            return entry != null && entry.IsMatchingValue(value) ? ReturnValue : AvaloniaProperty.UnsetValue;
         }
     }
 

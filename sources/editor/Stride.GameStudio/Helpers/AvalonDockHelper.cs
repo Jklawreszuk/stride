@@ -54,7 +54,7 @@ namespace Stride.GameStudio.Helpers
 
             foreach (var anchorable in GetAllAnchorables(docking))
             {
-                anchorable.SetValue(IsVisibleProperty, DependencyProperty.UnsetValue);
+                anchorable.SetValue(IsVisibleProperty, AvaloniaProperty.UnsetValue);
                 anchorable.IsVisibleChanged -= AnchorableIsVisibleChanged;
             }
         }

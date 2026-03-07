@@ -4,12 +4,11 @@
 
   <PropertyGroup>
     <StrideBuildTags>WindowsTools</StrideBuildTags>
-    <TargetFramework>$(StrideEditorTargetFramework)</TargetFramework>
+    <TargetFramework>$(StrideXplatEditorTargetFramework)</TargetFramework>
     <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
     <StrideAssemblyProcessorOptions>--auto-module-initializer --serialization</StrideAssemblyProcessorOptions>
     <StrideLocalized>true</StrideLocalized>
     <RestorePackages>true</RestorePackages>
-    <UseWPF>true</UseWPF>
     <EnableDefaultPageItems>false</EnableDefaultPageItems>
   </PropertyGroup>
 

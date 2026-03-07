@@ -17,7 +17,7 @@ namespace Stride.Core.Presentation.ValueConverters
             if (values.Length < 2)
                 throw new InvalidOperationException("This multi converter must be invoked with at least two elements");
 
-            var result = values.Any(x => x != DependencyProperty.UnsetValue && (bool)x);
+            var result = values.Any(x => x != AvaloniaProperty.UnsetValue && (bool)x);
             return result.Box();
         }
     }

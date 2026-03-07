@@ -121,12 +121,12 @@ namespace Stride.Core.Presentation.ValueConverters
             }
 
 #if DEBUG
-            if (value == null || value == DependencyProperty.UnsetValue)
-                return DependencyProperty.UnsetValue;
+            if (value == null || value == AvaloniaProperty.UnsetValue)
+                return AvaloniaProperty.UnsetValue;
 
             throw new NotSupportedException("Requested conversion is not supported.");
 #else
-            return DependencyProperty.UnsetValue;
+            return AvaloniaProperty.UnsetValue;
 #endif
         }
 

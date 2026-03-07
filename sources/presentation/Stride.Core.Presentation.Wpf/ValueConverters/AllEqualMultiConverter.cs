@@ -20,7 +20,7 @@ namespace Stride.Core.Presentation.ValueConverters
 
             var fallbackValue = parameter is bool && (bool)parameter;
             var first = values[0];
-            var result = values.All(x => x == DependencyProperty.UnsetValue ? fallbackValue : Equals(x, first));
+            var result = values.All(x => x == AvaloniaProperty.UnsetValue ? fallbackValue : Equals(x, first));
             return result.Box();
         }
     }

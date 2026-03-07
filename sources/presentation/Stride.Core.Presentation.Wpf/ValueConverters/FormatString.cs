@@ -12,7 +12,7 @@ namespace Stride.Core.Presentation.ValueConverters
         [NotNull]
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value == DependencyProperty.UnsetValue)
+            if (value == AvaloniaProperty.UnsetValue)
                 return value;
 
             var format = parameter as string;

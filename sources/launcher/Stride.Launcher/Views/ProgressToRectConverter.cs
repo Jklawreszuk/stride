@@ -13,7 +13,7 @@ namespace Stride.LauncherApp.Views
     {
         public override object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            if (values.Any(x => x == DependencyProperty.UnsetValue))
+            if (values.Any(x => x == AvaloniaProperty.UnsetValue))
                 return new Rect(0, 0, 1, 1);
 
             var width = (double)values[0];

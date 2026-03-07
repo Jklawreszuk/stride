@@ -3,10 +3,10 @@
 using System;
 using System.Globalization;
 using System.Reflection;
-using System.Windows;
-using System.Windows.Data;
-using System.Windows.Markup;
-using System.Xaml;
+using Avalonia;
+using Avalonia.Data;
+using Avalonia.Data.Converters;
+using Avalonia.Markup.Xaml;
 using Stride.Core.Annotations;
 
 namespace Stride.Core.Translation.Presentation.MarkupExtensions
@@ -122,7 +122,7 @@ namespace Stride.Core.Translation.Presentation.MarkupExtensions
             [NotNull]
             public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
             {
-                var count = value != DependencyProperty.UnsetValue ? System.Convert.ToInt32(value, culture) : default(int);
+                var count = value != AvaloniaProperty.UnsetValue ? System.Convert.ToInt32(value, culture) : default(int);
                 var result = string.IsNullOrEmpty(context)
                     ? TranslationManager.Instance.GetPluralString(text, plural, count, assembly)
                     : TranslationManager.Instance.GetParticularPluralString(context, text, plural, count, assembly);
