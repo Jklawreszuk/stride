@@ -4,11 +4,8 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Windows;
-using System.Windows.Input;
-using Clipboard = System.Windows.Clipboard;
-using KeyEventArgs = System.Windows.Input.KeyEventArgs;
-using SaveFileDialog = Microsoft.Win32.SaveFileDialog;
+using Avalonia.Controls;
+using Avalonia.Interactivity;
 
 namespace Stride.Editor.CrashReport;
 
@@ -35,12 +32,12 @@ public partial class CrashReportWindow : Window
         if (!Expanded)
         {
             buttonViewLog.Content = "View report";
-            textBoxLog.Visibility = Visibility.Collapsed;
+            textBoxLog.IsVisible = false;
         }
         else
         {
             buttonViewLog.Content = "Hide report";
-            textBoxLog.Visibility = Visibility.Visible;
+            textBoxLog.IsVisible = true;
         }
     }
 
@@ -63,21 +60,21 @@ public partial class CrashReportWindow : Window
             var error = "An error occurred while opening the browser. You can access Github Issues at the following url:"
                         + Environment.NewLine + Environment.NewLine + GithubIssuesUrl;
 
-            MessageBox.Show(error, "Stride", MessageBoxButton.OK, MessageBoxImage.Error);
+            //MessageBox.Show(error, "Stride", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
-        DialogResult = true;
+        //DialogResult = true;
     }
 
-    private void ButtonViewLog_Click(object sender, EventArgs e)
+    private void ButtonViewLog_Click(object sender, RoutedEventArgs e)
     {
         Expanded = !Expanded;
     }
 
-    private void ButtonCopyReport_Click(object sender, EventArgs e)
+    private async void ButtonCopyReport_Click(object sender, RoutedEventArgs e)
     {
         RefreshReport();
-        Clipboard.SetText(currentData.ToString());
+        await Clipboard.SetTextAsync(currentData.ToString());
     }
 
     private async void ButtonSaveReport_Click(object sender, RoutedEventArgs e)
@@ -86,14 +83,26 @@ public partial class CrashReportWindow : Window
 
         var fileDialog = new SaveFileDialog()
         {
-            FileName = "Report.txt",
-            DefaultExt = "txt",
-            Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*"
+            
+            InitialFileName = "Report.txt",
+            DefaultExtension = "txt",
+            Filters = [ 
+                new FileDialogFilter()
+                {
+                    Name = "Text files (*.txt)",
+                    Extensions = [".txt"],
+                },
+                new FileDialogFilter()
+                {
+                    Name = "All files (*.*)",
+                    Extensions = ["*.*"],
+                },
+            ]
         };
 
-        if (fileDialog.ShowDialog() == true)
+        if (await fileDialog.ShowAsync(this) == "true")
         {
-            await File.WriteAllTextAsync(fileDialog.FileName, currentData.ToString());
+            await File.WriteAllTextAsync(fileDialog.InitialFileName, currentData.ToString());
         }
     }
 }
