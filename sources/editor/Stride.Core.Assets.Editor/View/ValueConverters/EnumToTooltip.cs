@@ -16,7 +16,7 @@ namespace Stride.Core.Assets.Editor.View.ValueConverters
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             // Value can be null when the control is removed from the visual tree and the related property is unbound.
-            if (value == null || value == DependencyProperty.UnsetValue)
+            if (value == null || value == AvaloniaProperty.UnsetValue)
                 return null;
 
             var stringValue = value.ToString();

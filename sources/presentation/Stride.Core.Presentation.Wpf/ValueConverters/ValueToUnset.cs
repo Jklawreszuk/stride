@@ -7,14 +7,14 @@ using System.Windows;
 namespace Stride.Core.Presentation.ValueConverters
 {
     /// <summary>
-    /// This converter will convert a specific value to a <see cref="DependencyProperty.UnsetValue"/>.
+    /// This converter will convert a specific value to a <see cref="AvaloniaProperty.UnsetValue"/>.
     /// </summary>
     public class ValueToUnset : OneWayValueConverter<ValueToUnset>
     {
         /// <inheritdoc/>
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return Equals(value, parameter) ? DependencyProperty.UnsetValue : value;
+            return Equals(value, parameter) ? AvaloniaProperty.UnsetValue : value;
         }
     }
 }

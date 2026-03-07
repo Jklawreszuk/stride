@@ -9,9 +9,9 @@ namespace Stride.Core.Presentation.ValueConverters
 {
     /// <summary>
     /// This converter will convert a boolean to the object given in parameter if its true,
-    /// and to <see cref="DependencyProperty.UnsetValue"/> if it's false.
+    /// and to <see cref="AvaloniaProperty.UnsetValue"/> if it's false.
     /// <see cref="ConvertBack"/> is supported and will return whether the given object is different from
-    /// <see cref="DependencyProperty.UnsetValue"/>.
+    /// <see cref="AvaloniaProperty.UnsetValue"/>.
     /// </summary>
     public class BoolToParam : ValueConverterBase<BoolToParam>
     {
@@ -19,13 +19,13 @@ namespace Stride.Core.Presentation.ValueConverters
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var result = ConverterHelper.ConvertToBoolean(value, culture);
-            return result ? parameter : DependencyProperty.UnsetValue;
+            return result ? parameter : AvaloniaProperty.UnsetValue;
         }
 
         /// <inheritdoc/>
         public override object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var result = value != DependencyProperty.UnsetValue;
+            var result = value != AvaloniaProperty.UnsetValue;
             return result.Box();
         }
     }

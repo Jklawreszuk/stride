@@ -16,7 +16,7 @@ namespace Stride.Core.Presentation.ValueConverters
         /// <inheritdoc />
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return value == DependencyProperty.UnsetValue ? DependencyProperty.UnsetValue : value.Yield();
+            return value == AvaloniaProperty.UnsetValue ? AvaloniaProperty.UnsetValue : value.Yield();
         }
     }
 }

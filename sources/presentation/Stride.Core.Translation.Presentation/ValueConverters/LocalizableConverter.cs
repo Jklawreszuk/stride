@@ -4,8 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
-using System.Windows.Data;
-using System.Windows.Markup;
+using Avalonia.Data.Converters;
+using Avalonia.Markup.Xaml;
 using Stride.Core.Translation.Presentation.MarkupExtensions;
 
 namespace Stride.Core.Translation.Presentation.ValueConverters

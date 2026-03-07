@@ -20,14 +20,14 @@ namespace Stride.Core.Presentation.ValueConverters
         [NotNull]
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (!(value is Type objectType) || value == DependencyProperty.UnsetValue)
-                return DependencyProperty.UnsetValue;
+            if (!(value is Type objectType) || value == AvaloniaProperty.UnsetValue)
+                return AvaloniaProperty.UnsetValue;
 
             var typeDescriptor = TypeDescriptorFactory.Default.Find(objectType);
             if (typeDescriptor is NotSupportedObjectDescriptor)
                 return objectType.ToSimpleCSharpName();
 
-            return DependencyProperty.UnsetValue;
+            return AvaloniaProperty.UnsetValue;
         }
     }
 }

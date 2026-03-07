@@ -18,7 +18,7 @@ namespace Stride.Core.Presentation.ValueConverters
                 throw new InvalidOperationException("This multi converter must be invoked with at least two elements");
 
             var fallbackValue = parameter is bool && (bool)parameter;
-            var result = values.All(x => x == DependencyProperty.UnsetValue ? fallbackValue : (bool)x);
+            var result = values.All(x => x == AvaloniaProperty.UnsetValue ? fallbackValue : (bool)x);
             return result.Box();
         }
     }

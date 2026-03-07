@@ -12,13 +12,13 @@ using Stride.Core.Reflection;
 namespace Stride.Core.Presentation.ValueConverters
 {
     /// <summary>
-    /// Helper class with similar methods than <see cref="Convert"/> but returns the default value of the expected type if value is <see cref="DependencyProperty.UnsetValue"/>.
+    /// Helper class with similar methods than <see cref="Convert"/> but returns the default value of the expected type if value is <see cref="AvaloniaProperty.UnsetValue"/>.
     /// </summary>
     public static class ConverterHelper
     {
         /// <summary>
         /// Converts the given value to <see cref="Boolean"/>.
-        /// If the given value is <see cref="DependencyProperty.UnsetValue"/>, it converts to the default value of the <see cref="Boolean"/> type.
+        /// If the given value is <see cref="AvaloniaProperty.UnsetValue"/>, it converts to the default value of the <see cref="Boolean"/> type.
         /// </summary>
         /// <param name="value">The value to convert.</param>
         /// <param name="culture">The format provider to use for the conversion.</param>
@@ -26,12 +26,12 @@ namespace Stride.Core.Presentation.ValueConverters
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool ConvertToBoolean(object value, IFormatProvider culture)
         {
-            return value != DependencyProperty.UnsetValue && Convert.ToBoolean(value, culture);
+            return value != AvaloniaProperty.UnsetValue && Convert.ToBoolean(value, culture);
         }
 
         /// <summary>
         /// Converts the given value to <see cref="Char"/>.
-        /// If the given value is <see cref="DependencyProperty.UnsetValue"/>, it converts to the default value of the <see cref="Char"/> type.
+        /// If the given value is <see cref="AvaloniaProperty.UnsetValue"/>, it converts to the default value of the <see cref="Char"/> type.
         /// </summary>
         /// <param name="value">The value to convert.</param>
         /// <param name="culture">The format provider to use for the conversion.</param>
@@ -39,12 +39,12 @@ namespace Stride.Core.Presentation.ValueConverters
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static char ConvertToChar(object value, IFormatProvider culture)
         {
-            return value != DependencyProperty.UnsetValue ? Convert.ToChar(Convert.ToUInt32(value), culture) : default(char);
+            return value != AvaloniaProperty.UnsetValue ? Convert.ToChar(Convert.ToUInt32(value), culture) : default(char);
         }
 
         /// <summary>
         /// Converts the given value to <see cref="Double"/>.
-        /// If the given value is <see cref="DependencyProperty.UnsetValue"/>, it converts to the default value of the <see cref="Double"/> type.
+        /// If the given value is <see cref="AvaloniaProperty.UnsetValue"/>, it converts to the default value of the <see cref="Double"/> type.
         /// </summary>
         /// <param name="value">The value to convert.</param>
         /// <param name="culture">The format provider to use for the conversion.</param>
@@ -52,12 +52,12 @@ namespace Stride.Core.Presentation.ValueConverters
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static double ConvertToDouble(object value, IFormatProvider culture)
         {
-            return value != DependencyProperty.UnsetValue ? Convert.ToDouble(value, culture) : default(double);
+            return value != AvaloniaProperty.UnsetValue ? Convert.ToDouble(value, culture) : default(double);
         }
 
         /// <summary>
         /// Converts the given value to <see cref="Int32"/>.
-        /// If the given value is <see cref="DependencyProperty.UnsetValue"/>, it converts to the default value of the <see cref="Int32"/> type.
+        /// If the given value is <see cref="AvaloniaProperty.UnsetValue"/>, it converts to the default value of the <see cref="Int32"/> type.
         /// </summary>
         /// <param name="value">The value to convert.</param>
         /// <param name="culture">The format provider to use for the conversion.</param>
@@ -65,12 +65,12 @@ namespace Stride.Core.Presentation.ValueConverters
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int ConvertToInt32(object value, IFormatProvider culture)
         {
-            return value != DependencyProperty.UnsetValue ? Convert.ToInt32(value, culture) : default(int);
+            return value != AvaloniaProperty.UnsetValue ? Convert.ToInt32(value, culture) : default(int);
         }
 
         /// <summary>
         /// Converts the given value to <see cref="TimeSpan"/>.
-        /// If the given value is <see cref="DependencyProperty.UnsetValue"/>, it converts to the default value of the <see cref="TimeSpan"/> type.
+        /// If the given value is <see cref="AvaloniaProperty.UnsetValue"/>, it converts to the default value of the <see cref="TimeSpan"/> type.
         /// </summary>
         /// <param name="value">The value to convert.</param>
         /// <param name="culture">The format provider to use for the conversion.</param>
@@ -78,12 +78,12 @@ namespace Stride.Core.Presentation.ValueConverters
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static TimeSpan ConvertToTimeSpan(object value, IFormatProvider culture)
         {
-            return value != DependencyProperty.UnsetValue ? (TimeSpan)value : default(TimeSpan);
+            return value != AvaloniaProperty.UnsetValue ? (TimeSpan)value : default(TimeSpan);
         }
 
         /// <summary>
         /// Converts the given value to <see cref="AngleSingle"/>.
-        /// If the given value is <see cref="DependencyProperty.UnsetValue"/>, it converts to the default value of the <see cref="AngleSingle"/> type.
+        /// If the given value is <see cref="AvaloniaProperty.UnsetValue"/>, it converts to the default value of the <see cref="AngleSingle"/> type.
         /// </summary>
         /// <param name="value">The value to convert.</param>
         /// <param name="culture">The format provider to use for the conversion.</param>
@@ -91,12 +91,12 @@ namespace Stride.Core.Presentation.ValueConverters
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static AngleSingle ConvertToAngleSingle(object value, IFormatProvider culture)
         {
-            return value != DependencyProperty.UnsetValue ? (AngleSingle)value : default(AngleSingle);
+            return value != AvaloniaProperty.UnsetValue ? (AngleSingle)value : default(AngleSingle);
         }
 
         /// <summary>
         /// Converts the given value to <see cref="String"/>.
-        /// If the given value is <see cref="DependencyProperty.UnsetValue"/>, it converts to <see cref="String.Empty"/>.
+        /// If the given value is <see cref="AvaloniaProperty.UnsetValue"/>, it converts to <see cref="String.Empty"/>.
         /// </summary>
         /// <param name="value">The value to convert.</param>
         /// <param name="culture">The format provider to use for the conversion.</param>
@@ -104,12 +104,12 @@ namespace Stride.Core.Presentation.ValueConverters
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string ConvertToString(object value, IFormatProvider culture)
         {
-            return value != DependencyProperty.UnsetValue ? Convert.ToString(value, culture) : string.Empty;
+            return value != AvaloniaProperty.UnsetValue ? Convert.ToString(value, culture) : string.Empty;
         }
 
         /// <summary>
         /// Converts the given value to the given type.
-        /// If the given value is <see cref="DependencyProperty.UnsetValue"/>, it converts to the default value of the target type.
+        /// If the given value is <see cref="AvaloniaProperty.UnsetValue"/>, it converts to the default value of the target type.
         /// </summary>
         /// <param name="value">The value to convert.</param>
         /// <param name="targetType">The target type.</param>
@@ -119,12 +119,12 @@ namespace Stride.Core.Presentation.ValueConverters
         public static object ChangeType(object value, [NotNull] Type targetType, IFormatProvider culture)
         {
             // Retrieve the underlying type if the target type is a nullable.
-            return value != DependencyProperty.UnsetValue ? Convert.ChangeType(value, targetType, culture) : targetType.Default();            
+            return value != AvaloniaProperty.UnsetValue ? Convert.ChangeType(value, targetType, culture) : targetType.Default();            
         }
 
         /// <summary>
         /// Tries to convert the given value to <see cref="Boolean"/>.
-        /// If the given value is <see cref="DependencyProperty.UnsetValue"/> or <c>Null</c>, then <c>Null</c> is returned.
+        /// If the given value is <see cref="AvaloniaProperty.UnsetValue"/> or <c>Null</c>, then <c>Null</c> is returned.
         /// </summary>
         /// <param name="value">The value to convert.</param>
         /// <param name="culture">The format provider to use for the conversion.</param>
@@ -132,12 +132,12 @@ namespace Stride.Core.Presentation.ValueConverters
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool? TryConvertToBoolean(object value, IFormatProvider culture)
         {
-            return value != null && value != DependencyProperty.UnsetValue ? (bool?)ConvertToBoolean(value, culture) : null;
+            return value != null && value != AvaloniaProperty.UnsetValue ? (bool?)ConvertToBoolean(value, culture) : null;
         }
 
         /// <summary>
         /// Tries to convert the given value to <see cref="Char"/>.
-        /// If the given value is <see cref="DependencyProperty.UnsetValue"/> or <c>Null</c>, then <c>Null</c> is returned.
+        /// If the given value is <see cref="AvaloniaProperty.UnsetValue"/> or <c>Null</c>, then <c>Null</c> is returned.
         /// </summary>
         /// <param name="value">The value to convert.</param>
         /// <param name="culture">The format provider to use for the conversion.</param>
@@ -145,12 +145,12 @@ namespace Stride.Core.Presentation.ValueConverters
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static char? TryConvertToChar(object value, IFormatProvider culture)
         {
-            return value != null && value != DependencyProperty.UnsetValue ? (char?)ConvertToChar(value, culture) : null;
+            return value != null && value != AvaloniaProperty.UnsetValue ? (char?)ConvertToChar(value, culture) : null;
         }
 
         /// <summary>
         /// Tries to convert the given value to <see cref="Double"/>.
-        /// If the given value is <see cref="DependencyProperty.UnsetValue"/> or <c>Null</c>, then <c>Null</c> is returned.
+        /// If the given value is <see cref="AvaloniaProperty.UnsetValue"/> or <c>Null</c>, then <c>Null</c> is returned.
         /// </summary>
         /// <param name="value">The value to convert.</param>
         /// <param name="culture">The format provider to use for the conversion.</param>
@@ -158,12 +158,12 @@ namespace Stride.Core.Presentation.ValueConverters
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static double? TryConvertToDouble(object value, IFormatProvider culture)
         {
-            return value != null && value != DependencyProperty.UnsetValue ? (double?)ConvertToDouble(value, culture) : null;
+            return value != null && value != AvaloniaProperty.UnsetValue ? (double?)ConvertToDouble(value, culture) : null;
         }
 
         /// <summary>
         /// Tries to convert the given value to <see cref="Int32"/>.
-        /// If the given value is <see cref="DependencyProperty.UnsetValue"/> or <c>Null</c>, then <c>Null</c> is returned.
+        /// If the given value is <see cref="AvaloniaProperty.UnsetValue"/> or <c>Null</c>, then <c>Null</c> is returned.
         /// </summary>
         /// <param name="value">The value to convert.</param>
         /// <param name="culture">The format provider to use for the conversion.</param>
@@ -171,12 +171,12 @@ namespace Stride.Core.Presentation.ValueConverters
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int? TryConvertToInt32(object value, IFormatProvider culture)
         {
-            return value != null && value != DependencyProperty.UnsetValue ? (int?)ConvertToInt32(value, culture) : null;
+            return value != null && value != AvaloniaProperty.UnsetValue ? (int?)ConvertToInt32(value, culture) : null;
         }
 
         /// <summary>
         /// Converts the given value to <see cref="TimeSpan"/>.
-        /// If the given value is <see cref="DependencyProperty.UnsetValue"/>, it converts to the default value of the <see cref="TimeSpan"/> type.
+        /// If the given value is <see cref="AvaloniaProperty.UnsetValue"/>, it converts to the default value of the <see cref="TimeSpan"/> type.
         /// </summary>
         /// <param name="value">The value to convert.</param>
         /// <param name="culture">The format provider to use for the conversion.</param>
@@ -184,12 +184,12 @@ namespace Stride.Core.Presentation.ValueConverters
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static TimeSpan? TryConvertToTimeSpan(object value, IFormatProvider culture)
         {
-            return value != null && value != DependencyProperty.UnsetValue ? (TimeSpan?)ConvertToTimeSpan(value, culture) : null;
+            return value != null && value != AvaloniaProperty.UnsetValue ? (TimeSpan?)ConvertToTimeSpan(value, culture) : null;
         }
 
         /// <summary>
         /// Converts the given value to <see cref="AngleSingle"/>.
-        /// If the given value is <see cref="DependencyProperty.UnsetValue"/>, it converts to the default value of the <see cref="AngleSingle"/> type.
+        /// If the given value is <see cref="AvaloniaProperty.UnsetValue"/>, it converts to the default value of the <see cref="AngleSingle"/> type.
         /// </summary>
         /// <param name="value">The value to convert.</param>
         /// <param name="culture">The format provider to use for the conversion.</param>
@@ -197,12 +197,12 @@ namespace Stride.Core.Presentation.ValueConverters
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static AngleSingle? TryConvertToAngleSingle(object value, IFormatProvider culture)
         {
-            return value != null && value != DependencyProperty.UnsetValue ? (AngleSingle?)ConvertToAngleSingle(value, culture) : null;
+            return value != null && value != AvaloniaProperty.UnsetValue ? (AngleSingle?)ConvertToAngleSingle(value, culture) : null;
         }
 
         /// <summary>
         /// Tries to convert the given value to <see cref="String"/>.
-        /// If the given value is <see cref="DependencyProperty.UnsetValue"/> or <c>Null</c>, then <c>Null</c> is returned.
+        /// If the given value is <see cref="AvaloniaProperty.UnsetValue"/> or <c>Null</c>, then <c>Null</c> is returned.
         /// </summary>
         /// <param name="value">The value to convert.</param>
         /// <param name="culture">The format provider to use for the conversion.</param>
@@ -210,12 +210,12 @@ namespace Stride.Core.Presentation.ValueConverters
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string TryConvertToString(object value, IFormatProvider culture)
         {
-            return value != null && value != DependencyProperty.UnsetValue ? ConvertToString(value, culture) : null;
+            return value != null && value != AvaloniaProperty.UnsetValue ? ConvertToString(value, culture) : null;
         }
 
         /// <summary>
         /// Tries to convert the given value to the given type.
-        /// If the given value is <see cref="DependencyProperty.UnsetValue"/> or <c>Null</c>, then <c>Null</c> is returned.
+        /// If the given value is <see cref="AvaloniaProperty.UnsetValue"/> or <c>Null</c>, then <c>Null</c> is returned.
         /// </summary>
         /// <param name="value">The value to convert.</param>
         /// <param name="targetType">The target type.</param>
@@ -226,7 +226,7 @@ namespace Stride.Core.Presentation.ValueConverters
         {
             // Retrieve the underlying type if the target type is a nullable.
             targetType = Nullable.GetUnderlyingType(targetType) ?? targetType;
-            return value != null && value != DependencyProperty.UnsetValue ? Convert.ChangeType(value, targetType, culture) : null;
+            return value != null && value != AvaloniaProperty.UnsetValue ? Convert.ChangeType(value, targetType, culture) : null;
         }
     }
 }

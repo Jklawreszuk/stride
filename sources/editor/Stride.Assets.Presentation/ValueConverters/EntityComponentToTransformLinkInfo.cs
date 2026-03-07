@@ -17,7 +17,7 @@ namespace Stride.Assets.Presentation.ValueConverters
             var components = (IEnumerable<EntityComponent>)value;
             var modelNodeLinkComponent = components.OfType<ModelNodeLinkComponent>().FirstOrDefault();
             if (string.IsNullOrEmpty(modelNodeLinkComponent?.NodeName))
-                return DependencyProperty.UnsetValue;
+                return AvaloniaProperty.UnsetValue;
 
             if (modelNodeLinkComponent.Target != null && !string.IsNullOrEmpty(modelNodeLinkComponent.NodeName))
             {
