@@ -2,7 +2,9 @@
   <Import Project="..\..\targets\Stride.props" />
   <PropertyGroup>
     <TargetFramework>$(StrideXplatEditorTargetFramework)</TargetFramework>
-    <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia" />
+  </ItemGroup>
   <Import Project="$(StrideSdkTargets)" />
 </Project>

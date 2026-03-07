@@ -1,5 +1,5 @@
 <Window x:Class="Stride.Editor.CrashReport.CrashReportWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Height="380" Width="580"
         Topmost="True"
@@ -7,7 +7,7 @@
         MaxHeight="380"
         Background="{DynamicResource BackgroundBrush}" 
         Title="Report your crash"
-        ResizeMode="NoResize"
+        CanResize="False"
         WindowStartupLocation="CenterScreen">
   <Window.Resources>
     <ResourceDictionary>
@@ -68,27 +68,27 @@
                         <DrawingGroup>
                             <GeometryDrawing Brush="#fffc365b">
                                 <GeometryDrawing.Geometry>
-                                    <PathGeometry Figures="m 206.148 98.952 l 79.08 -46.577 l 75.862 44.531 l -79.086 46.573 z" FillRule="Nonzero"/>
+                                    <PathGeometry Figures="m 206.148 98.952 l 79.08 -46.577 l 75.862 44.531 l -79.086 46.573 z" FillRule="NonZero"/>
                                 </GeometryDrawing.Geometry>
                             </GeometryDrawing>
                             <GeometryDrawing Brush="#fffc365b">
                                 <GeometryDrawing.Geometry>
-                                    <PathGeometry Figures="m 202.746 145.422 v -40.575 l 75.945 44.578 V 190 Z" FillRule="Nonzero"/>
+                                    <PathGeometry Figures="m 202.746 145.422 v -40.575 l 75.945 44.578 V 190 Z" FillRule="NonZero"/>
                                 </GeometryDrawing.Geometry>
                             </GeometryDrawing>
                             <GeometryDrawing Brush="#fffc365b">
                                 <GeometryDrawing.Geometry>
-                                    <PathGeometry Figures="m 285.314 190.001 v -40.575 l 37.973 -22.289 l 34.561 20.288 l -72.534 42.577 z" FillRule="Nonzero"/>
+                                    <PathGeometry Figures="m 285.314 190.001 v -40.575 l 37.973 -22.289 l 34.561 20.288 l -72.534 42.577 z" FillRule="NonZero"/>
                                 </GeometryDrawing.Geometry>
                             </GeometryDrawing>
                             <GeometryDrawing Brush="#fffc365b">
                                 <GeometryDrawing.Geometry>
-                                    <PathGeometry Figures="M 361.259 190.001 L 330.01 171.659 L 361.259 153.315 Z" FillRule="Nonzero"/>
+                                    <PathGeometry Figures="M 361.259 190.001 L 330.01 171.659 L 361.259 153.315 Z" FillRule="NonZero"/>
                                 </GeometryDrawing.Geometry>
                             </GeometryDrawing>
                             <GeometryDrawing Brush="#fffc365b">
                                 <GeometryDrawing.Geometry>
-                                    <PathGeometry Figures="m 281.809 243.233 l -80.871 -47.194 l 38.245 -21.582 l 42.82 25.381 l 41.282 -24.233 l 37.042 21.463 z" FillRule="Nonzero"/>
+                                    <PathGeometry Figures="m 281.809 243.233 l -80.871 -47.194 l 38.245 -21.582 l 42.82 25.381 l 41.282 -24.233 l 37.042 21.463 z" FillRule="NonZero"/>
                                 </GeometryDrawing.Geometry>
                             </GeometryDrawing>
                         </DrawingGroup>
@@ -145,10 +145,10 @@
         </StackPanel>
 
         <TextBox Grid.Row="3" Grid.ColumnSpan="2"
-                 Visibility="Collapsed"
+                 IsVisible="False"
                  Margin="0,10,0,0"
                  TextWrapping="Wrap"
-                 VerticalScrollBarVisibility="Auto"
+                 
                  IsReadOnly="True"
                  AcceptsReturn="True"
                  Name="textBoxLog" />
