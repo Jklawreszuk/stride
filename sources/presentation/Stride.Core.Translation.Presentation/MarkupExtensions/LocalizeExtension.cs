@@ -14,7 +14,6 @@ namespace Stride.Core.Translation.Presentation.MarkupExtensions
     /// <summary>
     /// Provides support for localization in XAML document.
     /// </summary>
-    [MarkupExtensionReturnType(typeof(string))]
     public class LocalizeExtension : MarkupExtension
     {
         /// <summary>
@@ -82,7 +81,7 @@ namespace Stride.Core.Translation.Presentation.MarkupExtensions
             {
                 Count.Converter = new PluralConverter(Text, Plural, Context, assembly, IsStringFormat);
                 Count.Mode = BindingMode.OneWay;
-                return Count.ProvideValue(serviceProvider);
+                return Count;
             }
             return string.IsNullOrEmpty(Context)
                 ? TranslationManager.Instance.GetString(Text, assembly)
@@ -92,7 +91,6 @@ namespace Stride.Core.Translation.Presentation.MarkupExtensions
         /// <summary>
         /// Converts an integer to the corresponding plural form.
         /// </summary>
-        [ValueConversion(typeof(long), typeof(string))]
         private class PluralConverter : IValueConverter
         {
             private readonly Assembly assembly;
