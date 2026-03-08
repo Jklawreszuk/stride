@@ -1,15 +1,16 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
-using System.Windows;
-using System.Windows.Controls.Primitives;
+
+using Avalonia.Controls;
+using Avalonia.Interactivity;
 
 namespace Stride.Core.Presentation.Behaviors
 {
     /// <summary>
-    /// A behavior that can be attached to a <see cref="ButtonBase"/> and will close the window it is contained in when clicked. Note that if a command is attached to the button, it will be executed after the window is closed.
+    /// A behavior that can be attached to a <see cref="Button"/> and will close the window it is contained in when clicked. Note that if a command is attached to the button, it will be executed after the window is closed.
     /// If you need to execute a command before closing the window, you can use the <see cref="CloseWindowBehavior{T}.Command"/> and <see cref="CloseWindowBehavior{T}.CommandParameter"/> property of this behavior.
     /// </summary>
-    public class ButtonCloseWindowBehavior : CloseWindowBehavior<ButtonBase>
+    public class ButtonCloseWindowBehavior : CloseWindowBehavior<Button>
     {
         /// <inheritdoc/>
         protected override void OnAttached()

@@ -2,11 +2,11 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
 using System.Windows.Markup;
+using Avalonia.Markup.Xaml;
 using Stride.Core.Annotations;
 
 namespace Stride.Core.Presentation.MarkupExtensions
 {
-    [MarkupExtensionReturnType(typeof(double))]
     public sealed class MaxDoubleExtension : MarkupExtension
     {
         [NotNull]

@@ -1,8 +1,9 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
-using System.Windows;
-using System.Windows.Controls.Primitives;
+using Avalonia;
+using Avalonia.Controls.Metadata;
+using Avalonia.Controls.Primitives;
 
 namespace Stride.Core.Presentation.Controls
 {
@@ -17,14 +18,14 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="EditingMode"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty EditingModeProperty =
-            DependencyProperty.Register(nameof(EditingMode), typeof(VectorEditingMode), typeof(VectorEditor<T>), new FrameworkPropertyMetadata(VectorEditingMode.Normal, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+        public static readonly StyledProperty<VectorEditingMode> EditingModeProperty =
+            AvaloniaProperty.Register<VectorEditor<T>, VectorEditingMode>(nameof(EditingMode), defaultValue: VectorEditingMode.Normal);
         
         public VectorEditingMode EditingMode { get { return (VectorEditingMode)GetValue(EditingModeProperty); } set { SetValue(EditingModeProperty, value); } }
 
-        public override void OnApplyTemplate()
+        protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
-            base.OnApplyTemplate();
+            base.OnApplyTemplate(e);
 
             // TODO: the toggle button has been disabled
             //var toggleButton = GetTemplateChild(ToggleButtonPartName) as ToggleButton;
@@ -44,6 +45,6 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Resource Key for the ToggleButtonStyle.
         /// </summary>
-        public static ComponentResourceKey ToggleButtonStyleKey { get; } = new ComponentResourceKey(typeof(VectorEditorResources), nameof(ToggleButtonStyleKey));
+        public static object ToggleButtonStyleKey { get; } = new();
     }
 }

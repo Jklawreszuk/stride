@@ -2,7 +2,7 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
 using System.Globalization;
-using System.Windows.Data;
+using Avalonia.Data;
 
 namespace Stride.Core.Presentation.ValueConverters
 {
@@ -20,7 +20,7 @@ namespace Stride.Core.Presentation.ValueConverters
         /// <inheritdoc/>
         public override object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return ((bool)value) ? parameter : Binding.DoNothing;
+            return ((bool)value) ? parameter : BindingValueType.DoNothing;
         }
     }
 }

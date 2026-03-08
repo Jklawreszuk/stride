@@ -3,8 +3,8 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Windows;
-using Microsoft.Xaml.Behaviors;
+using Avalonia;
+using Avalonia.Xaml.Interactivity;
 using Stride.Core.Annotations;
 
 namespace Stride.Core.Presentation.Interactivity
@@ -12,7 +12,7 @@ namespace Stride.Core.Presentation.Interactivity
     /// <summary>
     /// A collection of behavior that synchronize with the Microsoft.Xaml.Behaviors.Interaction.Behaviors attached property.
     /// </summary>
-    public class BehaviorCollection : ObservableCollection<Behavior>, IAttachedObject
+    public class BehaviorCollection : ObservableCollection<Behavior>
     {
         public BehaviorCollection()
         {
@@ -20,7 +20,7 @@ namespace Stride.Core.Presentation.Interactivity
             collection.CollectionChanged += BehaviorCollectionChanged;
         }
 
-        public DependencyObject AssociatedObject { get; private set; }
+        public AvaloniaObject AssociatedObject { get; private set; }
 
         [NotNull]
         public BehaviorCollection Clone()
@@ -28,12 +28,12 @@ namespace Stride.Core.Presentation.Interactivity
             var clone = new BehaviorCollection();
             foreach (var behavior in Items)
             {
-                clone.Add((Behavior)behavior.Clone());
+                clone.Add(behavior);
             }
             return clone;
         }
 
-        public void Attach([NotNull] DependencyObject dependencyObject)
+        public void Attach([NotNull] AvaloniaObject dependencyObject)
         {
             if (dependencyObject == null) throw new ArgumentNullException(nameof(dependencyObject));
             // Aleady attached
@@ -44,7 +44,7 @@ namespace Stride.Core.Presentation.Interactivity
                 throw new InvalidOperationException("This BehaviorCollection has already been attached to a dependency object.");
 
             AssociatedObject = dependencyObject;
-            var behaviors = Microsoft.Xaml.Behaviors.Interaction.GetBehaviors(dependencyObject);
+            var behaviors = Interaction.GetBehaviors(dependencyObject);
             foreach (var behavior in this)
             {
                 behaviors.Add(behavior);
@@ -55,7 +55,7 @@ namespace Stride.Core.Presentation.Interactivity
         {
             if (AssociatedObject != null)
             {
-                var behaviors = Microsoft.Xaml.Behaviors.Interaction.GetBehaviors(AssociatedObject);
+                var behaviors = Interaction.GetBehaviors(AssociatedObject);
                 foreach (var behavior in this)
                 {
                     behaviors.Remove(behavior);
@@ -69,7 +69,7 @@ namespace Stride.Core.Presentation.Interactivity
             if (AssociatedObject == null)
                 return;
 
-            var behaviors = Microsoft.Xaml.Behaviors.Interaction.GetBehaviors(AssociatedObject);
+            var behaviors = Interaction.GetBehaviors(AssociatedObject);
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add:

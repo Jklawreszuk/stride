@@ -2,6 +2,7 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
 using System.Windows;
+using Avalonia;
 using Stride.Core.Annotations;
 using Stride.Core.Mathematics;
 
@@ -12,31 +13,35 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="X"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty XProperty = DependencyProperty.Register("X", typeof(float?), typeof(Vector4Editor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
+        public static readonly AvaloniaProperty XProperty = AvaloniaProperty.Register<Vector4Editor, float?>("X");
 
         /// <summary>
         /// Identifies the <see cref="Y"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty YProperty = DependencyProperty.Register("Y", typeof(float?), typeof(Vector4Editor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
+        public static readonly AvaloniaProperty YProperty = AvaloniaProperty.Register<Vector4Editor, float?>("Y");
 
         /// <summary>
         /// Identifies the <see cref="Z"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ZProperty = DependencyProperty.Register("Z", typeof(float?), typeof(Vector4Editor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
+        public static readonly AvaloniaProperty ZProperty = AvaloniaProperty.Register<Vector4Editor, float?>("Z");
 
         /// <summary>
         /// Identifies the <see cref="W"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty WProperty = DependencyProperty.Register("W", typeof(float?), typeof(Vector4Editor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
+        public static readonly AvaloniaProperty WProperty = AvaloniaProperty.Register<Vector4Editor, float?>("W");
 
         /// <summary>
         /// Identifies the <see cref="Length"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty LengthProperty = DependencyProperty.Register("Length", typeof(float?), typeof(Vector4Editor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceLengthValue));
-
+        public static readonly AvaloniaProperty LengthProperty = AvaloniaProperty.Register<Vector4Editor, float?>("Length");
+            
         static Vector4Editor()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(Vector4Editor), new FrameworkPropertyMetadata(typeof(Vector4Editor)));
+            XProperty.Changed.AddClassHandler<Vector4Editor>((o, e) => OnComponentPropertyChanged(o, e));
+            YProperty.Changed.AddClassHandler<Vector4Editor>((o, e) => OnComponentPropertyChanged(o, e));
+            ZProperty.Changed.AddClassHandler<Vector4Editor>((o, e) => OnComponentPropertyChanged(o, e));
+            WProperty.Changed.AddClassHandler<Vector4Editor>((o, e) => OnComponentPropertyChanged(o, e));
+            LengthProperty.Changed.AddClassHandler<Vector4Editor>((o, e) => OnComponentPropertyChanged(o, e));
         }
 
         /// <summary>
@@ -78,7 +83,7 @@ namespace Stride.Core.Presentation.Controls
         }
 
         /// <inheritdoc/>
-        protected override Vector4? UpdateValueFromComponent(DependencyProperty property)
+        protected override Vector4? UpdateValueFromComponent(AvaloniaProperty property)
         {
             switch (EditingMode)
             {
@@ -126,7 +131,7 @@ namespace Stride.Core.Presentation.Controls
         /// Coerce the value of the Length so it is always positive
         /// </summary>
         [NotNull]
-        private static object CoerceLengthValue(DependencyObject sender, object baseValue)
+        private static object CoerceLengthValue(AvaloniaObject sender, object baseValue)
         {
             baseValue = CoerceComponentValue(sender, baseValue);
             return Math.Max(0.0f, (float)baseValue);

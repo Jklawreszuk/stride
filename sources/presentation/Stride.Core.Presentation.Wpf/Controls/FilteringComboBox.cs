@@ -3,27 +3,33 @@
 using System;
 using System.Collections;
 using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Input;
+using Avalonia;
+using Avalonia.Collections;
+using Avalonia.Controls;
+using Avalonia.Controls.Metadata;
+using Avalonia.Controls.Primitives;
+using Avalonia.Data;
+using Avalonia.Input;
+using Avalonia.Interactivity;
+using Avalonia.Reactive;
+using Avalonia.Styling;
 using Stride.Core.Annotations;
 using Stride.Core.Extensions;
 using Stride.Core.Presentation.Core;
 using Stride.Core.Presentation.Extensions;
 using Stride.Core.Presentation.Internal;
+using CancelRoutedEventArgs = Stride.Core.Presentation.Core.CancelRoutedEventArgs;
 
 namespace Stride.Core.Presentation.Controls
 {
     [TemplatePart(Name = "PART_EditableTextBox", Type = typeof(TextBox))]
     [TemplatePart(Name = "PART_ListBox", Type = typeof(ListBox))]
-    public class FilteringComboBox : Selector
+    public class FilteringComboBox : SelectingItemsControl
     {
         /// <summary>
         /// A dependency property used to safely evaluate the value of an item given a path.
         /// </summary>
-        private static readonly DependencyProperty InternalValuePathProperty = DependencyProperty.Register("InternalValuePath", typeof(object), typeof(FilteringComboBox));
+        private static readonly AvaloniaProperty InternalValuePathProperty = AvaloniaProperty.Register<FilteringComboBox, object>("InternalValuePath");
         /// <summary>
         /// The input text box.
         /// </summary>
@@ -52,87 +58,87 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="RequireSelectedItemToValidate"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty RequireSelectedItemToValidateProperty = DependencyProperty.Register("RequireSelectedItemToValidate", typeof(bool), typeof(FilteringComboBox));
+        public static readonly AvaloniaProperty RequireSelectedItemToValidateProperty = AvaloniaProperty.Register<FilteringComboBox, bool>("RequireSelectedItemToValidate");
 
         /// <summary>
         /// Identifies the <see cref="Text"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty TextProperty = DependencyProperty.Register("Text", typeof(string), typeof(FilteringComboBox), new FrameworkPropertyMetadata { DefaultUpdateSourceTrigger = UpdateSourceTrigger.Explicit, BindsTwoWayByDefault = true });
+        public static readonly AvaloniaProperty TextProperty = AvaloniaProperty.Register<FilteringComboBox, string>("Text", defaultBindingMode: BindingMode.TwoWay);
 
         /// <summary>
         /// Identifies the <see cref="IsDropDownOpen"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty IsDropDownOpenProperty = DependencyProperty.Register("IsDropDownOpen", typeof(bool), typeof(FilteringComboBox), new FrameworkPropertyMetadata(BooleanBoxes.FalseBox, OnIsDropDownOpenChanged));
+        public static readonly AvaloniaProperty IsDropDownOpenProperty = AvaloniaProperty.Register<FilteringComboBox, bool>("IsDropDownOpen");
 
         /// <summary>
         /// Identifies the <see cref="OpenDropDownOnFocus"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty OpenDropDownOnFocusProperty = DependencyProperty.Register("OpenDropDownOnFocus", typeof(bool), typeof(FilteringComboBox));
+        public static readonly AvaloniaProperty OpenDropDownOnFocusProperty = AvaloniaProperty.Register<FilteringComboBox, bool>("OpenDropDownOnFocus");
 
         /// <summary>
         /// Identifies the <see cref="ClearTextAfterValidation"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ClearTextAfterValidationProperty = DependencyProperty.Register("ClearTextAfterValidation", typeof(bool), typeof(FilteringComboBox));
+        public static readonly AvaloniaProperty ClearTextAfterValidationProperty = AvaloniaProperty.Register<FilteringComboBox, bool>("ClearTextAfterValidation");
 
         /// <summary>
         /// Identifies the <see cref="WatermarkContent"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty WatermarkContentProperty = DependencyProperty.Register("WatermarkContent", typeof(object), typeof(FilteringComboBox), new PropertyMetadata(null));
+        public static readonly AvaloniaProperty WatermarkContentProperty = AvaloniaProperty.Register<FilteringComboBox, object>("WatermarkContent");
 
         /// <summary>
         /// Identifies the <see cref="IsFiltering"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty IsFilteringProperty = DependencyProperty.Register("IsFiltering", typeof(bool), typeof(FilteringComboBox), new FrameworkPropertyMetadata(true, OnIsFilteringChanged));
+        public static readonly AvaloniaProperty IsFilteringProperty = AvaloniaProperty.Register<FilteringComboBox, bool>("IsFiltering");
 
         /// <summary>
         /// Identifies the <see cref="ItemsToExclude"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ItemsToExcludeProperty = DependencyProperty.Register("ItemsToExclude", typeof(IEnumerable), typeof(FilteringComboBox));
+        public static readonly AvaloniaProperty ItemsToExcludeProperty = AvaloniaProperty.Register<FilteringComboBox, IEnumerable>("ItemsToExclude");
 
         /// <summary>
         /// Identifies the <see cref="Sort"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty SortProperty = DependencyProperty.Register("Sort", typeof(FilteringComboBoxSort), typeof(FilteringComboBox), new FrameworkPropertyMetadata(OnItemsSourceRefresh));
+        public static readonly AvaloniaProperty SortProperty = AvaloniaProperty.Register<FilteringComboBox, FilteringComboBoxSort>("Sort");
 
         /// <summary>
         /// Identifies the <see cref="SortMemberPath"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty SortMemberPathProperty = DependencyProperty.Register("SortMemberPath", typeof(string), typeof(FilteringComboBox));
+        public static readonly AvaloniaProperty SortMemberPathProperty = AvaloniaProperty.Register<FilteringComboBox, string>("SortMemberPath");
 
         /// <summary>
         /// Identifies the <see cref="ValidatedValue"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ValidatedValueProperty = DependencyProperty.Register("ValidatedValue", typeof(object), typeof(FilteringComboBox));
+        public static readonly AvaloniaProperty ValidatedValueProperty = AvaloniaProperty.Register<FilteringComboBox, object>("ValidatedValue");
 
         /// <summary>
         /// Identifies the <see cref="ValidatedItem"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ValidatedItemProperty = DependencyProperty.Register("ValidatedItem", typeof(object), typeof(FilteringComboBox));
+        public static readonly AvaloniaProperty ValidatedItemProperty = AvaloniaProperty.Register<FilteringComboBox, object>("ValidatedItem");
 
         /// <summary>
         /// Identifies the <see cref="ValidateOnLostFocus"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ValidateOnLostFocusProperty =
-            DependencyProperty.Register(nameof(ValidateOnLostFocus), typeof(bool), typeof(FilteringComboBox), new PropertyMetadata(BooleanBoxes.TrueBox));
+        public static readonly AvaloniaProperty ValidateOnLostFocusProperty =
+            AvaloniaProperty.Register<FilteringComboBox, bool>(nameof(ValidateOnLostFocus), true);
 
 
         /// <summary>
         /// Raised just before the TextBox changes are validated. This event is cancellable
         /// </summary>
-        public static readonly RoutedEvent ValidatingEvent = EventManager.RegisterRoutedEvent("Validating", RoutingStrategy.Bubble, typeof(CancelRoutedEventHandler), typeof(FilteringComboBox));
+        public static readonly RoutedEvent ValidatingEvent = RoutedEvent.Register<FilteringComboBox, RoutedEventArgs>("Validating", RoutingStrategies.Bubble);
 
         /// <summary>
         /// Raised when TextBox changes have been validated.
         /// </summary>
-        public static readonly RoutedEvent ValidatedEvent = EventManager.RegisterRoutedEvent("Validated", RoutingStrategy.Bubble, typeof(ValidationRoutedEventHandler<string>), typeof(FilteringComboBox));
+        public static readonly RoutedEvent ValidatedEvent = RoutedEvent.Register<FilteringComboBox, RoutedEventArgs>("Validated", RoutingStrategies.Bubble);
 
         static FilteringComboBox()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(FilteringComboBox), new FrameworkPropertyMetadata(typeof(FilteringComboBox)));
         }
 
         public FilteringComboBox()
         {
+            ItemsSourceProperty.Changed.Subscribe(new AnonymousObserver<AvaloniaPropertyChangedEventArgs<IEnumerable>>((e) => OnItemsSourceChanged(e)));
             IsTextSearchEnabled = false;
         }
 
@@ -203,17 +209,15 @@ namespace Stride.Core.Presentation.Controls
         /// </summary>
         public event ValidationRoutedEventHandler<string> Validated { add { AddHandler(ValidatedEvent, value); } remove { RemoveHandler(ValidatedEvent, value); } }
 
-        protected override void OnItemsSourceChanged(IEnumerable oldValue, IEnumerable newValue)
+        protected void OnItemsSourceChanged(AvaloniaPropertyChangedEventArgs<IEnumerable> changedEventArgs)
         {
-            base.OnItemsSourceChanged(oldValue, newValue);
-
-            if (newValue != null)
+            if (changedEventArgs.NewValue != null)
             {
                 UpdateCollectionView();
             }
         }
 
-        private static void OnIsDropDownOpenChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnIsDropDownOpenChanged(AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var filteringComboBox = (FilteringComboBox)d;
             if ((bool)e.NewValue && filteringComboBox.ItemsSource != null)
@@ -222,7 +226,7 @@ namespace Stride.Core.Presentation.Controls
             }
         }
 
-        private static void OnIsFilteringChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnIsFilteringChanged(AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var filteringComboBox = (FilteringComboBox)d;
             if (filteringComboBox.ItemsSource != null)
@@ -231,41 +235,38 @@ namespace Stride.Core.Presentation.Controls
             }
         }
 
-        public override void OnApplyTemplate()
+        protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
-            base.OnApplyTemplate();
+            base.OnApplyTemplate(e);
 
-            editableTextBox = GetTemplateChild("PART_EditableTextBox") as TextBox;
+            editableTextBox =  e.NameScope.Find<TextBox>("PART_EditableTextBox");
             if (editableTextBox == null)
                 throw new InvalidOperationException("A part named 'PART_EditableTextBox' must be present in the ControlTemplate, and must be of type 'Stride.Core.Presentation.Controls.Input.TextBox'.");
 
-            listBox = GetTemplateChild("PART_ListBox") as ListBox;
+            listBox =  e.NameScope.Find<ListBox>("PART_ListBox");
             if (listBox == null)
                 throw new InvalidOperationException("A part named 'PART_ListBox' must be present in the ControlTemplate, and must be of type 'ListBox'.");
 
             editableTextBox.TextChanged += EditableTextBoxTextChanged;
-            editableTextBox.PreviewKeyDown += EditableTextBoxPreviewKeyDown;
+            AddHandler(PointerPressedEvent, EditableTextBoxPreviewKeyDown, RoutingStrategies.Tunnel);
             editableTextBox.Validating += EditableTextBoxValidating;
             editableTextBox.Validated += EditableTextBoxValidated;
             editableTextBox.Cancelled += EditableTextBoxCancelled;
             editableTextBox.LostFocus += EditableTextBoxLostFocus;
-            listBox.MouseUp += ListBoxMouseUp;
+            listBox.PointerReleased += ListBoxPointerReleased;
         }
 
-        protected override void OnGotKeyboardFocus(KeyboardFocusChangedEventArgs e)
+        protected override void OnGotFocus(GotFocusEventArgs e)
         {
-            base.OnGotKeyboardFocus(e);
+            if(e.NavigationMethod == NavigationMethod.Tab)
+                return;
+            
+            base.OnGotFocus(e);
             if (OpenDropDownOnFocus && !listBoxClicking)
             {
                 IsDropDownOpen = true;
             }
             listBoxClicking = false;
-        }
-
-        private static void OnItemsSourceRefresh(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var filteringComboBox = (FilteringComboBox)d;
-            filteringComboBox.OnItemsSourceChanged(filteringComboBox.ItemsSource, filteringComboBox.ItemsSource);
         }
 
         private void EditableTextBoxValidating(object sender, CancelRoutedEventArgs e)
@@ -275,11 +276,11 @@ namespace Stride.Core.Presentation.Controls
                 return;
 
             // If we require a selected item but there is none, cancel the validation
-            BindingExpression expression;
+            BindingExpressionBase? expression;
             if (RequireSelectedItemToValidate && SelectedItem == null)
             {
                 e.Cancel = true;
-                expression = GetBindingExpression(TextProperty);
+                expression = BindingOperations.GetBindingExpressionBase(this, TextProperty);
                 expression?.UpdateTarget();
                 editableTextBox.Cancel();
                 return;
@@ -303,7 +304,7 @@ namespace Stride.Core.Presentation.Controls
             }
 
             // Update the source of the text property binding
-            expression = GetBindingExpression(TextProperty);
+            expression = BindingOperations.GetBindingExpressionBase(this, TextProperty);
             expression?.UpdateSource();
 
             // Close the dropdown
@@ -345,7 +346,7 @@ namespace Stride.Core.Presentation.Controls
             if (!ReferenceEquals(sender, editableTextBox))
                 return;
 
-            var expression = GetBindingExpression(TextProperty);
+            var expression = BindingOperations.GetBindingExpressionBase(this, TextProperty);
             expression?.UpdateTarget();
 
             clearing = true;
@@ -394,13 +395,12 @@ namespace Stride.Core.Presentation.Controls
             // TODO: this will update the selected index because the collection view is shared. If UpdateSelectionOnValidation is true, this will still modify the SelectedIndex
             UpdateCollectionView();
 
-            var collectionView = CollectionViewSource.GetDefaultView(ItemsSource);
-            var listCollectionView = collectionView as ListCollectionView;
+            var collectionView = new DataGridCollectionView(ItemsSource);
 
             collectionView.Refresh();
             if (!validating)
             {
-                if (listCollectionView?.Count > 0 || collectionView.Cast<object>().Any())
+                if (collectionView?.Count > 0 || collectionView.Cast<object>().Any())
                 {
                     listBox.SelectedIndex = 0;
                 }
@@ -410,13 +410,14 @@ namespace Stride.Core.Presentation.Controls
 
         private void UpdateCollectionView()
         {
-            var collectionView = CollectionViewSource.GetDefaultView(ItemsSource);
-            collectionView.Filter = IsFiltering ? (Predicate<object>)InternalFilter : null;
-            var listCollectionView = collectionView as ListCollectionView;
-            if (listCollectionView != null)
-            {
-                listCollectionView.CustomSort = Sort;
-            }
+            // TODO:
+            // var collectionView = CollectionViewSource.GetDefaultView(ItemsSource);
+            // collectionView.Filter = IsFiltering ? (Predicate<object>)InternalFilter : null;
+            // var listCollectionView = collectionView as ListCollectionView;
+            // if (listCollectionView != null)
+            // {
+            //     listCollectionView.CustomSort = Sort;
+            // }
         }
 
         private void EditableTextBoxPreviewKeyDown(object sender, KeyEventArgs e)
@@ -508,9 +509,9 @@ namespace Stride.Core.Presentation.Controls
             updatingSelection = false;
         }
 
-        private void ListBoxMouseUp(object sender, [NotNull] MouseButtonEventArgs e)
+        private void ListBoxPointerReleased(object sender, [NotNull] PointerEventArgs e)
         {
-            if (e.ChangedButton == MouseButton.Left && listBox.SelectedIndex > -1)
+            if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed && listBox.SelectedIndex > -1)
             {
                 // We need to force the validation here
                 // The user might have clicked on the list after the drop down was automatically open (see OpenDropDownOnFocus).
@@ -561,7 +562,7 @@ namespace Stride.Core.Presentation.Controls
             var value = obj;
             try
             {
-                SetBinding(InternalValuePathProperty, new Binding(SortMemberPath) { Source = obj });
+                Bind(InternalValuePathProperty, new Binding(SortMemberPath) { Source = obj });
                 value = GetValue(InternalValuePathProperty);
             }
             catch (Exception e)
@@ -570,7 +571,7 @@ namespace Stride.Core.Presentation.Controls
             }
             finally
             {
-                BindingOperations.ClearBinding(this, InternalValuePathProperty);
+                Bind(InternalValuePathProperty, null!);
             }
             return value;
         }

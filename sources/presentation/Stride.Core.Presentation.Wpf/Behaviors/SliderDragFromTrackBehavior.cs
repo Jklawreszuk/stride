@@ -2,11 +2,10 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Input;
-using Microsoft.Xaml.Behaviors;
+using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
+using Avalonia.Input;
+using Avalonia.Xaml.Interactivity;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Extensions;
 
@@ -20,19 +19,19 @@ namespace Stride.Core.Presentation.Behaviors
         protected override void OnAttached()
         {
             base.OnAttached();
-            AssociatedObject.AddHandler(UIElement.PreviewMouseLeftButtonDownEvent, (MouseButtonEventHandler)TrackMouseEvent, true);
-            AssociatedObject.AddHandler(UIElement.PreviewMouseLeftButtonUpEvent, (MouseButtonEventHandler)TrackMouseEvent, true);
+            AssociatedObject.PointerPressed += OnPointerPressed;
+            AssociatedObject.PointerReleased += OnPointerReleased;
             AssociatedObject.Initialized += SliderInitialized;
         }
 
         protected override void OnDetaching()
         {
             AssociatedObject.Initialized -= SliderInitialized;
-            AssociatedObject.RemoveHandler(UIElement.PreviewMouseLeftButtonDownEvent, (MouseButtonEventHandler)TrackMouseEvent);
-            AssociatedObject.RemoveHandler(UIElement.PreviewMouseLeftButtonUpEvent, (MouseButtonEventHandler)TrackMouseEvent);
+            AssociatedObject.PointerPressed -= OnPointerPressed;
+            AssociatedObject.PointerReleased -= OnPointerReleased;
             if (track != null && track.Thumb != null)
             {
-                track.Thumb.MouseEnter -= MouseEnter;
+                track.Thumb.PointerEntered -= PointerEntered;
             }
             base.OnDetaching();
         }
@@ -44,22 +43,37 @@ namespace Stride.Core.Presentation.Behaviors
             track = AssociatedObject.FindVisualChildOfType<Track>();
             if (track == null || track.Name != "PART_Track")
                 throw new InvalidOperationException("The associated slider must have a Track child named 'PART_Track'");
-            track.Thumb.MouseEnter += MouseEnter;
+            track.Thumb.PointerEntered += PointerEntered;
             AssociatedObject.Initialized += SliderInitialized;
         }
 
-        private void TrackMouseEvent(object sender, [NotNull] MouseButtonEventArgs e)
+        private void OnPointerReleased(object sender, [NotNull] PointerReleasedEventArgs e)
         {
-            if (e.ChangedButton == MouseButton.Left)
-                trackMouseDown = e.ButtonState == MouseButtonState.Pressed;
+            if (e.GetCurrentPoint(AssociatedObject).Properties.IsLeftButtonPressed)
+            {
+                trackMouseDown = false;
+
+                // Release pointer capture
+                if (e.Pointer.Captured == AssociatedObject)
+                    e.Pointer.Capture(null);
+            }
+        }
+        private void OnPointerPressed(object sender, [NotNull] PointerPressedEventArgs e)
+        {
+            if (e.GetCurrentPoint(AssociatedObject).Properties.IsLeftButtonPressed)
+            {
+                trackMouseDown = true;
+                e.Pointer.Capture(AssociatedObject);
+            }
         }
 
-        private void MouseEnter(object sender, [NotNull] MouseEventArgs e)
+        private void PointerEntered(object sender, [NotNull] PointerEventArgs e)
         {
             if (trackMouseDown)
             {
-                var args = new MouseButtonEventArgs(e.MouseDevice, e.Timestamp, MouseButton.Left) { RoutedEvent = UIElement.MouseLeftButtonDownEvent };
-                track.Thumb.RaiseEvent(args);
+                //todo
+                //var args = new PointerEventArgs(e.MouseDevice, e.Timestamp, MouseButton.Left) { RoutedEvent = Control.MouseLeftButtonDownEvent };
+                //track.Thumb.RaiseEvent(args);
                 trackMouseDown = false;
             }
         }

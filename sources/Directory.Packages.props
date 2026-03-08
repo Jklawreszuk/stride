@@ -42,6 +42,7 @@
     <PackageVersion Include="System.ValueTuple" Version="4.6.1" />
     <PackageVersion Include="Vortice.Vulkan" Version="3.0.3" />
     <PackageVersion Include="WinPixEventRuntime" Version="1.0.240308001" />
+    <PackageVersion Include="Xaml.Behaviors" Version="11.3.9.5" />
   </ItemGroup>
   <!-- Other dependencies -->
   <ItemGroup>
@@ -94,7 +95,7 @@
   </ItemGroup>
   <!-- Avalonia dependencies -->
   <PropertyGroup>
-    <AvaloniaVersion>11.0.6</AvaloniaVersion>
+    <AvaloniaVersion>11.3.12</AvaloniaVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Avalonia" Version="$(AvaloniaVersion)" />

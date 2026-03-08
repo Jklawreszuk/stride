@@ -6,10 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Media;
+using Avalonia;
+using Avalonia.Controls;
 using Stride.Core.Annotations;
 
 namespace Stride.Core.Presentation.Controls
@@ -354,17 +352,17 @@ namespace Stride.Core.Presentation.Controls
 
         private static void InvalidateMeasure([NotNull] TreeViewItem child)
         {
-            var itemsPresenter = child.Template.FindName("itemsPresenter", child) as FrameworkElement;
+            var itemsPresenter = child.Template.FindName("itemsPresenter", child) as Control;
             if (itemsPresenter != null)
             {
-                var virtualizingTreePanel = VisualTreeHelper.GetChild(itemsPresenter, 0) as UIElement;
+                var virtualizingTreePanel = VisualTreeHelper.GetChild(itemsPresenter, 0) as Control;
                 virtualizingTreePanel.InvalidateMeasure();
             }
         }
 
         private static double GetHeightOfHeader([NotNull] ItemsControl itemsControl)
         {
-            var border = (FrameworkElement)itemsControl.Template.FindName("border", itemsControl);
+            var border = (Control)itemsControl.Template.FindName("border", itemsControl);
             return border.DesiredSize.Height;
         }
 
@@ -412,7 +410,7 @@ namespace Stride.Core.Presentation.Controls
                     if (child != null)
                     {
                         child.Arrange(new Rect(-HorizontalOffset, currentY - VerticalOffset, finalSize.Width, child.DesiredSize.Height));
-                        currentY += child.ActualHeight;
+                        currentY += child.Bounds.Height;
                     }
                     else
                     {
@@ -424,7 +422,7 @@ namespace Stride.Core.Presentation.Controls
             {
                 for (var i = 0; i < itemsControl.Items.Count; i++)
                 {
-                    if (itemsControl.ItemContainerGenerator.ContainerFromIndex(i) is UIElement child)
+                    if (itemsControl.ItemContainerGenerator.ContainerFromIndex(i) is Control child)
                     {
                         child.Arrange(new Rect(-HorizontalOffset, currentY - VerticalOffset, finalSize.Width, child.DesiredSize.Height));
                         currentY += child.DesiredSize.Height;
@@ -526,7 +524,7 @@ namespace Stride.Core.Presentation.Controls
                 if (extent == value) return;
                 extent = value;
 
-                ScrollOwner?.InvalidateScrollInfo();
+                ScrollOwner?.InvalidateMeasure();
             }
         }
 
@@ -541,7 +539,7 @@ namespace Stride.Core.Presentation.Controls
                 if (viewport == value) return;
                 viewport = value;
 
-                ScrollOwner?.InvalidateScrollInfo();
+                ScrollOwner?.InvalidateMeasure();
             }
         }
 
@@ -643,13 +641,13 @@ namespace Stride.Core.Presentation.Controls
 
         public void MouseWheelUp()
         {
-            var lines = SystemParameters.WheelScrollLines;
+            const int lines = 3;
             SetVerticalOffset(VerticalOffset - lines * GetScrollLineHeightY());
         }
 
         public void MouseWheelDown()
         {
-            var lines = SystemParameters.WheelScrollLines;
+            const int lines = 3;
             SetVerticalOffset(VerticalOffset + lines * GetScrollLineHeightY());
         }
 
@@ -665,20 +663,20 @@ namespace Stride.Core.Presentation.Controls
 
         public Rect MakeVisible(Visual visual, Rect rectangle)
         {
-            if (rectangle.IsEmpty || visual == null || ReferenceEquals(visual, this) || !IsAncestorOf(visual))
+            if (rectangle == default || visual == null || ReferenceEquals(visual, this) || !IsAncestorOf(visual))
             {
-                return Rect.Empty;
+                return new Rect();
             }
 
             var treeViewItem = visual as TreeViewItem;
-            FrameworkElement element;
+            Control element;
             if (treeViewItem != null)
             {
-                element = treeViewItem.Template.FindName("border", treeViewItem) as FrameworkElement;
+                element = treeViewItem.Template.FindName("border", treeViewItem) as Control;
             }
             else
             {
-                element = visual as FrameworkElement;
+                element = visual as Control;
             }
 
             var transform = visual.TransformToAncestor(this);
@@ -689,7 +687,7 @@ namespace Stride.Core.Presentation.Controls
             {
                 SetHorizontalOffset(HorizontalOffset + rect.X);
             }
-            else if (treeViewItem != null && treeViewItem.ParentTreeView.ActualWidth < rect.X)
+            else if (treeViewItem != null && treeViewItem.ParentTreeView.Bounds.Width < rect.X)
             {
                 SetHorizontalOffset(HorizontalOffset + rect.X);
             }
@@ -698,10 +696,10 @@ namespace Stride.Core.Presentation.Controls
             {
                 SetVerticalOffset(VerticalOffset + rect.Y);
             }
-            else if (treeViewItem != null && treeViewItem.ParentTreeView.ActualHeight < rect.Y + rect.Height)
+            else if (treeViewItem != null && treeViewItem.ParentTreeView.Bounds.Height < rect.Y + rect.Height)
             {
                 // set 5 more, so the next item is realized for sure.
-                var verticalOffset = rect.Y + rect.Height + VerticalOffset - treeViewItem.ParentTreeView.ActualHeight + 5;
+                var verticalOffset = rect.Y + rect.Height + VerticalOffset - treeViewItem.ParentTreeView.Bounds.Height + 5;
                 SetVerticalOffset(verticalOffset);
             }
 
@@ -710,13 +708,13 @@ namespace Stride.Core.Presentation.Controls
 
         public void MouseWheelLeft()
         {
-            var lines = SystemParameters.WheelScrollLines;
+            const int lines = 3;
             SetHorizontalOffset(HorizontalOffset - lines * GetScrollLineHeightX());
         }
 
         public void MouseWheelRight()
         {
-            var lines = SystemParameters.WheelScrollLines;
+            const int lines = 3;
             SetHorizontalOffset(HorizontalOffset + lines * GetScrollLineHeightX());
         }
 
@@ -746,7 +744,7 @@ namespace Stride.Core.Presentation.Controls
 
             HorizontalOffset = offset;
 
-            ScrollOwner?.InvalidateScrollInfo();
+            ScrollOwner?.InvalidateMeasure();
 
             // Force us to realize the correct children
             InvalidateMeasure();
@@ -768,7 +766,7 @@ namespace Stride.Core.Presentation.Controls
 
             VerticalOffset = offset;
 
-            ScrollOwner?.InvalidateScrollInfo();
+            ScrollOwner?.InvalidateMeasure();
 
             // Force us to realize the correct children
             InvalidateMeasure();

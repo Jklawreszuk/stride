@@ -2,7 +2,7 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System.Reflection;
-using System.Windows.Data;
+using Avalonia.Data;
 using Stride.Core.Annotations;
 
 namespace Stride.Core.Presentation.Extensions
@@ -28,7 +28,7 @@ namespace Stride.Core.Presentation.Extensions
         /// <returns>A clone of the given <see cref="BindingBase"/></returns>
         public static BindingBase CloneBinding([NotNull] this BindingBase bindingBase, BindingMode mode)
         {
-            return (BindingBase)CloneMethodInfo.Invoke(bindingBase, new object[] { mode });
+            return (BindingBase)CloneMethodInfo.Invoke(bindingBase, [mode]);
         }
     }
 }

@@ -34,38 +34,40 @@ SOFTWARE.
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Markup;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Documents;
+using Avalonia.Controls.Shapes;
+using Avalonia.Media;
+using Avalonia.Metadata;
+using Avalonia.Styling;
+using CommunityToolkit.Mvvm.Input;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Internal;
 
 namespace Stride.Core.Presentation
 {
-    public sealed class XamlMarkdown : DependencyObject
+    public sealed class XamlMarkdown : AvaloniaObject
     {
         /// <summary>
         /// Identifies the <see cref="BaseUrl"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty BaseUrlProperty =
-            DependencyProperty.Register(nameof(BaseUrl), typeof(string), typeof(XamlMarkdown), new PropertyMetadata(null));
+        public static readonly AvaloniaProperty BaseUrlProperty =
+            AvaloniaProperty.Register<XamlMarkdown, string>(nameof(BaseUrl));
         /// <summary>
         /// Identifies the <see cref="HyperlinkCommand"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty HyperlinkCommandProperty =
-            DependencyProperty.Register(nameof(HyperlinkCommand), typeof(ICommand), typeof(XamlMarkdown), new PropertyMetadata(null));
+        public static readonly AvaloniaProperty HyperlinkCommandProperty =
+            AvaloniaProperty.Register<XamlMarkdown, ICommand>(nameof(HyperlinkCommand));
         /// <summary>
         /// Identifies the <see cref="StrictBoldItalic"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty StrictBoldItalicProperty =
-            DependencyProperty.Register(nameof(StrictBoldItalic), typeof(bool), typeof(XamlMarkdown), new PropertyMetadata(BooleanBoxes.FalseBox));
+        public static readonly AvaloniaProperty StrictBoldItalicProperty =
+            AvaloniaProperty.Register<XamlMarkdown, bool>(nameof(StrictBoldItalic));
 
         /// <summary>
         /// maximum nested depth of [] and () supported by the transform; implementation detail
@@ -86,21 +88,24 @@ namespace Stride.Core.Presentation
         /// <remarks><see cref="Application.Current"/> will be used for styles look-up.</remarks>
         public XamlMarkdown()
         {
-            HyperlinkCommand = NavigationCommands.GoToPage;
+            HyperlinkCommand = new RelayCommand<string>(GoToPage);
+        }
+        
+        private static void GoToPage(string uri)
+        {
+            Process.Start(new ProcessStartInfo(uri) { UseShellExecute = true });
         }
 
-        private readonly FrameworkElement resourcesProvider;
+        private readonly Control resourcesProvider;
 
         /// <summary>
         /// Creates an instance of <see cref="XamlMarkdown"/> with <paramref name="resourcesProvider"/> for styles look-up.
         /// </summary>
         /// <param name="resourcesProvider">The framework element used for styles look-up.</param>
-        public XamlMarkdown([NotNull] FrameworkElement resourcesProvider)
+        public XamlMarkdown([NotNull] Control resourcesProvider)
             : this()
         {
-            if (resourcesProvider == null) throw new ArgumentNullException(nameof(resourcesProvider));
-
-            this.resourcesProvider = resourcesProvider;
+            this.resourcesProvider = resourcesProvider ?? throw new ArgumentNullException(nameof(resourcesProvider));
         }
 
         /// <summary>
@@ -343,7 +348,7 @@ namespace Stride.Core.Presentation
                 url = (BaseUrl ?? string.Empty) + url;
             }
 
-            var result = Create<Hyperlink, Inline>(RunSpanGamut(linkText));
+            var result = Create<HyperlinkButton, Inline>(RunSpanGamut(linkText));
             // Note: cannot use Command and CommandParameter because of a WPF bug (when copying the text). See https://stackoverflow.com/questions/3206258/commandconverter-valid-exception-or-net-bug
             result.Click += (_, __) => HyperlinkCommand.Execute(url);
             return result;

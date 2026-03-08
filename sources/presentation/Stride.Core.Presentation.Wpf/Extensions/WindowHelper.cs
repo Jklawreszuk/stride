@@ -2,8 +2,8 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
-using System.Windows;
-using System.Windows.Interop;
+using Avalonia;
+using Avalonia.Controls;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Interop;
 
@@ -35,10 +35,12 @@ namespace Stride.Core.Presentation.Extensions
         public static void CenterToArea([NotNull] this Window window, Rect area)
         {
             if (window == null) throw new ArgumentNullException(nameof(window));
-            if (area == Rect.Empty) return;
+            if (area.Width <= 0 || area.Height <= 0) return;
 
-            window.Left = Math.Abs(area.Width - window.Width) / 2 + area.Left;
-            window.Top = Math.Abs(area.Height - window.Height) / 2 + area.Top;
+            var x = area.Left + Math.Abs(area.Width - window.Width) / 2;
+            var y = area.Top + Math.Abs(area.Height - window.Height) / 2;
+
+            window.Position = new PixelPoint((int)x, (int)y);
         }
 
         /// <summary>
@@ -67,40 +69,8 @@ namespace Stride.Core.Presentation.Extensions
         {
             if (window == null) throw new ArgumentNullException(nameof(window));
 
-            NativeHelper.POINT point;
-            NativeHelper.GetCursorPos(out point);
-            var position = window.PointFromScreen((Point)point);
-            position.Offset(window.Left, window.Top);
-            return position;
-        }
-
-        /// <summary>
-        /// Gets the size of the screen monitor for this <paramref cref="window"/>.
-        /// </summary>
-        /// <param name="window">The window.</param>>
-        /// <returns>The size of the screen monitor for this <paramref cref="window"/> in WPF screen coordinates (see remarks).</returns>
-        /// <remarks>
-        /// Because of monitor DPI, WPF screen coordinates and virtual screen coordinates can be different.
-        /// To convert a <see cref="Rect"/> in virtual screen coordinates to WPF screen coordinates:
-        /// <list type="number">
-        /// <item>Use <see cref="VisualExtensions.RectFromScreen(System.Windows.Media.Visual,Rect)"/></item>
-        /// <item>Offset the result <see cref="Rect"/> by the window top-left corner: <c>rect.Offset(window.Left, window.Top)</c></item>
-        /// </list>
-        /// To convert a <see cref="Rect"/> in WPF screen coordinates to virtual screen coordinates:
-        /// <list type="number">
-        /// <item>Un-offset the result <see cref="Rect"/> by the window top-left corner: <c>rect.Offset(-window.Left, -window.Top)</c></item>
-        /// <item>Use <see cref="VisualExtensions.RectToScreen(System.Windows.Media.Visual,Rect)"/></item>
-        /// </list>
-        /// </remarks>
-        public static Rect GetScreenSize([NotNull] this Window window)
-        {
-            var monitor = GetMonitorInfo(new WindowInteropHelper(window).Handle);
-            if (monitor == null) return Rect.Empty;
-
-            var area = (Rect)monitor.rcMonitor;
-            var rect = window.RectFromScreen(ref area);
-            rect.Offset(window.Left, window.Top);
-            return rect;
+            return window.PointToClient(/* there is no way to get cursor position :( */
+                new());
         }
 
         /// <summary>
@@ -125,12 +95,23 @@ namespace Stride.Core.Presentation.Extensions
         {
             if (window == null) throw new ArgumentNullException(nameof(window));
 
-            var monitor = GetMonitorInfo(new WindowInteropHelper(window).Handle);
-            if (monitor == null) return Rect.Empty;
-            
-            var area = (Rect)monitor.rcWork;
-            var rect = window.RectFromScreen(ref area);
-            rect.Offset(window.Left, window.Top);
+            var screens = window.Screens;
+
+            var screen = screens.ScreenFromWindow(window) ?? screens.Primary;
+
+            if (screen == null)
+                return new Rect();
+
+            var workingArea = screen.WorkingArea;
+
+            var scaling = screen.Scaling;
+            var rect = new Rect(
+                workingArea.X / scaling,
+                workingArea.Y / scaling,
+                workingArea.Width / scaling,
+                workingArea.Height / scaling
+            );
+
             return rect;
         }
 
@@ -158,25 +139,7 @@ namespace Stride.Core.Presentation.Extensions
 
             window.Width = area.Width;
             window.Height = area.Height;
-            window.Left = area.Left;
-            window.Top = area.Top;
+            window.Position = new PixelPoint((int)area.X, (int)area.Y);
         }
-
-        #region Internals
-        // FIXME: this should be turned private. Review usage in BehaviorProperties.
-        [CanBeNull]
-        internal static NativeHelper.MONITORINFO GetMonitorInfo(IntPtr hWnd)
-        {
-            var monitor = NativeHelper.MonitorFromWindow(hWnd, NativeHelper.MONITOR_DEFAULTTONEAREST);
-            if (monitor != IntPtr.Zero)
-            {
-                var monitorInfo = new NativeHelper.MONITORINFO();
-                NativeHelper.GetMonitorInfo(monitor, monitorInfo);
-                return monitorInfo;
-            }
-
-            return null;
-        }
-        #endregion // Internals
     }
 }

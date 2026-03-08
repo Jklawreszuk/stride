@@ -1,43 +1,32 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System.Collections.Generic;
-using System.Windows;
-using System.Windows.Media;
+using Avalonia;
+using Avalonia.Controls;
 
 namespace Stride.Core.Presentation.Drawing
 {
     /// <summary>
-    /// Provides a hosting <see cref="FrameworkElement"/> for a collection of <see cref="Visual"/>.
+    /// Provides a hosting <see cref="Control"/> for a collection of <see cref="Visual"/>.
     /// </summary>
-    internal class VisualHost : FrameworkElement
+    internal class VisualHost : Control
     {
-        private readonly VisualCollection children;
-
-        public VisualHost()
+        public void AddChild(Visual child)
         {
-            children = new VisualCollection(this);
-        }
-        
-        /// <inheritdoc/>
-        protected override int VisualChildrenCount => children.Count;
-
-        public int AddChild(Visual child)
-        {
-            return children.Add(child);
+            VisualChildren.Add(child);
+            LogicalChildren.Add(child);
         }
 
         public void AddChildren(IEnumerable<Visual> visuals)
         {
-            foreach (var child in children)
+            foreach (var child in visuals)
             {
-                children.Add(child);
-            }
-        }
+                if (child == null)
+                    continue;
 
-        /// <inheritdoc/>
-        protected override Visual GetVisualChild(int index)
-        {
-            return children[index];
+                VisualChildren.Add(child);
+                LogicalChildren.Add(child);
+            }
         }
     }
 }

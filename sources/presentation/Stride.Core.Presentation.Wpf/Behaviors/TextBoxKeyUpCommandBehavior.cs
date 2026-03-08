@@ -2,7 +2,9 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System.Windows;
 using System.Windows.Input;
-using Microsoft.Xaml.Behaviors;
+using Avalonia;
+using Avalonia.Input;
+using Avalonia.Xaml.Interactivity;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Controls;
 
@@ -13,20 +15,20 @@ namespace Stride.Core.Presentation.Behaviors
         /// <summary>
         /// Identifies the <see cref="Command"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty CommandProperty = DependencyProperty.Register("Command", typeof(ICommand), typeof(TextBoxKeyUpCommandBehavior));
+        public static readonly StyledProperty<ICommand> CommandProperty = AvaloniaProperty.Register<TextBoxKeyUpCommandBehavior,ICommand>("Command");
 
         /// <summary>
         /// Identifies the <see cref="Key"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty KeyProperty = DependencyProperty.Register("Key", typeof(Key), typeof(TextBoxKeyUpCommandBehavior), new PropertyMetadata(Key.Enter));
+        public static readonly StyledProperty<Key> KeyProperty = AvaloniaProperty.Register<TextBoxKeyUpCommandBehavior,Key>("Key", Key.Enter);
 
         /// <summary>
         /// Gets or sets the command to invoke.
         /// </summary>
-        public ICommand Command { get { return (ICommand)GetValue(CommandProperty); } set { SetValue(CommandProperty, value); } }
+        public ICommand Command { get { return GetValue(CommandProperty); } set { SetValue(CommandProperty, value); } }
 
         /// <summary>
-        /// Gets or sets the key that should trigger this behavior. The default is <see cref="System.Windows.Input.Key.Enter"/>.
+        /// Gets or sets the key that should trigger this behavior. The default is <see cref="Avalonia.Input.Key.Enter"/>.
         /// </summary>
         public Key Key { get { return (Key)GetValue(KeyProperty); } set { SetValue(KeyProperty, value); } }
 

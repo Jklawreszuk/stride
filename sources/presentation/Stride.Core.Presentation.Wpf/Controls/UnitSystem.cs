@@ -2,7 +2,7 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
+using Avalonia;
 using Stride.Core.Presentation.Internal;
 
 namespace Stride.Core.Presentation.Controls
@@ -10,11 +10,11 @@ namespace Stride.Core.Presentation.Controls
     /// <summary>
     /// Represent a unit system that can be used with a ScaleBar
     /// </summary>
-    public class UnitSystem : DependencyObject
+    public class UnitSystem : AvaloniaObject
     {
-        public static readonly DependencyProperty SymbolProperty = DependencyProperty.Register("Symbol", typeof(string), typeof(UnitSystem));
-        public static readonly DependencyProperty GroupingValuesProperty = DependencyProperty.Register("GroupingValues", typeof(UnitGroupingCollection), typeof(UnitSystem));
-        public static readonly DependencyProperty ConversionsProperty = DependencyProperty.Register("Conversions", typeof(UnitConversionCollection), typeof(UnitSystem));
+        public static readonly AvaloniaProperty SymbolProperty = AvaloniaProperty.Register<UnitSystem,string>("Symbol");
+        public static readonly AvaloniaProperty GroupingValuesProperty = AvaloniaProperty.Register<UnitSystem,UnitGroupingCollection>("GroupingValues");
+        public static readonly AvaloniaProperty ConversionsProperty = AvaloniaProperty.Register<UnitSystem,UnitConversionCollection>("Conversions");
 
         /// <summary>
         /// The default symbol of the unit that will be appended to numeric value in the ScaleBar
@@ -31,8 +31,8 @@ namespace Stride.Core.Presentation.Controls
 
         public UnitSystem()
         {
-            GroupingValues = new UnitGroupingCollection();
-            Conversions = new UnitConversionCollection();
+            GroupingValues = [];
+            Conversions = [];
         }
 
         public void GetAllGroupingValues(ref List<double> values)
@@ -45,12 +45,12 @@ namespace Stride.Core.Presentation.Controls
     /// <summary>
     /// Represent a unit conversion for an <see cref="UnitSystem" /> used for grouping large or small values (such as nano or mega units) 
     /// </summary>
-    public class UnitConversion : DependencyObject
+    public class UnitConversion : AvaloniaObject
     {
-        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register("Value", typeof(double), typeof(UnitConversion));
-        public static readonly DependencyProperty SymbolProperty = DependencyProperty.Register("Symbol", typeof(string), typeof(UnitConversion));
-        public static readonly DependencyProperty GroupingValuesProperty = DependencyProperty.Register("GroupingValues", typeof(UnitGroupingCollection), typeof(UnitConversion));
-        public static readonly DependencyProperty IsMultipliableProperty = DependencyProperty.Register("IsMultipliable", typeof(bool), typeof(UnitConversion));
+        public static readonly AvaloniaProperty ValueProperty = AvaloniaProperty.Register<UnitConversion, double>("Value");
+        public static readonly AvaloniaProperty SymbolProperty = AvaloniaProperty.Register<UnitConversion, string>("Symbol");
+        public static readonly AvaloniaProperty GroupingValuesProperty = AvaloniaProperty.Register<UnitConversion, UnitGroupingCollection>("GroupingValues");
+        public static readonly AvaloniaProperty IsMultipliableProperty = AvaloniaProperty.Register<UnitConversion, bool>("IsMultipliable");
 
         /// <summary>
         /// The value of this conversion expressed in its parent unit
@@ -71,18 +71,18 @@ namespace Stride.Core.Presentation.Controls
 
         public UnitConversion()
         {
-            GroupingValues = new UnitGroupingCollection();
+            GroupingValues = [];
         }
     }
 
     /// <summary>
     /// Represent an acceptable value for grouping units
     /// </summary>
-    public class UnitGrouping : DependencyObject
+    public class UnitGrouping : AvaloniaObject
     {
-        public static readonly DependencyProperty LargeIntervalSizeProperty = DependencyProperty.Register("LargeIntervalSize", typeof(double), typeof(UnitGrouping));
-        public static readonly DependencyProperty SmallIntervalCountProperty = DependencyProperty.Register("SmallIntervalCount", typeof(int), typeof(UnitGrouping), new FrameworkPropertyMetadata(10));
-        public static readonly DependencyProperty IsMultipliableProperty = DependencyProperty.Register("IsMultipliable", typeof(bool), typeof(UnitGrouping));
+        public static readonly AvaloniaProperty LargeIntervalSizeProperty = AvaloniaProperty.Register<UnitConversion, double>("LargeIntervalSize");
+        public static readonly AvaloniaProperty SmallIntervalCountProperty = AvaloniaProperty.Register<UnitConversion, int>("SmallIntervalCount", 10);
+        public static readonly AvaloniaProperty IsMultipliableProperty = AvaloniaProperty.Register<UnitConversion, bool>("IsMultipliable");
 
         /// <summary>
         /// Grouping value that represent the length of a large tick interval in a ScaleBar

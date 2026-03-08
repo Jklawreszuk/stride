@@ -8,7 +8,7 @@ using Stride.Core.Presentation.Behaviors;
 
 namespace Stride.Core.Assets.Editor.View.Behaviors
 {
-    public abstract class ActivateOnLocationChangedBehavior<T> : ActivateOnCollectionChangedBehavior<T> where T : DependencyObject
+    public abstract class ActivateOnLocationChangedBehavior<T> : ActivateOnCollectionChangedBehavior<T> where T : AvaloniaObject
     {
         private bool selectionDone;
 

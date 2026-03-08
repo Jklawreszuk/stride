@@ -1,14 +1,14 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
-using System.Windows.Data;
-using System.Windows.Markup;
+using Avalonia.Data;
+using Avalonia.Metadata;
 
 namespace Stride.Core.Presentation.MarkupExtensions
 {
     /// <summary>
     /// This class extends the <see cref="System.Windows.Data.MultiBinding"/> by providing constructors that allows construction using markup extension.
     /// </summary>
-    public class MultiBinding : System.Windows.Data.MultiBinding
+    public class MultiBinding : Avalonia.Data.MultiBinding
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="MultiBinding"/> class.

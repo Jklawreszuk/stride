@@ -1,9 +1,10 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
+using System.Collections.Generic;
 using System.Globalization;
-using System.Windows.Data;
-using System.Windows.Markup;
+using Avalonia.Data.Converters;
+using Avalonia.Markup.Xaml;
 
 namespace Stride.Core.Presentation.ValueConverters
 {
@@ -27,11 +28,11 @@ namespace Stride.Core.Presentation.ValueConverters
         /// <inheritdoc/>
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
-            return valueConverterInstance ?? (valueConverterInstance = new T());
+            return valueConverterInstance ??= new T();
         }
 
         /// <inheritdoc/>
-        public abstract object Convert(object[] values, Type targetType, object parameter, CultureInfo culture);
+        public abstract object Convert(IList<object> values, Type targetType, object parameter, CultureInfo culture);
 
         /// <inheritdoc/>
         public abstract object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture);

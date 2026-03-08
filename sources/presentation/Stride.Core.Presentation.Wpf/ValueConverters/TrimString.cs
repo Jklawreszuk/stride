@@ -1,9 +1,10 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
+using System.Collections.Generic;
 using System.Globalization;
-using System.Windows;
-using System.Windows.Controls;
+using Avalonia.Controls;
+using Avalonia.Media;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Controls;
 
@@ -20,15 +21,13 @@ namespace Stride.Core.Presentation.ValueConverters
         public string WordSeparators { get; set; }
 
         /// <inheritdoc />
-        public override object Convert([NotNull] object[] values, Type targetType, object parameter, CultureInfo culture)
+        public override object Convert([NotNull] IList<object> values, Type targetType, object parameter, CultureInfo culture)
         {
             if (values == null) throw new ArgumentNullException(nameof(values));
-            if (values.Length != 2)
+            if (values.Count != 2)
                 throw new ArgumentException("The number of provided bindings to this converter must be 2.");
 
             var text = values[0]?.ToString() ?? string.Empty;
-            if (values[1] is Control control)
-                return Trimming.ProcessTrimming(control, text, TextTrimming, TrimmingSource, WordSeparators, MaxWidth);
             if (values[1] is TextBlock textBlock)
                 return Trimming.ProcessTrimming(textBlock, text, TextTrimming, TrimmingSource, WordSeparators, MaxWidth);
             return text;

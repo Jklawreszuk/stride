@@ -3,9 +3,10 @@
 
 using System;
 using System.Runtime.CompilerServices;
-using System.Windows;
-using System.Windows.Documents;
-using System.Windows.Media;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
+using Avalonia.VisualTree;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Interop;
 
@@ -26,10 +27,11 @@ namespace Stride.Core.Presentation.Extensions
         public static Point GetCursorRelativePosition([NotNull] this Visual visual)
         {
             if (visual == null) throw new ArgumentNullException(nameof(visual));
+            
+            //todo
+            Point point = visual.GetCursorRelativePosition();
 
-            NativeHelper.POINT point;
-            NativeHelper.GetCursorPos(out point);
-            return visual.PointFromScreen((Point)point);
+            return point;  //visual.PointToClient(new (point.X, point.Y));
         }
 
         /// <summary>
@@ -43,7 +45,7 @@ namespace Stride.Core.Presentation.Extensions
         {
             if (visual == null) throw new ArgumentNullException(nameof(visual));
 
-            return Window.GetWindow(visual).GetCursorScreenPosition();
+            return TopLevel.GetTopLevel(visual)!.GetCursorScreenPosition();
         }
 
         [CanBeNull]
@@ -61,13 +63,15 @@ namespace Stride.Core.Presentation.Extensions
             if (AdornerLayer.GetAdornerLayer(source) != null && source is T)
                 return (T)source;
 
-            var childCount = VisualTreeHelper.GetChildrenCount(source);
-            for (var i = 0; i < childCount; i++)
+            
+            foreach (var child in source.GetVisualChildren())
             {
-                var child = VisualTreeHelper.GetChild(source, i) as T;
-                var test = child?.FindAdornableOfType<T>();
-                if (test != null)
-                    return test;
+                if (child is Visual visualChild)
+                {
+                    var result = visualChild.FindAdornableOfType<T>();
+                    if (result != null)
+                        return result;
+                }
             }
 
             return null;
@@ -82,13 +86,14 @@ namespace Stride.Core.Presentation.Extensions
             if (adornerLayer != null)
                 return adornerLayer;
 
-            var childCount = VisualTreeHelper.GetChildrenCount(source);
-            for (var i = 0; i < childCount; i++)
+            foreach (var child in source.GetVisualChildren())
             {
-                var child = VisualTreeHelper.GetChild(source, i) as Visual;
-                var test = child?.FindAdornerLayer();
-                if (test != null)
-                    return test;
+                if (child is Visual visualChild)
+                {
+                    var result = visualChild.FindAdornerLayer();
+                    if (result != null)
+                        return result;
+                }
             }
 
             return null;
@@ -116,8 +121,9 @@ namespace Stride.Core.Presentation.Extensions
         {
             if (visual == null) throw new ArgumentNullException(nameof(visual));
 
-            var topLeft = visual.PointFromScreen(new Point(rect.Left, rect.Top));
-            var bottomRight = visual.PointFromScreen(new Point(rect.Right, rect.Bottom));
+            var topLeft = visual.PointToClient(new PixelPoint((int)rect.Left, (int)rect.Top));
+            var bottomRight = visual.PointToClient(new PixelPoint((int)rect.Right, (int)rect.Bottom));
+
             return new Rect(topLeft, bottomRight);
         }
 
@@ -145,7 +151,7 @@ namespace Stride.Core.Presentation.Extensions
 
             var topLeft = visual.PointToScreen(new Point(rect.Left, rect.Top));
             var bottomRight = visual.PointToScreen(new Point(rect.Right, rect.Bottom));
-            return new Rect(topLeft, bottomRight);
+            return new Rect(topLeft.ToPoint(1), bottomRight.ToPoint(1));
         }
 
     }

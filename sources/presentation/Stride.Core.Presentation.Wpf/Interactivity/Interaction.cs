@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System.Windows;
+using Avalonia;
+using Avalonia.Controls;
 using Stride.Core.Annotations;
 
 namespace Stride.Core.Presentation.Interactivity
@@ -13,21 +15,22 @@ namespace Stride.Core.Presentation.Interactivity
     /// When the collection is modified or set, it automatically synchronize the attached property
     /// Microsoft.Xaml.Behaviors.Interaction.Behaviors.
     /// </summary>
-    public static class Interaction
+    public class Interaction
     {
-        public static readonly DependencyProperty BehaviorsProperty = DependencyProperty.RegisterAttached("Behaviors", typeof(BehaviorCollection), typeof(Interaction), new PropertyMetadata(new BehaviorCollection(), OnBehaviorCollectionChanged));
+        public static readonly AttachedProperty<BehaviorCollection> BehaviorsProperty =
+            AvaloniaProperty.RegisterAttached<Interaction, Control, BehaviorCollection>("Behaviors", defaultValue: null);
 
-        public static BehaviorCollection GetBehaviors([NotNull] DependencyObject obj)
+        public static BehaviorCollection GetBehaviors([NotNull] AvaloniaObject obj)
         {
-            return (BehaviorCollection)obj.GetValue(BehaviorsProperty);
+            return obj.GetValue(BehaviorsProperty);
         }
 
-        public static void SetBehaviors([NotNull] DependencyObject obj, BehaviorCollection value)
+        public static void SetBehaviors([NotNull] AvaloniaObject obj, BehaviorCollection value)
         {
             obj.SetValue(BehaviorsProperty, value);
         }
 
-        private static void OnBehaviorCollectionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnBehaviorCollectionChanged(AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var oldValue = (BehaviorCollection)e.OldValue;
             oldValue?.Detach();

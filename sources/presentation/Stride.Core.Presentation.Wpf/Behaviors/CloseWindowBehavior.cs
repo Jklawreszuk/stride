@@ -2,9 +2,10 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
 using System.Reflection;
-using System.Windows;
 using System.Windows.Input;
-using Microsoft.Xaml.Behaviors;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Xaml.Interactivity;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Services;
 
@@ -14,25 +15,25 @@ namespace Stride.Core.Presentation.Behaviors
     /// A base behavior that will close the window it is contained in an event occurs on a control. A command can be executed
     /// before closing the window by using the <see cref="Command"/> and <see cref="CommandParameter"/> properties of this behavior.
     /// </summary>
-    public abstract class CloseWindowBehavior<T> : Behavior<T> where T : DependencyObject
+    public abstract class CloseWindowBehavior<T> : Behavior<T> where T : AvaloniaObject
     {
         /// <summary>
         /// Identifies the <see cref="DialogResult"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty DialogResultProperty = DependencyProperty.Register("DialogResult", typeof(DialogResult), typeof(CloseWindowBehavior<T>));
+        public static readonly AvaloniaProperty DialogResultProperty = AvaloniaProperty.Register<CloseWindowBehavior<T>, DialogResult>("DialogResult");
 
         /// <summary>
         /// Identifies the <see cref="Command"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty CommandProperty = DependencyProperty.Register("Command", typeof(ICommand), typeof(CloseWindowBehavior<T>), new PropertyMetadata(null, CommandChanged));
+        public static readonly AvaloniaProperty CommandProperty = AvaloniaProperty.Register<CloseWindowBehavior<T>, ICommand>("Command");
 
         /// <summary>
         /// Identifies the <see cref="CommandParameter"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty CommandParameterProperty = DependencyProperty.Register("CommandParameter", typeof(object), typeof(CloseWindowBehavior<T>), new PropertyMetadata(null, CommandParameterChanged));
+        public static readonly AvaloniaProperty CommandParameterProperty = AvaloniaProperty.Register<CloseWindowBehavior<T>, object>("CommandParameter");
 
         /// <summary>
-        /// Gets or sets the value to set to the <see cref="Window.DialogResult"/> property of the window the associated button is contained in.
+        /// Gets or sets the value to set to the <see cref="Services.DialogResult"/> property of the window the associated button is contained in.
         /// </summary>
         public DialogResult DialogResult { get { return (DialogResult)GetValue(DialogResultProperty); } set { SetValue(DialogResultProperty, value); } }
 
@@ -46,23 +47,29 @@ namespace Stride.Core.Presentation.Behaviors
         /// </summary>
         public object CommandParameter { get { return GetValue(CommandParameterProperty); } set { SetValue(CommandParameterProperty, value); } }
 
+        static CloseWindowBehavior()
+        {
+            CommandProperty.Changed.AddClassHandler<CloseWindowBehavior<T>>((o, e) => CommandChanged(o, e));
+            CommandParameterProperty.Changed.AddClassHandler<CloseWindowBehavior<T>>((o, e) => CommandChanged(o, e));
+            
+        }
+        
         /// <inheritdoc/>
         protected override void OnAttached()
         {
             base.OnAttached();
             if (Command != null)
             {
-                AssociatedObject.SetCurrentValue(UIElement.IsEnabledProperty, Command.CanExecute(CommandParameter));
+                AssociatedObject.SetCurrentValue(Control.IsEnabledProperty, Command.CanExecute(CommandParameter));
             }
         }
 
-        private static void CommandChanged([NotNull] DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void CommandChanged([NotNull] AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var behavior = (ButtonCloseWindowBehavior)d;
-            var oldCommand = e.OldValue as ICommand;
             var newCommand = e.NewValue as ICommand;
 
-            if (oldCommand != null)
+            if (e.OldValue is ICommand oldCommand)
             {
                 oldCommand.CanExecuteChanged -= behavior.CommandCanExecuteChanged;
             }
@@ -72,18 +79,18 @@ namespace Stride.Core.Presentation.Behaviors
             }
         }
 
-        private static void CommandParameterChanged([NotNull] DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void CommandParameterChanged([NotNull] AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var behavior = (ButtonCloseWindowBehavior)d;
             if (behavior.Command != null)
             {
-                behavior.AssociatedObject.SetCurrentValue(UIElement.IsEnabledProperty, behavior.Command.CanExecute(behavior.CommandParameter));
+                behavior.AssociatedObject.SetCurrentValue(Control.IsEnabledProperty, behavior.Command.CanExecute(behavior.CommandParameter));
             }
         }
 
         private void CommandCanExecuteChanged(object sender, EventArgs e)
         {
-            AssociatedObject.SetCurrentValue(UIElement.IsEnabledProperty, Command.CanExecute(CommandParameter));
+            AssociatedObject.SetCurrentValue(Control.IsEnabledProperty, Command.CanExecute(CommandParameter));
         }
 
         /// <summary>
@@ -96,40 +103,22 @@ namespace Stride.Core.Presentation.Behaviors
                 Command.Execute(CommandParameter);
             }
 
-            var window = Window.GetWindow(AssociatedObject);
-            if (window == null) throw new InvalidOperationException("The button attached to this behavior is not in a window");
-
-            bool dialogResultUpdated = false;
-            bool processed = false;
-            var modal = window as IModalDialogInternal;
-
-            if (modal != null)
+            if (AssociatedObject is not Visual visualObject)
             {
-                modal.Result = DialogResult;
-                processed = true;
+                return;
             }
 
-            // Window.DialogResult setter will throw an exception when the window was not displayed with ShowDialog, even if we're setting null.
-            if (WpfModalHelper.IsModal(window))
+            if (TopLevel.GetTopLevel(visualObject) is not Window window)
             {
-                if (DialogResult != WpfModalHelper.ToDialogResult(window.DialogResult))
-                {
-                    // Setting DialogResult to a non-null value will close the window, we don't want to invoke Close after that.
-                    window.DialogResult = WpfModalHelper.ToDialogResult(DialogResult);
-                    dialogResultUpdated = true;
-                }
-                processed = true;
+                throw new InvalidOperationException("The button attached to this behavior is not in a window");
             }
 
-            if (DialogResult != DialogResult.None && !processed)
+            if (window is IModalDialogInternal modal)
             {
-                throw new InvalidOperationException("The DialogResult can be set by a CloseWindowBehavior only if the window has been shown with ShowDialog or implements IModalDialogInternal");
+                modal.Result = DialogResult; //todo Avalonia uses ShowDialog to get DialogResult 
             }
 
-            if (window.DialogResult == null || !dialogResultUpdated)
-            {
-                window.Close();
-            }
+            window.Close();
         }
     }
 
@@ -161,17 +150,13 @@ namespace Stride.Core.Presentation.Behaviors
 
         public static bool? ToDialogResult(DialogResult dialogResult)
         {
-            switch (dialogResult)
+            return dialogResult switch
             {
-                case DialogResult.None:
-                    return null;
-                case DialogResult.Ok:
-                    return true;
-                case DialogResult.Cancel:
-                    return false;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(dialogResult), dialogResult, null);
-            }
+                DialogResult.None => null,
+                DialogResult.Ok => true,
+                DialogResult.Cancel => false,
+                _ => throw new ArgumentOutOfRangeException(nameof(dialogResult), dialogResult, null)
+            };
         }
     }
 }

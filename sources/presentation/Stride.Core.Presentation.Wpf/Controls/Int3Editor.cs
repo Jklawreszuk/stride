@@ -2,7 +2,7 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
 using System.Windows;
-
+using Avalonia;
 using Stride.Core.Mathematics;
 
 namespace Stride.Core.Presentation.Controls
@@ -12,18 +12,17 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="X"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty XProperty = DependencyProperty.Register("X", typeof(int?), typeof(Int3Editor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
-
+        public static readonly AvaloniaProperty XProperty = AvaloniaProperty.Register<Int3Editor, int?>("X");
+            
         /// <summary>
         /// Identifies the <see cref="Y"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty YProperty = DependencyProperty.Register("Y", typeof(int?), typeof(Int3Editor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
-
+        public static readonly AvaloniaProperty YProperty = AvaloniaProperty.Register<Int3Editor, int?>("Y");
         /// <summary>
         /// Identifies the <see cref="Z"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ZProperty = DependencyProperty.Register("Z", typeof(int?), typeof(Int3Editor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
-
+        public static readonly AvaloniaProperty ZProperty = AvaloniaProperty.Register<Int3Editor, int?>("Z");
+        
         /// <summary>
         /// Gets or sets the X component of the <see cref="Int3"/> associated to this control.
         /// </summary>
@@ -39,6 +38,13 @@ namespace Stride.Core.Presentation.Controls
         /// </summary>
         public int? Z { get { return (int?)GetValue(ZProperty); } set { SetValue(ZProperty, value); } }
 
+        static Int3Editor()
+        {
+            XProperty.Changed.AddClassHandler<Int3Editor>((sender, e) => OnComponentPropertyChanged(sender, e));
+            YProperty.Changed.AddClassHandler<Int3Editor>((sender, e) => OnComponentPropertyChanged(sender, e));
+            ZProperty.Changed.AddClassHandler<Int3Editor>((sender, e) => OnComponentPropertyChanged(sender, e));
+        }
+        
         /// <inheritdoc/>
         protected override void UpdateComponentsFromValue(Int3? value)
         {
@@ -51,7 +57,7 @@ namespace Stride.Core.Presentation.Controls
         }
 
         /// <inheritdoc/>
-        protected override Int3? UpdateValueFromComponent(DependencyProperty property)
+        protected override Int3? UpdateValueFromComponent(AvaloniaProperty property)
         {
             if (property == XProperty)
                 return X.HasValue && Value.HasValue ? (Int3?)new Int3(X.Value, Value.Value.Y, Value.Value.Z) : null;

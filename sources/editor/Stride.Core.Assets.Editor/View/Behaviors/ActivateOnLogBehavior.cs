@@ -14,7 +14,7 @@ namespace Stride.Core.Assets.Editor.View.Behaviors
     /// receives a new message which has an equal or greater level comparing to the <see cref="MinimumLevel"/> of this behavior.
     /// </summary>
     /// <typeparam name="T">The type of dependency object associated to this behavior.</typeparam>
-    public abstract class ActivateOnLogBehavior<T> : ActivateOnCollectionChangedBehavior<T> where T : DependencyObject
+    public abstract class ActivateOnLogBehavior<T> : ActivateOnCollectionChangedBehavior<T> where T : AvaloniaObject
     {
         private bool selectionDone;
 

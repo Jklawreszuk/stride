@@ -2,7 +2,7 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
 using System.Windows;
-
+using Avalonia;
 using Stride.Core.Mathematics;
 
 namespace Stride.Core.Presentation.Controls
@@ -12,12 +12,12 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="X"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty XProperty = DependencyProperty.Register("X", typeof(int?), typeof(Int2Editor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
+        public static readonly AvaloniaProperty XProperty = AvaloniaProperty.Register<Int2Editor, int?>("X");
 
         /// <summary>
         /// Identifies the <see cref="Y"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty YProperty = DependencyProperty.Register("Y", typeof(int?), typeof(Int2Editor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
+        public static readonly AvaloniaProperty YProperty = AvaloniaProperty.Register<Int2Editor, int?>("Y");
 
         /// <summary>
         /// Gets or sets the X component of the <see cref="Int2"/> associated to this control.
@@ -28,6 +28,12 @@ namespace Stride.Core.Presentation.Controls
         /// Gets or sets the Y component of the <see cref="Int2"/> associated to this control.
         /// </summary>
         public int? Y { get { return (int?)GetValue(YProperty); } set { SetValue(YProperty, value); } }
+
+        static Int2Editor()
+        {
+            XProperty.Changed.AddClassHandler<Int2Editor>((sender, e) => OnComponentPropertyChanged(sender, e));
+            YProperty.Changed.AddClassHandler<Int2Editor>((sender, e) => OnComponentPropertyChanged(sender, e));
+        }
 
         /// <inheritdoc/>
         protected override void UpdateComponentsFromValue(Int2? value)
@@ -40,7 +46,7 @@ namespace Stride.Core.Presentation.Controls
         }
 
         /// <inheritdoc/>
-        protected override Int2? UpdateValueFromComponent(DependencyProperty property)
+        protected override Int2? UpdateValueFromComponent(AvaloniaProperty property)
         {
             if (property == XProperty)
                 return X.HasValue && Value.HasValue ? (Int2?)new Int2(X.Value, Value.Value.Y) : null;

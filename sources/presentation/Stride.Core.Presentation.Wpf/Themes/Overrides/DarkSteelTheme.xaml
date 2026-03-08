@@ -2,11 +2,11 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 -->
-<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                    x:Class="Stride.Core.Presentation.Themes.Overrides.DarkSteelTheme"
+                    x:Class="Stride.Core.Presentation.Themes.DarkSteelTheme"
                     mc:Ignorable="d">
   <!-- Main Colors -->
 
@@ -102,7 +102,7 @@
 
   <SolidColorBrush x:Key="MenuBlueGlyphs" Color="#007ACC" />
 
-  <DropShadowBitmapEffect x:Key="PopupDropShadow" ShadowDepth="1.5" Softness="0.15" />
+  <DropShadowEffect x:Key="PopupDropShadow" Color="#80000000" BlurRadius="10" OffsetX="0" OffsetY="2" />
 
   <SolidColorBrush x:Key="CodeEditorBackgroundBrush" Color="#FF1E1E1E" />
 

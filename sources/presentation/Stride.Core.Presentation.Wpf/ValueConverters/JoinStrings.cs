@@ -28,7 +28,7 @@ namespace Stride.Core.Presentation.ValueConverters
         {
             var str = (string)value;
             var separator = (string)parameter;
-            return str.Split(new[] { separator ?? " "}, StringSplitOptions.None);
+            return str.Split([separator ?? " "], StringSplitOptions.None);
         }
     }
 }

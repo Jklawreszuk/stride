@@ -2,21 +2,26 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
 using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
 using System.Windows.Input;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Metadata;
+using Avalonia.Controls.Primitives;
+using Avalonia.Data;
+using Avalonia.Input;
+using Avalonia.Interactivity;
+using Avalonia.Styling;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Core;
 using Stride.Core.Presentation.Extensions;
 using Stride.Core.Presentation.Internal;
+using FocusManager = Avalonia.Input.FocusManager;
 
 namespace Stride.Core.Presentation.Controls
 {
     [TemplatePart(Name = EditableTextBoxPartName, Type = typeof(TextBox))]
     [TemplatePart(Name = ListBoxPartName, Type = typeof(ListBox))]
-    public class SearchComboBox : Selector
+    public class SearchComboBox : SelectingItemsControl
     {
         /// <summary>
         /// The name of the part for the <see cref="TextBox"/>.
@@ -30,48 +35,48 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="AlternativeCommand"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty AlternativeCommandProperty =
-            DependencyProperty.Register("AlternativeCommand", typeof(ICommand), typeof(SearchComboBox));
+        public static readonly AvaloniaProperty AlternativeCommandProperty =
+            AvaloniaProperty.Register<SearchComboBox, ICommand>("AlternativeCommand");
         /// <summary>
         /// Identifies the <see cref="AlternativeModifiers"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty AlternativeModifiersProperty =
-            DependencyProperty.Register("AlternativeModifiers", typeof(ModifierKeys), typeof(SearchComboBox), new PropertyMetadata(ModifierKeys.Shift));
+        public static readonly AvaloniaProperty AlternativeModifiersProperty =
+            AvaloniaProperty.Register<SearchComboBox, KeyModifiers>("AlternativeModifiers", KeyModifiers.Shift);
         /// <summary>
         /// Identifies the <see cref="ClearTextAfterSelection"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ClearTextAfterSelectionProperty =
-            DependencyProperty.Register("ClearTextAfterSelection", typeof(bool), typeof(SearchComboBox));
+        public static readonly AvaloniaProperty ClearTextAfterSelectionProperty =
+            AvaloniaProperty.Register<SearchComboBox, KeyModifiers>("ClearTextAfterSelection");
         /// <summary>
         /// Identifies the <see cref="Command"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty CommandProperty =
-            DependencyProperty.Register("Command", typeof(ICommand), typeof(SearchComboBox));
+        public static readonly AvaloniaProperty CommandProperty =
+            AvaloniaProperty.Register<SearchComboBox, ICommand>("Command");
         /// <summary>
         /// Identifies the <see cref="IsAlternative"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty IsAlternativeProperty =
-            DependencyProperty.Register("IsAlternative", typeof(bool), typeof(SearchComboBox), new PropertyMetadata(BooleanBoxes.FalseBox));
+        public static readonly AvaloniaProperty IsAlternativeProperty =
+            AvaloniaProperty.Register<SearchComboBox, bool>("IsAlternative");
         /// <summary>
         /// Identifies the <see cref="IsDropDownOpen"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty IsDropDownOpenProperty =
-            DependencyProperty.Register("IsDropDownOpen", typeof(bool), typeof(SearchComboBox));
+        public static readonly AvaloniaProperty IsDropDownOpenProperty =
+            AvaloniaProperty.Register<SearchComboBox, bool>("IsDropDownOpen");
         /// <summary>
         /// Identifies the <see cref="OpenDropDownOnFocus"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty OpenDropDownOnFocusProperty =
-            DependencyProperty.Register("OpenDropDownOnFocus", typeof(bool), typeof(SearchComboBox));
+        public static readonly AvaloniaProperty OpenDropDownOnFocusProperty =
+            AvaloniaProperty.Register<SearchComboBox, bool>("OpenDropDownOnFocus");
         /// <summary>
         /// Identifies the <see cref="SearchText"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty SearchTextProperty =
-            DependencyProperty.Register("SearchText", typeof(string), typeof(SearchComboBox), new FrameworkPropertyMetadata { BindsTwoWayByDefault = true });
+        public static readonly AvaloniaProperty SearchTextProperty =
+            AvaloniaProperty.Register<SearchComboBox, string>("SearchText", defaultBindingMode: BindingMode.TwoWay);
         /// <summary>
         /// Identifies the <see cref="WatermarkContent"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty WatermarkContentProperty =
-            DependencyProperty.Register("WatermarkContent", typeof(object), typeof(SearchComboBox));
+        public static readonly AvaloniaProperty WatermarkContentProperty =
+            AvaloniaProperty.Register<SearchComboBox, object>("WatermarkContent");
 
         /// <summary>
         /// The input text box.
@@ -92,11 +97,7 @@ namespace Stride.Core.Presentation.Controls
 
         static SearchComboBox()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(SearchComboBox), new FrameworkPropertyMetadata(typeof(SearchComboBox)));
-
-            SelectedIndexProperty.OverrideMetadata(typeof(SearchComboBox), new FrameworkPropertyMetadata { DefaultUpdateSourceTrigger = UpdateSourceTrigger.Explicit });
-            SelectedItemProperty.OverrideMetadata(typeof(SearchComboBox), new FrameworkPropertyMetadata { DefaultUpdateSourceTrigger = UpdateSourceTrigger.Explicit });
-            SelectedValueProperty.OverrideMetadata(typeof(SearchComboBox), new FrameworkPropertyMetadata { DefaultUpdateSourceTrigger = UpdateSourceTrigger.Explicit });
+            
         }
 
         public SearchComboBox()
@@ -106,19 +107,19 @@ namespace Stride.Core.Presentation.Controls
 
         /// <summary>
         /// Gets or Sets the command that is invoked once a selection has been made and <see cref="AlternativeModifiers"/> are active.
-        /// The parameter of the command is the current <see cref="Selector.SelectedValue"/>.
+        /// The parameter of the command is the current <see cref="SelectingItemsControl.SelectedValue"/>.
         /// </summary>
         public ICommand AlternativeCommand { get { return (ICommand)GetValue(AlternativeCommandProperty); } set { SetValue(AlternativeCommandProperty, value); } }
         /// <summary>
         /// 
         /// </summary>
-        public ModifierKeys AlternativeModifiers { get { return (ModifierKeys)GetValue(AlternativeModifiersProperty); } set { SetValue(AlternativeModifiersProperty, value); } }
+        public KeyModifiers AlternativeModifiers { get { return (KeyModifiers)GetValue(AlternativeModifiersProperty); } set { SetValue(AlternativeModifiersProperty, value); } }
         /// <summary>
         /// Gets or sets whether to clear the text after the selection.
         /// </summary>
         public bool ClearTextAfterSelection { get { return (bool)GetValue(ClearTextAfterSelectionProperty); } set { SetValue(ClearTextAfterSelectionProperty, value.Box()); } }
         /// <summary>
-        /// Gets or Sets the command that is invoked once a selection has been made. The parameter of the command is the current <see cref="Selector.SelectedValue"/>.
+        /// Gets or Sets the command that is invoked once a selection has been made. The parameter of the command is the current <see cref="SelectingItemsControl.SelectedValue"/>.
         /// </summary>
         public ICommand Command { get { return (ICommand)GetValue(CommandProperty); } set { SetValue(CommandProperty, value); } }
         /// <summary>
@@ -142,28 +143,28 @@ namespace Stride.Core.Presentation.Controls
         /// </summary>
         public object WatermarkContent { get { return GetValue(WatermarkContentProperty); } set { SetValue(WatermarkContentProperty, value); } }
 
-        public override void OnApplyTemplate()
+        protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
-            base.OnApplyTemplate();
+            base.OnApplyTemplate(e);
 
-            editableTextBox = GetTemplateChild(EditableTextBoxPartName) as TextBox;
+            editableTextBox =  e.NameScope.Find<TextBox>(EditableTextBoxPartName);
             if (editableTextBox == null)
                 throw new InvalidOperationException($"A part named '{EditableTextBoxPartName}' must be present in the ControlTemplate, and must be of type '{typeof(TextBox).FullName}'.");
 
-            listBox = GetTemplateChild(ListBoxPartName) as ListBox;
+            listBox =  e.NameScope.Find<ListBox>(ListBoxPartName);
             if (listBox == null)
                 throw new InvalidOperationException($"A part named '{ListBoxPartName}' must be present in the ControlTemplate, and must be of type '{nameof(ListBox)}'.");
             
             editableTextBox.LostFocus += EditableTextBoxLostFocus;
-            editableTextBox.PreviewKeyDown += EditableTextBoxPreviewKeyDown;
-            editableTextBox.PreviewKeyUp += EditableTextBoxPreviewKeyUp;
+            editableTextBox.KeyDown += EditableTextBoxPreviewKeyDown;
+            editableTextBox.KeyUp += EditableTextBoxPreviewKeyUp;
             editableTextBox.Validated += EditableTextBoxValidated;
-            listBox.MouseUp += ListBoxMouseUp;
+            listBox.PointerReleased += ListBoxPointerReleased;
         }
 
-        protected override void OnGotKeyboardFocus(KeyboardFocusChangedEventArgs e)
+        protected override void OnGotFocus(GotFocusEventArgs e)
         {
-            base.OnGotKeyboardFocus(e);
+            base.OnGotFocus(e);
             if (OpenDropDownOnFocus && !listBoxClicking)
             {
                 IsDropDownOpen = true;
@@ -189,16 +190,17 @@ namespace Stride.Core.Presentation.Controls
             }
         }
 
-        protected override void OnLostKeyboardFocus(KeyboardFocusChangedEventArgs e)
+        protected override void OnLostFocus(RoutedEventArgs e)
         {
-            base.OnLostKeyboardFocus(e);
+            base.OnLostFocus(e);
+            var topLevel = TopLevel.GetTopLevel(this);
+            var newFocus = topLevel?.FocusManager?.GetFocusedElement();
 
-            var el = e.NewFocus as UIElement;
-            if (el != null)
+            if (newFocus is Control el)
             {
-                // The user probably clicked (MouseDown) somewhere on our dropdown listbox, so we won't clear to be able to
-                // get the MouseUp event (<see cref="ListBoxMouseUp">).
-                if (listBox.FindVisualChildrenOfType<UIElement>().Contains(el))
+                // The user probably clicked (PointerPressed) somewhere on our dropdown listbox, so we won't clear to be able to
+                // get the PointerReleased event (<see cref="ListBoxPointerReleased">).
+                if (listBox.FindVisualChildrenOfType<Control>().Contains(el))
                     return;
             }
 
@@ -310,7 +312,7 @@ namespace Stride.Core.Presentation.Controls
             }
         }
 
-        private void ListBoxMouseUp(object sender, MouseButtonEventArgs e)
+        private void ListBoxPointerReleased(object sender, PointerEventArgs e)
         {
             ValidateSelection();
             if (ClearTextAfterSelection)
@@ -344,15 +346,15 @@ namespace Stride.Core.Presentation.Controls
         {
             switch (AlternativeModifiers)
             {
-                case ModifierKeys.None:
+                case KeyModifiers.None:
                     return false;
-                case ModifierKeys.Alt:
+                case KeyModifiers.Alt:
                     return key == Key.LeftAlt || key == Key.RightAlt;
-                case ModifierKeys.Control:
+                case KeyModifiers.Control:
                     return key == Key.LeftCtrl || key == Key.RightCtrl;
-                case ModifierKeys.Shift:
+                case KeyModifiers.Shift:
                     return key == Key.LeftShift || key == Key.RightShift;
-                case ModifierKeys.Windows:
+                case KeyModifiers.Meta:
                     return key == Key.LWin || key == Key.RWin;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -361,11 +363,11 @@ namespace Stride.Core.Presentation.Controls
 
         private void ValidateSelection()
         {
-            var expression = GetBindingExpression(SelectedIndexProperty);
+            var expression = BindingOperations.GetBindingExpressionBase(this, SelectedIndexProperty);
             expression?.UpdateSource();
-            expression = GetBindingExpression(SelectedItemProperty);
+            expression = BindingOperations.GetBindingExpressionBase(this, SelectedItemProperty);
             expression?.UpdateSource();
-            expression = GetBindingExpression(SelectedValueProperty);
+            expression = BindingOperations.GetBindingExpressionBase(this, SelectedValueProperty);
             expression?.UpdateSource();
             
             var commandParameter = listBox.SelectedValue;

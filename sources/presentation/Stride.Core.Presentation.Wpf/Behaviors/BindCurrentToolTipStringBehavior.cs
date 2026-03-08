@@ -1,15 +1,15 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using Microsoft.Xaml.Behaviors;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Xaml.Interactivity;
 
 namespace Stride.Core.Presentation.Behaviors
 {
     /// <summary>
-    /// Allows the bind the <see cref="Control.ToolTip"/> property of a control to a particular target property when the attached control is hovered by the mouse.
+    /// Allows the bind the <see cref="ToolTip"/> property of a control to a particular target property when the attached control is hovered by the mouse.
     /// This behavior can be used to display the same message that the tool-tip in a status bar, for example.
     /// </summary>
     /// <remarks>This behavior can be used to display the tool tip of some controls in another place, such as a status bar.</remarks>
@@ -18,12 +18,12 @@ namespace Stride.Core.Presentation.Behaviors
         /// <summary>
         /// Identifies the <see cref="ToolTipTarget"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ToolTipTargetProperty = DependencyProperty.Register(nameof(ToolTipTarget), typeof(string), typeof(BindCurrentToolTipStringBehavior), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+        public static readonly AvaloniaProperty ToolTipTargetProperty = AvaloniaProperty.Register<BindCurrentToolTipStringBehavior, string?>(nameof(ToolTipTarget), defaultBindingMode: Avalonia.Data.BindingMode.TwoWay);
 
         /// <summary>
         /// Identifies the <see cref="DefaultValue"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty DefaultValueProperty = DependencyProperty.Register(nameof(DefaultValue), typeof(string), typeof(BindCurrentToolTipStringBehavior), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+        public static readonly StyledProperty<string?> DefaultValueProperty = AvaloniaProperty.Register<BindCurrentToolTipStringBehavior, string?>(nameof(DefaultValue), defaultBindingMode: Avalonia.Data.BindingMode.TwoWay);
 
         /// <summary>
         /// Gets or sets the tool tip text of the control when the mouse is over the control, or <see cref="DefaultValue"/> otherwise. This property should usually be bound.
@@ -39,24 +39,25 @@ namespace Stride.Core.Presentation.Behaviors
         protected override void OnAttached()
         {
             base.OnAttached();
-            AssociatedObject.MouseEnter += MouseEnter;
-            AssociatedObject.MouseLeave += MouseLeave;
+            AssociatedObject.PointerEntered += PointerEntered;
+            AssociatedObject.PointerExited += PointerExited;
         }
 
         /// <inheritdoc/>
         protected override void OnDetaching()
         {
-            AssociatedObject.MouseEnter -= MouseEnter;
-            AssociatedObject.MouseLeave -= MouseLeave;
+            AssociatedObject.PointerEntered -= PointerEntered;
+            AssociatedObject.PointerExited -= PointerExited;
             base.OnDetaching();
         }
 
-        private void MouseEnter(object sender, MouseEventArgs e)
+        private void PointerEntered(object sender, PointerEventArgs e)
         {
-            SetCurrentValue(ToolTipTargetProperty, AssociatedObject.ToolTip);
+            var tooltip = ToolTip.GetTip(AssociatedObject)?.ToString();
+            SetCurrentValue(ToolTipTargetProperty, tooltip);
         }
 
-        private void MouseLeave(object sender, MouseEventArgs e)
+        private void PointerExited(object sender, PointerEventArgs e)
         {
             SetCurrentValue(ToolTipTargetProperty, DefaultValue);
         }

@@ -3,9 +3,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Interop;
-using Stride.Core.Presentation.Interop;
+using Avalonia.Controls;
 using Stride.Core.Presentation.Services;
 using Stride.Core.Presentation.Windows;
 
@@ -18,15 +16,12 @@ namespace Stride.Core.Presentation.Controls
 			Loaded += (sender, e) =>
             {
                 // Disable minimize on modal windows
-                var handle = new WindowInteropHelper(this).Handle;
-                if (handle != IntPtr.Zero)
-                {
-                    NativeHelper.DisableMinimizeButton(handle);
-                }
+                CanMinimize = false;
             };
-            Owner = WindowManager.MainWindow?.Window ?? WindowManager.BlockingWindows.LastOrDefault()?.Window;
+            var owner = WindowManager.MainWindow?.Window ?? WindowManager.BlockingWindows.LastOrDefault()?.Window;
+            Owner = owner;
             WindowStartupLocation = Owner != null ? WindowStartupLocation.CenterOwner : WindowStartupLocation.CenterScreen;
-            await Dispatcher.InvokeAsync(ShowDialog);
+            await ShowDialog(owner);
             return Result;
         }
 

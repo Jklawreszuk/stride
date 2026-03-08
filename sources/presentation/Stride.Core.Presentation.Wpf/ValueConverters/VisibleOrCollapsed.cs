@@ -25,15 +25,15 @@ namespace Stride.Core.Presentation.ValueConverters
             {
                 result = !result;
             }
-            return result ? VisibilityBoxes.VisibleBox : VisibilityBoxes.CollapsedBox;
+            return result;
         }
 
         /// <inheritdoc/>
         [NotNull]
         public override object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var visibility = (Visibility)value;
-            var result = visibility == Visibility.Visible;
+            var visibility = (bool)value;
+            var result = visibility;
             if (parameter as bool? == false)
             {
                 result = !result;

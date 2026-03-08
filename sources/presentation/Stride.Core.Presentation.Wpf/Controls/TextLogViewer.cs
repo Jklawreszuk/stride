@@ -5,12 +5,16 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Documents;
-using System.Windows.Media;
-using System.Windows.Threading;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Documents;
+using Avalonia.Controls.Metadata;
+using Avalonia.Controls.Primitives;
+using Avalonia.Interactivity;
+using Avalonia.Media;
+using Avalonia.Media.TextFormatting;
+using Avalonia.Threading;
+using Avalonia.VisualTree;
 using Stride.Core.Annotations;
 using Stride.Core.Diagnostics;
 using Stride.Core.Extensions;
@@ -21,134 +25,134 @@ namespace Stride.Core.Presentation.Controls
     /// <summary>
     /// This control displays a collection of <see cref="ILogMessage"/>.
     /// </summary>
-    [TemplatePart(Name = "PART_LogTextBox", Type = typeof(RichTextBox))]
-    [TemplatePart(Name = "PART_ClearLog", Type = typeof(ButtonBase))]
-    [TemplatePart(Name = "PART_PreviousResult", Type = typeof(ButtonBase))]
-    [TemplatePart(Name = "PART_NextResult", Type = typeof(ButtonBase))]
-    public class TextLogViewer : Control
+    [TemplatePart(Name = "PART_LogTextBox", Type = typeof(TextBox))]
+    [TemplatePart(Name = "PART_ClearLog", Type = typeof(Button))]
+    [TemplatePart(Name = "PART_PreviousResult", Type = typeof(Button))]
+    [TemplatePart(Name = "PART_NextResult", Type = typeof(Button))]
+    public class TextLogViewer : TemplatedControl
     {
-        private readonly List<TextRange> searchMatches = new List<TextRange>();
+        private readonly List<TextRange> searchMatches = [];
         private int currentResult;
 
         /// <summary>
-        /// The <see cref="RichTextBox"/> in which the log messages are actually displayed.
+        /// The <see cref="TextBox"/> in which the log messages are actually displayed.
         /// </summary>
-        private RichTextBox logTextBox;
+        private TextBox logTextBox;
 
         /// <summary>
         /// Identifies the <see cref="LogMessages"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty LogMessagesProperty = DependencyProperty.Register("LogMessages", typeof(ICollection<ILogMessage>), typeof(TextLogViewer), new PropertyMetadata(null, LogMessagesPropertyChanged));
+        public static readonly AvaloniaProperty LogMessagesProperty = AvaloniaProperty.Register<TextLogViewer, ICollection<ILogMessage>>("LogMessages");
 
         /// <summary>
         /// Identifies the <see cref="AutoScroll"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty AutoScrollProperty = DependencyProperty.Register("AutoScroll", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox));
+        public static readonly AvaloniaProperty AutoScrollProperty = AvaloniaProperty.Register<TextLogViewer, bool>("AutoScroll");
 
         /// <summary>
         /// Identifies the <see cref="IsToolBarVisible"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty IsToolBarVisibleProperty = DependencyProperty.Register("IsToolBarVisible", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox));
+        public static readonly AvaloniaProperty IsToolBarVisibleProperty = AvaloniaProperty.Register<TextLogViewer, bool>("IsToolBarVisible");
 
         /// <summary>
         /// Identifies the <see cref="CanClearLog"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty CanClearLogProperty = DependencyProperty.Register("CanClearLog", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox));
+        public static readonly AvaloniaProperty CanClearLogProperty = AvaloniaProperty.Register<TextLogViewer, bool>("CanClearLog", true);
 
         /// <summary>
         /// Identifies the <see cref="CanFilterLog"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty CanFilterLogProperty = DependencyProperty.Register("CanFilterLog", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox));
+        public static readonly AvaloniaProperty CanFilterLogProperty = AvaloniaProperty.Register<TextLogViewer, bool>("CanFilterLog", true);
 
         /// <summary>
         /// Identifies the <see cref="CanSearchLog"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty CanSearchLogProperty = DependencyProperty.Register("CanSearchLog", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox));
+        public static readonly AvaloniaProperty CanSearchLogProperty = AvaloniaProperty.Register<TextLogViewer, bool>("CanSearchLog", true);
 
         /// <summary>
         /// Identifies the <see cref="SearchToken"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty SearchTokenProperty = DependencyProperty.Register("SearchToken", typeof(string), typeof(TextLogViewer), new PropertyMetadata("", SearchTokenChanged));
+        public static readonly AvaloniaProperty SearchTokenProperty = AvaloniaProperty.Register<TextLogViewer, string>("SearchToken", "");
 
         /// <summary>
         /// Identifies the <see cref="SearchMatchCase"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty SearchMatchCaseProperty = DependencyProperty.Register("SearchMatchCase", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.FalseBox, SearchTokenChanged));
+        public static readonly AvaloniaProperty SearchMatchCaseProperty = AvaloniaProperty.Register<TextLogViewer, bool>("SearchMatchCase");
 
         /// <summary>
         /// Identifies the <see cref="SearchMatchWord"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty SearchMatchWordProperty = DependencyProperty.Register("SearchMatchWord", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.FalseBox, SearchTokenChanged));
+        public static readonly AvaloniaProperty SearchMatchWordProperty = AvaloniaProperty.Register<TextLogViewer, bool>("SearchMatchWord");
 
         /// <summary>
         /// Identifies the <see cref="SearchMatchBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty SearchMatchBrushProperty = DependencyProperty.Register("SearchMatchBrush", typeof(Brush), typeof(TextLogViewer), new PropertyMetadata(Brushes.LightSteelBlue, TextPropertyChanged));
+        public static readonly AvaloniaProperty SearchMatchBrushProperty = AvaloniaProperty.Register<TextLogViewer, IBrush>("SearchMatchBrush", Brushes.LightSteelBlue);
 
         /// <summary>
         /// Identifies the <see cref="DebugBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty DebugBrushProperty = DependencyProperty.Register("DebugBrush", typeof(Brush), typeof(TextLogViewer), new PropertyMetadata(Brushes.White, TextPropertyChanged));
+        public static readonly AvaloniaProperty DebugBrushProperty = AvaloniaProperty.Register<TextLogViewer, IBrush>("DebugBrush", Brushes.White);
 
         /// <summary>
         /// Identifies the <see cref="VerboseBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty VerboseBrushProperty = DependencyProperty.Register("VerboseBrush", typeof(Brush), typeof(TextLogViewer), new PropertyMetadata(Brushes.White, TextPropertyChanged));
+        public static readonly AvaloniaProperty VerboseBrushProperty = AvaloniaProperty.Register<TextLogViewer, IBrush>("VerboseBrush", Brushes.White);
 
         /// <summary>
         /// Identifies the <see cref="InfoBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty InfoBrushProperty = DependencyProperty.Register("InfoBrush", typeof(Brush), typeof(TextLogViewer), new PropertyMetadata(Brushes.White, TextPropertyChanged));
+        public static readonly AvaloniaProperty InfoBrushProperty = AvaloniaProperty.Register<TextLogViewer, IBrush>("InfoBrush", Brushes.White);
 
         /// <summary>
         /// Identifies the <see cref="WarningBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty WarningBrushProperty = DependencyProperty.Register("WarningBrush", typeof(Brush), typeof(TextLogViewer), new PropertyMetadata(Brushes.White, TextPropertyChanged));
+        public static readonly AvaloniaProperty WarningBrushProperty = AvaloniaProperty.Register<TextLogViewer, IBrush>("WarningBrush", Brushes.White);
 
         /// <summary>
         /// Identifies the <see cref="ErrorBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ErrorBrushProperty = DependencyProperty.Register("ErrorBrush", typeof(Brush), typeof(TextLogViewer), new PropertyMetadata(Brushes.White, TextPropertyChanged));
+        public static readonly AvaloniaProperty ErrorBrushProperty = AvaloniaProperty.Register<TextLogViewer, IBrush>("ErrorBrush", Brushes.White);
 
         /// <summary>
         /// Identifies the <see cref="FatalBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty FatalBrushProperty = DependencyProperty.Register("FatalBrush", typeof(Brush), typeof(TextLogViewer), new PropertyMetadata(Brushes.White, TextPropertyChanged));
+        public static readonly AvaloniaProperty FatalBrushProperty = AvaloniaProperty.Register<TextLogViewer, IBrush>("FatalBrush", Brushes.White);
 
         /// <summary>
         /// Identifies the <see cref="ShowDebugMessages"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ShowDebugMessagesProperty = DependencyProperty.Register("ShowDebugMessages", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox, TextPropertyChanged));
+        public static readonly AvaloniaProperty ShowDebugMessagesProperty = AvaloniaProperty.Register<TextLogViewer, bool>("ShowDebugMessages", true);
 
         /// <summary>
         /// Identifies the <see cref="ShowVerboseMessages"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ShowVerboseMessagesProperty = DependencyProperty.Register("ShowVerboseMessages", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox, TextPropertyChanged));
+        public static readonly AvaloniaProperty ShowVerboseMessagesProperty = AvaloniaProperty.Register<TextLogViewer, bool>("ShowVerboseMessages", true);
 
         /// <summary>
         /// Identifies the <see cref="ShowInfoMessages"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ShowInfoMessagesProperty = DependencyProperty.Register("ShowInfoMessages", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox, TextPropertyChanged));
+        public static readonly AvaloniaProperty ShowInfoMessagesProperty = AvaloniaProperty.Register<TextLogViewer, bool>("ShowInfoMessages", true);
 
         /// <summary>
         /// Identifies the <see cref="ShowWarningMessages"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ShowWarningMessagesProperty = DependencyProperty.Register("ShowWarningMessages", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox, TextPropertyChanged));
+        public static readonly AvaloniaProperty ShowWarningMessagesProperty = AvaloniaProperty.Register<TextLogViewer, bool>("ShowWarningMessages", true);
 
         /// <summary>
         /// Identifies the <see cref="ShowErrorMessages"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ShowErrorMessagesProperty = DependencyProperty.Register("ShowErrorMessages", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox, TextPropertyChanged));
+        public static readonly AvaloniaProperty ShowErrorMessagesProperty = AvaloniaProperty.Register<TextLogViewer, bool>("ShowErrorMessages", true);
 
         /// <summary>
         /// Identifies the <see cref="ShowFatalMessages"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ShowFatalMessagesProperty = DependencyProperty.Register("ShowFatalMessages", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox, TextPropertyChanged));
+        public static readonly AvaloniaProperty ShowFatalMessagesProperty = AvaloniaProperty.Register<TextLogViewer, bool>("ShowFatalMessages", true);
 
         /// <summary>
         /// Identifies the <see cref="ShowStacktrace"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ShowStacktraceProperty = DependencyProperty.Register("ShowStacktrace", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox, TextPropertyChanged));
+        public static readonly AvaloniaProperty ShowStacktraceProperty = AvaloniaProperty.Register<TextLogViewer, bool>("ShowStacktrace", true);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TextLogViewer"/> class.
@@ -160,7 +164,12 @@ namespace Stride.Core.Presentation.Controls
                 try
                 {
                     if (AutoScroll)
-                        logTextBox?.ScrollToEnd();
+                    {
+                        var scrollViewer = logTextBox?.GetVisualDescendants()
+                            .OfType<ScrollViewer>()
+                            .FirstOrDefault();
+                        scrollViewer?.ScrollToEnd();
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -169,6 +178,23 @@ namespace Stride.Core.Presentation.Controls
                     ex.Ignore();
                 }
             };
+            LogMessagesProperty.Changed.AddClassHandler<AvaloniaObject>(LogMessagesPropertyChanged);
+            SearchTokenProperty.Changed.AddClassHandler<AvaloniaObject>(SearchTokenChanged);
+            SearchMatchCaseProperty.Changed.AddClassHandler<AvaloniaObject>(SearchTokenChanged);
+            SearchMatchBrushProperty.Changed.AddClassHandler<AvaloniaObject>(TextPropertyChanged);
+            DebugBrushProperty.Changed.AddClassHandler<AvaloniaObject>(TextPropertyChanged);
+            VerboseBrushProperty.Changed.AddClassHandler<AvaloniaObject>(TextPropertyChanged);
+            InfoBrushProperty.Changed.AddClassHandler<AvaloniaObject>(TextPropertyChanged);
+            WarningBrushProperty.Changed.AddClassHandler<AvaloniaObject>(TextPropertyChanged);
+            ErrorBrushProperty.Changed.AddClassHandler<AvaloniaObject>(TextPropertyChanged);
+            FatalBrushProperty.Changed.AddClassHandler<AvaloniaObject>(TextPropertyChanged);
+            ShowDebugMessagesProperty.Changed.AddClassHandler<AvaloniaObject>(TextPropertyChanged);
+            ShowVerboseMessagesProperty.Changed.AddClassHandler<AvaloniaObject>(TextPropertyChanged);
+            ShowInfoMessagesProperty.Changed.AddClassHandler<AvaloniaObject>(TextPropertyChanged);
+            ShowWarningMessagesProperty.Changed.AddClassHandler<AvaloniaObject>(TextPropertyChanged);
+            ShowErrorMessagesProperty.Changed.AddClassHandler<AvaloniaObject>(TextPropertyChanged);
+            ShowFatalMessagesProperty.Changed.AddClassHandler<AvaloniaObject>(TextPropertyChanged);
+            ShowStacktraceProperty.Changed.AddClassHandler<AvaloniaObject>(TextPropertyChanged);
         }
 
         /// <summary>
@@ -287,26 +313,26 @@ namespace Stride.Core.Presentation.Controls
         public bool ShowStacktrace { get { return (bool)GetValue(ShowStacktraceProperty); } set { SetValue(ShowStacktraceProperty, value.Box()); } }
 
         /// <inheritdoc/>
-        public override void OnApplyTemplate()
+        protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
-            base.OnApplyTemplate();
+            base.OnApplyTemplate(e);
 
-            logTextBox = GetTemplateChild("PART_LogTextBox") as RichTextBox;
+            logTextBox =  e.NameScope.Find<TextBox>("PART_LogTextBox");
             if (logTextBox == null)
-                throw new InvalidOperationException("A part named 'PART_LogTextBox' must be present in the ControlTemplate, and must be of type 'RichTextBox'.");
+                throw new InvalidOperationException("A part named 'PART_LogTextBox' must be present in the ControlTemplate, and must be of type 'TextBox'.");
 
-            var clearLogButton = GetTemplateChild("PART_ClearLog") as ButtonBase;
+            var clearLogButton =  e.NameScope.Find<Button>("PART_ClearLog");
             if (clearLogButton != null)
             {
                 clearLogButton.Click += ClearLog;
             }
 
-            var previousResultButton = GetTemplateChild("PART_PreviousResult") as ButtonBase;
+            var previousResultButton =  e.NameScope.Find<Button>("PART_PreviousResult");
             if (previousResultButton != null)
             {
                 previousResultButton.Click += PreviousResultClicked;
             }
-            var nextResultButton = GetTemplateChild("PART_NextResult") as ButtonBase;
+            var nextResultButton =  e.NameScope.Find<Button>("PART_NextResult");
             if (nextResultButton != null)
             {
                 nextResultButton.Click += NextResultClicked;
@@ -322,102 +348,100 @@ namespace Stride.Core.Presentation.Controls
 
         private void ResetText()
         {
-            if (logTextBox != null)
+            if (logTextBox == null)
             {
-                ClearSearchResults();
-                var document = new FlowDocument(new Paragraph());
-                if (LogMessages != null)
-                {
-                    var logMessages = LogMessages.ToList();
-                    AppendText(document, logMessages);
-                }
-                logTextBox.Document = document;
+                return;
+            }
+            
+            logTextBox.Clear();
+            ClearSearchResults();
+            if (LogMessages != null)
+            {
+                var logMessages = LogMessages.ToList();
+                AppendText(logMessages);
             }
         }
 
-        private void AppendText([NotNull] FlowDocument document, [NotNull] IEnumerable<ILogMessage> logMessages)
+        private void AppendText([NotNull] IEnumerable<ILogMessage> logMessages)
         {
-            if (document == null) throw new ArgumentNullException(nameof(document));
-            if (logMessages == null) throw new ArgumentNullException(nameof(logMessages));
-            if (logTextBox != null)
+            if (logMessages == null) throw new ArgumentNullException(nameof(logMessages)); 
+            if (logTextBox == null) return;
+
+            var stringComparison = SearchMatchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
+            var searchToken = SearchToken;
+            var sb = new StringBuilder();
+            foreach (var message in logMessages.Where(x => ShouldDisplayMessage(x.Type)))
             {
-                var paragraph = (Paragraph)document.Blocks.AsEnumerable().First();
-                var stringComparison = SearchMatchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
-                var searchToken = SearchToken;
-                var sb = new StringBuilder();
-                foreach (var message in logMessages.Where(x => ShouldDisplayMessage(x.Type)))
+                sb.Clear();
+
+                if (message.Module != null)
                 {
-                    sb.Clear();
+                    sb.AppendFormat("[{0}]: ", message.Module);
+                }
 
-                    if (message.Module != null)
-                    {
-                        sb.AppendFormat("[{0}]: ", message.Module);
-                    }
-
-                    sb.AppendFormat("{0}: {1}", message.Type, message.Text);
+                sb.AppendFormat("{0}: {1}", message.Type, message.Text);
                     
-                    var ex = message.ExceptionInfo;
-                    if (ex != null)
+                var ex = message.ExceptionInfo;
+                if (ex != null)
+                {
+                    if (ShowStacktrace)
                     {
-                        if (ShowStacktrace)
-                        {
-                            sb.AppendFormat("{0}{1}{0}", Environment.NewLine, ex);
-                        }
-                        else
-                        {
-                            sb.Append(" (...)");
-                        }
-                    }
-
-                    sb.AppendLine();
-
-                    var lineText = sb.ToString();
-
-                    var logColor = GetLogColor(message.Type);
-                    if (string.IsNullOrEmpty(searchToken))
-                    {
-                        paragraph.Inlines.Add(new Run(lineText) { Foreground = logColor });
+                        sb.AppendFormat("{0}{1}{0}", Environment.NewLine, ex);
                     }
                     else
                     {
-                        do
-                        {
-                            var tokenIndex = lineText.IndexOf(searchToken, stringComparison);
-                            if (tokenIndex == -1)
-                            {
-                                paragraph.Inlines.Add(new Run(lineText) { Foreground = logColor });
-                                break;
-                            }
-                            var acceptResult = true;
-                            if (SearchMatchWord && lineText.Length > 1)
-                            {
-                                if (tokenIndex > 0)
-                                {
-                                    var c = lineText[tokenIndex - 1];
-                                    if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'))
-                                        acceptResult = false;
-                                }
-                                if (tokenIndex + searchToken.Length < lineText.Length)
-                                {
-                                    var c = lineText[tokenIndex + searchToken.Length];
-                                    if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'))
-                                        acceptResult = false;
-                                }
-                            }
-
-                            if (acceptResult)
-                            {
-                                if (tokenIndex > 0)
-                                    paragraph.Inlines.Add(new Run(lineText.Substring(0, tokenIndex)) { Foreground = logColor });
-
-                                var tokenRun = new Run(lineText.Substring(tokenIndex, searchToken.Length)) { Background = SearchMatchBrush, Foreground = logColor };
-                                paragraph.Inlines.Add(tokenRun);
-                                var tokenRange = new TextRange(tokenRun.ContentStart, tokenRun.ContentEnd);
-                                searchMatches.Add(tokenRange);
-                                lineText = lineText.Substring(tokenIndex + searchToken.Length);
-                            }
-                        } while (lineText.Length > 0);
+                        sb.Append(" (...)");
                     }
+                }
+
+                sb.AppendLine();
+
+                var lineText = sb.ToString();
+                var logColor = GetLogColor(message.Type);
+                
+                if (string.IsNullOrEmpty(searchToken))
+                {
+                    logTextBlock.Inlines.Add(new Run(lineText) { Foreground = logColor });
+                }
+                else
+                {
+                    do
+                    {
+                        var tokenIndex = lineText.IndexOf(searchToken, stringComparison);
+                        if (tokenIndex == -1)
+                        {
+                            logTextBlock.Inlines.Add(new Run(lineText) { Foreground = logColor });
+                            break;
+                        }
+                        var acceptResult = true;
+                        if (SearchMatchWord && lineText.Length > 1)
+                        {
+                            if (tokenIndex > 0)
+                            {
+                                var c = lineText[tokenIndex - 1];
+                                if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'))
+                                    acceptResult = false;
+                            }
+                            if (tokenIndex + searchToken.Length < lineText.Length)
+                            {
+                                var c = lineText[tokenIndex + searchToken.Length];
+                                if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'))
+                                    acceptResult = false;
+                            }
+                        }
+
+                        if (acceptResult)
+                        {
+                            if (tokenIndex > 0)
+                                logTextBlock.Inlines.Add(new Run(lineText.Substring(0, tokenIndex)) { Foreground = logColor });
+
+                            var tokenRun = new Run(lineText.Substring(tokenIndex, searchToken.Length)) { Background = SearchMatchBrush, Foreground = logColor };
+                            logTextBlock.Inlines.Add(tokenRun);
+                            var tokenRange = new TextRange(tokenIndex, searchToken.Length);
+                            searchMatches.Add(tokenRange);
+                            lineText = lineText.Substring(tokenIndex + searchToken.Length);
+                        }
+                    } while (lineText.Length > 0);
                 }
             }
         }
@@ -457,87 +481,71 @@ namespace Stride.Core.Presentation.Controls
         private void SelectSearchResult(int resultIndex)
         {
             var result = searchMatches[resultIndex];
-            logTextBox.Selection.Select(result.Start, result.End);
-            var selectionRect = logTextBox.Selection.Start.GetCharacterRect(LogicalDirection.Forward);
-            var offset = selectionRect.Top + logTextBox.VerticalOffset;
-            logTextBox.ScrollToVerticalOffset(offset - logTextBox.ActualHeight / 2);
-            logTextBox.BringIntoView();
+            logTextBlock.Selection.Select(result.Start, result.End);
+            var selectionRect = logTextBlock.Selection.Start.GetCharacterRect(LogicalDirection.Forward);
+            var offset = selectionRect.Top + logTextBlock.VerticalOffset;
+            logTextBlock.ScrollToVerticalOffset(offset - logTextBlock.Bounds.Height / 2);
+            logTextBlock.BringIntoView();
             currentResult = resultIndex;
         }
 
         private bool ShouldDisplayMessage(LogMessageType type)
         {
-            switch (type)
+            return type switch
             {
-                case LogMessageType.Debug:
-                    return ShowDebugMessages;
-                case LogMessageType.Verbose:
-                    return ShowVerboseMessages;
-                case LogMessageType.Info:
-                    return ShowInfoMessages;
-                case LogMessageType.Warning:
-                    return ShowWarningMessages;
-                case LogMessageType.Error:
-                    return ShowErrorMessages;
-                case LogMessageType.Fatal:
-                    return ShowFatalMessages;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(type));
-            }
+                LogMessageType.Debug => ShowDebugMessages,
+                LogMessageType.Verbose => ShowVerboseMessages,
+                LogMessageType.Info => ShowInfoMessages,
+                LogMessageType.Warning => ShowWarningMessages,
+                LogMessageType.Error => ShowErrorMessages,
+                LogMessageType.Fatal => ShowFatalMessages,
+                _ => throw new ArgumentOutOfRangeException(nameof(type))
+            };
         }
 
         private Brush GetLogColor(LogMessageType type)
         {
-            switch (type)
+            return type switch
             {
-                case LogMessageType.Debug:
-                    return DebugBrush;
-                case LogMessageType.Verbose:
-                    return VerboseBrush;
-                case LogMessageType.Info:
-                    return InfoBrush;
-                case LogMessageType.Warning:
-                    return WarningBrush;
-                case LogMessageType.Error:
-                    return ErrorBrush;
-                case LogMessageType.Fatal:
-                    return FatalBrush;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(type));
-            }
+                LogMessageType.Debug => DebugBrush,
+                LogMessageType.Verbose => VerboseBrush,
+                LogMessageType.Info => InfoBrush,
+                LogMessageType.Warning => WarningBrush,
+                LogMessageType.Error => ErrorBrush,
+                LogMessageType.Fatal => FatalBrush,
+                _ => throw new ArgumentOutOfRangeException(nameof(type))
+            };
         }
 
-        private static void TextPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void TextPropertyChanged(AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var logViewer = (TextLogViewer)d;
             logViewer.ResetText();
-            logViewer.logTextBox?.ScrollToEnd();
+            var scrollViewer = logViewer.logTextBlock?
+                .GetVisualDescendants()
+                .OfType<ScrollViewer>()
+                .FirstOrDefault();
+            
+            scrollViewer?.ScrollToEnd();
         }
 
         /// <summary>
         /// Raised when the <see cref="LogMessages"/> dependency property is changed.
         /// </summary>
-        private static void LogMessagesPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void LogMessagesPropertyChanged(AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var logViewer = (TextLogViewer)d;
-            var oldValue = e.OldValue as ICollection<ILogMessage>;
             var newValue = e.NewValue as ICollection<ILogMessage>;
-            if (oldValue != null)
+            if (e.OldValue is ICollection<ILogMessage> oldValue)
             {
-                // ReSharper disable SuspiciousTypeConversion.Global - go home resharper, you're drunk
-                var notifyCollectionChanged = oldValue as INotifyCollectionChanged;
-                // ReSharper restore SuspiciousTypeConversion.Global
-                if (notifyCollectionChanged != null)
+                if (oldValue is INotifyCollectionChanged notifyCollectionChanged)
                 {
                     notifyCollectionChanged.CollectionChanged -= logViewer.LogMessagesCollectionChanged;
                 }
             }
             if (e.NewValue != null)
             {
-                // ReSharper disable SuspiciousTypeConversion.Global - go home resharper, you're drunk
-                var notifyCollectionChanged = newValue as INotifyCollectionChanged;
-                // ReSharper restore SuspiciousTypeConversion.Global
-                if (notifyCollectionChanged != null)
+                if (newValue is INotifyCollectionChanged notifyCollectionChanged)
                 {
                     notifyCollectionChanged.CollectionChanged += logViewer.LogMessagesCollectionChanged;
                 }
@@ -548,7 +556,7 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Raised when the <see cref="SearchToken"/> property is changed.
         /// </summary>
-        private static void SearchTokenChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void SearchTokenChanged(AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var logViewer = (TextLogViewer)d;
             logViewer.ResetText();
@@ -560,19 +568,15 @@ namespace Stride.Core.Presentation.Controls
         /// </summary>
         private void LogMessagesCollectionChanged(object sender, [NotNull] NotifyCollectionChangedEventArgs e)
         {
-            var shouldScroll = AutoScroll && logTextBox != null && logTextBox.ExtentHeight - logTextBox.ViewportHeight - logTextBox.VerticalOffset < 1.0;
+            var shouldScroll = AutoScroll && logTextBlock != null && logTextBlock.ExtentHeight - logTextBlock.ViewportHeight - logTextBlock.VerticalOffset < 1.0;
 
             if (e.Action == NotifyCollectionChangedAction.Add)
             {
                 if (e.NewItems != null)
                 {
-                    if (logTextBox != null)
+                    if (logTextBlock != null)
                     {
-                        if (logTextBox.Document == null)
-                        {
-                            logTextBox.Document = new FlowDocument(new Paragraph());
-                        }
-                        AppendText(logTextBox.Document, e.NewItems.Cast<ILogMessage>());
+                        AppendText(e.NewItems.Cast<ILogMessage>());
                     }
                 }
             }
@@ -585,7 +589,13 @@ namespace Stride.Core.Presentation.Controls
             {
                 // Sometimes crashing with ExecutionEngineException in Window.GetWindowMinMax() if not ran with a dispatcher low priority.
                 // Note: priority should still be higher than DispatcherPriority.Input so that user input have a chance to scroll.
-                Dispatcher.InvokeAsync(() => logTextBox.ScrollToEnd(), DispatcherPriority.DataBind);
+                Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    var scrollViewer = logTextBlock?.GetVisualDescendants()
+                        .OfType<ScrollViewer>()
+                        .FirstOrDefault();
+                    scrollViewer?.ScrollToEnd();
+                }, DispatcherPriority.DataBind);
             }
         }
 

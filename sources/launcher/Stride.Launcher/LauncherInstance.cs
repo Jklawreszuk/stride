@@ -24,7 +24,7 @@ namespace Stride.LauncherApp
 
         public LauncherErrorCode Run(bool shouldStartHidden)
         {
-            dispatcher = new DispatcherService(Dispatcher.CurrentDispatcher);
+            dispatcher = new DispatcherService(Dispatcher.UIThread);
 
             // Note: Initialize is responsible of displaying a message box in case of error
             if (!Initialize())
@@ -33,7 +33,7 @@ namespace Stride.LauncherApp
             app = new App { ShutdownMode = ShutdownMode.OnExplicitShutdown };
             app.InitializeComponent();
 
-            using (new WindowManager(Dispatcher.CurrentDispatcher))
+            using (new WindowManager(Dispatcher.UIThread))
             {
                 dispatcher.InvokeTask(() => ApplicationEntryPoint(shouldStartHidden)).Forget();
                 app.Run();

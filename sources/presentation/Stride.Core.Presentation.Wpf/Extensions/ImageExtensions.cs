@@ -2,9 +2,11 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
-using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Media;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using Stride.Core.Annotations;
 
 namespace Stride.Core.Presentation.Extensions
@@ -30,22 +32,16 @@ namespace Stride.Core.Presentation.Extensions
         }
 
         [NotNull]
-        public static ImageSource ImageSourceFromFile([NotNull] Uri uri)
+        public static IImage ImageSourceFromFile([NotNull] Uri uri)
         {
             if (uri == null)
                 throw new ArgumentNullException(nameof(uri));
 
-            var source = new BitmapImage();
-            source.BeginInit();
-            source.UriSource = uri;
-            source.CacheOption = BitmapCacheOption.OnLoad;
-            source.EndInit();
-
-            return source;
+            return uri.IsFile ? new Bitmap(uri.LocalPath) : new Bitmap(AssetLoader.Open(uri));
         }
 
         [NotNull]
-        public static ImageSource ImageSourceFromFile([NotNull] string uri)
+        public static IImage ImageSourceFromFile([NotNull] string uri)
         {
             if (string.IsNullOrWhiteSpace(uri))
                 throw new ArgumentException("Invalid 'uri' argument.");

@@ -1,9 +1,9 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using System.Windows;
-using System.Windows.Documents;
-using System.Windows.Media;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Media;
 using Stride.Core.Annotations;
 
 namespace Stride.Core.Presentation.Adorners
@@ -11,96 +11,88 @@ namespace Stride.Core.Presentation.Adorners
     /// <summary>
     /// An adorner that draw a rectangle with borders over the adorned element. It can multiple possible states: Hidden, Visible, HighlightAccept and HighlightRefuse.
     /// </summary>
-    public class HighlightBorderAdorner : Adorner
+    public class HighlightBorderAdorner : Decorator
     {
         /// <summary>
         /// Identifies the <see cref="AcceptBorderBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty AcceptBorderBrushProperty = DependencyProperty.Register("AcceptBorderBrush", typeof(Brush), typeof(HighlightBorderAdorner), new PropertyMetadata(Brushes.PaleGreen, PropertyChanged));
+        public static readonly AvaloniaProperty AcceptBorderBrushProperty = AvaloniaProperty.Register<HighlightBorderAdorner, IBrush?>("AcceptBorderBrush", Brushes.PaleGreen);
 
         /// <summary>
         /// Identifies the <see cref="AcceptBorderBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty AcceptBorderThicknessProperty = DependencyProperty.Register("AcceptBorderThickness", typeof(double), typeof(HighlightBorderAdorner), new PropertyMetadata(2.0, PropertyChanged));
+        public static readonly AvaloniaProperty AcceptBorderThicknessProperty = AvaloniaProperty.Register<HighlightBorderAdorner, double>("AcceptBorderThickness", 2.0);
 
         /// <summary>
         /// Identifies the <see cref="AcceptBorderBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty AcceptBorderCornerRadiusProperty = DependencyProperty.Register("AcceptBorderCornerRadius", typeof(double), typeof(HighlightBorderAdorner), new PropertyMetadata(3.0, PropertyChanged));
+        public static readonly AvaloniaProperty AcceptBorderCornerRadiusProperty = AvaloniaProperty.Register<HighlightBorderAdorner, double>("AcceptBorderCornerRadius", 3.0);
 
         /// <summary>
         /// Identifies the <see cref="AcceptBorderBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty AcceptBackgroundBrushProperty = DependencyProperty.Register("AcceptBackgroundBrush", typeof(Brush), typeof(HighlightBorderAdorner), new PropertyMetadata(Brushes.MediumSeaGreen, PropertyChanged));
+        public static readonly AvaloniaProperty AcceptBackgroundBrushProperty = AvaloniaProperty.Register<HighlightBorderAdorner, IBrush?>("AcceptBackgroundBrush", Brushes.MediumSeaGreen);
 
         /// <summary>
         /// Identifies the <see cref="AcceptBorderBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty AcceptBackgroundOpacityProperty = DependencyProperty.Register("AcceptBackgroundOpacity", typeof(double), typeof(HighlightBorderAdorner), new PropertyMetadata(0.3, PropertyChanged));
+        public static readonly AvaloniaProperty AcceptBackgroundOpacityProperty = AvaloniaProperty.Register<HighlightBorderAdorner, double>("AcceptBackgroundOpacity", 0.3);
 
         /// <summary>
         /// Identifies the <see cref="RefuseBorderBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty RefuseBorderBrushProperty = DependencyProperty.Register("RefuseBorderBrush", typeof(Brush), typeof(HighlightBorderAdorner), new PropertyMetadata(Brushes.Red, PropertyChanged));
+        public static readonly AvaloniaProperty RefuseBorderBrushProperty = AvaloniaProperty.Register<HighlightBorderAdorner, IBrush?>("RefuseBorderBrush", Brushes.Red);
 
         /// <summary>
         /// Identifies the <see cref="RefuseBorderBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty RefuseBorderThicknessProperty = DependencyProperty.Register("RefuseBorderThickness", typeof(double), typeof(HighlightBorderAdorner), new PropertyMetadata(2.0, PropertyChanged));
+        public static readonly AvaloniaProperty RefuseBorderThicknessProperty = AvaloniaProperty.Register<HighlightBorderAdorner, double>("RefuseBorderThickness", 2.0);
 
         /// <summary>
         /// Identifies the <see cref="RefuseBorderBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty RefuseBorderCornerRadiusProperty = DependencyProperty.Register("RefuseBorderCornerRadius", typeof(double), typeof(HighlightBorderAdorner), new PropertyMetadata(3.0, PropertyChanged));
+        public static readonly AvaloniaProperty RefuseBorderCornerRadiusProperty = AvaloniaProperty.Register<HighlightBorderAdorner, double>("RefuseBorderCornerRadius", 3.0);
 
         /// <summary>
         /// Identifies the <see cref="RefuseBorderBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty RefuseBackgroundBrushProperty = DependencyProperty.Register("RefuseBackgroundBrush", typeof(Brush), typeof(HighlightBorderAdorner), new PropertyMetadata(Brushes.IndianRed, PropertyChanged));
+        public static readonly AvaloniaProperty RefuseBackgroundBrushProperty = AvaloniaProperty.Register<HighlightBorderAdorner, IBrush?>("RefuseBackgroundBrush", Brushes.IndianRed);
 
         /// <summary>
         /// Identifies the <see cref="RefuseBorderBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty RefuseBackgroundOpacityProperty = DependencyProperty.Register("RefuseBackgroundOpacity", typeof(double), typeof(HighlightBorderAdorner), new PropertyMetadata(0.3, PropertyChanged));
+        public static readonly AvaloniaProperty RefuseBackgroundOpacityProperty = AvaloniaProperty.Register<HighlightBorderAdorner, double>("RefuseBackgroundOpacity", 0.3);
 
         /// <summary>
         /// Identifies the <see cref="BorderBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty BorderBrushProperty = DependencyProperty.Register("BorderBrush", typeof(Brush), typeof(HighlightBorderAdorner), new PropertyMetadata(Brushes.SteelBlue, PropertyChanged));
+        public static readonly AvaloniaProperty BorderBrushProperty = AvaloniaProperty.Register<HighlightBorderAdorner, IBrush?>("BorderBrush", Brushes.SteelBlue);
 
         /// <summary>
         /// Identifies the <see cref="BorderThickness"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty BorderThicknessProperty = DependencyProperty.Register("BorderThickness", typeof(double), typeof(HighlightBorderAdorner), new PropertyMetadata(2.0, PropertyChanged));
+        public static readonly AvaloniaProperty BorderThicknessProperty = AvaloniaProperty.Register<HighlightBorderAdorner, double>("BorderThickness", 2.0);
 
         /// <summary>
         /// Identifies the <see cref="BorderCornerRadius"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty BorderCornerRadiusProperty = DependencyProperty.Register("BorderCornerRadius", typeof(double), typeof(HighlightBorderAdorner), new PropertyMetadata(3.0, PropertyChanged));
+        public static readonly AvaloniaProperty BorderCornerRadiusProperty = AvaloniaProperty.Register<HighlightBorderAdorner, double>("BorderCornerRadius", 3.0);
 
         /// <summary>
         /// Identifies the <see cref="BackgroundBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty BackgroundBrushProperty = DependencyProperty.Register("BackgroundBrush", typeof(Brush), typeof(HighlightBorderAdorner), new PropertyMetadata(Brushes.LightSteelBlue, PropertyChanged));
+        public static readonly AvaloniaProperty BackgroundBrushProperty = AvaloniaProperty.Register<HighlightBorderAdorner, IBrush?>("BackgroundBrush", Brushes.LightSteelBlue);
 
         /// <summary>
         /// Identifies the <see cref="BorderBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty BackgroundOpacityProperty = DependencyProperty.Register("BackgroundOpacity", typeof(double), typeof(HighlightBorderAdorner), new PropertyMetadata(0.3, PropertyChanged));
+        public static readonly AvaloniaProperty BackgroundOpacityProperty = AvaloniaProperty.Register<HighlightBorderAdorner, double>("BackgroundOpacity", 0.3);
 
         /// <summary>
         /// Identifies the <see cref="State"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty StateProperty = DependencyProperty.Register("State", typeof(HighlightAdornerState), typeof(HighlightBorderAdorner), new PropertyMetadata(HighlightAdornerState.Hidden, PropertyChanged));
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="HighlightBorderAdorner"/> class.
-        /// </summary>
-        /// <param name="adornedElement"></param>
-        public HighlightBorderAdorner([NotNull] UIElement adornedElement)
-            : base(adornedElement)
-        {
-        }
+        public static readonly AvaloniaProperty StateProperty = AvaloniaProperty.Register<HighlightBorderAdorner, HighlightAdornerState>(nameof(State));
+        
 
         /// <summary>
         /// Gets or sets the border brush when the adorner is Accepted.
@@ -182,10 +174,31 @@ namespace Stride.Core.Presentation.Adorners
         /// </summary>
         public HighlightAdornerState State { get { return (HighlightAdornerState)GetValue(StateProperty); } set { SetValue(StateProperty, value); } }
 
-        /// <inheritdoc/>
-        protected override void OnRender(DrawingContext drawingContext)
+        static HighlightBorderAdorner()
         {
-            var adornedElementRect = new Rect(AdornedElement.RenderSize);
+            AcceptBorderBrushProperty.Changed.AddClassHandler<AvaloniaObject>(PropertyChanged);
+            AcceptBorderThicknessProperty.Changed.AddClassHandler<AvaloniaObject>(PropertyChanged);
+            AcceptBorderCornerRadiusProperty.Changed.AddClassHandler<AvaloniaObject>(PropertyChanged);
+            AcceptBackgroundBrushProperty.Changed.AddClassHandler<AvaloniaObject>(PropertyChanged);
+            AcceptBackgroundOpacityProperty.Changed.AddClassHandler<AvaloniaObject>(PropertyChanged);
+            RefuseBorderBrushProperty.Changed.AddClassHandler<AvaloniaObject>(PropertyChanged);
+            RefuseBorderThicknessProperty.Changed.AddClassHandler<AvaloniaObject>(PropertyChanged);
+            RefuseBorderCornerRadiusProperty.Changed.AddClassHandler<AvaloniaObject>(PropertyChanged);
+            RefuseBackgroundBrushProperty.Changed.AddClassHandler<AvaloniaObject>(PropertyChanged);
+            RefuseBackgroundOpacityProperty.Changed.AddClassHandler<AvaloniaObject>(PropertyChanged);
+            BorderBrushProperty.Changed.AddClassHandler<AvaloniaObject>(PropertyChanged);
+            BorderThicknessProperty.Changed.AddClassHandler<AvaloniaObject>(PropertyChanged);
+            BorderCornerRadiusProperty.Changed.AddClassHandler<AvaloniaObject>(PropertyChanged);
+            BackgroundBrushProperty.Changed.AddClassHandler<AvaloniaObject>(PropertyChanged);
+            BackgroundOpacityProperty.Changed.AddClassHandler<AvaloniaObject>(PropertyChanged);
+            StateProperty.Changed.AddClassHandler<AvaloniaObject>(PropertyChanged);
+        }
+        
+        /// <inheritdoc/>
+        public override void Render(DrawingContext drawingContext)
+        {
+            base.Render(drawingContext);
+            var adornedElementRect = new Rect(Bounds.Size);
             Brush renderBrush = null;
             Pen renderPen = null;
             switch (State)
@@ -193,47 +206,47 @@ namespace Stride.Core.Presentation.Adorners
                 case HighlightAdornerState.HighlightAccept:
                     if (AcceptBackgroundBrush != null)
                     {
-                        renderBrush = AcceptBackgroundBrush.Clone();
+                        renderBrush = AcceptBackgroundBrush;
                         renderBrush.Opacity = AcceptBackgroundOpacity;
                     }
                     if (AcceptBorderBrush != null)
                     {
                         renderPen = new Pen(AcceptBorderBrush, AcceptBorderThickness);
                     }
-                    drawingContext.DrawRoundedRectangle(renderBrush, renderPen, adornedElementRect, AcceptBorderCornerRadius, AcceptBorderCornerRadius);
+                    drawingContext.DrawRectangle(renderBrush, renderPen, adornedElementRect, AcceptBorderCornerRadius, AcceptBorderCornerRadius);
                     break;
 
                 case HighlightAdornerState.HighlightRefuse:
                     if (RefuseBackgroundBrush != null)
                     {
-                        renderBrush = RefuseBackgroundBrush.Clone();
+                        renderBrush = RefuseBackgroundBrush;
                         renderBrush.Opacity = RefuseBackgroundOpacity;
                     }
                     if (RefuseBorderBrush != null)
                     {
                         renderPen = new Pen(RefuseBorderBrush, RefuseBorderThickness);
                     }
-                    drawingContext.DrawRoundedRectangle(renderBrush, renderPen, adornedElementRect, RefuseBorderCornerRadius, RefuseBorderCornerRadius);
+                    drawingContext.DrawRectangle(renderBrush, renderPen, adornedElementRect, RefuseBorderCornerRadius, RefuseBorderCornerRadius);
                     break;
 
                 case HighlightAdornerState.Visible:
                     if (BackgroundBrush != null)
                     {
-                        renderBrush = BackgroundBrush.Clone();
+                        renderBrush = BackgroundBrush;
                         renderBrush.Opacity = BackgroundOpacity;
                     }
                     if (BorderBrush != null)
                     {
                         renderPen = new Pen(BorderBrush, BorderThickness);
                     }
-                    drawingContext.DrawRoundedRectangle(renderBrush, renderPen, adornedElementRect, BorderCornerRadius, BorderCornerRadius);
+                    drawingContext.DrawRectangle(renderBrush, renderPen, adornedElementRect, BorderCornerRadius, BorderCornerRadius);
                     break;
             }
         }
 
-        private static void PropertyChanged([NotNull] DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void PropertyChanged([NotNull] AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
-            var adorner = (Adorner)d;
+            var adorner = (Decorator)d;
             adorner.InvalidateVisual();
         }
     }

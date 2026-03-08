@@ -2,8 +2,9 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
 using System.Collections.Generic;
-using System.Windows;
-using System.Windows.Markup;
+using Avalonia;
+using Avalonia.Metadata;
+using Avalonia.Markup.Xaml.Templates;
 using Stride.Core.Annotations;
 
 namespace Stride.Core.Presentation.View
@@ -11,15 +12,14 @@ namespace Stride.Core.Presentation.View
     /// <summary>
     /// An abstract implementation of the <see cref="ITemplateProvider"/> interface.
     /// </summary>
-    [ContentProperty("Template")]
-    public abstract class TemplateProviderBase : DependencyObject, ITemplateProvider
+    public abstract class TemplateProviderBase : AvaloniaObject, ITemplateProvider
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="TemplateProviderBase"/> class.
         /// </summary>
         protected TemplateProviderBase()
         {
-            OverriddenProviderNames = new List<string>();
+            OverriddenProviderNames = [];
             OverrideRule = OverrideRule.Some;
         }
 
@@ -27,7 +27,7 @@ namespace Stride.Core.Presentation.View
         public abstract string Name { get; }
 
         /// <inheritdoc/>
-        public DataTemplate Template { get; set; }
+        [Content] public DataTemplate Template { get; set; }
 
         /// <inheritdoc/>
         public OverrideRule OverrideRule { get; set; }

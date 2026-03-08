@@ -4,9 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
-using System.Windows;
-using System.Windows.Threading;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Interactivity;
+using Avalonia.Threading;
 using Stride.Core.Annotations;
 using Stride.Core.Diagnostics;
 using Stride.Core.Presentation.Extensions;
@@ -22,22 +23,20 @@ namespace Stride.Core.Presentation.Windows
     {
         // TODO: this list should be completely external
         private static readonly string[] DebugWindowTypeNames =
-        {
+        [
             // WPF adorners introduced in Visual Studio 2015 Update 2
             "Microsoft.XamlDiagnostics.WpfTap",
             // WPF Inspector
             "ChristianMoser.WpfInspector",
             // Snoop
-            "Snoop.SnoopUI",
-        };
+            "Snoop.SnoopUI"
+        ];
 
-        private static readonly List<WindowInfo> ModalWindowsList = new List<WindowInfo>();
-        private static readonly List<WindowInfo> BlockingWindowsList = new List<WindowInfo>();
-        private static readonly HashSet<WindowInfo> AllWindowsList = new HashSet<WindowInfo>();
+        private static readonly List<WindowInfo> ModalWindowsList = [];
+        private static readonly List<WindowInfo> BlockingWindowsList = [];
+        private static readonly HashSet<WindowInfo> AllWindowsList = [];
 
         // This must remains a field to prevent garbage collection!
-        private static NativeHelper.WinEventDelegate winEventProc;
-        private static IntPtr hook;
         private static Dispatcher dispatcher;
         private static bool initialized;
 
@@ -50,13 +49,8 @@ namespace Stride.Core.Presentation.Windows
             if (initialized) throw new InvalidOperationException("An instance of WindowManager is already existing.");
 
             initialized = true;
-            winEventProc = WinEventProc;
             WindowManager.dispatcher = dispatcher;
-            uint processId = (uint)Process.GetCurrentProcess().Id;
-            hook = NativeHelper.SetWinEventHook(NativeHelper.EVENT_OBJECT_SHOW, NativeHelper.EVENT_OBJECT_HIDE, IntPtr.Zero, winEventProc, processId, 0, NativeHelper.WINEVENT_OUTOFCONTEXT);
-            if (hook == IntPtr.Zero)
-                throw new InvalidOperationException("Unable to initialize the window manager.");
-
+            
             Logger.Info($"{nameof(WindowManager)} initialized");
         }
 
@@ -84,11 +78,6 @@ namespace Stride.Core.Presentation.Windows
         /// <inheritdoc/>
         public void Dispose()
         {
-            if (!NativeHelper.UnhookWinEvent(hook))
-                throw new InvalidOperationException("An error occurred while disposing the window manager.");
-
-            hook = IntPtr.Zero;
-            winEventProc = null;
             dispatcher = null;
             MainWindow = null;
             AllWindowsList.Clear();
@@ -125,7 +114,7 @@ namespace Stride.Core.Presentation.Windows
 
         /// <summary>
         /// Shows the given window as blocking window. A blocking window will always block the main window of the application, even if shown before it, but does not
-        /// affect modal windows. However it can still be blocked by them..
+        /// affect modal windows. However, it can still be blocked by them..
         /// </summary>
         /// <param name="window">The blocking window to show.</param>
         public static void ShowBlockingWindow([NotNull] Window window)
@@ -137,7 +126,6 @@ namespace Stride.Core.Presentation.Windows
             if (BlockingWindowsList.Contains(windowInfo))
                 throw new InvalidOperationException("This window has already been shown as blocking.");
 
-            window.Owner = MainWindow?.Window;
             window.WindowStartupLocation = MainWindow != null ? WindowStartupLocation.CenterOwner : WindowStartupLocation.CenterScreen;
 
             // Set the owner now so the window can be recognized as modal when shown
@@ -151,11 +139,10 @@ namespace Stride.Core.Presentation.Windows
 
             // Update the hwnd on load in case the window is closed before being shown
             // We will receive EVENT_OBJECT_HIDE but not EVENT_OBJECT_SHOW in this case.
-            window.Loaded += (sender, e) => windowInfo.ForceUpdateHwnd();
             window.Closed += (sender, e) => ActivateMainWindow();
 
             Logger.Info($"Modal window showing. ({window})");
-            window.Show();
+            window.ShowDialog(MainWindow?.Window);
         }
 
         /// <summary>
@@ -174,16 +161,17 @@ namespace Stride.Core.Presentation.Windows
         {
             var window = (Window)sender;
             // dispatch with one frame delay to make sure WPF layout passes are completed (if not, actual width and height might be incorrect)
-            window.Dispatcher.InvokeAsync(() =>
+            Dispatcher.UIThread.InvokeAsync(() =>
             {
                 var area = window.GetWorkArea();
-                if (area != Rect.Empty)
+                if (area != new Rect())
                 {
                     var mousePosition = window.GetCursorScreenPosition();
-                    var expandRight = area.Right > mousePosition.X + window.ActualWidth;
-                    var expandBottom = area.Bottom > mousePosition.Y + window.ActualHeight;
-                    window.Left = expandRight ? mousePosition.X : mousePosition.X - window.ActualWidth;
-                    window.Top = expandBottom ? mousePosition.Y : mousePosition.Y - window.ActualHeight;
+                    var expandRight = area.Right > mousePosition.X + window.Bounds.Width;
+                    var expandBottom = area.Bottom > mousePosition.Y + window.Bounds.Height;
+                    var x = expandRight ? mousePosition.X : mousePosition.X - window.Bounds.Width;
+                    var y = expandBottom ? mousePosition.Y : mousePosition.Y - window.Bounds.Height;
+                    window.Position = new PixelPoint((int)x, (int)y);
                 }
             });
 
@@ -192,13 +180,12 @@ namespace Stride.Core.Presentation.Windows
 
         private static void ActivateMainWindow()
         {
-            if (MainWindow != null && MainWindow.Hwnd != IntPtr.Zero)
-                NativeHelper.SetActiveWindow(MainWindow.Hwnd);
+            MainWindow?.Window.Activate();   
         }
 
         private static void CheckDispatcher()
         {
-            if (dispatcher.Thread != Thread.CurrentThread)
+            if (!dispatcher.CheckAccess())
             {
                 const string message = "This method must be invoked from the dispatcher thread";
                 Logger.Error(message);
@@ -206,193 +193,14 @@ namespace Stride.Core.Presentation.Windows
             }
         }
 
-        private static void WinEventProc(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
-        {
-            if (hwnd == IntPtr.Zero)
-                return;
-
-            var rootHwnd = NativeHelper.GetAncestor(hwnd, NativeHelper.GetAncestorFlags.GetRoot);
-            if (rootHwnd != IntPtr.Zero && rootHwnd != hwnd)
-            {
-                Logger.Debug($"Discarding non-root window ({hwnd}) - root: ({NativeHelper.GetAncestor(hwnd, NativeHelper.GetAncestorFlags.GetRoot)})");
-                return;
-            }
-
-            // idObject == 0 means it is the window itself, not a child object
-            if (eventType == NativeHelper.EVENT_OBJECT_SHOW && idObject == 0)
-            {
-                if (dispatcher.CheckAccess())
-                    WindowShown(hwnd);
-                else
-                    dispatcher.InvokeAsync(() => WindowShown(hwnd));
-            }
-            if (eventType == NativeHelper.EVENT_OBJECT_HIDE && idObject == 0)
-            {
-                if (dispatcher.CheckAccess())
-                    WindowHidden(hwnd);
-                else
-                    dispatcher.InvokeAsync(() => WindowHidden(hwnd));
-            }
-        }
-
-        private static void WindowShown(IntPtr hwnd)
-        {
-            if (!HwndHelper.HasStyleFlag(hwnd, NativeHelper.WS_VISIBLE))
-            {
-                Logger.Debug($"Discarding non-visible window ({hwnd})");
-                return;
-            }
-
-            Logger.Verbose($"Processing newly shown window ({hwnd})...");
-            var windowInfo = Find(hwnd);
-            if (windowInfo == null)
-            {
-                windowInfo = new WindowInfo(hwnd);
-
-                // Ignore window created on separate UI threads
-                if (windowInfo.Window?.Dispatcher != dispatcher)
-                    return;
-
-                if (Debugger.IsAttached)
-                {
-                    // Some external processes might attach a window to ours, we want to discard them.
-                    foreach (var debugWindowTypeName in DebugWindowTypeNames)
-                    {
-                        if (windowInfo.Window?.GetType().FullName.StartsWith(debugWindowTypeName, StringComparison.Ordinal) ?? false)
-                        {
-                            Logger.Debug($"Discarding debug/diagnostics window '{windowInfo.Window.GetType().FullName}' ({hwnd})");
-                            return;
-                        }
-                    }
-                }
-
-                // Make sure first window is activated (modal windows is not auto activated after splash screen)
-                if (AllWindowsList.Count == 0)
-                {
-                    windowInfo.Window?.Activate();
-                    windowInfo.Window?.Focus();
-                }
-
-                AllWindowsList.Add(windowInfo);
-            }
-            windowInfo.IsShown = true;
-
-            if (windowInfo == MainWindow)
-            {
-                Logger.Info($"Main window ({hwnd}) shown.");
-                foreach (var blockingWindow in BlockingWindowsList)
-                {
-                    Logger.Debug($"Setting owner of exiting blocking window {blockingWindow.Hwnd} to be the main window ({hwnd}).");
-                    blockingWindow.Owner = MainWindow;
-                }
-                if (ModalWindowsList.Count > 0 || BlockingWindowsList.Count > 0)
-                {
-                    Logger.Verbose($"Main window ({MainWindow.Hwnd}) disabled because a modal or blocking window is already visible.");
-                    MainWindow.IsDisabled = true;
-                }
-            }
-            else if (windowInfo.IsBlocking)
-            {
-                Logger.Info($"Blocking window ({hwnd}) shown.");
-                if (MainWindow != null && MainWindow.IsShown)
-                {
-                    Logger.Verbose($"Main window ({MainWindow.Hwnd}) disabled by new blocking window.");
-                    MainWindow.IsDisabled = true;
-                }
-                if (ModalWindowsList.Count > 0)
-                {
-                    Logger.Verbose($"Blocking window ({hwnd}) disabled because a modal is already visible.");
-                    windowInfo.IsDisabled = true;
-                }
-            }
-            else if (windowInfo.IsModal)
-            {
-                Logger.Info($"Modal window ({hwnd}) shown.");
-                ModalWindowsList.Add(windowInfo);
-            }
-        }
-
-        private static void WindowHidden(IntPtr hwnd)
-        {
-            Logger.Verbose($"Processing newly hidden window ({hwnd})...");
-
-            var windowInfo = Find(hwnd);
-            if (windowInfo == null)
-            {
-                var message = $"This window was not handled by the {nameof(WindowManager)} ({hwnd})";
-                Logger.Verbose(message);
-                return;
-            }
-
-            windowInfo.IsShown = false;
-            AllWindowsList.Remove(windowInfo);
-
-            if (MainWindow != null && MainWindow.Equals(windowInfo))
-            {
-                Logger.Info($"Main window ({hwnd}) closed.");
-                MainWindow = null;
-            }
-            else if (windowInfo.IsBlocking)
-            {
-                Logger.Info($"Blocking window ({hwnd}) closed.");
-                var index = BlockingWindowsList.IndexOf(windowInfo);
-                if (index < 0)
-                    throw new InvalidOperationException("An unregistered blocking window has been closed.");
-                BlockingWindowsList.RemoveAt(index);
-                windowInfo.IsBlocking = false;
-                if (MainWindow != null && MainWindow.IsShown && BlockingWindowsList.Count == 0 && ModalWindows.Count == 0)
-                {
-                    Logger.Verbose($"Main window ({MainWindow.Hwnd}) enabled because no more modal nor blocking windows are visible.");
-                    MainWindow.IsDisabled = false;
-                }
-                ActivateMainWindow();
-            }
-            else
-            {
-                // Note: We cannot check windowInfo.IsModal anymore at that point because the window is closed.
-                var index = ModalWindowsList.IndexOf(windowInfo);
-                if (index >= 0)
-                {
-                    Logger.Info($"Modal window ({hwnd}) closed.");
-                    ModalWindowsList.RemoveAt(index);
-
-                    if (ModalWindowsList.Count == 0)
-                    {
-                        foreach (var blockingWindow in BlockingWindowsList)
-                        {
-                            Logger.Verbose($"Blocking window ({blockingWindow.Hwnd}) enabled because no more modal windows are visible.");
-                            blockingWindow.IsDisabled = false;
-                        }
-                        if (MainWindow != null && MainWindow.IsShown && BlockingWindowsList.Count == 0 && ModalWindows.Count == 0)
-                        {
-                            Logger.Verbose($"Main window ({MainWindow.Hwnd}) enabled because no more modal nor blocking windows are visible.");
-                            MainWindow.IsDisabled = false;
-                        }
-                        // re-activate only after all popups have closed, since some popups are spawned from popups themselves,
-                        // when their original parent closes, reactivating the main window causes the still living children to close.
-                        ActivateMainWindow();
-                    }
-                }
-            }
-        }
-
         [CanBeNull]
-        internal static WindowInfo Find(IntPtr hwnd)
+        internal static WindowInfo Find(WindowBase hwnd)
         {
-            if (hwnd == IntPtr.Zero)
+            if (hwnd == null)
                 return null;
 
-            var result = AllWindowsList.FirstOrDefault(x => Equals(x.Hwnd, hwnd));
-            if (result != null)
-                return result;
-
-            var window = WindowInfo.FromHwnd(hwnd);
-
-            // Ignore window created on separate UI threads
-            if (window == null || window.Dispatcher != dispatcher)
-                return null;
-
-            return AllWindowsList.FirstOrDefault(x => Equals(x.Window, window));
+            var result = AllWindowsList.FirstOrDefault(x => Equals(x.Owner, hwnd));
+            return result != null ? result : AllWindowsList.FirstOrDefault(x => Equals(x.Window, hwnd));
         }
     }
 }

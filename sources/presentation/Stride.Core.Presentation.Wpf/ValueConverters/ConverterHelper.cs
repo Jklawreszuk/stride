@@ -5,6 +5,7 @@ using System;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using Avalonia;
 using Stride.Core.Annotations;
 using Stride.Core.Mathematics;
 using Stride.Core.Reflection;

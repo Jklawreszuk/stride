@@ -3,7 +3,11 @@
 
 using System;
 using System.Runtime.InteropServices;
-using System.Windows;
+using System.Threading.Tasks;
+using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Input;
+using Avalonia.Input.Platform;
 using Stride.Core.Annotations;
 using Stride.Core.Extensions;
 
@@ -14,25 +18,14 @@ namespace Stride.Core.Presentation.Interop
     /// </summary>
     public static class SafeClipboard
     {
-        // ReSharper disable InconsistentNaming
-        public const int CLIPBRD_E_CANT_OPEN = unchecked((int)0x800401D0);
-        public const int CLIPBRD_E_CANT_SET = unchecked((int)0x800401D2);
-        // ReSharper restore InconsistentNaming
-
         /// <summary>
         /// Similar to <see cref="Clipboard.ContainsText()"/> but don't throw if the clipboard cannot be open.
         /// </summary>
         /// <returns><c>true</c> if the Clipboard contains data in the <see cref="DataFormats.UnicodeText"/> data format; otherwise, <c>false</c>.</returns>
-        public static bool ContainsText()
+        public static async Task<bool> ContainsText()
         {
-            try
-            {
-                return Clipboard.ContainsText();
-            }
-            catch (COMException e) when (e.HResult == CLIPBRD_E_CANT_OPEN)
-            {
-                return false;
-            }
+            var text = await GetText();//to verify
+            return !text.IsNullOrEmpty();
         }
 
         /// <summary>
@@ -40,17 +33,9 @@ namespace Stride.Core.Presentation.Interop
         /// </summary>
         /// <returns>A string containing the <see cref="DataFormats.UnicodeText"/> data, or an empty string if no <see cref="DataFormats.UnicodeText"/> data is available on the Clipboard.</returns>
         [NotNull]
-        public static string GetText()
+        public static async Task<string> GetText()
         {
-            try
-            {
-                return Clipboard.GetText();
-            }
-            catch (Exception e) when (e.HResult == CLIPBRD_E_CANT_OPEN)
-            {
-                e.Ignore();
-                return string.Empty;
-            }
+            return await GetClipboard()?.TryGetTextAsync();
         }
 
         /// <summary>
@@ -60,14 +45,7 @@ namespace Stride.Core.Presentation.Interop
         public static void SetDataObject([NotNull] object data, bool copy)
         {
             if (data == null) throw new ArgumentNullException(nameof(data));
-            try
-            {
-                Clipboard.SetDataObject(data, copy);
-            }
-            catch (Exception e) when (e.HResult == CLIPBRD_E_CANT_OPEN || e.HResult == CLIPBRD_E_CANT_SET)
-            {
-                e.Ignore();
-            }
+            GetClipboard()?.SetDataAsync((IAsyncDataTransfer)data);
         }
 
         /// <summary>
@@ -77,14 +55,18 @@ namespace Stride.Core.Presentation.Interop
         public static void SetText([NotNull] string text)
         {
             if (text == null) throw new ArgumentNullException(nameof(text));
-            try
+            GetClipboard()?.SetTextAsync(text);
+        }
+        
+        [CanBeNull]
+        private static IClipboard GetClipboard()
+        {
+            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                Clipboard.SetText(text);
+                return desktop.MainWindow?.Clipboard;
             }
-            catch (Exception e) when (e.HResult == CLIPBRD_E_CANT_OPEN || e.HResult == CLIPBRD_E_CANT_SET)
-            {
-                e.Ignore();
-            }
+
+            throw new InvalidOperationException("Clipboard not available outside desktop lifetime.");
         }
     }
 }

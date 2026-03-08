@@ -2,7 +2,7 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
 using System.Globalization;
-using System.Windows.Controls;
+using Avalonia.Controls;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Internal;
 
@@ -25,14 +25,14 @@ namespace Stride.Core.Presentation.ValueConverters
             {
                 result = !result;
             }
-            return result ? SelectionMode.Extended : SelectionMode.Single;
+            return result ? SelectionMode.Multiple : SelectionMode.Single;
         }
 
         /// <inheritdoc/>
         public override object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var selectionMode = (SelectionMode)value;
-            var result = selectionMode == SelectionMode.Extended;
+            var result = selectionMode == SelectionMode.Multiple;
             if (parameter as bool? == false)
             {
                 result = !result;

@@ -3,26 +3,27 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
-using System.Windows.Data;
-using Microsoft.Xaml.Behaviors;
-using Stride.Core;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Data;
+using Avalonia.Interactivity;
+using Avalonia.Xaml.Interactivity;
 using Stride.Core.Presentation.Extensions;
 
 namespace Stride.Core.Presentation.Behaviors
 {
     /// <summary>
-    /// Represents a behavior capable of interrupting a <c>Binding</c> on a <c>UIElement</c> when it receives focus,
+    /// Represents a behavior capable of interrupting a <c>Binding</c> on a <c>Control</c> when it receives focus,
     /// and resuming that <c>Binding</c> when it loses focus.
     /// </summary>
-    /// <remarks>The host element must be of type <c>UIElement</c> and the <c>DependencyProprty</c> defined by PropertyName property must be set to a <c>BindingBase</c> object.</remarks>
-    public class OnFocusBindingInterruptionBehavior : Behavior<DependencyObject>
+    /// <remarks>The host element must be of type <c>Control</c> and the <c>DependencyProprty</c> defined by PropertyName property must be set to a <c>BindingBase</c> object.</remarks>
+    public class OnFocusBindingInterruptionBehavior : Behavior<AvaloniaObject>
     {
         private IDisposable subscriber;
-        private DependencyProperty property;
+        private AvaloniaProperty property;
 
         /// <summary>
-        /// Gets or sets the name of the DependencyProperty on which the Binding has to be interrupted.
+        /// Gets or sets the name of the AvaloniaProperty on which the Binding has to be interrupted.
         /// </summary>
         public string PropertyName { get; set; }
         /// <summary>
@@ -45,17 +46,16 @@ namespace Stride.Core.Presentation.Behaviors
             if (property == null /* need to check DesignMode as well ? */)
                 throw new InvalidOperationException($"Impossible to find property named '{PropertyName}' on object typed '{AssociatedObject.GetType()}'.");
 
-            if ((Binding is Binding) == false)
+            if (Binding is not Avalonia.Data.Binding)
                 throw new InvalidOperationException("Not supported binding type.");
 
-            var element = AssociatedObject as FrameworkElement;
-            if (element == null)
+            if (AssociatedObject is not Control element)
             {
                 throw new InvalidOperationException(
-                    $"Behavior of type '{GetType()}' must be bound to objects of type '{typeof(FrameworkElement)}'. (currently bound to object typed '{AssociatedObject.GetType()}')");
+                    $"Behavior of type '{GetType()}' must be bound to objects of type '{typeof(Control)}'. (currently bound to object typed '{AssociatedObject.GetType()}')");
             }
 
-            BindingOperations.SetBinding(AssociatedObject, property, Binding);
+            AssociatedObject.Bind(property, Binding);
 
             // subscribe to *Focus events
             element.GotFocus += OnHostGotFocus;
@@ -81,7 +81,7 @@ namespace Stride.Core.Presentation.Behaviors
             var value = AssociatedObject.GetValue(property);
 
             // clear binding (the side-effect is that value is also clear from within the control)
-            BindingOperations.ClearBinding(AssociatedObject, property);
+            AssociatedObject.SetValue(property, null);
 
             // set back value stored before clearing binding
             AssociatedObject.SetValue(property, value);
@@ -101,7 +101,7 @@ namespace Stride.Core.Presentation.Behaviors
             var binding = (Binding)Binding;
 
             // resolve the source instance here (seems BindingOperations.SetBinding does not resolve DataContext)
-            var source = binding.Source ?? ((FrameworkElement)AssociatedObject).DataContext;
+            var source = binding.Source ?? ((Control)AssociatedObject).DataContext;
 
             var intermediateBinding = new Binding
             {
@@ -119,13 +119,13 @@ namespace Stride.Core.Presentation.Behaviors
             };
 
             // apply custom binding
-            BindingOperations.SetBinding(AssociatedObject, property, intermediateBinding);
+            AssociatedObject.Bind(property, intermediateBinding);
 
             // set target property, side-effect is the source property value is set too
             AssociatedObject.SetValue(property, currentValue);
 
             // restore cleared binding
-            BindingOperations.SetBinding(AssociatedObject, property, Binding);
+            AssociatedObject.Bind(property, Binding);
         }
     }
 }

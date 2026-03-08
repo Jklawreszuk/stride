@@ -2,7 +2,8 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System.Windows;
-using Microsoft.Xaml.Behaviors;
+using Avalonia;
+using Avalonia.Xaml.Interactivity;
 using Stride.Core.Transactions;
 using Stride.Core.Presentation.Controls;
 using Stride.Core.Presentation.Services;
@@ -16,9 +17,9 @@ namespace Stride.Core.Presentation.Behaviors
     {
         private ITransaction transaction;
 
-        public static DependencyProperty UndoRedoServiceProperty = DependencyProperty.Register(nameof(UndoRedoService), typeof(IUndoRedoService), typeof(NumericTextBoxTransactionalRepeatButtonsBehavior));
+        public static StyledProperty<IUndoRedoService> UndoRedoServiceProperty = AvaloniaProperty.Register<NumericTextBoxTransactionalRepeatButtonsBehavior,IUndoRedoService>(nameof(UndoRedoService));
 
-        public IUndoRedoService UndoRedoService { get { return (IUndoRedoService)GetValue(UndoRedoServiceProperty); } set { SetValue(UndoRedoServiceProperty, value); } }
+        public IUndoRedoService UndoRedoService { get { return GetValue(UndoRedoServiceProperty); } set { SetValue(UndoRedoServiceProperty, value); } }
 
         protected override void OnAttached()
         {

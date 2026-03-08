@@ -27,8 +27,8 @@ namespace Stride.Core.Presentation.ViewModel
         public const int DefaultUpdateInterval = 300;
 
         protected readonly Dictionary<Logger, List<ILogMessage>> Loggers = new Dictionary<Logger, List<ILogMessage>>();
-        private readonly ObservableList<ILogMessage> messages = new ObservableList<ILogMessage>();
-        private readonly List<Tuple<Logger, ILogMessage>> pendingMessages = new List<Tuple<Logger, ILogMessage>>();
+        private readonly ObservableList<ILogMessage> messages = [];
+        private readonly List<Tuple<Logger, ILogMessage>> pendingMessages = [];
 
         private int updateInterval = DefaultUpdateInterval;
         private bool updatePending;
@@ -57,7 +57,7 @@ namespace Stride.Core.Presentation.ViewModel
             : this(serviceProvider)
         {
             if (logger == null) throw new ArgumentNullException(nameof(logger));
-            Loggers.Add(logger, new List<ILogMessage>());
+            Loggers.Add(logger, []);
             logger.MessageLogged += MessageLogged;
         }
 
@@ -72,7 +72,7 @@ namespace Stride.Core.Presentation.ViewModel
             if (loggers == null) throw new ArgumentNullException(nameof(loggers));
             foreach (var logger in loggers)
             {
-                Loggers.Add(logger, new List<ILogMessage>());
+                Loggers.Add(logger, []);
                 logger.MessageLogged += MessageLogged;
             }
             ClearMessagesCommand = new AnonymousCommand(serviceProvider, ClearMessages);
@@ -157,7 +157,7 @@ namespace Stride.Core.Presentation.ViewModel
         /// <param name="logger">The <see cref="Logger"/> to monitor.</param>
         public virtual void AddLogger([NotNull] Logger logger)
         {
-            Loggers.Add(logger, new List<ILogMessage>());
+            Loggers.Add(logger, []);
             logger.MessageLogged += MessageLogged;
         }
 

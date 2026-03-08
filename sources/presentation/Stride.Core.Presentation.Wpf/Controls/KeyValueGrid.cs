@@ -1,8 +1,8 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
-using System.Windows;
-using System.Windows.Controls;
+using Avalonia;
+using Avalonia.Controls;
 using Stride.Core.Annotations;
 
 namespace Stride.Core.Presentation.Controls
@@ -19,7 +19,7 @@ namespace Stride.Core.Presentation.Controls
     {
         private bool gridParametersInvalidated;
 
-        public static readonly DependencyProperty UseFullRowProperty = DependencyProperty.RegisterAttached("UseFullRow", typeof(bool), typeof(KeyValueGrid));
+        public static readonly AttachedProperty<bool> UseFullRowProperty = AvaloniaProperty.RegisterAttached<KeyValueGrid, bool>("UseFullRow", typeof(KeyValueGrid));
 
         /// <summary>
         /// Initializes a new instance of the <see cref="KeyValueGrid"/> class.
@@ -30,12 +30,12 @@ namespace Stride.Core.Presentation.Controls
             ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1.0, GridUnitType.Star) });
         }
 
-        public static bool GetUseFullRow([NotNull] DependencyObject obj)
+        public static bool GetUseFullRow([NotNull] AvaloniaObject obj)
         {
-            return (bool)obj.GetValue(UseFullRowProperty);
+            return obj.GetValue(UseFullRowProperty);
         }
 
-        public static void SetUseFullRow([NotNull] DependencyObject obj, bool value)
+        public static void SetUseFullRow([NotNull] AvaloniaObject obj, bool value)
         {
             obj.SetValue(UseFullRowProperty, value);
         }
@@ -69,7 +69,7 @@ namespace Stride.Core.Presentation.Controls
             // Update Grid.Row and Grid.Column dependency properties on each child control
             var row = 0;
             var column = 0;
-            foreach (UIElement element in children)
+            foreach (Control element in children)
             {
                 element.SetValue(ColumnProperty, column);
                 element.SetValue(RowProperty, row);
@@ -104,10 +104,10 @@ namespace Stride.Core.Presentation.Controls
         }
 
         /// <inheritdoc/>
-        protected override void OnVisualChildrenChanged(DependencyObject visualAdded, DependencyObject visualRemoved)
+        protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
         {
             gridParametersInvalidated = true;
-            base.OnVisualChildrenChanged(visualAdded, visualRemoved);
+            base.OnPropertyChanged(change);
         }
     }
 }

@@ -1,6 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
-using System.Windows;
+using Avalonia;
 
 namespace Stride.Core.Presentation.Behaviors
 {
@@ -13,22 +13,22 @@ namespace Stride.Core.Presentation.Behaviors
         /// <summary>
         /// Identifies the <see cref="Property"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty PropertyProperty = DependencyProperty.Register("Property", typeof(DependencyProperty), typeof(OnEventSetPropertyBehavior));
+        public static readonly StyledProperty<AvaloniaProperty> PropertyProperty = AvaloniaProperty.Register<OnEventSetPropertyBehavior,AvaloniaProperty>("Property");
 
         /// <summary>
         /// Identifies the <see cref="Value"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register("Value", typeof(object), typeof(OnEventSetPropertyBehavior));
+        public static readonly AvaloniaProperty<object> ValueProperty = AvaloniaProperty.Register<OnEventSetPropertyBehavior,object>("Value");
 
         /// <summary>
         /// Identifies the <see cref="Target"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty TargetProperty = DependencyProperty.Register("Target", typeof(DependencyObject), typeof(OnEventSetPropertyBehavior));
+        public static readonly AvaloniaProperty<AvaloniaObject> TargetProperty = AvaloniaProperty.Register<OnEventSetPropertyBehavior,AvaloniaObject>("Target");
 
         /// <summary>
-        /// Gets or sets the <see cref="DependencyProperty"/> to set when the event is raised.
+        /// Gets or sets the <see cref="AvaloniaProperty"/> to set when the event is raised.
         /// </summary>
-        public DependencyProperty Property { get { return (DependencyProperty)GetValue(PropertyProperty); } set { SetValue(PropertyProperty, value); } }
+        public AvaloniaProperty Property { get { return (AvaloniaProperty)GetValue(PropertyProperty); } set { SetValue(PropertyProperty, value); } }
 
         /// <summary>
         /// Gets or sets the value to set when the event is raised.
@@ -39,7 +39,7 @@ namespace Stride.Core.Presentation.Behaviors
         /// Gets or sets the target control to set the dependency property.
         /// If null, it will be set on the control hosting this behavior.
         /// </summary>
-        public DependencyObject Target { get { return (DependencyObject)GetValue(TargetProperty); } set { SetValue(TargetProperty, value); } }
+        public AvaloniaObject Target { get { return (AvaloniaObject)GetValue(TargetProperty); } set { SetValue(TargetProperty, value); } }
 
         /// <inheritdoc/>
         protected override void OnEvent()

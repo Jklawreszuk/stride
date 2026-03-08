@@ -1,8 +1,9 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
+using System.Collections.Generic;
 using System.Globalization;
-using System.Windows;
+using Avalonia;
 using Stride.Core.Annotations;
 
 namespace Stride.Core.Presentation.ValueConverters
@@ -10,11 +11,11 @@ namespace Stride.Core.Presentation.ValueConverters
     public class ThicknessMultiConverter : OneWayMultiValueConverter<ThicknessMultiConverter>
     {
         [NotNull]
-        public override object Convert([NotNull] object[] values, Type targetType, object parameter, CultureInfo culture)
+        public override object Convert([NotNull] IList<object> values, Type targetType, object parameter, CultureInfo culture)
         {
             if (values == null) throw new ArgumentNullException(nameof(values));
 
-            switch (values.Length)
+            switch (values.Count)
             {
                 case 1:
                     var uniform = ConverterHelper.ConvertToDouble(values[0], culture);
@@ -33,7 +34,7 @@ namespace Stride.Core.Presentation.ValueConverters
                     return new Thickness(left, top, right, bottom);
 
                 default:
-                    throw new ArgumentException($"Inconsistent number of parameters: expected 1, 2 or 4 values, got {values.Length}.", nameof(values));
+                    throw new ArgumentException($"Inconsistent number of parameters: expected 1, 2 or 4 values, got {values.Count}.", nameof(values));
             }
         }
     }

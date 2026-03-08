@@ -1,4 +1,4 @@
-<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:ctrl="clr-namespace:Stride.Core.Presentation.Controls"
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -80,12 +80,12 @@
                           HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
                           VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
                           Background="{TemplateBinding Panel.Background}" Padding="{TemplateBinding Control.Padding}"
-                          SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" Focusable="False">
+                          SnapsToDevicePixels="{TemplateBinding Control.SnapsToDevicePixels}" Focusable="False">
               <ItemsPresenter />
             </ScrollViewer>
           </Border>
           <ControlTemplate.Triggers>
-            <Trigger Property="UIElement.IsEnabled" Value="False">
+            <Trigger Property="Control.IsEnabled" Value="False">
               <Setter TargetName="Bd" Property="Panel.Background"
                       Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
             </Trigger>
@@ -131,12 +131,12 @@
                             </Path>
                           </Border>
                           <ControlTemplate.Triggers>
-                            <Trigger Property="UIElement.IsMouseOver" Value="True">
+                            <Trigger Property="Control.IsMouseOver" Value="True">
                               <Setter TargetName="ExpandPath" Property="Shape.Stroke" Value="#FF1BBBFA" />
                               <Setter TargetName="ExpandPath" Property="Shape.Fill" Value="#00FFFFFF" />
                             </Trigger>
                             <Trigger Property="ToggleButton.IsChecked" Value="True">
-                              <Setter TargetName="ExpandPath" Property="UIElement.RenderTransform">
+                              <Setter TargetName="ExpandPath" Property="Control.RenderTransform">
                                 <Setter.Value>
                                   <RotateTransform Angle="180" CenterX="3" CenterY="3" />
                                 </Setter.Value>
@@ -161,7 +161,7 @@
                                   ContentStringFormat="{TemplateBinding HeaderedItemsControl.HeaderStringFormat}"
                                   ContentSource="Header" Name="PART_Header"
                                   HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}"
-                                  SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
+                                  SnapsToDevicePixels="{TemplateBinding Control.SnapsToDevicePixels}" />
                 <Expander x:Name="propertyExpander" Grid.Row="1" IsExpanded="{TemplateBinding IsExpanded}"
                           Style="{StaticResource PropertyExpanderStyle}" IsEnabled="True">
                   <ItemsPresenter Name="ItemsHost" Grid.Row="1" />
@@ -181,8 +181,8 @@
           <mwt:ListBoxChrome Background="{TemplateBinding Panel.Background}"
                              BorderBrush="{TemplateBinding Border.BorderBrush}"
                              BorderThickness="{TemplateBinding Border.BorderThickness}"
-                             RenderMouseOver="{TemplateBinding UIElement.IsMouseOver}"
-                             RenderFocused="{TemplateBinding UIElement.IsKeyboardFocusWithin}" Name="Bd"
+                             RenderMouseOver="{TemplateBinding Control.IsMouseOver}"
+                             RenderFocused="{TemplateBinding Control.IsKeyboardFocusWithin}" Name="Bd"
                              SnapsToDevicePixels="True">
             <Grid Focusable="False">
               <ScrollViewer x:Name="PART_ContentHost" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
@@ -201,7 +201,7 @@
             <Trigger Property="HasText" Value="True">
               <Setter TargetName="Watermark" Property="Visibility" Value="Hidden" />
             </Trigger>
-            <Trigger Property="UIElement.IsEnabled" Value="False">
+            <Trigger Property="Control.IsEnabled" Value="False">
               <Setter TargetName="Bd" Property="Panel.Background"
                       Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
               <Setter Property="TextElement.Foreground"
@@ -231,12 +231,12 @@
           <mwt:ListBoxChrome Background="{TemplateBinding Panel.Background}"
                              BorderBrush="{TemplateBinding Border.BorderBrush}"
                              BorderThickness="{TemplateBinding Border.BorderThickness}"
-                             RenderMouseOver="{TemplateBinding UIElement.IsMouseOver}"
-                             RenderFocused="{TemplateBinding UIElement.IsKeyboardFocusWithin}" Name="Bd"
+                             RenderMouseOver="{TemplateBinding Control.IsMouseOver}"
+                             RenderFocused="{TemplateBinding Control.IsKeyboardFocusWithin}" Name="Bd"
                              SnapsToDevicePixels="True">
             <DockPanel LastChildFill="True" Focusable="False">
               <UniformGrid x:Name="upDownButtons" Rows="2" DockPanel.Dock="Right" Focusable="False"
-                           Visibility="Collapsed" MaxWidth="20">
+                           IsVisible="False" MaxWidth="20">
                 <RepeatButton x:Name="PART_IncreaseButton"
                               Command="{x:Static ctrl:NumericTextBox.SmallIncreaseCommand}">
                   <Grid Margin="0" Background="Transparent">
@@ -262,7 +262,7 @@
             <Trigger Property="DisplayUpDownButtons" Value="True">
               <Setter TargetName="upDownButtons" Property="Visibility" Value="Visible" />
             </Trigger>
-            <Trigger Property="UIElement.IsEnabled" Value="False">
+            <Trigger Property="Control.IsEnabled" Value="False">
               <Setter TargetName="Bd" Property="Panel.Background"
                       Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
               <Setter Property="TextElement.Foreground"
@@ -397,7 +397,7 @@
                         BorderThickness="0" Margin="2" Focusable="False">
                 <ctrl:KeyValueGrid x:Name="RGBGrid" HorizontalAlignment="Stretch" Focusable="False">
                   <TextBlock Margin="4,0" Text="{sd:Localize R:, Context=RGBA}"
-                             ToolTipService.ToolTip="{sd:Localize Red, Context=ToolTip}" VerticalAlignment="Center"
+                             ToolTip.Tip="{sd:Localize Red, Context=ToolTip}" VerticalAlignment="Center"
                              HorizontalAlignment="Left" Focusable="False" />
                   <StackPanel Margin="0,2">
                     <ctrl:NumericTextBox x:Name="RedTextBox"
@@ -412,7 +412,7 @@
                     </Rectangle>
                   </StackPanel>
                   <TextBlock Margin="4,0" Text="{sd:Localize G:, Context=RGBA}"
-                             ToolTipService.ToolTip="{sd:Localize Green, Context=ToolTip}" VerticalAlignment="Center"
+                             ToolTip.Tip="{sd:Localize Green, Context=ToolTip}" VerticalAlignment="Center"
                              HorizontalAlignment="Left" Focusable="False" />
                   <StackPanel Margin="0,2">
                     <ctrl:NumericTextBox x:Name="GreenTextBox"
@@ -427,7 +427,7 @@
                     </Rectangle>
                   </StackPanel>
                   <TextBlock Margin="4,0" Text="{sd:Localize B:, Context=RGBA}"
-                             ToolTipService.ToolTip="{sd:Localize Blue, Context=ToolTip}" VerticalAlignment="Center"
+                             ToolTip.Tip="{sd:Localize Blue, Context=ToolTip}" VerticalAlignment="Center"
                              HorizontalAlignment="Left" Focusable="False" />
                   <StackPanel Margin="0,2">
                     <ctrl:NumericTextBox x:Name="BlueTextBox"
@@ -442,7 +442,7 @@
                     </Rectangle>
                   </StackPanel>
                   <TextBlock x:Name="AlphaTextBlock" Margin="4,0" Text="{sd:Localize A:, Context=RGBA}"
-                             ToolTipService.ToolTip="{sd:Localize Alpha, Context=ToolTip}" VerticalAlignment="Center"
+                             ToolTip.Tip="{sd:Localize Alpha, Context=ToolTip}" VerticalAlignment="Center"
                              HorizontalAlignment="Left" Focusable="False" />
                   <StackPanel Margin="0,2" x:Name="AlphaValue">
                     <ctrl:NumericTextBox x:Name="AlphaTextBox"
@@ -462,7 +462,7 @@
                         Margin="2" Focusable="False">
                 <ctrl:KeyValueGrid Focusable="False">
                   <TextBlock Margin="4,0" Text="{sd:Localize H:, Context=HSB}"
-                             ToolTipService.ToolTip="{sd:Localize Hue, Context=ToolTip}" VerticalAlignment="Center"
+                             ToolTip.Tip="{sd:Localize Hue, Context=ToolTip}" VerticalAlignment="Center"
                              HorizontalAlignment="Left" Focusable="False" />
                   <StackPanel Margin="0,2">
                     <ctrl:NumericTextBox x:Name="HueTextBox"
@@ -477,7 +477,7 @@
                     </Rectangle>
                   </StackPanel>
                   <TextBlock Margin="4,0" Text="{sd:Localize S:, Context=HSB}"
-                             ToolTipService.ToolTip="{sd:Localize Saturation, Context=ToolTip}"
+                             ToolTip.Tip="{sd:Localize Saturation, Context=ToolTip}"
                              VerticalAlignment="Center" HorizontalAlignment="Left" Focusable="False" />
                   <StackPanel Margin="0,2">
                     <ctrl:NumericTextBox x:Name="SaturationTextBox"
@@ -492,7 +492,7 @@
                     </Rectangle>
                   </StackPanel>
                   <TextBlock Margin="4,0" Text="{sd:Localize B:, Context=HSB}"
-                             ToolTipService.ToolTip="{sd:Localize Value, Context=ToolTip}" VerticalAlignment="Center"
+                             ToolTip.Tip="{sd:Localize Value, Context=ToolTip}" VerticalAlignment="Center"
                              HorizontalAlignment="Left" Focusable="False" />
                   <StackPanel Margin="0,2">
                     <ctrl:NumericTextBox x:Name="BrightnessTextBox"
@@ -542,7 +542,7 @@
             <Popup IsOpen="{TemplateBinding IsDropDownOpen}" Placement="Bottom" x:Name="Popup" Focusable="False"
                    AllowsTransparency="True" PopupAnimation="Slide">
               <Grid>
-                <ListBox x:Name="PART_ListBox" MinWidth="{TemplateBinding ActualWidth}" MaxHeight="380"
+                <ListBox x:Name="PART_ListBox" MinWidth="{TemplateBinding Bounds.Width}" MaxHeight="380"
                          SnapsToDevicePixels="True"
                          FocusManager.IsFocusScope="True"
                          ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource AncestorType=ctrl:FilteringComboBox}}"
@@ -554,7 +554,7 @@
                          ItemTemplate="{TemplateBinding ItemTemplate}"
                          ItemTemplateSelector="{TemplateBinding ItemTemplateSelector}"
                          ItemStringFormat="{TemplateBinding ItemStringFormat}"
-                         Visibility="{Binding Items.Count, RelativeSource={RelativeSource Self}, Converter={cvt:VisibleOrCollapsed}}" />
+                         IsVisible="{Binding Items.Count, RelativeSource={RelativeSource Self}, Converter={cvt:VisibleOrCollapsed}}" />
               </Grid>
             </Popup>
           </Grid>
@@ -583,7 +583,7 @@
             <Popup IsOpen="{TemplateBinding IsDropDownOpen}" Placement="Bottom" x:Name="Popup" Focusable="False"
                    AllowsTransparency="True" PopupAnimation="Slide">
               <Grid>
-                <ListBox x:Name="PART_ListBox" MinWidth="{TemplateBinding ActualWidth}" MaxHeight="380"
+                <ListBox x:Name="PART_ListBox" MinWidth="{TemplateBinding Bounds.Width}" MaxHeight="380"
                          SnapsToDevicePixels="True"
                          FocusManager.IsFocusScope="True"
                          ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource AncestorType=ctrl:SearchComboBox}}"
@@ -594,7 +594,7 @@
                          ItemTemplate="{TemplateBinding ItemTemplate}"
                          ItemTemplateSelector="{TemplateBinding ItemTemplateSelector}"
                          ItemStringFormat="{TemplateBinding ItemStringFormat}"
-                         Visibility="{Binding Items.Count, RelativeSource={RelativeSource Self}, Converter={cvt:VisibleOrCollapsed}}" />
+                         IsVisible="{Binding Items.Count, RelativeSource={RelativeSource Self}, Converter={cvt:VisibleOrCollapsed}}" />
               </Grid>
             </Popup>
           </Grid>
@@ -653,7 +653,7 @@
                               Content="Match whole word" />
               </ToolBar>
             </ToolBarTray>
-            <RichTextBox x:Name="PART_LogTextBox" IsReadOnly="True" HorizontalScrollBarVisibility="Auto"
+            <TextBox x:Name="PART_LogTextBox" IsReadOnly="True" HorizontalScrollBarVisibility="Auto"
                          VerticalScrollBarVisibility="Auto" FontFamily="Consolas, Courrier New" FontSize="11" />
           </DockPanel>
         </ControlTemplate>
@@ -683,10 +683,10 @@
       <Setter.Value>
         <ControlTemplate TargetType="{x:Type ctrl:TrackerControl}">
           <Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsHitTestVisible="False">
-            <Line x:Name="PART_HorizontalLine" Visibility="{TemplateBinding HorizontalLineVisibility}"
+            <Line x:Name="PART_HorizontalLine" IsVisible="{TemplateBinding HorizontalLineVisibility}"
                   Stroke="{TemplateBinding LineStroke}" StrokeThickness="{TemplateBinding LineThickness}"
                   RenderOptions.EdgeMode="Aliased" />
-            <Line x:Name="PART_VerticalLine" Visibility="{TemplateBinding VerticalLineVisibility}"
+            <Line x:Name="PART_VerticalLine" IsVisible="{TemplateBinding VerticalLineVisibility}"
                   Stroke="{TemplateBinding LineStroke}" StrokeThickness="{TemplateBinding LineThickness}"
                   RenderOptions.EdgeMode="Aliased" />
             <!--<ContentPresenter />-->

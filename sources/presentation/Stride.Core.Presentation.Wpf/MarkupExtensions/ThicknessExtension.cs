@@ -3,11 +3,12 @@
 using System;
 using System.Windows;
 using System.Windows.Markup;
+using Avalonia;
+using Avalonia.Markup.Xaml;
 using Stride.Core.Annotations;
 
 namespace Stride.Core.Presentation.MarkupExtensions
 {
-    [MarkupExtensionReturnType(typeof(ThicknessExtension))]
     public class ThicknessExtension : MarkupExtension
     {
         public ThicknessExtension(double uniformLength)

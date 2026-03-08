@@ -3,11 +3,15 @@
 
 using System;
 using System.Globalization;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
 using System.Windows.Input;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Metadata;
+using Avalonia.Controls.Primitives;
+using Avalonia.Data;
+using Avalonia.Input;
+using Avalonia.Interactivity;
+using CommunityToolkit.Mvvm.Input;
 using Stride.Core.Annotations;
 using Stride.Core.Mathematics;
 using Stride.Core.Presentation.Core;
@@ -28,7 +32,7 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// The validation occurs when the mouse button is released.
         /// </summary>
-        OnMouseUp,
+        OnPointerReleased,
     }
 
     public class RepeatButtonPressedRoutedEventArgs : RoutedEventArgs
@@ -72,123 +76,108 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="Value"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(double?), typeof(NumericTextBox), new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnValuePropertyChanged, null, true, UpdateSourceTrigger.Explicit));
+        public static readonly AvaloniaProperty ValueProperty = AvaloniaProperty.Register<NumericTextBox, double?>(nameof(Value), defaultBindingMode: BindingMode.TwoWay);
 
         /// <summary>
         /// Identifies the <see cref="DecimalPlaces"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty DecimalPlacesProperty = DependencyProperty.Register(nameof(DecimalPlaces), typeof(int), typeof(NumericTextBox), new FrameworkPropertyMetadata(-1, OnDecimalPlacesPropertyChanged));
+        public static readonly AvaloniaProperty DecimalPlacesProperty = AvaloniaProperty.Register<NumericTextBox, int>(nameof(DecimalPlaces), -1);
 
         /// <summary>
         /// Identifies the <see cref="Minimum"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty MinimumProperty = DependencyProperty.Register(nameof(Minimum), typeof(double), typeof(NumericTextBox), new FrameworkPropertyMetadata(double.MinValue, OnMinimumPropertyChanged));
+        public static readonly AvaloniaProperty MinimumProperty = AvaloniaProperty.Register<NumericTextBox, double>(nameof(Minimum), double.MinValue);
 
         /// <summary>
         /// Identifies the <see cref="Maximum"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty MaximumProperty = DependencyProperty.Register(nameof(Maximum), typeof(double), typeof(NumericTextBox), new FrameworkPropertyMetadata(double.MaxValue, OnMaximumPropertyChanged));
+        public static readonly AvaloniaProperty MaximumProperty = AvaloniaProperty.Register<NumericTextBox, double>(nameof(Maximum), double.MaxValue);
 
         /// <summary>
         /// Identifies the <see cref="ValueRatio"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ValueRatioProperty = DependencyProperty.Register(nameof(ValueRatio), typeof(double), typeof(NumericTextBox), new PropertyMetadata(default(double), ValueRatioChanged));
+        public static readonly AvaloniaProperty ValueRatioProperty = AvaloniaProperty.Register<NumericTextBox, double>(nameof(ValueRatio));
 
         /// <summary>
         /// Identifies the <see cref="LargeChange"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty LargeChangeProperty = DependencyProperty.Register(nameof(LargeChange), typeof(double), typeof(NumericTextBox), new PropertyMetadata(10.0));
+        public static readonly AvaloniaProperty LargeChangeProperty = AvaloniaProperty.Register<NumericTextBox, double>(nameof(LargeChange),10.0);
 
         /// <summary>
         /// Identifies the <see cref="SmallChange"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty SmallChangeProperty = DependencyProperty.Register(nameof(SmallChange), typeof(double), typeof(NumericTextBox), new PropertyMetadata(1.0));
+        public static readonly AvaloniaProperty SmallChangeProperty = AvaloniaProperty.Register<NumericTextBox, double>(nameof(SmallChange), 1.0);
 
         /// <summary>
         /// Identifies the <see cref="DisplayUpDownButtons"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty DisplayUpDownButtonsProperty = DependencyProperty.Register(nameof(DisplayUpDownButtons), typeof(bool), typeof(NumericTextBox), new PropertyMetadata(BooleanBoxes.TrueBox));
+        public static readonly AvaloniaProperty DisplayUpDownButtonsProperty = AvaloniaProperty.Register<NumericTextBox, bool>(nameof(DisplayUpDownButtons), true);
 
         /// <summary>
         /// Identifies the <see cref="AllowMouseDrag"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty AllowMouseDragProperty = DependencyProperty.Register(nameof(AllowMouseDrag), typeof(bool), typeof(NumericTextBox), new PropertyMetadata(BooleanBoxes.TrueBox));
+        public static readonly AvaloniaProperty AllowMouseDragProperty = AvaloniaProperty.Register<NumericTextBox, bool>(nameof(AllowMouseDrag), true);
 
         /// <summary>
         /// Identifies the <see cref="MouseValidationTrigger"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty MouseValidationTriggerProperty = DependencyProperty.Register(nameof(MouseValidationTrigger), typeof(MouseValidationTrigger), typeof(NumericTextBox), new PropertyMetadata(MouseValidationTrigger.OnMouseUp));
+        public static readonly AvaloniaProperty MouseValidationTriggerProperty = AvaloniaProperty.Register<NumericTextBox, MouseValidationTrigger>(nameof(MouseValidationTrigger), MouseValidationTrigger.OnPointerReleased);
 
         /// <summary>
         /// Raised when the <see cref="Value"/> property has changed.
         /// </summary>
-        public static readonly RoutedEvent ValueChangedEvent = EventManager.RegisterRoutedEvent("ValueChanged", RoutingStrategy.Bubble, typeof(RoutedPropertyChangedEventHandler<double>), typeof(NumericTextBox));
+        public static readonly RoutedEvent ValueChangedEvent = RoutedEvent.Register<NumericTextBox, RoutedEventArgs>("ValueChanged", RoutingStrategies.Bubble);
 
         /// <summary>
         /// Raised when one of the repeat button is pressed.
         /// </summary>
-        public static readonly RoutedEvent RepeatButtonPressedEvent = EventManager.RegisterRoutedEvent("RepeatButtonPressed", RoutingStrategy.Bubble, typeof(EventHandler<RepeatButtonPressedRoutedEventArgs>), typeof(NumericTextBox));
+        public static readonly RoutedEvent RepeatButtonPressedEvent = RoutedEvent.Register<NumericTextBox, RoutedEventArgs>("RepeatButtonPressed", RoutingStrategies.Bubble);
 
         /// <summary>
         /// Raised when one of the repeat button is released.
         /// </summary>
-        public static readonly RoutedEvent RepeatButtonReleasedEvent = EventManager.RegisterRoutedEvent("RepeatButtonReleased", RoutingStrategy.Bubble, typeof(EventHandler<RepeatButtonPressedRoutedEventArgs>), typeof(NumericTextBox));
+        public static readonly RoutedEvent RepeatButtonReleasedEvent = RoutedEvent.Register<NumericTextBox, RoutedEventArgs>("RepeatButtonReleased", RoutingStrategies.Bubble);
 
         /// <summary>
         /// Increases the current value with the value of the <see cref="LargeChange"/> property.
         /// </summary>
-        public static RoutedCommand LargeIncreaseCommand { get; }
+        public static ICommand LargeIncreaseCommand { get; }
 
         /// <summary>
         /// Increases the current value with the value of the <see cref="SmallChange"/> property.
         /// </summary>
-        public static RoutedCommand SmallIncreaseCommand { get; }
+        public static ICommand SmallIncreaseCommand { get; }
 
         /// <summary>
         /// Decreases the current value with the value of the <see cref="LargeChange"/> property.
         /// </summary>
-        public static RoutedCommand LargeDecreaseCommand { get; }
+        public static ICommand LargeDecreaseCommand { get; }
 
         /// <summary>
         /// Decreases the current value with the value of the <see cref="SmallChange"/> property.
         /// </summary>
-        public static RoutedCommand SmallDecreaseCommand { get; }
+        public static ICommand SmallDecreaseCommand { get; }
 
         /// <summary>
         /// Resets the current value to zero.
         /// </summary>
-        public static RoutedCommand ResetValueCommand { get; }
+        public static ICommand ResetValueCommand { get; }
 
         static NumericTextBox()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(NumericTextBox), new FrameworkPropertyMetadata(typeof(NumericTextBox)));
-            HorizontalScrollBarVisibilityProperty.OverrideMetadata(typeof(NumericTextBox), new FrameworkPropertyMetadata(ScrollBarVisibility.Hidden, OnForbiddenPropertyChanged));
-            VerticalScrollBarVisibilityProperty.OverrideMetadata(typeof(NumericTextBox), new FrameworkPropertyMetadata(ScrollBarVisibility.Hidden, OnForbiddenPropertyChanged));
-            AcceptsReturnProperty.OverrideMetadata(typeof(NumericTextBox), new FrameworkPropertyMetadata(BooleanBoxes.FalseBox, OnForbiddenPropertyChanged));
-            AcceptsTabProperty.OverrideMetadata(typeof(NumericTextBox), new FrameworkPropertyMetadata(BooleanBoxes.FalseBox, OnForbiddenPropertyChanged));
+            DecimalPlacesProperty.Changed.AddClassHandler<AvaloniaObject>(OnDecimalPlacesPropertyChanged);
+            MinimumProperty.Changed.AddClassHandler<AvaloniaObject>(OnMinimumPropertyChanged);
+            MaximumProperty.Changed.AddClassHandler<AvaloniaObject>(OnMaximumPropertyChanged);
+            ValueRatioProperty.Changed.AddClassHandler<AvaloniaObject>(ValueRatioChanged);
+            HorizontalAlignmentProperty.Changed.AddClassHandler<AvaloniaObject>(OnForbiddenPropertyChanged);
+            VerticalAlignmentProperty.Changed.AddClassHandler<AvaloniaObject>(OnForbiddenPropertyChanged);
+            AcceptsReturnProperty.Changed.AddClassHandler<AvaloniaObject>(OnForbiddenPropertyChanged);
+            AcceptsTabProperty.Changed.AddClassHandler<AvaloniaObject>(OnForbiddenPropertyChanged);
+        }
 
-            // Since the NumericTextBox is not focusable itself, we have to bind the commands to the inner text box of the control.
-            // The handlers will then find the parent that is a NumericTextBox and process the command on this control if it is found.
-            LargeIncreaseCommand = new RoutedCommand("LargeIncreaseCommand", typeof(System.Windows.Controls.TextBox));
-            CommandManager.RegisterClassCommandBinding(typeof(System.Windows.Controls.TextBox), new CommandBinding(LargeIncreaseCommand, OnLargeIncreaseCommand));
-            CommandManager.RegisterClassInputBinding(typeof(System.Windows.Controls.TextBox), new InputBinding(LargeIncreaseCommand, new KeyGesture(Key.PageUp)));
-            CommandManager.RegisterClassInputBinding(typeof(System.Windows.Controls.TextBox), new InputBinding(LargeIncreaseCommand, new KeyGesture(Key.Up, ModifierKeys.Shift)));
-
-            LargeDecreaseCommand = new RoutedCommand("LargeDecreaseCommand", typeof(System.Windows.Controls.TextBox));
-            CommandManager.RegisterClassCommandBinding(typeof(System.Windows.Controls.TextBox), new CommandBinding(LargeDecreaseCommand, OnLargeDecreaseCommand));
-            CommandManager.RegisterClassInputBinding(typeof(System.Windows.Controls.TextBox), new InputBinding(LargeDecreaseCommand, new KeyGesture(Key.PageDown)));
-            CommandManager.RegisterClassInputBinding(typeof(System.Windows.Controls.TextBox), new InputBinding(LargeDecreaseCommand, new KeyGesture(Key.Down, ModifierKeys.Shift)));
-
-            SmallIncreaseCommand = new RoutedCommand("SmallIncreaseCommand", typeof(System.Windows.Controls.TextBox));
-            CommandManager.RegisterClassCommandBinding(typeof(System.Windows.Controls.TextBox), new CommandBinding(SmallIncreaseCommand, OnSmallIncreaseCommand));
-            CommandManager.RegisterClassInputBinding(typeof(System.Windows.Controls.TextBox), new InputBinding(SmallIncreaseCommand, new KeyGesture(Key.Up)));
-
-            SmallDecreaseCommand = new RoutedCommand("SmallDecreaseCommand", typeof(System.Windows.Controls.TextBox));
-            CommandManager.RegisterClassCommandBinding(typeof(System.Windows.Controls.TextBox), new CommandBinding(SmallDecreaseCommand, OnSmallDecreaseCommand));
-            CommandManager.RegisterClassInputBinding(typeof(System.Windows.Controls.TextBox), new InputBinding(SmallDecreaseCommand, new KeyGesture(Key.Down)));
-
-            ResetValueCommand = new RoutedCommand("ResetValueCommand", typeof(System.Windows.Controls.TextBox));
-            CommandManager.RegisterClassCommandBinding(typeof(System.Windows.Controls.TextBox), new CommandBinding(ResetValueCommand, OnResetValueCommand));
+        public NumericTextBox()
+        {
+            AddHandler(KeyDownEvent, OnKeyDown, RoutingStrategies.Tunnel);
         }
 
         /// <summary>
@@ -245,7 +234,7 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Raised when the <see cref="Value"/> property has changed.
         /// </summary>
-        public event RoutedPropertyChangedEventHandler<double> ValueChanged { add { AddHandler(ValueChangedEvent, value); } remove { RemoveHandler(ValueChangedEvent, value); } }
+        public event EventHandler<double> ValueChanged { add { AddHandler(ValueChangedEvent, value); } remove { RemoveHandler(ValueChangedEvent, value); } }
 
         /// <summary>
         /// Raised when one of the repeat button is pressed.
@@ -256,28 +245,67 @@ namespace Stride.Core.Presentation.Controls
         /// Raised when one of the repeat button is released.
         /// </summary>
         public event EventHandler<RepeatButtonPressedRoutedEventArgs> RepeatButtonReleased { add { AddHandler(RepeatButtonReleasedEvent, value); } remove { RemoveHandler(RepeatButtonReleasedEvent, value); } }
-
-        /// <inheritdoc/>
-        public override void OnApplyTemplate()
+        
+        private void OnKeyDown(object sender, KeyEventArgs e)
         {
-            base.OnApplyTemplate();
+            if (e.Source is not TextBox)
+            {
+                return;
+            }
 
-            increaseButton = GetTemplateChild("PART_IncreaseButton") as RepeatButton;
+            if (e.Key == Key.Up && e.KeyModifiers == KeyModifiers.None)
+            {
+                OnSmallIncreaseCommand(sender);
+                e.Handled = true;
+            }
+            else if (e.Key == Key.Down && e.KeyModifiers == KeyModifiers.None)
+            {
+                OnSmallDecreaseCommand(sender);
+                e.Handled = true;
+            }
+            else if (e.Key == Key.Up && e.KeyModifiers.HasFlag(KeyModifiers.Shift))
+            {
+                OnLargeIncreaseCommand(sender);
+                e.Handled = true;
+            }
+            else if (e.Key == Key.Down && e.KeyModifiers.HasFlag(KeyModifiers.Shift))
+            {
+                OnLargeDecreaseCommand(sender);
+                e.Handled = true;
+            }
+            else if (e.Key == Key.PageUp)
+            {
+                OnLargeIncreaseCommand(sender);
+                e.Handled = true;
+            }
+            else if (e.Key == Key.PageDown)
+            {
+                OnLargeDecreaseCommand(sender);
+                e.Handled = true;
+            }
+        }
+        
+        /// <inheritdoc/>
+        protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
+        {
+            base.OnApplyTemplate(e);
+
+            increaseButton =  e.NameScope.Find<RepeatButton>("PART_IncreaseButton");
             if (increaseButton == null)
                 throw new InvalidOperationException("A part named 'PART_IncreaseButton' must be present in the ControlTemplate, and must be of type 'RepeatButton'.");
 
-            decreaseButton = GetTemplateChild("PART_DecreaseButton") as RepeatButton;
+            decreaseButton =  e.NameScope.Find<RepeatButton>("PART_DecreaseButton");
             if (decreaseButton == null)
                 throw new InvalidOperationException("A part named 'PART_DecreaseButton' must be present in the ControlTemplate, and must be of type 'RepeatButton'.");
 
-            contentHost = GetTemplateChild("PART_ContentHost") as ScrollViewer;
+            contentHost =  e.NameScope.Find<ScrollViewer>("PART_ContentHost");
             if (contentHost == null)
                 throw new InvalidOperationException("A part named 'PART_ContentHost' must be present in the ControlTemplate, and must be of type 'ScrollViewer'.");
 
             var increasePressedWatcher = new DependencyPropertyWatcher(increaseButton);
-            increasePressedWatcher.RegisterValueChangedHandler(ButtonBase.IsPressedProperty, RepeatButtonIsPressedChanged);
+            increasePressedWatcher.RegisterValueChangedHandler(Button.IsPressedProperty, RepeatButtonIsPressedChanged);
             var decreasePressedWatcher = new DependencyPropertyWatcher(decreaseButton);
-            decreasePressedWatcher.RegisterValueChangedHandler(ButtonBase.IsPressedProperty, RepeatButtonIsPressedChanged);
+            decreasePressedWatcher.RegisterValueChangedHandler(Button.IsPressedProperty, RepeatButtonIsPressedChanged);
             var textValue = FormatValue(Value);
 
             SetCurrentValue(TextProperty, textValue);
@@ -291,9 +319,9 @@ namespace Stride.Core.Presentation.Controls
         }
 
         /// <inheritdoc/>
-        protected override void OnInitialized(EventArgs e)
+        protected override void OnInitialized()
         {
-            base.OnInitialized(e);
+            base.OnInitialized();
             var textValue = FormatValue(Value);
             SetCurrentValue(TextProperty, textValue);
         }
@@ -301,7 +329,7 @@ namespace Stride.Core.Presentation.Controls
         /// <inheritdoc/>
         protected sealed override void OnCancelled()
         {
-            var expression = GetBindingExpression(ValueProperty);
+            var expression = BindingOperations.GetBindingExpressionBase(this, ValueProperty);
             expression?.UpdateTarget();
 
             var textValue = FormatValue(Value);
@@ -322,7 +350,7 @@ namespace Stride.Core.Presentation.Controls
             }
             SetCurrentValue(ValueProperty, value);
 
-            var expression = GetBindingExpression(ValueProperty);
+            var expression = BindingOperations.GetBindingExpressionBase(this, ValueProperty);
             expression?.UpdateSource();
         }
 
@@ -400,8 +428,10 @@ namespace Stride.Core.Presentation.Controls
             SetCurrentValue(TextProperty, textValue);
             SetCurrentValue(ValueRatioProperty, newValue.HasValue ? MathUtil.InverseLerp(Minimum, Maximum, newValue.Value) : 0.0);
             updatingValue = false;
-
-            RaiseEvent(new RoutedPropertyChangedEventArgs<double?>(oldValue, newValue, ValueChangedEvent));
+            RaiseEvent(new NumericValueChangedEventArgs(oldValue, newValue)
+            {
+                RoutedEvent = ValueChangedEvent
+            });
             OnValueChanged(oldValue, newValue);
         }
 
@@ -428,7 +458,7 @@ namespace Stride.Core.Presentation.Controls
             var span = value.TrimStart('0');
             if (span.StartsWith("x", StringComparison.OrdinalIgnoreCase) || span.StartsWith("#", StringComparison.OrdinalIgnoreCase))
             {
-                var span2 = span.TrimStart(stackalloc[] {'x', '#'});
+                var span2 = span.TrimStart(['x', '#']);
                 if (double.TryParse(span2, NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo, out result))
                     return true;
             }
@@ -445,18 +475,18 @@ namespace Stride.Core.Presentation.Controls
             return false;
         }
 
-        private static void OnValuePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void OnValuePropertyChanged(AvaloniaObject sender, AvaloniaPropertyChangedEventArgs e)
         {
             ((NumericTextBox)sender).OnValuePropertyChanged((double?)e.OldValue, (double?)e.NewValue);
         }
 
-        private static void OnDecimalPlacesPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void OnDecimalPlacesPropertyChanged(AvaloniaObject sender, AvaloniaPropertyChangedEventArgs e)
         {
             var numericInput = (NumericTextBox)sender;
             numericInput.CoerceValue(ValueProperty);
         }
 
-        private static void OnMinimumPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void OnMinimumPropertyChanged(AvaloniaObject sender, AvaloniaPropertyChangedEventArgs e)
         {
             var numericInput = (NumericTextBox)sender;
             var needValidation = false;
@@ -482,7 +512,7 @@ namespace Stride.Core.Presentation.Controls
             }
         }
 
-        private static void OnMaximumPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void OnMaximumPropertyChanged(AvaloniaObject sender, AvaloniaPropertyChangedEventArgs e)
         {
             var numericInput = (NumericTextBox)sender;
             var needValidation = false;
@@ -508,7 +538,7 @@ namespace Stride.Core.Presentation.Controls
             }
         }
 
-        private static void ValueRatioChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void ValueRatioChanged(AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var control = (NumericTextBox)d;
             if (control != null && !control.updatingValue)
@@ -517,7 +547,7 @@ namespace Stride.Core.Presentation.Controls
 
         private static void UpdateValueCommand([NotNull] object sender, Func<NumericTextBox, double> getValue, bool validate = true)
         {
-            var control = sender as NumericTextBox ?? ((System.Windows.Controls.TextBox)sender).FindVisualParentOfType<NumericTextBox>();
+            var control = sender as NumericTextBox ?? ((Avalonia.Controls.TextBox)sender).FindVisualParentOfType<NumericTextBox>();
             if (control != null)
             {
                 var value = getValue(control);
@@ -528,39 +558,45 @@ namespace Stride.Core.Presentation.Controls
             }
         }
 
-        private static void OnLargeIncreaseCommand([NotNull] object sender, ExecutedRoutedEventArgs e)
+        private static void OnLargeIncreaseCommand([NotNull] object sender)
         {
             UpdateValueCommand(sender, x => (x.Value ?? x.Minimum) + x.LargeChange);
         }
 
-        private static void OnLargeDecreaseCommand([NotNull] object sender, ExecutedRoutedEventArgs e)
+        private static void OnLargeDecreaseCommand([NotNull] object sender)
         {
             UpdateValueCommand(sender, x => (x.Value ?? x.Maximum) - x.LargeChange);
         }
 
-        private static void OnSmallIncreaseCommand([NotNull] object sender, ExecutedRoutedEventArgs e)
+        private static void OnSmallIncreaseCommand([NotNull] object sender)
         {
             UpdateValueCommand(sender, x => (x.Value ?? x.Minimum) + x.SmallChange);
         }
 
-        private static void OnSmallDecreaseCommand([NotNull] object sender, ExecutedRoutedEventArgs e)
+        private static void OnSmallDecreaseCommand([NotNull] object sender)
         {
             UpdateValueCommand(sender, x => (x.Value ?? x.Maximum) - x.SmallChange);
         }
 
-        private static void OnResetValueCommand([NotNull] object sender, ExecutedRoutedEventArgs e)
+        private static void OnResetValueCommand([NotNull] object sender)
         {
             UpdateValueCommand(sender, x => 0.0, false);
         }
 
-        private static void OnForbiddenPropertyChanged([NotNull] DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnForbiddenPropertyChanged([NotNull] AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var metadata = e.Property.GetMetadata(d);
-            if (!Equals(e.NewValue, metadata.DefaultValue))
+            if (!Equals(e.NewValue, metadata.DefaultBindingMode))
             {
-                var message = $"The value of the property '{e.Property.Name}' cannot be different from the value '{metadata.DefaultValue}'";
+                var message = $"The value of the property '{e.Property.Name}' cannot be different from the value '{metadata.DefaultBindingMode}'";
                 throw new InvalidOperationException(message);
             }
         }
+    }
+
+    internal class NumericValueChangedEventArgs(double? oldValue, double? newValue) : RoutedEventArgs
+    {
+        private readonly double? oldValue = oldValue;
+        private readonly double? newValue = newValue;
     }
 }

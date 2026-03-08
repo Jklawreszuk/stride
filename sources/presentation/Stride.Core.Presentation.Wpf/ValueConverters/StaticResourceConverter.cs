@@ -2,7 +2,9 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
 using System.Globalization;
-using System.Windows;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Styling;
 
 namespace Stride.Core.Presentation.ValueConverters
 {
@@ -13,7 +15,10 @@ namespace Stride.Core.Presentation.ValueConverters
     {
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return Application.Current.TryFindResource(value) ?? AvaloniaProperty.UnsetValue;
+            if (value == null)
+                return AvaloniaProperty.UnsetValue;
+
+            return Application.Current?.TryFindResource(value, ThemeVariant.Default, out var resource) == true ? resource : AvaloniaProperty.UnsetValue;
         }
     }
 }

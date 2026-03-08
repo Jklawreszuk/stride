@@ -6,10 +6,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Metadata;
+using Avalonia.Controls.Presenters;
+using Avalonia.Controls.Primitives;
+using Avalonia.Data;
+using Avalonia.Input;
+using Avalonia.Interactivity;
+using Avalonia.Markup.Xaml.Templates;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Collections;
 using Stride.Core.Presentation.Extensions;
@@ -31,53 +36,54 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="SelectedItem"/> dependency property.
         /// </summary>
-        public static DependencyProperty SelectedItemProperty =
-            DependencyProperty.Register(nameof(SelectedItem), typeof(object), typeof(TreeView), new FrameworkPropertyMetadata(null, OnSelectedItemPropertyChanged));
+        public static AvaloniaProperty SelectedItemProperty =
+            AvaloniaProperty.Register<TreeView, object>(nameof(SelectedItem));
         /// <summary>
         /// Identifies the <see cref="SelectedItems"/> dependency property.
         /// </summary>
-        public static DependencyPropertyKey SelectedItemsProperty =
-            DependencyProperty.RegisterReadOnly(nameof(SelectedItems), typeof(IList), typeof(TreeView), new FrameworkPropertyMetadata(null, OnSelectedItemsPropertyChanged));
+        public static AvaloniaProperty SelectedItemsProperty =
+            AvaloniaProperty.RegisterDirect<TreeView, IList>(nameof(SelectedItems), o => o.SelectedItems);
         /// <summary>
         /// Identifes the <see cref="SelectionMode"/> dependency property.
         /// </summary>
-        public static DependencyProperty SelectionModeProperty =
-            DependencyProperty.Register(nameof(SelectionMode), typeof(SelectionMode), typeof(TreeView), new FrameworkPropertyMetadata(SelectionMode.Extended, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnSelectionModeChanged));
+        public static AvaloniaProperty SelectionModeProperty =
+            AvaloniaProperty.Register<TreeView, SelectionMode>(nameof(SelectionMode), SelectionMode.Multiple, defaultBindingMode:BindingMode.TwoWay);
         /// <summary>
         /// Identifies the <see cref="IsVirtualizing"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty IsVirtualizingProperty =
-            DependencyProperty.Register(nameof(IsVirtualizing), typeof(bool), typeof(TreeView), new PropertyMetadata(BooleanBoxes.FalseBox));
+        public static readonly AvaloniaProperty IsVirtualizingProperty =
+            AvaloniaProperty.Register<TreeView, bool>(nameof(IsVirtualizing));
+
         /// <summary>
         /// Identifies the <see cref="PrepareItem"/> routed event.
         /// This attached routed event may be raised by the PropertyGrid itself or by a PropertyItemBase containing sub-items.
         /// </summary>
         public static readonly RoutedEvent PrepareItemEvent =
-            EventManager.RegisterRoutedEvent("PrepareItem", RoutingStrategy.Bubble, typeof(EventHandler<TreeViewItemEventArgs>), typeof(TreeView));
+            RoutedEvent.Register<TreeView, RoutedEventArgs>("PrepareItem", RoutingStrategies.Bubble);
         /// <summary>
         /// Identifies the <see cref="ClearItem"/> routed event.
         /// This attached routed event may be raised by the PropertyGrid itself or by a PropertyItemBase containing sub items.
         /// </summary>
         public static readonly RoutedEvent ClearItemEvent =
-            EventManager.RegisterRoutedEvent("ClearItem", RoutingStrategy.Bubble, typeof(EventHandler<TreeViewItemEventArgs>), typeof(TreeView));
+            RoutedEvent.Register<TreeView, RoutedEventArgs>("ClearItem", RoutingStrategies.Bubble);
 
         /// <summary>
         /// Indicates whether the Control key is currently down.
         /// </summary>
-        internal static bool IsControlKeyDown => (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control;
+        internal static bool IsControlKeyDown => (Keyboard.Modifiers & KeyModifiers.Control) == KeyModifiers.Control;
 
         /// <summary>
         /// Indicates whether the Shift key is currently down.
         /// </summary>
-        internal static bool IsShiftKeyDown => (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift;
+        internal static bool IsShiftKeyDown => (Keyboard.Modifiers & KeyModifiers.Shift) == KeyModifiers.Shift;
 
         // the space where items will be realized if virtualization is enabled. This is set by virtualizingtreepanel.
-        internal VirtualizingTreePanel.VerticalArea RealizationSpace = new VirtualizingTreePanel.VerticalArea();
-        internal VirtualizingTreePanel.SizesCache CachedSizes = new VirtualizingTreePanel.SizesCache();
+        internal VirtualizingTreePanel.VerticalArea RealizationSpace = new();
+        internal VirtualizingTreePanel.SizesCache CachedSizes = new();
         private bool updatingSelection;
         private bool stoppingEdition;
         private bool allowedSelectionChanges;
-        private bool mouseDown;
+        private bool pointerPressed;
         private bool scrollViewerReentrency;
         private object lastShiftRoot;
         private TreeViewItem editedItem;
@@ -85,8 +91,10 @@ namespace Stride.Core.Presentation.Controls
 
         static TreeView()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(TreeView), new FrameworkPropertyMetadata(typeof(TreeView)));
-
+            SelectedItemProperty.Changed.AddClassHandler<AvaloniaObject>(OnSelectedItemPropertyChanged);
+            SelectedItemsProperty.Changed.AddClassHandler<AvaloniaObject>(OnSelectedItemsPropertyChanged);
+            SelectionModeProperty.Changed.AddClassHandler<AvaloniaObject>(OnSelectionModeChanged);
+            
             var vPanel = new FrameworkElementFactory(typeof(VirtualizingTreePanel));
             vPanel.SetValue(Panel.IsItemsHostProperty, true);
             var vPanelTemplate = new ItemsPanelTemplate { VisualTree = vPanel };
@@ -115,7 +123,7 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Gets the list of selected items.
         /// </summary>
-        public IList SelectedItems { get { return (IList)GetValue(SelectedItemsProperty.DependencyProperty); } private set { SetValue(SelectedItemsProperty, value); } }
+        public IList SelectedItems { get { return (IList)GetValue(SelectedItemsProperty); } private set { SetValue(SelectedItemsProperty, value); } }
 
         /// <summary>
         /// Gets the selection mode for this control.
@@ -136,11 +144,11 @@ namespace Stride.Core.Presentation.Controls
 
         /// <inheritdoc/>
         /// <inheritdoc />
-        public override void OnApplyTemplate()
+        protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
-            base.OnApplyTemplate();
+            base.OnApplyTemplate(e);
 
-            scroller = DependencyObjectExtensions.CheckTemplatePart<ScrollViewer>(GetTemplateChild(ScrollViewerPartName));
+            scroller = DependencyObjectExtensions.CheckTemplatePart<ScrollViewer>( e.NameScope.Find<ScrollViewer>(ScrollViewerPartName));
             if (scroller != null)
             {
                 scroller.ScrollChanged += ScrollChanged;
@@ -321,16 +329,16 @@ namespace Stride.Core.Presentation.Controls
         }
 
         /// <inheritdoc />
-        protected override void OnMouseDown(MouseButtonEventArgs e)
+        protected override void OnPointerPressed(PointerPressedEventArgs e)
         {
-            base.OnMouseDown(e);
+            base.OnPointerPressed(e);
             StopEditing();
 
-            mouseDown = e.ChangedButton == MouseButton.Left;
+            pointerPressed = e.GetCurrentPoint(this).Properties.IsLeftButtonPressed;
 
             var item = GetTreeViewItemUnderMouse(e.GetPosition(this));
             if (item == null) return;
-            if (e.ChangedButton != MouseButton.Right || item.ContextMenu == null) return;
+            if (!e.GetCurrentPoint(this).Properties.IsRightButtonPressed || item.ContextMenu == null) return;
             if (item.IsEditing) return;
 
             if (!SelectedItems.Contains(item.DataContext))
@@ -342,14 +350,14 @@ namespace Stride.Core.Presentation.Controls
         }
 
         /// <inheritdoc />
-        protected override void OnMouseUp(MouseButtonEventArgs e)
+        protected override void OnPointerReleased(PointerReleasedEventArgs e)
         {
-            base.OnMouseUp(e);
-            if (mouseDown)
+            base.OnPointerReleased(e);
+            if (pointerPressed)
             {
                 var item = GetTreeViewItemUnderMouse(e.GetPosition(this));
                 if (item == null) return;
-                if (e.ChangedButton != MouseButton.Left) return;
+                if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) return;
                 if (item.IsEditing) return;
 
                 SelectSingleItem(item);
@@ -357,12 +365,12 @@ namespace Stride.Core.Presentation.Controls
                 item.ForceFocus();
             }
             scrollViewerReentrency = false;
-            mouseDown = false;
+            pointerPressed = false;
         }
 
         private void ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            if (mouseDown && !scrollViewerReentrency)
+            if (pointerPressed && !scrollViewerReentrency)
             {
                 scrollViewerReentrency = true;
                 scroller.ScrollToVerticalOffset(e.VerticalOffset - e.VerticalChange);
@@ -382,7 +390,7 @@ namespace Stride.Core.Presentation.Controls
                 return;
 
             stoppingEdition = true;
-            Keyboard.Focus(editedItem);
+            editedItem.Focus();
             editedItem.ForceFocus();
             editedItem = null;
             stoppingEdition = false;
@@ -464,22 +472,6 @@ namespace Stride.Core.Presentation.Controls
             return nodesToSelect;
         }
 
-        /// <inheritdoc />
-        protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
-        {
-            base.PrepareContainerForItemOverride(element, item);
-            //Send down the IsVirtualizing property if it's set on this element.
-            TreeViewItem.IsVirtualizingPropagationHelper(this, element);
-            RaiseEvent(new TreeViewItemEventArgs(PrepareItemEvent, this, (TreeViewItem)element, item));
-        }
-
-        /// <inheritdoc />
-        protected override void ClearContainerForItemOverride(DependencyObject element, object item)
-        {
-            RaiseEvent(new TreeViewItemEventArgs(ClearItemEvent, this, (TreeViewItem)element, item));
-            base.ClearContainerForItemOverride(element, item);
-        }
-
         [CanBeNull]
         internal TreeViewItem GetPreviousItem([NotNull] TreeViewItem item, [ItemNotNull, NotNull]  List<TreeViewItem> items)
         {
@@ -519,19 +511,7 @@ namespace Stride.Core.Presentation.Controls
 
         }
 
-        /// <inheritdoc />
-        protected override DependencyObject GetContainerForItemOverride()
-        {
-            return new TreeViewItem();
-        }
-
-        /// <inheritdoc />
-        protected override bool IsItemItsOwnContainerOverride(object item)
-        {
-            return item is TreeViewItem;
-        }
-
-        private static void OnSelectedItemPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnSelectedItemPropertyChanged(AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var treeView = (TreeView)d;
             if (treeView.updatingSelection)
@@ -568,7 +548,7 @@ namespace Stride.Core.Presentation.Controls
             treeView.updatingSelection = false;
         }
 
-        private static void OnSelectedItemsPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnSelectedItemsPropertyChanged(AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var treeView = (TreeView)d;
             if (e.OldValue != null)
@@ -590,7 +570,7 @@ namespace Stride.Core.Presentation.Controls
             }
         }
 
-        private static void OnSelectionModeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnSelectionModeChanged(AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var newValue = (SelectionMode)e.NewValue;
             switch (newValue)
@@ -611,8 +591,7 @@ namespace Stride.Core.Presentation.Controls
                             continue;
 
                         var item = treeView.GetTreeViewItemFor(treeView.SelectedItems[i]);
-                        if (item != null)
-                            item.IsSelected = false;
+                        item?.IsSelected = false;
                         treeView.SelectedItems.RemoveAt(i);
                     }
                     treeView.updatingSelection = false;
@@ -729,15 +708,14 @@ namespace Stride.Core.Presentation.Controls
             if (hitTestResult?.VisualHit == null)
                 return null;
 
-            var child = hitTestResult.VisualHit as FrameworkElement;
+            var child = hitTestResult.VisualHit as Control;
 
             do
             {
                 if (child == null)
                     return null;
 
-                var treeViewItem = child as TreeViewItem;
-                if (treeViewItem != null)
+                if (child is TreeViewItem treeViewItem)
                 {
                     return treeViewItem.IsVisible ? treeViewItem : null;
                 }
@@ -745,7 +723,7 @@ namespace Stride.Core.Presentation.Controls
                 if (child is TreeView)
                     return null;
 
-                child = VisualTreeHelper.GetParent(child) as FrameworkElement;
+                child = VisualTreeHelper.GetParent(child) as Control;
             } while (child != null);
 
             return null;

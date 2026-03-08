@@ -3,11 +3,13 @@
 
 using System;
 using System.Reflection;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
+using Avalonia.Input;
+using Avalonia.Layout;
+using Avalonia.Media;
+using Avalonia.Reactive;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Controls;
 using Stride.Core.Presentation.Extensions;
@@ -33,7 +35,7 @@ namespace Stride.Core.Presentation.Behaviors
         /// <summary>
         /// Identifies the <see cref="NumericTextBox.MouseValidationTrigger"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty DragCursorProperty = DependencyProperty.Register(nameof(DragCursor), typeof(Cursor), typeof(NumericTextBox), new PropertyMetadata(Cursors.ScrollAll));
+        public static readonly AvaloniaProperty DragCursorProperty = AvaloniaProperty.Register<NumericTextBox, Cursor>(nameof(DragCursor), new Cursor(StandardCursorType.SizeAll));
         
         /// <summary>
         /// Gets or sets the <see cref="Cursor"/> to display when the value can be modified via dragging.
@@ -43,12 +45,15 @@ namespace Stride.Core.Presentation.Behaviors
         /// <inheritdoc />
         protected override void CancelOverride()
         {
-            Mouse.OverrideCursor = null;
+            AssociatedObject.Cursor = null;
             dragState = DragState.None;
 
-            var root = AssociatedObject.FindVisualRoot() as UIElement;
-            if (root != null)
-                root.IsKeyboardFocusWithinChanged -= RootParentIsKeyboardFocusWithinChanged;
+            if (AssociatedObject.FindVisualRoot() is Control root)
+            {
+                root.Cursor = null;
+                root.GetObservable(InputElement.IsKeyboardFocusWithinProperty)
+                    .Subscribe(new AnonymousObserver<bool>(RootParentIsKeyboardFocusWithinChanged));
+            }
         }
 
         /// <inheritdoc />
@@ -64,48 +69,52 @@ namespace Stride.Core.Presentation.Behaviors
             base.OnDetaching();
             AssociatedObject.Initialized -= NumericTextBoxInitialized;
             if (AssociatedObject.contentHost != null)
-                AssociatedObject.contentHost.QueryCursor -= HostQueryCursor;
+                AssociatedObject.contentHost.PointerMoved -= HostQueryCursor;
         }
 
         /// <inheritdoc />
-        protected override void OnMouseDown(MouseButtonEventArgs e)
+        protected override void OnPointerPressed(PointerPressedEventArgs e)
         {
-            if (!IsContentHostPart(e.OriginalSource))
+            if (!IsContentHostPart(e.Source))
                 return;
 
             if (!AssociatedObject.AllowMouseDrag || AssociatedObject.IsReadOnly || AssociatedObject.IsFocused)
                 return;
 
             e.Handled = true;
-            CaptureMouse();
+            CaptureMouse(e);
 
             dragState = DragState.Starting;
-            Mouse.OverrideCursor = Cursors.None;
+            AssociatedObject.Cursor = new Cursor(StandardCursorType.None);
             mouseDownPosition = e.GetPosition(AssociatedObject);
 
             if (adorner == null)
             {
-                adorner = new DragDirectionAdorner(AssociatedObject, AssociatedObject.contentHost.ActualWidth);
-                var adornerLayer = AdornerLayer.GetAdornerLayer(AssociatedObject);
-                adornerLayer?.Add(adorner);
+                adorner = new DragDirectionAdorner(AssociatedObject, AssociatedObject.contentHost.Bounds.Width);
+                AdornerLayer.GetAdornerLayer(AssociatedObject);
+                AdornerLayer.SetAdorner(AssociatedObject, adorner);
             }
         }
 
         /// <inheritdoc />
-        protected override void OnMouseMove(MouseEventArgs e)
+        protected override void OnMouseMove(PointerEventArgs e)
         {
             var position = e.GetPosition(AssociatedObject);
-            if (AssociatedObject.AllowMouseDrag && dragState == DragState.Starting && e.LeftButton == MouseButtonState.Pressed)
+            if (AssociatedObject.AllowMouseDrag && dragState == DragState.Starting && e.GetCurrentPoint(AssociatedObject).Properties.IsLeftButtonPressed)
             {
                 var dx = Math.Abs(position.X - mouseDownPosition.X);
                 var dy = Math.Abs(position.Y - mouseDownPosition.Y);
                 dragOrientation = dx >= dy ? Orientation.Horizontal : Orientation.Vertical;
-
-                if (dx > SystemParameters.MinimumHorizontalDragDistance || dy > SystemParameters.MinimumVerticalDragDistance)
+                
+                const int dragDistance = 4;
+                if (dx > dragDistance || dy > dragDistance)
                 {
-                    var root = AssociatedObject.FindVisualRoot() as UIElement;
-                    if (root != null)
-                        root.IsKeyboardFocusWithinChanged += RootParentIsKeyboardFocusWithinChanged;
+                    if (AssociatedObject.FindVisualRoot() is Control root)
+                    {
+                        root.Cursor = null;
+                        root.GetObservable(InputElement.IsKeyboardFocusWithinProperty)
+                            .Subscribe(new AnonymousObserver<bool>(RootParentIsKeyboardFocusWithinChanged));
+                    }
 
                     mouseDownPosition = position;
                     mouseMoveDelta = 0;
@@ -133,21 +142,22 @@ namespace Stride.Core.Presentation.Behaviors
                 {
                     AssociatedObject.Validate();
                 }
-                NativeHelper.SetCursorPos(AssociatedObject.PointToScreen(mouseDownPosition));
+
+                mouseDownPosition = position;
             }
         }
 
         /// <inheritdoc />
-        protected override void OnMouseUp(MouseButtonEventArgs e)
+        protected override void OnPointerReleased(PointerEventArgs e)
         {
             // We have to release the mouse first, in case Validate triggers a Detach of this behavior.
             ReleaseMouseCapture();
             if (dragState == DragState.Starting)
             {
-                AssociatedObject.Select(0, AssociatedObject.Text.Length);
+                AssociatedObject.SelectAll();
                 if (!AssociatedObject.IsFocused)
                 {
-                    Keyboard.Focus(AssociatedObject);
+                    AssociatedObject.Focus(NavigationMethod.Pointer);
                 }
             }
             else if (dragState == DragState.Dragging && AssociatedObject.AllowMouseDrag)
@@ -157,7 +167,7 @@ namespace Stride.Core.Presentation.Behaviors
                     var adornerLayer = AdornerLayer.GetAdornerLayer(AssociatedObject);
                     if (adornerLayer != null)
                     {
-                        adornerLayer.Remove(adorner);
+                        AdornerLayer.SetAdorner(AssociatedObject, null);
                         adorner = null;
                     }
                 }
@@ -165,39 +175,39 @@ namespace Stride.Core.Presentation.Behaviors
             }
 
             e.Handled = true;
-            Mouse.OverrideCursor = null;
+            AssociatedObject.Cursor = null;
             dragState = DragState.None;
         }
         
-        private void HostQueryCursor(object sender, QueryCursorEventArgs e)
+        private void HostQueryCursor(object sender, PointerEventArgs e)
         {
-            if (!IsContentHostPart(e.OriginalSource))
+            if (!IsContentHostPart(e.Source))
                 return;
 
             if (!AssociatedObject.AllowMouseDrag || AssociatedObject.IsFocused || DragCursor == null)
                 return;
 
-            e.Cursor = DragCursor;
+            if (sender is Control control)
+            {
+                control.Cursor = DragCursor;
+            }
             e.Handled = true;
         }
         
         private bool IsContentHostPart(object obj)
         {
-            var frameworkElement = obj as FrameworkElement;
+            var frameworkElement = obj as Control;
             return Equals(obj, AssociatedObject.contentHost) || (frameworkElement != null && Equals(frameworkElement.Parent, AssociatedObject.contentHost));
         }
         
         private void NumericTextBoxInitialized(object sender, EventArgs e)
         {
             AssociatedObject.ApplyTemplate();
-            AssociatedObject.contentHost.QueryCursor += HostQueryCursor;
+            AssociatedObject.contentHost.PointerMoved += HostQueryCursor;
         }
 
-        private void RootParentIsKeyboardFocusWithinChanged(object sender, DependencyPropertyChangedEventArgs args)
+        private void RootParentIsKeyboardFocusWithinChanged(bool args)
         {
-            if ((bool)args.NewValue)
-                return;
-
             // Cancel dragging in progress
             if (dragState == DragState.Dragging)
             {
@@ -206,7 +216,7 @@ namespace Stride.Core.Presentation.Behaviors
                     var adornerLayer = AdornerLayer.GetAdornerLayer(AssociatedObject);
                     if (adornerLayer != null)
                     {
-                        adornerLayer.Remove(adorner);
+                        AdornerLayer.SetAdorner(AssociatedObject, null);
                         adorner = null;
                     }
                 }
@@ -215,11 +225,11 @@ namespace Stride.Core.Presentation.Behaviors
             Cancel();
         }
 
-        private class DragDirectionAdorner : Adorner
+        private class DragDirectionAdorner : Control
         {
             private readonly double contentWidth;
-            private static readonly ImageSource CursorHorizontalImageSource;
-            private static readonly ImageSource CursorVerticalImageSource;
+            private static readonly IImage CursorHorizontalImageSource;
+            private static readonly IImage CursorVerticalImageSource;
 
             static DragDirectionAdorner()
             {
@@ -231,10 +241,12 @@ namespace Stride.Core.Presentation.Behaviors
             private Orientation dragOrientation;
             private bool ready;
 
-            internal DragDirectionAdorner([NotNull] UIElement adornedElement, double contentWidth)
-                : base(adornedElement)
+            internal DragDirectionAdorner([NotNull] Control adornedElement, double contentWidth)
             {
                 this.contentWidth = contentWidth;
+                IsHitTestVisible = false;
+                Width = adornedElement.Bounds.Width;
+                Height = adornedElement.Bounds.Height;
             }
 
             internal void SetOrientation(Orientation orientation)
@@ -244,18 +256,17 @@ namespace Stride.Core.Presentation.Behaviors
                 InvalidateVisual();
             }
 
-            protected override void OnRender(DrawingContext drawingContext)
+            public override void Render(DrawingContext drawingContext)
             {
-                base.OnRender(drawingContext);
+                base.Render(drawingContext);
 
-                if (ready == false)
+                if (!ready)
                     return;
 
-                VisualEdgeMode = EdgeMode.Aliased;
                 var source = dragOrientation == Orientation.Horizontal ? CursorHorizontalImageSource : CursorVerticalImageSource;
-                var left = Math.Round(contentWidth - source.Width);
-                var top = Math.Round((AdornedElement.RenderSize.Height - source.Height) * 0.5);
-                drawingContext.DrawImage(source, new Rect(new Point(left, top), new Size(source.Width, source.Height)));
+                var left = Math.Round(contentWidth - source.Size.Width);
+                var top = Math.Round((Bounds.Height - source.Size.Height) * 0.5);
+                drawingContext.DrawImage(source, new Rect(new Point(left, top), source.Size));
             }
         }
     }

@@ -2,16 +2,23 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
+using System.Collections;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Markup;
-using System.Windows.Threading;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
+using Avalonia.Controls.Templates;
+using Avalonia.Input;
+using Avalonia.Interactivity;
+using Avalonia.Markup.Xaml.Templates;
+using Avalonia.Metadata;
+using Avalonia.Reactive;
+using Avalonia.Threading;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Extensions;
 using Stride.Core.Presentation.Internal;
+using Stride.Core.Presentation.ValueConverters;
 
 namespace Stride.Core.Presentation.Controls
 {
@@ -22,51 +29,46 @@ namespace Stride.Core.Presentation.Controls
     {
         internal double ItemTopInTreeSystem; // for virtualization purposes
         internal int HierachyLevel;// for virtualization purposes
+        private NavigationMethod lastNavMethod;
+        private INotifyCollectionChanged? collection;
 
         /// <summary>
         /// Identifies the <see cref="IsEditable"/> dependency property.
         /// </summary>
-        public static DependencyProperty IsEditableProperty =
-            DependencyProperty.Register(nameof(IsEditable), typeof(bool), typeof(TreeViewItem), new FrameworkPropertyMetadata(BooleanBoxes.TrueBox, null));
+        public static AvaloniaProperty IsEditableProperty =
+            AvaloniaProperty.Register<TreeViewItem, bool>(nameof(IsEditable), true);
         /// <summary>
         /// Identifies the <see cref="IsEditing"/> dependency property.
         /// </summary>
-        public static DependencyProperty IsEditingProperty =
-            DependencyProperty.Register(nameof(IsEditing), typeof(bool), typeof(TreeViewItem), new FrameworkPropertyMetadata(BooleanBoxes.FalseBox, OnIsEditingChanged));
+        public static AvaloniaProperty IsEditingProperty =
+            AvaloniaProperty.Register<TreeViewItem, bool>(nameof(IsEditing));
         /// <summary>
         /// Identifies the <see cref="IsSelected"/> dependency property.
         /// </summary>
-        public static DependencyProperty IsSelectedProperty =
-            DependencyProperty.Register(nameof(IsSelected), typeof(bool), typeof(TreeViewItem), new FrameworkPropertyMetadata(BooleanBoxes.FalseBox, null));
+        public static AvaloniaProperty IsSelectedProperty =
+            AvaloniaProperty.Register<TreeViewItem, bool>(nameof(IsSelected));
         /// <summary>
         /// Identifies the <see cref="TemplateEdit"/> dependency property.
         /// </summary>
-        public static DependencyProperty TemplateEditProperty =
-            DependencyProperty.Register(nameof(TemplateEdit), typeof(DataTemplate), typeof(TreeViewItem), new FrameworkPropertyMetadata(null, null));
+        public static AvaloniaProperty TemplateEditProperty =
+            AvaloniaProperty.Register<TreeViewItem, DataTemplate>(nameof(TemplateEdit));
         /// <summary>
         /// Identifies the <see cref="TemplateSelectorEdit"/> dependency property.
         /// </summary>
-        public static DependencyProperty TemplateSelectorEditProperty =
-            DependencyProperty.Register(nameof(TemplateSelectorEdit), typeof(DataTemplateSelector), typeof(TreeViewItem), new FrameworkPropertyMetadata(null, null));
+        public static AvaloniaProperty TemplateSelectorEditProperty =
+            AvaloniaProperty.Register<TreeViewItem, IDataTemplate>(nameof(TemplateSelectorEdit));
         /// <summary>
         /// Identifies the <see cref="Indentation"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty IndentationProperty =
-            DependencyProperty.Register(nameof(Indentation), typeof(double), typeof(TreeViewItem), new PropertyMetadata(10.0));
+        public static readonly AvaloniaProperty IndentationProperty =
+            AvaloniaProperty.Register<TreeViewItem, double>(nameof(Indentation), 10.0);
 
-        static TreeViewItem()
+        public TreeViewItem()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(TreeViewItem), new FrameworkPropertyMetadata(typeof(TreeViewItem)));
-
-            var vPanel = new FrameworkElementFactory(typeof(VirtualizingTreePanel));
-            vPanel.SetValue(Panel.IsItemsHostProperty, true);
-            var vPanelTemplate = new ItemsPanelTemplate { VisualTree = vPanel };
-            ItemsPanelProperty.OverrideMetadata(typeof(TreeViewItem), new FrameworkPropertyMetadata(vPanelTemplate));
-
-            KeyboardNavigation.DirectionalNavigationProperty.OverrideMetadata(typeof(TreeViewItem), new FrameworkPropertyMetadata(KeyboardNavigationMode.Continue));
-            KeyboardNavigation.TabNavigationProperty.OverrideMetadata(typeof(TreeViewItem), new FrameworkPropertyMetadata(KeyboardNavigationMode.None));
-            VirtualizingPanel.ScrollUnitProperty.OverrideMetadata(typeof(TreeViewItem), new FrameworkPropertyMetadata(ScrollUnit.Item));
-            IsTabStopProperty.OverrideMetadata(typeof(TreeViewItem), new FrameworkPropertyMetadata(BooleanBoxes.FalseBox));
+            ItemsPanel = new FuncTemplate<Panel>(() => new StackPanel());
+            KeyboardNavigation.SetTabNavigation(this, KeyboardNavigationMode.None);
+            ItemsSourceProperty.Changed.Subscribe(new AnonymousObserver<AvaloniaPropertyChangedEventArgs<IEnumerable>>(OnItemsSourceChanged));
+            IsTabStop = false;
         }
 
         public bool IsEditable { get { return (bool)GetValue(IsEditableProperty); } set { SetValue(IsEditableProperty, value.Box()); } }
@@ -79,7 +81,7 @@ namespace Stride.Core.Presentation.Controls
 
         public DataTemplate TemplateEdit { get { return (DataTemplate)GetValue(TemplateEditProperty); } set { SetValue(TemplateEditProperty, value); } }
 
-        public DataTemplateSelector TemplateSelectorEdit { get { return (DataTemplateSelector)GetValue(TemplateSelectorEditProperty); } set { SetValue(TemplateSelectorEditProperty, value); } }
+        public IDataTemplate TemplateSelectorEdit { get { return (IDataTemplate)GetValue(TemplateSelectorEditProperty); } set { SetValue(TemplateSelectorEditProperty, value); } }
 
         [DependsOn("Indentation")]
         public double Offset => ParentTreeViewItem?.Offset + Indentation ?? 0;
@@ -92,7 +94,7 @@ namespace Stride.Core.Presentation.Controls
         {
             get
             {
-                if (Visibility != Visibility.Visible)
+                if (!IsVisible)
                     return false;
                 var currentItem = ParentTreeViewItem;
                 while (currentItem != null)
@@ -106,38 +108,20 @@ namespace Stride.Core.Presentation.Controls
         }
 
         private bool CanExpandOnInput => CanExpand && IsEnabled;
-
-        // Synchronizes the value of the child's IsVirtualizing property with that of the parent's
-        internal static void IsVirtualizingPropagationHelper([NotNull] DependencyObject parent, [NotNull] DependencyObject element)
+        
+        private void OnItemsSourceChanged(AvaloniaPropertyChangedEventArgs<IEnumerable> newValue)
         {
-            SynchronizeValue(VirtualizingStackPanel.IsVirtualizingProperty, parent, element);
-            SynchronizeValue(VirtualizingStackPanel.VirtualizationModeProperty, parent, element);
-        }
+            // Unsubscribe from old collection
+            collection?.CollectionChanged -= OnCollectionChanged;
 
-        private static void SynchronizeValue([NotNull] DependencyProperty dp, [NotNull] DependencyObject parent, [NotNull] DependencyObject child)
-        {
-            var value = parent.GetValue(dp);
-            child.SetValue(dp, value);
+            // Subscribe to new collection if supported
+            collection?.CollectionChanged += OnCollectionChanged;
         }
-
-        /// <inheritdoc/>
-        protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
-        {
-            base.PrepareContainerForItemOverride(element, item);
-            RaiseEvent(new TreeViewItemEventArgs(TreeView.PrepareItemEvent, this, (TreeViewItem)element, item));
-        }
-
-        /// <inheritdoc/>
-        protected override void ClearContainerForItemOverride(DependencyObject element, object item)
-        {
-            RaiseEvent(new TreeViewItemEventArgs(TreeView.ClearItemEvent, this, (TreeViewItem)element, item));
-            base.ClearContainerForItemOverride(element, item);
-        }
-
+        
         /// <summary>
         /// This method is invoked when the Items property changes.
         /// </summary>
-        protected override void OnItemsChanged(NotifyCollectionChangedEventArgs e)
+        private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             switch (e.Action)
             {
@@ -156,47 +140,14 @@ namespace Stride.Core.Presentation.Controls
             }
         }
 
-        private static void OnIsEditingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var item = (TreeViewItem)d;
-            var newValue = (bool)e.NewValue;
-            if (newValue)
-            {
-                item.ParentTreeView.StartEditing(item);
-            }
-            else
-            {
-                item.ParentTreeView.StopEditing();
-            }
-        }
-
-        /// <summary>
-        ///     Returns true if the item is or should be its own container.
-        /// </summary>
-        /// <param name="item">The item to test.</param>
-        /// <returns>true if its type matches the container type.</returns>
-        protected override bool IsItemItsOwnContainerOverride(object item)
-        {
-            return item is TreeViewItem;
-        }
-
-        /// <summary>
-        ///     Create or identify the element used to display the given item.
-        /// </summary>
-        /// <returns>The container.</returns>
-        protected override DependencyObject GetContainerForItemOverride()
-        {
-            return new TreeViewItem();
-        }
-
         public override string ToString()
         {
             return DataContext != null ? $"{DataContext} ({base.ToString()})" : base.ToString();
         }
 
-        public override void OnApplyTemplate()
+        protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
-            base.OnApplyTemplate();
+            base.OnApplyTemplate(e);
 
             if (ParentTreeView?.SelectedItems != null && ParentTreeView.SelectedItems.Contains(DataContext))
             {
@@ -208,7 +159,7 @@ namespace Stride.Core.Presentation.Controls
         {
             if (!Focus())
             {
-                Dispatcher.BeginInvoke(DispatcherPriority.Input, new Action(() => Focus()));
+                Dispatcher.UIThread.Post(() => Focus(), DispatcherPriority.Input);
             }
         }
 
@@ -310,12 +261,14 @@ namespace Stride.Core.Presentation.Controls
             }
         }
 
-        protected override void OnLostKeyboardFocus(KeyboardFocusChangedEventArgs e)
+        protected override void OnLostFocus(RoutedEventArgs e)
         {
-            base.OnLostKeyboardFocus(e);
+            base.OnLostFocus(e);
+            var topLevel = TopLevel.GetTopLevel(this);
+            
             if (IsEditing)
             {
-                var newFocus = e.NewFocus as DependencyObject;
+                var newFocus = topLevel?.FocusManager?.GetFocusedElement() as AvaloniaObject;
                 if (ReferenceEquals(newFocus, this))
                     return;
 
@@ -362,7 +315,7 @@ namespace Stride.Core.Presentation.Controls
             }
         }
 
-        protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
+        protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs e)
         {
             //if (e.Property.Name == "IsEditing")
             //{
@@ -389,7 +342,7 @@ namespace Stride.Core.Presentation.Controls
 
         private bool LogicalLeft(Key key)
         {
-            bool invert = (FlowDirection == FlowDirection.RightToLeft);
+            bool invert = (FlowDirection == Avalonia.Media.FlowDirection.RightToLeft);
             return (!invert && (key == Key.Left)) || (invert && (key == Key.Right));
         }
 

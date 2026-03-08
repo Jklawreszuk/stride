@@ -1,8 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
-using System.Windows;
-
+using Avalonia;
 using Stride.Core.Mathematics;
 
 namespace Stride.Core.Presentation.Controls
@@ -12,23 +11,23 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="RectX"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty RectXProperty = DependencyProperty.Register("RectX", typeof(int?), typeof(RectangleEditor), new FrameworkPropertyMetadata(0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
+        public static readonly AvaloniaProperty RectXProperty = AvaloniaProperty.Register<RectangleEditor, int?>("RectX");
 
         /// <summary>
         /// Identifies the <see cref="RectY"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty RectYProperty = DependencyProperty.Register("RectY", typeof(int?), typeof(RectangleEditor), new FrameworkPropertyMetadata(0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
+        public static readonly AvaloniaProperty RectYProperty = AvaloniaProperty.Register<RectangleEditor, int?>("RectY");
 
         /// <summary>
         /// Identifies the <see cref="RectWidth"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty RectWidthProperty = DependencyProperty.Register("RectWidth", typeof(int?), typeof(RectangleEditor), new FrameworkPropertyMetadata(0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
+        public static readonly AvaloniaProperty RectWidthProperty = AvaloniaProperty.Register<RectangleEditor, int?>("RectWidth");
 
         /// <summary>
         /// Identifies the <see cref="RectHeight"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty RectHeightProperty = DependencyProperty.Register("RectHeight", typeof(int?), typeof(RectangleEditor), new FrameworkPropertyMetadata(0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
-
+        public static readonly AvaloniaProperty RectHeightProperty = AvaloniaProperty.Register<RectangleEditor, int?>("RectHeight");
+        
         /// <summary>
         /// Gets or sets the X component of the <see cref="Rectangle"/> associated to this control.
         /// </summary>
@@ -62,7 +61,7 @@ namespace Stride.Core.Presentation.Controls
         }
 
         /// <inheritdoc/>
-        protected override Rectangle? UpdateValueFromComponent(DependencyProperty property)
+        protected override Rectangle? UpdateValueFromComponent(AvaloniaProperty property)
         {
             if (property == RectXProperty)
                 return RectX.HasValue && Value.HasValue ? (Rectangle?)new Rectangle(RectX.Value, Value.Value.Y, Value.Value.Width, Value.Value.Height) : null;

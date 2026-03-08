@@ -1,8 +1,11 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
+
+using System;
+using Avalonia;
+using Avalonia.Controls.Primitives;
+using Avalonia.Input;
+using Avalonia.Interactivity;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Internal;
 
@@ -13,35 +16,43 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="IsExpanded"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty IsExpandedProperty = DependencyProperty.Register(nameof(IsExpanded), typeof(bool), typeof(ExpandableItemsControl), new FrameworkPropertyMetadata(BooleanBoxes.FalseBox, OnIsExpandedChanged));
+        public static readonly AvaloniaProperty IsExpandedProperty = AvaloniaProperty.Register<ExpandableItemsControl, bool>(nameof(IsExpanded));
 
         /// <summary>
         /// Identifies the <see cref="Expanded"/> routed event.
         /// </summary>
-        public static readonly RoutedEvent ExpandedEvent = EventManager.RegisterRoutedEvent(nameof(Expanded), RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(ExpandableItemsControl));
+        public static readonly RoutedEvent ExpandedEvent = RoutedEvent.Register<ExpandableItemsControl, RoutedEventArgs>(nameof(Expanded), RoutingStrategies.Bubble);
 
         /// <summary>
         /// Identifies the <see cref="Collapsed"/> routed event.
         /// </summary>
-        public static readonly RoutedEvent CollapsedEvent = EventManager.RegisterRoutedEvent(nameof(Collapsed), RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(ExpandableItemsControl));
+        public static readonly RoutedEvent CollapsedEvent = RoutedEvent.Register<ExpandableItemsControl, RoutedEventArgs>(nameof(Collapsed), RoutingStrategies.Bubble);
 
         /// <summary>
         /// Gets or sets whether this control is expanded.
         /// </summary>
         public bool IsExpanded { get { return (bool)GetValue(IsExpandedProperty); } set { SetValue(IsExpandedProperty, value.Box()); } }
 
-        protected bool CanExpand => HasItems;
+        protected bool CanExpand => ItemCount > 0;
 
         /// <summary>
         /// Raised when this <see cref="ExpandableItemsControl"/> is expanded.
         /// </summary>
-        public event RoutedEventHandler Expanded { add { AddHandler(ExpandedEvent, value); } remove { RemoveHandler(ExpandedEvent, value); } }
+        public event EventHandler<RoutedEventArgs> Expanded { add { AddHandler(ExpandedEvent, value); } remove { RemoveHandler(ExpandedEvent, value); } }
 
         /// <summary>
         /// Raised when this <see cref="ExpandableItemsControl"/> is collapsed.
         /// </summary>
-        public event RoutedEventHandler Collapsed { add { AddHandler(CollapsedEvent, value); } remove { RemoveHandler(CollapsedEvent, value); } }
+        public event EventHandler<RoutedEventArgs> Collapsed { add { AddHandler(CollapsedEvent, value); } remove { RemoveHandler(CollapsedEvent, value); } }
 
+        public ExpandableItemsControl()
+        {
+            IsExpandedProperty.Changed.AddClassHandler<AvaloniaObject>(OnIsExpandedChanged);
+            PointerPressed += OnMouseLeftButtonDown;
+        }
+        
+        
+        
         /// <summary>
         /// Invoked when this <see cref="ExpandableItemsControl"/> is expanded. Raises the <see cref="Expanded"/> event.
         /// </summary>
@@ -61,17 +72,16 @@ namespace Stride.Core.Presentation.Controls
         }
 
         /// <inheritdoc/>
-        protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
+        protected void OnMouseLeftButtonDown(object sender, PointerPressedEventArgs e)
         {
             if (!e.Handled && IsEnabled && e.ClickCount % 2 == 0)
             {
                 SetCurrentValue(IsExpandedProperty, !IsExpanded);
                 e.Handled = true;
             }
-            base.OnMouseLeftButtonDown(e);
         }
 
-        private static void OnIsExpandedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnIsExpandedChanged(AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var item = (ExpandableItemsControl)d;
             var isExpanded = (bool)e.NewValue;

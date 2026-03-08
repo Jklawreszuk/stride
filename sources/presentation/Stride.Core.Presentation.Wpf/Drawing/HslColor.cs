@@ -2,7 +2,7 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
-using System.Windows.Media;
+using Avalonia.Media;
 
 namespace Stride.Core.Presentation.Drawing
 {

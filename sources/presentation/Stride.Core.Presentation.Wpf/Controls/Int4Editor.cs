@@ -2,7 +2,7 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
 using System.Windows;
-
+using Avalonia;
 using Stride.Core.Mathematics;
 
 namespace Stride.Core.Presentation.Controls
@@ -12,23 +12,22 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="X"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty XProperty = DependencyProperty.Register("X", typeof(int?), typeof(Int4Editor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
-
+        public static readonly AvaloniaProperty XProperty = AvaloniaProperty.Register<Int4Editor, int?>("X");
         /// <summary>
         /// Identifies the <see cref="Y"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty YProperty = DependencyProperty.Register("Y", typeof(int?), typeof(Int4Editor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
-
+        public static readonly AvaloniaProperty YProperty = AvaloniaProperty.Register<Int4Editor, int?>("Y");
+        
         /// <summary>
         /// Identifies the <see cref="Z"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ZProperty = DependencyProperty.Register("Z", typeof(int?), typeof(Int4Editor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
-
+        public static readonly AvaloniaProperty ZProperty = AvaloniaProperty.Register<Int4Editor, int?>("Z");
+        
         /// <summary>
         /// Identifies the <see cref="W"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty WProperty = DependencyProperty.Register("W", typeof(int?), typeof(Int4Editor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
-
+        public static readonly AvaloniaProperty WProperty = AvaloniaProperty.Register<Int4Editor, int?>("W");
+        
         /// <summary>
         /// Gets or sets the X component of the <see cref="Int4"/> associated to this control.
         /// </summary>
@@ -48,7 +47,15 @@ namespace Stride.Core.Presentation.Controls
         /// Gets or sets the W component of the <see cref="Int4"/> associated to this control.
         /// </summary>
         public int? W { get { return (int?)GetValue(WProperty); } set { SetValue(WProperty, value); } }
-
+        
+        static Int4Editor()
+        {
+            XProperty.Changed.AddClassHandler<Int4Editor>((sender, e) => OnComponentPropertyChanged(sender, e));
+            YProperty.Changed.AddClassHandler<Int4Editor>((sender, e) => OnComponentPropertyChanged(sender, e));
+            ZProperty.Changed.AddClassHandler<Int4Editor>((sender, e) => OnComponentPropertyChanged(sender, e));
+            WProperty.Changed.AddClassHandler<Int4Editor>((sender, e) => OnComponentPropertyChanged(sender, e));
+        }
+        
         /// <inheritdoc/>
         protected override void UpdateComponentsFromValue(Int4? value)
         {
@@ -62,7 +69,7 @@ namespace Stride.Core.Presentation.Controls
         }
 
         /// <inheritdoc/>
-        protected override Int4? UpdateValueFromComponent(DependencyProperty property)
+        protected override Int4? UpdateValueFromComponent(AvaloniaProperty property)
         {
             if (property == XProperty)
                 return X.HasValue && Value.HasValue ? (Int4?)new Int4(X.Value, Value.Value.Y, Value.Value.Z, Value.Value.W) : null;

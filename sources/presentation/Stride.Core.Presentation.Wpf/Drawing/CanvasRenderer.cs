@@ -34,10 +34,12 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Shapes;
+using Avalonia;
+using Avalonia.Collections;
+using Avalonia.Controls;
+using Avalonia.Controls.Shapes;
+using Avalonia.Layout;
+using Avalonia.Media;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Extensions;
 
@@ -47,7 +49,7 @@ namespace Stride.Core.Presentation.Drawing
 
     public class CanvasRenderer : IDrawingContext
     {
-        private readonly Dictionary<Color, Brush> cachedBrushes = new Dictionary<Color, Brush>();
+        private readonly Dictionary<Color, Brush> cachedBrushes = new();
         private const int MaxPolylinesPerLine = 64;
         private const int MinPointsPerPolyline = 16;
 
@@ -88,7 +90,7 @@ namespace Stride.Core.Presentation.Drawing
         public void DrawEllipse(Point point, Size size, Color fillColor, Color strokeColor,
             double thickness, PenLineJoin lineJoin, ICollection<double> dashArray, double dashOffset, bool isHitTestVisible)
         {
-            point.Offset(-size.Width / 2, -size.Height / 2);
+            point = new Point(point.X - size.Width / 2, point.Y - size.Height / 2);
             var rect = new Rect(point, size);
 
             var ellipse = Create<Ellipse>(isHitTestVisible, rect.Left, rect.Top);
@@ -110,24 +112,10 @@ namespace Stride.Core.Presentation.Drawing
             if (points.Count == 0)
                 return;
 
-            var fillBrush = GetBrush(fillColor);
-            var strokeBrush = GetBrush(strokeColor);
-            var pen = new Pen(strokeBrush, thickness)
-            {
-                LineJoin = lineJoin,
-                DashStyle = new DashStyle(dashArray, dashOffset),
-            };
-
-            var visual = new DrawingVisual();
-            var context = visual.RenderOpen();
             foreach (var point in points)
             {
-                context.DrawEllipse(fillBrush, pen, point, radiusX, radiusY);
+                DrawEllipse(point, new Size(radiusX * 2, radiusY * 2), fillColor, strokeColor, thickness, lineJoin, dashArray, dashOffset, isHitTestVisible);
             }
-            context.Close();
-
-            var host = Create<VisualHost>(isHitTestVisible);
-            host.AddChild(visual);
         }
 
         /// <inheritdoc/>
@@ -136,10 +124,8 @@ namespace Stride.Core.Presentation.Drawing
         {
             var line = Create<Line>(isHitTestVisible);
             SetStroke(line, strokeColor, thickness, lineJoin, dashArray, dashOffset, aliased);
-            line.X1 = p1.X;
-            line.Y1 = p1.Y;
-            line.X2 = p2.X;
-            line.Y2 = p2.Y;
+            line.StartPoint = p1;
+            line.EndPoint = p2;
         }
 
         /// <inheritdoc/>
@@ -166,7 +152,6 @@ namespace Stride.Core.Presentation.Drawing
                 };
                 var segment = new LineSegment
                 {
-                    IsSmoothJoin = false,
                     IsStroked = true,
                     Point = aliased ? ToPixelAlignedPoint(points[i + 1]) : points[i + 1],
                 };
@@ -252,7 +237,6 @@ namespace Stride.Core.Presentation.Drawing
             }
 
             textBlock.RenderTransform = new TranslateTransform(point.X + dx, point.Y + dy);
-            textBlock.SetValue(RenderOptions.ClearTypeHintProperty, ClearTypeHint.Enabled);
         }
 
         /// <inheritdoc/>
@@ -265,10 +249,8 @@ namespace Stride.Core.Presentation.Drawing
             if (points.Count != texts.Count) throw new ArgumentException($"{nameof(points)} and {nameof(texts)} must have the same number of elements.");
 
             var brush = GetBrush(color);
-            var typeFace = new Typeface(fontFamily, FontStyles.Normal, fontWeight, FontStretches.Normal);
+            var typeFace = new Typeface(fontFamily, FontStyle.Normal, fontWeight);
 
-            var visual = new DrawingVisual();
-            var context = visual.RenderOpen();
             for (var i = 0; i < points.Count; ++i)
             {
                 var text = texts[i];
@@ -291,26 +273,21 @@ namespace Stride.Core.Presentation.Drawing
                     if (vAlign == VerticalAlignment.Bottom)
                         dy = -size.Height;
                 }
-                point.Offset(dx, dy);
-                context.DrawText(formatted, point);
+                point = new Point(point.X + dx, point.Y + dy);
+                DrawText(point, color, texts[i], fontFamily, fontSize, fontWeight, hAlign, vAlign, isHitTestVisible);
             }
-            context.Close();
-
-            var host = Create<VisualHost>(isHitTestVisible);
-            host.AddChild(visual);
         }
 
         /// <inheritdoc/>
         public Size MeasureText(string text, FontFamily fontFamily, double fontSize, FontWeight fontWeight, TextMeasurementMethod measurementMethod)
         {
             if (string.IsNullOrEmpty(text))
-                return Size.Empty;
+                return new Size();
 
             switch (measurementMethod)
             {
                 case TextMeasurementMethod.GlyphTypeface:
-                    GlyphTypeface glyphTypeface;
-                    if (TryGetGlyphTypeface(fontFamily, FontStyles.Normal, fontWeight, FontStretches.Normal, out glyphTypeface))
+                    if (TryGetGlyphTypeface(fontFamily, FontStyle.Normal, fontWeight, FontStretch.Normal, out var glyphTypeface))
                         return MeasureTextSize(glyphTypeface, fontSize, text);
                     // Fallback to TextBlock measurement method
                     goto case TextMeasurementMethod.TextBlock;
@@ -346,8 +323,7 @@ namespace Stride.Core.Presentation.Drawing
                 switch (measurementMethod)
                 {
                     case TextMeasurementMethod.GlyphTypeface:
-                        GlyphTypeface glyphTypeface;
-                        if (TryGetGlyphTypeface(fontFamily, FontStyles.Normal, fontWeight, FontStretches.Normal, out glyphTypeface))
+                        if (TryGetGlyphTypeface(fontFamily, FontStyle.Normal, fontWeight, FontStretch.Normal, out var glyphTypeface))
                         {
                             size = MeasureTextSize(glyphTypeface, fontSize, text);
                             break;
@@ -403,10 +379,10 @@ namespace Stride.Core.Presentation.Drawing
         /// <returns></returns>
         [NotNull]
         private TElement Create<TElement>(bool isHitTestVisible, double clipOffsetX = 0, double clipOffsetY = 0)
-            where TElement : UIElement, new()
+            where TElement : Control, new()
         {
             var element = new TElement();
-            if (clip.HasValue && !clip.Value.IsEmpty)
+            if (clip.HasValue && !(clip.Value == default))
             {
                 element.Clip = new RectangleGeometry(
                     new Rect(
@@ -440,10 +416,9 @@ namespace Stride.Core.Presentation.Drawing
             var streamGeometryContext = streamGeometry.Open();
             for (var i = 0; i < points.Count - 1; i += 2)
             {
-                streamGeometryContext.BeginFigure(aliased ? ToPixelAlignedPoint(points[i]) : points[i], false, false);
-                streamGeometryContext.LineTo(aliased ? ToPixelAlignedPoint(points[i + 1]) : points[i + 1], true, false);
+                streamGeometryContext.BeginFigure(aliased ? ToPixelAlignedPoint(points[i]) : points[i], false);
+                streamGeometryContext.LineTo(aliased ? ToPixelAlignedPoint(points[i + 1]) : points[i + 1], true);
             }
-            streamGeometryContext.Close();
 
             var path = Create<Path>(isHitTestVisible);
             SetStroke(path, strokeColor, thickness, lineJoin, dashArray, dashOffset, aliased);
@@ -468,7 +443,7 @@ namespace Stride.Core.Presentation.Drawing
 
             var polyline = Create<Polyline>(isHitTestVisible);
             SetStroke(polyline, strokeColor, thickness, lineJoin, dashArray, 0, aliased);
-            var pointCollection = new PointCollection(numPointsPerPolyline);
+            var pointCollection = new List<Point>(numPointsPerPolyline);
 
             var pointCount = points.Count;
             double lineLength = 0;
@@ -503,7 +478,7 @@ namespace Stride.Core.Presentation.Drawing
                         var dashOffset = dashPatternLength > 0 ? lineLength / thickness : 0;
                         polyline = Create<Polyline>(isHitTestVisible);
                         SetStroke(polyline, strokeColor, thickness, lineJoin, dashArray, dashOffset, aliased);
-                        pointCollection = new PointCollection(numPointsPerPolyline) { pointCollection.Last() };
+                        pointCollection = new List<Point>(numPointsPerPolyline) { pointCollection.Last() };
                     }
                 }
             }
@@ -533,8 +508,6 @@ namespace Stride.Core.Presentation.Drawing
             if (!cachedBrushes.TryGetValue(color, out brush))
             {
                 brush = new SolidColorBrush(color.ToSystemColor());
-                if (brush.CanFreeze)
-                    brush.Freeze(); // Freezing should improve rendering performance
                 cachedBrushes.Add(color, brush);
             }
 
@@ -545,17 +518,16 @@ namespace Stride.Core.Presentation.Drawing
         {
             shape.Stroke = GetBrush(color);
             shape.StrokeThickness = thickness;
-            shape.StrokeLineJoin = lineJoin;
+            //shape.StrokeLineJoin = lineJoin;
             if (dashArray != null)
             {
-                shape.StrokeDashArray = new DoubleCollection(dashArray);
+                shape.StrokeDashArray = new AvaloniaList<double>(dashArray);
                 shape.StrokeDashOffset = dashOffset;
             }
 
             if (aliased)
             {
-                shape.SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
-                shape.SnapsToDevicePixels = true;
+                //TODO: shape.SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
             }
         }
 
@@ -622,9 +594,9 @@ namespace Stride.Core.Presentation.Drawing
         /// <param name="aliased">Convert to pixel aligned points if set to <c>true</c>.</param>
         /// <returns>The point collection.</returns>
         [NotNull]
-        private static PointCollection ToPointCollection(IEnumerable<Point> points, bool aliased)
+        private static List<Point> ToPointCollection(IEnumerable<Point> points, bool aliased)
         {
-            return new PointCollection(aliased ? points.Select(ToPixelAlignedPoint) : points);
+            return [..aliased ? points.Select(ToPixelAlignedPoint) : points];
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -32,8 +32,8 @@ namespace Stride.Core.Presentation.ValueConverters
         [NotNull]
         public override object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var visibility = (Visibility)value;
-            var result = visibility == Visibility.Visible;
+            var visibility = (bool)value;
+            var result = visibility;
             if (parameter as bool? == false)
             {
                 result = !result;

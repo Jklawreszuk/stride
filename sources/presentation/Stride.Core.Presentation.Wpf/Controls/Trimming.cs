@@ -5,14 +5,14 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Media;
 using Stride.Core.Annotations;
 
 namespace Stride.Core.Presentation.Controls
 {
-    public static class Trimming
+    public class Trimming
     {
         /// <summary>
         /// The string used as ellipsis for trimming.
@@ -22,90 +22,90 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="TextTrimming"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty TextTrimmingProperty = DependencyProperty.RegisterAttached("TextTrimming", typeof(TextTrimming), typeof(Trimming), new PropertyMetadata(TextTrimming.None));
+        public static readonly AvaloniaProperty TextTrimmingProperty = AvaloniaProperty.RegisterAttached<Trimming, Control, TextTrimming>("TextTrimming", TextTrimming.None);
 
         /// <summary>
         /// Identifies the <see cref="TrimmingSource"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty TrimmingSourceProperty = DependencyProperty.RegisterAttached("TrimmingSource", typeof(TrimmingSource), typeof(Trimming), new PropertyMetadata(TrimmingSource.End));
+        public static readonly AvaloniaProperty TrimmingSourceProperty = AvaloniaProperty.RegisterAttached<Trimming, Control, TrimmingSource>("TrimmingSource",TrimmingSource.End);
 
         /// <summary>
         /// Identifies the <see cref="WordSeparators"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty WordSeparatorsProperty = DependencyProperty.RegisterAttached("WordSeparators", typeof(string), typeof(Trimming), new PropertyMetadata(" \t"));
+        public static readonly AvaloniaProperty WordSeparatorsProperty = AvaloniaProperty.RegisterAttached<Trimming, Control, string>("WordSeparators", " \t");
 
         /// <summary>
-        /// Gets the current value of the <see cref="TextTrimming"/> dependency property attached to the given <see cref="DependencyObject"/>.
+        /// Gets the current value of the <see cref="TextTrimming"/> dependency property attached to the given <see cref="AvaloniaObject"/>.
         /// </summary>
-        /// <param name="target">The target <see cref="DependencyObject"/>.</param>
+        /// <param name="target">The target <see cref="AvaloniaObject"/>.</param>
         /// <returns>The value of the <see cref="TextTrimming"/> dependency property.</returns>
-        public static TextTrimming GetTextTrimming([NotNull] DependencyObject target)
+        public static TextTrimming GetTextTrimming([NotNull] AvaloniaObject target)
         {
             return (TextTrimming)target.GetValue(TextTrimmingProperty);
         }
 
         /// <summary>
-        /// Sets the value of the <see cref="TextTrimming"/> dependency property attached to the given <see cref="DependencyObject"/>.
+        /// Sets the value of the <see cref="TextTrimming"/> dependency property attached to the given <see cref="AvaloniaObject"/>.
         /// </summary>
-        /// <param name="target">The target <see cref="DependencyObject"/>.</param>
+        /// <param name="target">The target <see cref="AvaloniaObject"/>.</param>
         /// <param name="value">The value to set.</param>
-        public static void SetTextTrimming([NotNull] DependencyObject target, TextTrimming value)
+        public static void SetTextTrimming([NotNull] AvaloniaObject target, TextTrimming value)
         {
             target.SetValue(TextTrimmingProperty, value);
         }
 
         /// <summary>
-        /// Gets the current value of the <see cref="TrimmingSource"/> dependency property attached to the given <see cref="DependencyObject"/>.
+        /// Gets the current value of the <see cref="TrimmingSource"/> dependency property attached to the given <see cref="AvaloniaObject"/>.
         /// </summary>
-        /// <param name="target">The target <see cref="DependencyObject"/>.</param>
+        /// <param name="target">The target <see cref="AvaloniaObject"/>.</param>
         /// <returns>The value of the <see cref="TrimmingSource"/> dependency property.</returns>
-        public static TrimmingSource GetTrimmingSource([NotNull] DependencyObject target)
+        public static TrimmingSource GetTrimmingSource([NotNull] AvaloniaObject target)
         {
             return (TrimmingSource)target.GetValue(TrimmingSourceProperty);
         }
 
         /// <summary>
-        /// Sets the value of the <see cref="TrimmingSource"/> dependency property attached to the given <see cref="DependencyObject"/>.
+        /// Sets the value of the <see cref="TrimmingSource"/> dependency property attached to the given <see cref="AvaloniaObject"/>.
         /// </summary>
-        /// <param name="target">The target <see cref="DependencyObject"/>.</param>
+        /// <param name="target">The target <see cref="AvaloniaObject"/>.</param>
         /// <param name="value">The value to set.</param>
-        public static void SetTrimmingSource([NotNull] DependencyObject target, TrimmingSource value)
+        public static void SetTrimmingSource([NotNull] AvaloniaObject target, TrimmingSource value)
         {
             target.SetValue(TrimmingSourceProperty, value);
         }
 
         /// <summary>
-        /// Gets the current value of the <see cref="WordSeparators"/> dependency property attached to the given <see cref="DependencyObject"/>.
+        /// Gets the current value of the <see cref="WordSeparators"/> dependency property attached to the given <see cref="AvaloniaObject"/>.
         /// </summary>
-        /// <param name="target">The target <see cref="DependencyObject"/>.</param>
+        /// <param name="target">The target <see cref="AvaloniaObject"/>.</param>
         /// <returns>The value of the <see cref="WordSeparators"/> dependency property.</returns>
-        public static string GetWordSeparators([NotNull] DependencyObject target)
+        public static string GetWordSeparators([NotNull] AvaloniaObject target)
         {
             return (string)target.GetValue(WordSeparatorsProperty);
         }
 
         /// <summary>
-        /// Sets the value of the <see cref="WordSeparators"/> dependency property attached to the given <see cref="DependencyObject"/>.
+        /// Sets the value of the <see cref="WordSeparators"/> dependency property attached to the given <see cref="AvaloniaObject"/>.
         /// </summary>
-        /// <param name="target">The target <see cref="DependencyObject"/>.</param>
+        /// <param name="target">The target <see cref="AvaloniaObject"/>.</param>
         /// <param name="value">The value to set.</param>
-        public static void SetWordSeparators([NotNull] DependencyObject target, string value)
+        public static void SetWordSeparators([NotNull] AvaloniaObject target, string value)
         {
             target.SetValue(WordSeparatorsProperty, value);
         }
-
-        public static string ProcessTrimming([NotNull] Control control, string text, double availableWidth)
+        
+        public static string ProcessTrimming([NotNull] TextBox textBlock, string text, double availableWidth)
         {
-            var trimming = GetTextTrimming(control);
-            var source = GetTrimmingSource(control);
-            var wordSeparators = GetWordSeparators(control);
-            return ProcessTrimming(control, text, trimming, source, wordSeparators, availableWidth);
+            var trimming = GetTextTrimming(textBlock);
+            var source = GetTrimmingSource(textBlock);
+            var wordSeparators = GetWordSeparators(textBlock);
+            return ProcessTrimming(textBlock, text, trimming, source, wordSeparators, availableWidth);
         }
 
-        public static string ProcessTrimming([NotNull] Control control, string text, TextTrimming trimming, TrimmingSource source, string wordSeparators, double availableWidth)
+        public static string ProcessTrimming([NotNull] TextBox textBlock, string text, TextTrimming trimming, TrimmingSource source, string wordSeparators, double availableWidth)
         {
-            var typeface = new Typeface(control.FontFamily, control.FontStyle, control.FontWeight, control.FontStretch);
-            return ProcessTrimming(text, typeface, control.FontSize, trimming, source, wordSeparators, availableWidth);
+            var typeface = new Typeface(textBlock.FontFamily, textBlock.FontStyle, textBlock.FontWeight, textBlock.FontStretch);
+            return ProcessTrimming(text, typeface, textBlock.FontSize, trimming, source, wordSeparators, availableWidth);
         }
 
         public static string ProcessTrimming([NotNull] TextBlock textBlock, string text, double availableWidth)
@@ -141,16 +141,17 @@ namespace Stride.Core.Presentation.Controls
 
             List<string> words;
 
-            switch (trimming)
+            if (trimming == TextTrimming.CharacterEllipsis)
             {
-                case TextTrimming.CharacterEllipsis:
-                    words = text.ToCharArray().Select(c => c.ToString(CultureInfo.InvariantCulture)).ToList();
-                    break;
-                case TextTrimming.WordEllipsis:
-                    words = SplitWords(text, wordSeparators);
-                    break;
-                default:
-                    throw new ArgumentException("Invalid 'TextTrimming' argument.");
+                words = text.ToCharArray().Select(c => c.ToString(CultureInfo.InvariantCulture)).ToList();
+            }
+            if (trimming == TextTrimming.WordEllipsis)
+            {
+                words = SplitWords(text, wordSeparators);
+            }
+            else
+            {
+                throw new ArgumentException("Invalid 'TextTrimming' argument.");
             }
 
             var firstWord = true;
@@ -249,34 +250,36 @@ namespace Stride.Core.Presentation.Controls
             var period = new FormattedText(".", CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, typeface, fontSize, Brushes.Black);
             var periodWidth = period.Width;
 
-            switch (trimming)
+            if (trimming == TextTrimming.CharacterEllipsis)
             {
-                case TextTrimming.CharacterEllipsis:
-                    sizes = new double[text.Length];
-                    for (var i = 0; i < text.Length; i++)
-                    {
-                        var token = text[i].ToString(CultureInfo.CurrentUICulture) + ".";
-                        var formattedText = new FormattedText(token, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, typeface, fontSize, Brushes.Black);
-                        var width = formattedText.Width - periodWidth;
-                        sizes[i] = width;
-                        totalWidth += width;
-                    }
-                    return totalWidth;
-                case TextTrimming.WordEllipsis:
-                    var words = SplitWords(text, wordSeparators);
-                    sizes = new double[words.Count];
-                    for (var i = 0; i < words.Count; i++)
-                    {
-                        var token = words[i] + ".";
-                        var formattedText = new FormattedText(token, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, typeface, fontSize, Brushes.Black);
-                        var width = formattedText.Width - periodWidth;
-                        sizes[i] = width;
-                        totalWidth += width;
-                    }
-                    return totalWidth;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(trimming));
+                sizes = new double[text.Length];
+                for (var i = 0; i < text.Length; i++)
+                {
+                    var token = text[i].ToString(CultureInfo.CurrentUICulture) + ".";
+                    var formattedText = new FormattedText(token, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, typeface, fontSize, Brushes.Black);
+                    var width = formattedText.Width - periodWidth;
+                    sizes[i] = width;
+                    totalWidth += width;
+                }
+                return totalWidth;
             }
+
+            if (trimming == TextTrimming.WordEllipsis)
+            {
+                var words = SplitWords(text, wordSeparators);
+                sizes = new double[words.Count];
+                for (var i = 0; i < words.Count; i++)
+                {
+                    var token = words[i] + ".";
+                    var formattedText = new FormattedText(token, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, typeface, fontSize, Brushes.Black);
+                    var width = formattedText.Width - periodWidth;
+                    sizes[i] = width;
+                    totalWidth += width;
+                }
+                return totalWidth;
+            }
+
+            throw new ArgumentOutOfRangeException(nameof(trimming));
         }
 
         [NotNull]

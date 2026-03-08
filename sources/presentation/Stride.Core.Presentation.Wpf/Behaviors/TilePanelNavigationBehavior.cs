@@ -1,11 +1,14 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Input;
-using System.Windows.Media;
+using Avalonia.Controls;
+using Avalonia;
+using Avalonia.Controls.Primitives;
+using Avalonia.Input;
+using Avalonia.Interactivity;
+using Avalonia.Layout;
+using Avalonia.Styling;
+using Avalonia.VisualTree;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Controls;
 
@@ -13,35 +16,32 @@ namespace Stride.Core.Presentation.Behaviors
 {
     public class TilePanelNavigationBehavior : DeferredBehaviorBase<VirtualizingTilePanel>
     {
-        private Selector selector;
+        private SelectingItemsControl selector;
 
         protected override void OnAttachedAndLoaded()
         {
-            DependencyObject parent = AssociatedObject;
+            AvaloniaObject parent = AssociatedObject;
             while (parent != null)
             {
-                parent = VisualTreeHelper.GetParent(parent);
-                if (parent is Selector)
+                parent = ((Visual)parent).GetVisualParent();
+                if (parent is SelectingItemsControl)
                     break;
             }
 
             if (parent == null)
             {
-                throw new InvalidOperationException("Unable to find a parent Selector to the associated VirtualizingTilePanel.");
+                throw new InvalidOperationException("Unable to find a parent SelectingItemsControl to the associated VirtualizingTilePanel.");
             }
 
-            selector = (Selector)parent;
+            selector = (SelectingItemsControl)parent;
 
-            selector.IsSynchronizedWithCurrentItem = true;
-            KeyboardNavigation.SetDirectionalNavigation(selector, KeyboardNavigationMode.None);
-
-            selector.PreviewKeyDown += OnAssociatedObjectKeyDown;
+            KeyboardNavigation.SetTabNavigation(selector, KeyboardNavigationMode.None);
+            selector.AddHandler(InputElement.KeyDownEvent, OnAssociatedObjectKeyDown, RoutingStrategies.Tunnel);
         }
 
         protected override void OnDetachingAndUnloaded()
         {
-            if (selector != null)
-                selector.PreviewKeyDown -= OnAssociatedObjectKeyDown;
+            selector?.RemoveHandler(InputElement.KeyDownEvent, OnAssociatedObjectKeyDown);
             selector = null;
         }
 
@@ -50,12 +50,12 @@ namespace Stride.Core.Presentation.Behaviors
             if (selector.SelectedIndex == -1 || selector.Items.Count == 0)
                 return;
 
-            var window = Window.GetWindow(selector);
-            if (window == null)
+            var topLevel = TopLevel.GetTopLevel(selector);
+            if (topLevel is not Window)
                 return;
 
             // Find the currently focused element (logical focus)
-            var focusedElement = FocusManager.GetFocusedElement(window) as DependencyObject;
+            var focusedElement = topLevel.FocusManager?.GetFocusedElement() as AvaloniaObject;
             if (focusedElement == null)
                 return;
 
@@ -68,7 +68,7 @@ namespace Stride.Core.Presentation.Behaviors
                 return;
             }
 
-            bool moved;
+            bool moved = false;
 
             switch (e.Key)
             {
@@ -115,11 +115,21 @@ namespace Stride.Core.Presentation.Behaviors
                     break;
 
                 case Key.Home:
-                    moved = selector.Items.MoveCurrentToFirst();
+                    if (selector.ItemCount > 0)
+                    {
+                        selector.SelectedIndex = 0;
+                        selector.ScrollIntoView(selector.SelectedItem);
+                        moved = true;
+                    }
                     break;
 
                 case Key.End:
-                    moved = selector.Items.MoveCurrentToLast();
+                    if (selector.ItemCount > 0)
+                    {
+                        selector.SelectedIndex = selector.ItemCount - 1;
+                        selector.ScrollIntoView(selector.SelectedItem);
+                        moved = true;
+                    }
                     break;
 
                 default:
@@ -136,7 +146,7 @@ namespace Stride.Core.Presentation.Behaviors
 
                     if (selector.ItemContainerGenerator != null && selector.SelectedItem != null)
                     {
-                        var lbi = selector.ItemContainerGenerator.ContainerFromItem(selector.SelectedItem) as UIElement;
+                        var lbi = selector.ContainerFromItem(selector.SelectedItem);
                         lbi?.Focus();
                     }
                 }
@@ -149,8 +159,11 @@ namespace Stride.Core.Presentation.Behaviors
 
             int newPos = selector.SelectedIndex - (AssociatedObject.ItemsPerLine * lineCount);
 
-            if (newPos >= 0)
-                moved = selector.Items.MoveCurrentToPosition(newPos);
+            if (newPos >= 0 && newPos < selector.ItemCount)
+            {
+                selector.SelectedIndex = newPos;
+                moved = true;
+            }
 
             return moved;
         }
@@ -163,30 +176,47 @@ namespace Stride.Core.Presentation.Behaviors
             {
                 int newPos = selector.SelectedIndex + (AssociatedObject.ItemsPerLine * lineCount);
 
-                if (newPos < AssociatedObject.ItemCount)
-                    moved = selector.Items.MoveCurrentToPosition(newPos);
+                if (newPos < AssociatedObject.ItemCount && newPos >= 0 && newPos < selector.ItemCount)
+                {
+                    selector.SelectedIndex = newPos;
+                    moved = true;
+                }
             }
             return moved;
         }
 
         private bool MoveToPreviousItem()
         {
-            bool moved = selector.Items.MoveCurrentToPrevious();
-            if (moved == false)
+            bool moved = false;
+
+            if (selector.SelectedIndex > 0)
             {
-                if (selector.SelectedItem == null)
-                    selector.Items.MoveCurrentToFirst();
+                selector.SelectedIndex--;
+                moved = true;
+            }
+            if (!moved && selector.SelectedItem == null && selector.ItemCount > 0)
+            {
+                selector.SelectedIndex = 0;
+                selector.ScrollIntoView(selector.SelectedItem);
+                moved = true;
             }
             return moved;
         }
 
         private bool MoveToNextItem()
         {
-            bool moved = selector.Items.MoveCurrentToNext();
-            if (moved == false)
+            bool moved = false;
+
+            if (selector.SelectedIndex < selector.ItemCount - 1)
             {
-                if (selector.SelectedItem == null)
-                    selector.Items.MoveCurrentToLast();
+                selector.SelectedIndex++;
+                moved = true;
+            }
+            if (!moved && selector.SelectedItem == null && selector.ItemCount > 0)
+            {
+                selector.SelectedIndex = selector.ItemCount - 1;
+                selector.ScrollIntoView(selector.SelectedItem);
+                moved = true;
             }
             return moved;
         }

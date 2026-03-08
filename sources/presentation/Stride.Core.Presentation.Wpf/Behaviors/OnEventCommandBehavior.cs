@@ -2,6 +2,7 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System.Windows;
 using System.Windows.Input;
+using Avalonia;
 
 namespace Stride.Core.Presentation.Behaviors
 {
@@ -13,17 +14,17 @@ namespace Stride.Core.Presentation.Behaviors
         /// <summary>
         /// Identifies the <see cref="Command"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty CommandProperty = DependencyProperty.Register("Command", typeof(ICommand), typeof(OnEventCommandBehavior));
+        public static readonly StyledProperty<ICommand> CommandProperty = AvaloniaProperty.Register<OnEventCommandBehavior, ICommand>("Command");
 
         /// <summary>
         /// Identifies the <see cref="CommandParameter"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty CommandParameterProperty = DependencyProperty.Register("CommandParameter", typeof(object), typeof(OnEventCommandBehavior));
+        public static readonly StyledProperty<object> CommandParameterProperty = AvaloniaProperty.Register<OnEventCommandBehavior, object>("CommandParameter");
 
         /// <summary>
         /// Gets or sets the command to invoke when the event is raised.
         /// </summary>
-        public ICommand Command { get { return (ICommand)GetValue(CommandProperty); } set { SetValue(CommandProperty, value); } }
+        public ICommand Command { get { return GetValue(CommandProperty); } set { SetValue(CommandProperty, value); } }
 
         /// <summary>
         /// Gets or sets the parameter of the command to invoke when the event is raised.

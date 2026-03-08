@@ -4,7 +4,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows;
+using Avalonia;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Services;
 
@@ -17,14 +17,14 @@ namespace Stride.Core.Presentation.Windows
         /// <summary>
         /// Identifies the <see cref="CheckedMessage"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty CheckedMessageProperty =
-            DependencyProperty.Register(nameof(CheckedMessage), typeof(string), typeof(CheckedMessageBox));
+        public static readonly StyledProperty<string> CheckedMessageProperty =
+            AvaloniaProperty.Register<CheckedMessageBox, string>(nameof(CheckedMessage));
 
         /// <summary>
         /// Identifies the <see cref="IsCheckedProperty"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty IsCheckedProperty =
-            DependencyProperty.Register(nameof(IsChecked), typeof(bool?), typeof(CheckedMessageBox));
+        public static readonly StyledProperty<bool?> IsCheckedProperty =
+            AvaloniaProperty.Register<CheckedMessageBox, bool?>(nameof(IsChecked));
 
         public string CheckedMessage
         {

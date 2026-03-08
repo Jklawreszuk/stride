@@ -1,11 +1,16 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
-using System.ComponentModel;
+using System.Net.Mime;
 using System.Threading;
-using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Metadata;
+using Avalonia.Controls.Primitives;
+using Avalonia.Media;
+using Avalonia.Threading;
+using CommunityToolkit.Mvvm.Input;
 using Stride.Core.Presentation.Internal;
 
 namespace Stride.Core.Presentation.Controls
@@ -23,39 +28,38 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="UseTimedValidation"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty UseTimedValidationProperty = DependencyProperty.Register("UseTimedValidation", typeof(bool), typeof(TextBox), new PropertyMetadata(BooleanBoxes.FalseBox, OnUseTimedValidationPropertyChanged));
+        public static readonly AvaloniaProperty UseTimedValidationProperty = AvaloniaProperty.Register<TextBox, bool>("UseTimedValidation");
 
         /// <summary>
         /// Identifies the <see cref="ValidationDelay"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ValidationDelayProperty = DependencyProperty.Register("ValidationDelay", typeof(int), typeof(TextBox), new PropertyMetadata(500));
+        public static readonly AvaloniaProperty ValidationDelayProperty = AvaloniaProperty.Register<TextBox, int>("ValidationDelay", 500);
         
         /// <summary>
         /// Identifies the <see cref="TrimmedText"/> dependency property.
         /// </summary>
-        public static readonly DependencyPropertyKey TrimmedTextPropertyKey = DependencyProperty.RegisterReadOnly("TrimmedText", typeof(string), typeof(TextBox), new PropertyMetadata(""));
+        public static readonly AvaloniaProperty TrimmedTextPropertyKey = AvaloniaProperty.RegisterDirect<TextBox, string>("TrimmedText", o => o.TrimmedText);
 
         /// <summary>
         /// Identifies the <see cref="TrimmedText"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty TrimmedTextProperty = TrimmedTextPropertyKey.DependencyProperty;
+        public static readonly AvaloniaProperty TrimmedTextProperty = TrimmedTextPropertyKey;
 
         /// <summary>
-        /// Clears the current <see cref="System.Windows.Controls.TextBox.Text"/> of a text box.
+        /// Clears the current <see cref="MediaTypeNames.Text"/> of a text box.
         /// </summary>
-        public static RoutedCommand ClearTextCommand { get; }
+        public static ICommand ClearTextCommand { get; }
         
         static TextBox()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(TextBox), new FrameworkPropertyMetadata(typeof(TextBox)));
-            ClearTextCommand = new RoutedCommand("ClearTextCommand", typeof(System.Windows.Controls.TextBox));
-            CommandManager.RegisterClassCommandBinding(typeof(System.Windows.Controls.TextBox), new CommandBinding(ClearTextCommand, OnClearTextCommand));
+            UseTimedValidationProperty.Changed.AddClassHandler<AvaloniaObject>(OnUseTimedValidationPropertyChanged);
+            ClearTextCommand = new RelayCommand<TextBox>(OnClearTextCommand);
         }
 
         public TextBox()
         {
-            if (DesignerProperties.GetIsInDesignMode(this) == false)
-                validationTimer = new Timer(x => Dispatcher.InvokeAsync(Validate), null, Timeout.Infinite, Timeout.Infinite);
+            if (!Avalonia.Controls.Design.IsDesignMode)
+                validationTimer = new Timer(x => Dispatcher.UIThread.InvokeAsync(Validate), null, Timeout.Infinite, Timeout.Infinite);
         }
 
         /// <summary>
@@ -65,7 +69,7 @@ namespace Stride.Core.Presentation.Controls
 
         /// <summary>
         /// Gets or sets the amount of time before a validation of input text happens, in milliseconds.
-        /// Every change to the <see cref="TextBox.Text"/> property reset the timer to this value.
+        /// Every change to the <see cref="MediaTypeNames.Text"/> property reset the timer to this value.
         /// </summary>
         /// <remarks>The default value is <c>500</c> milliseconds.</remarks>
         public int ValidationDelay { get { return (int)GetValue(ValidationDelayProperty); } set { SetValue(ValidationDelayProperty, value); } }
@@ -73,14 +77,14 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Gets the trimmed text to display when the control does not have the focus, depending of the value of the <see cref="TextTrimming"/> property.
         /// </summary>
-        public string TrimmedText { get { return (string)GetValue(TrimmedTextPropertyKey.DependencyProperty); } private set { SetValue(TrimmedTextPropertyKey, value); } }
+        public string TrimmedText { get { return (string)GetValue(TrimmedTextPropertyKey); } private set { SetValue(TrimmedTextPropertyKey, value); } }
 
         /// <inheritdoc/>
-        public override void OnApplyTemplate()
+        protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
-            base.OnApplyTemplate();
+            base.OnApplyTemplate(e);
 
-            trimmedTextBlock = GetTemplateChild("PART_TrimmedText") as TextBlock;
+            trimmedTextBlock =  e.NameScope.Find<TextBlock>("PART_TrimmedText");
             if (trimmedTextBlock == null)
                 throw new InvalidOperationException("A part named 'PART_TrimmedText' must be present in the ControlTemplate, and must be of type 'TextBlock'.");
         }
@@ -88,8 +92,8 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Raised when the text of the TextBox changes.
         /// </summary>
-        /// <param name="oldValue">The old value of the <see cref="TextBox.Text"/> property.</param>
-        /// <param name="newValue">The new value of the <see cref="TextBox.Text"/> property.</param>
+        /// <param name="oldValue">The old value of the <see cref="MediaTypeNames.Text"/> property.</param>
+        /// <param name="newValue">The new value of the <see cref="MediaTypeNames.Text"/> property.</param>
         protected override void OnTextChanged(string oldValue, string newValue)
         {
             if (UseTimedValidation)
@@ -104,7 +108,7 @@ namespace Stride.Core.Presentation.Controls
                 }
             }
             
-            var availableWidth = ActualWidth;
+            var availableWidth = Bounds.Width;
             if (trimmedTextBlock != null)
                 availableWidth -= trimmedTextBlock.Margin.Left + trimmedTextBlock.Margin.Right;
 
@@ -122,7 +126,7 @@ namespace Stride.Core.Presentation.Controls
             return arrangedSize;
         }
 
-        private static void OnUseTimedValidationPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void OnUseTimedValidationPropertyChanged(AvaloniaObject sender, AvaloniaPropertyChangedEventArgs e)
         {
             var txt = (TextBox)sender;
             if ((bool)e.NewValue)
@@ -131,9 +135,8 @@ namespace Stride.Core.Presentation.Controls
             }
         }
 
-        private static void OnClearTextCommand(object sender, ExecutedRoutedEventArgs e)
+        private static void OnClearTextCommand(TextBox textBox)
         {
-            var textBox = sender as TextBox;
             textBox?.Clear();
         }
     }

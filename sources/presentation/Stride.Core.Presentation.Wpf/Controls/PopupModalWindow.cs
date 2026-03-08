@@ -1,10 +1,10 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
-using System.ComponentModel;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Input;
+using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
+using Avalonia.Input;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Services;
 using Stride.Core.Presentation.Windows;
@@ -25,21 +25,14 @@ namespace Stride.Core.Presentation.Controls
 
         protected PopupModalWindow()
         {
-            Loaded += OnLoaded;
+            Deactivated += OnDeactivated;
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
-            if (!IsMouseCaptured)
-                Mouse.Capture(this, CaptureMode.SubTree);
-        }
-
-        public override void OnApplyTemplate()
-        {
-            base.OnApplyTemplate();
-            var titleBar = GetTemplateChild("TitleBar") as UIElement;
-            if (titleBar != null)
-                titleBar.Visibility = Visibility.Collapsed;
+            base.OnApplyTemplate(e);
+            if ( e.NameScope.Find<Control>("TitleBar") is { } titleBar)
+                titleBar.IsVisible = false;
         }
 
         public override Task<DialogResult> ShowModal()
@@ -58,13 +51,12 @@ namespace Stride.Core.Presentation.Controls
             }
         }
 
-        protected override void OnDeactivated(EventArgs e)
+        protected void OnDeactivated(object sender, EventArgs e)
         {
-            base.OnDeactivated(e);
             CloseWithCancel();
         }
 
-        protected override void OnClosing([NotNull] CancelEventArgs e)
+        protected override void OnClosing(WindowClosingEventArgs e)
         {
             if (!e.Cancel)
                 closing = true;
@@ -72,9 +64,9 @@ namespace Stride.Core.Presentation.Controls
             base.OnClosing(e);
         }
 
-        protected override void OnMouseDown(MouseButtonEventArgs e)
+        protected override void OnPointerPressed(PointerPressedEventArgs e)
         {
-            base.OnMouseDown(e);
+            base.OnPointerPressed(e);
             if (!IsMouseOverWindow(e))
             {
                 CloseWithCancel();
@@ -86,15 +78,15 @@ namespace Stride.Core.Presentation.Controls
         {
             if (!closing)
             {
-                Result = Services.DialogResult.Cancel;
+                Result = DialogResult.Cancel;
                 Close();
             }
         }
 
-        protected bool IsMouseOverWindow([NotNull] MouseEventArgs e)
+        protected bool IsMouseOverWindow([NotNull] PointerEventArgs e)
         {
             var position = e.GetPosition(this);
-            return position.X >= 0 && position.Y >= 0 && position.X < ActualWidth && position.Y < ActualHeight;
+            return position.X >= 0 && position.Y >= 0 && position.X < Bounds.Width && position.Y < Bounds.Height;
         }
     }
 }

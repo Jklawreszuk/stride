@@ -185,7 +185,7 @@ namespace Stride.LauncherApp
             }
             catch (Exception exception)
             {
-                CrashReportHelper.HandleException(Dispatcher.CurrentDispatcher, exception);
+                CrashReportHelper.HandleException(Dispatcher.UIThread, exception);
                 return LauncherErrorCode.ErrorWhileRunningServer;
             }
         }

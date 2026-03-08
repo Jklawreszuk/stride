@@ -1,7 +1,8 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
-using System.Windows;
-using System.Windows.Controls;
+
+using Avalonia;
+using Avalonia.Controls;
 using Stride.Core.Presentation.Commands;
 
 namespace Stride.Core.Presentation.Controls
@@ -11,18 +12,13 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="CloseTagCommand"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty CloseTagCommandProperty =
-            DependencyProperty.Register("CloseTagCommand", typeof(ICommandBase), typeof(TagControl));
+        public static readonly AvaloniaProperty CloseTagCommandProperty =
+            AvaloniaProperty.Register<TagControl, ICommandBase>("CloseTagCommand");
 
         public ICommandBase CloseTagCommand
         {
             get { return (ICommandBase)GetValue(CloseTagCommandProperty); }
             set { SetValue(CloseTagCommandProperty, value); }
-        }
-
-        static TagControl()
-        {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(TagControl), new FrameworkPropertyMetadata(typeof(TagControl)));
         }
     }
 }

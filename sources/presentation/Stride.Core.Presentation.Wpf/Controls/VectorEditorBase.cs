@@ -1,34 +1,37 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
+using Avalonia.Data;
+using Avalonia.Markup.Xaml.Templates;
+using Avalonia.Reactive;
 using Stride.Core.Presentation.Internal;
 
 namespace Stride.Core.Presentation.Controls
 {
-    public abstract class VectorEditorBase : Control
+    public abstract class VectorEditorBase : TemplatedControl
     {
         /// <summary>
         /// Identifies the <see cref="DecimalPlaces"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty DecimalPlacesProperty = DependencyProperty.Register("DecimalPlaces", typeof(int), typeof(VectorEditorBase), new FrameworkPropertyMetadata(-1));
+        public static readonly AvaloniaProperty DecimalPlacesProperty = AvaloniaProperty.Register<VectorEditorBase, int>("DecimalPlaces", -1);
 
         /// <summary>
         /// Identifies the <see cref="IsDropDownOpen"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty IsDropDownOpenProperty = DependencyProperty.Register("IsDropDownOpen", typeof(bool), typeof(VectorEditorBase), new PropertyMetadata(BooleanBoxes.FalseBox));
+        public static readonly AvaloniaProperty IsDropDownOpenProperty = AvaloniaProperty.Register<VectorEditorBase, bool>("IsDropDownOpen");
 
         /// <summary>
         /// Identifies the <see cref="WatermarkContent"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty WatermarkContentProperty = DependencyProperty.Register("WatermarkContent", typeof(object), typeof(VectorEditorBase), new PropertyMetadata(null));
+        public static readonly AvaloniaProperty WatermarkContentProperty = AvaloniaProperty.Register<VectorEditorBase, object>("WatermarkContent");
 
         /// <summary>
         /// Identifies the <see cref="WatermarkContentTemplate"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty WatermarkContentTemplateProperty = DependencyProperty.Register("WatermarkContentTemplate", typeof(DataTemplate), typeof(VectorEditorBase), new PropertyMetadata(null));
+        public static readonly AvaloniaProperty WatermarkContentTemplateProperty = AvaloniaProperty.Register<VectorEditorBase, DataTemplate>("WatermarkContentTemplate");
 
         /// <summary>
         /// Gets or sets the number of decimal places displayed in the <see cref="NumericTextBox"/>.
@@ -50,6 +53,11 @@ namespace Stride.Core.Presentation.Controls
         /// </summary>
         public DataTemplate WatermarkContentTemplate { get { return (DataTemplate)GetValue(WatermarkContentTemplateProperty); } set { SetValue(WatermarkContentTemplateProperty, value); } }
 
+        public VectorEditorBase()
+        {
+            this.GetObservable(IsKeyboardFocusWithinProperty)
+                .Subscribe(new AnonymousObserver<bool>(_ => OnIsKeyboardFocusWithinChanged()));
+        }
         /// <summary>
         /// Sets the vector value of this vector editor from a single float value.
         /// </summary>
@@ -58,9 +66,8 @@ namespace Stride.Core.Presentation.Controls
 
         public abstract void ResetValue();
 
-        protected override void OnIsKeyboardFocusWithinChanged(DependencyPropertyChangedEventArgs e)
+        private void OnIsKeyboardFocusWithinChanged()
         {
-            base.OnIsKeyboardFocusWithinChanged(e);
             if (IsDropDownOpen && !IsKeyboardFocusWithin)
             {
                 SetCurrentValue(IsDropDownOpenProperty, false);
@@ -72,17 +79,17 @@ namespace Stride.Core.Presentation.Controls
     {
         private bool interlock;
         private bool templateApplied;
-        private DependencyProperty initializingProperty;
+        private AvaloniaProperty initializingProperty;
 
         /// <summary>
         /// Identifies the <see cref="Value"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register("Value", typeof(T), typeof(VectorEditorBase<T>), new FrameworkPropertyMetadata(default(T), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnValuePropertyChanged, null, false, UpdateSourceTrigger.Explicit));
+        public static readonly AvaloniaProperty ValueProperty = AvaloniaProperty.Register<VectorEditorBase<T>, T>("Value");
 
         /// <summary>
         /// Identifies the <see cref="DefaultValue"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty DefaultValueProperty = DependencyProperty.Register("DefaultValue", typeof(T), typeof(VectorEditorBase<T>), new PropertyMetadata(default(T)));
+        public static readonly AvaloniaProperty DefaultValueProperty = AvaloniaProperty.Register<VectorEditorBase<T>, T>("DefaultValue");
 
         /// <summary>
         /// Gets or sets the vector associated to this control.
@@ -95,10 +102,10 @@ namespace Stride.Core.Presentation.Controls
         public T DefaultValue { get { return (T)GetValue(DefaultValueProperty); } set { SetValue(DefaultValueProperty, value); } }
         
         /// <inheritdoc/>
-        public override void OnApplyTemplate()
+        protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
             templateApplied = false;
-            base.OnApplyTemplate();
+            base.OnApplyTemplate(e);
             templateApplied = true;
         }
 
@@ -124,7 +131,7 @@ namespace Stride.Core.Presentation.Controls
         /// Updates the <see cref="Value"/> property according to a change in the given component property.
         /// </summary>
         /// <param name="property">The component property from which to update the <see cref="Value"/>.</param>
-        protected abstract T UpdateValueFromComponent(DependencyProperty property);
+        protected abstract T UpdateValueFromComponent(AvaloniaProperty property);
 
         /// <summary>
         /// Updates the <see cref="Value"/> property from a single float.
@@ -153,7 +160,7 @@ namespace Stride.Core.Presentation.Controls
                 initializingProperty = null;
         }
 
-        private void OnComponentPropertyChanged(DependencyPropertyChangedEventArgs e)
+        private void OnComponentPropertyChanged(AvaloniaPropertyChangedEventArgs e)
         {
             var isInitializing = !templateApplied && initializingProperty == null;
             if (isInitializing)
@@ -176,22 +183,22 @@ namespace Stride.Core.Presentation.Controls
         /// Updates the binding of the given dependency property.
         /// </summary>
         /// <param name="dependencyProperty">The dependency property.</param>
-        private void UpdateBinding(DependencyProperty dependencyProperty)
+        private void UpdateBinding(AvaloniaProperty dependencyProperty)
         {
             if (dependencyProperty != initializingProperty)
             {
-                var expression = GetBindingExpression(dependencyProperty);
+                var expression = BindingOperations.GetBindingExpressionBase(this, dependencyProperty);
                 expression?.UpdateSource();
             }
         }
 
-        protected static void OnComponentPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        protected static void OnComponentPropertyChanged(AvaloniaObject sender, AvaloniaPropertyChangedEventArgs e)
         {
             var editor = (VectorEditorBase<T>)sender;
             editor.OnComponentPropertyChanged(e);
         }
 
-        protected static object CoerceComponentValue(DependencyObject sender, object basevalue)
+        protected static object CoerceComponentValue(AvaloniaObject sender, object basevalue)
         {
             if (basevalue == null)
                 return null;
@@ -206,7 +213,7 @@ namespace Stride.Core.Presentation.Controls
         /// </summary>
         /// <param name="sender">The dependency object where the event handler is attached.</param>
         /// <param name="e">The event data.</param>
-        private static void OnValuePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void OnValuePropertyChanged(AvaloniaObject sender, AvaloniaPropertyChangedEventArgs e)
         {
             var editor = (VectorEditorBase<T>)sender;
             editor.OnValueValueChanged();

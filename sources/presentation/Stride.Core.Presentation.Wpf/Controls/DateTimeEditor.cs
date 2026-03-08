@@ -1,68 +1,70 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
+using Avalonia.Data;
+using Avalonia.Markup.Xaml.Templates;
 using Stride.Core.Presentation.Internal;
 
 namespace Stride.Core.Presentation.Controls
 {
-    public sealed class DateTimeEditor : Control
+    public sealed class DateTimeEditor : TemplatedControl
     {
         private bool interlock;
         private bool templateApplied;
-        private DependencyProperty initializingProperty;
+        private AvaloniaProperty initializingProperty;
 
         /// <summary>
         /// Identifies the <see cref="IsDropDownOpen"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty IsDropDownOpenProperty = DependencyProperty.Register("IsDropDownOpen", typeof(bool), typeof(DateTimeEditor), new PropertyMetadata(BooleanBoxes.FalseBox));
+        public static readonly AvaloniaProperty IsDropDownOpenProperty = AvaloniaProperty.Register<DateTimeEditor, bool>("IsDropDownOpen");
 
         /// <summary>
         /// Identifies the <see cref="WatermarkContent"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty WatermarkContentProperty = DependencyProperty.Register("WatermarkContent", typeof(object), typeof(DateTimeEditor), new PropertyMetadata(null));
+        public static readonly AvaloniaProperty WatermarkContentProperty = AvaloniaProperty.Register<DateTimeEditor, object>("WatermarkContent");
 
         /// <summary>
         /// Identifies the <see cref="WatermarkContentTemplate"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty WatermarkContentTemplateProperty = DependencyProperty.Register("WatermarkContentTemplate", typeof(DataTemplate), typeof(DateTimeEditor), new PropertyMetadata(null));
+        public static readonly AvaloniaProperty WatermarkContentTemplateProperty = AvaloniaProperty.Register<DateTimeEditor, DataTemplate>("WatermarkContentTemplate");
 
         /// <summary>
         /// Identifies the <see cref="Value"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register("Value", typeof(DateTime?), typeof(DateTimeEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnValuePropertyChanged, null, false, UpdateSourceTrigger.Explicit));
+        public static readonly AvaloniaProperty ValueProperty = AvaloniaProperty.Register<DateTimeEditor, DateTime?>(nameof(Value), defaultBindingMode: BindingMode.TwoWay);
 
         /// <summary>
         /// Identifies the <see cref="Year"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty YearProperty = DependencyProperty.Register("Year", typeof(int?), typeof(DateTimeEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged));
+        public static readonly AvaloniaProperty YearProperty = AvaloniaProperty.Register<DateTimeEditor, int?>(nameof(Year), defaultBindingMode: BindingMode.TwoWay);
 
         /// <summary>
         /// Identifies the <see cref="Month"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty MonthProperty = DependencyProperty.Register("Month", typeof(int?), typeof(DateTimeEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged));
+        public static readonly AvaloniaProperty MonthProperty = AvaloniaProperty.Register<DateTimeEditor, int?>(nameof(Month), defaultBindingMode: BindingMode.TwoWay);
 
         /// <summary>
         /// Identifies the <see cref="Day"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty DayProperty = DependencyProperty.Register("Day", typeof(int?), typeof(DateTimeEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged));
+        public static readonly AvaloniaProperty DayProperty = AvaloniaProperty.Register<DateTimeEditor, int?>(nameof(Day), defaultBindingMode: BindingMode.TwoWay);
 
         /// <summary>
         /// Identifies the <see cref="Hour"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty HourProperty = DependencyProperty.Register("Hour", typeof(int?), typeof(DateTimeEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged));
+        public static readonly AvaloniaProperty HourProperty = AvaloniaProperty.Register<DateTimeEditor, int?>(nameof(Hour), defaultBindingMode: BindingMode.TwoWay);
 
         /// <summary>
         /// Identifies the <see cref="Minute"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty MinuteProperty = DependencyProperty.Register("Minute", typeof(int?), typeof(DateTimeEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged));
+        public static readonly AvaloniaProperty MinuteProperty = AvaloniaProperty.Register<DateTimeEditor, int?>(nameof(Minute), defaultBindingMode: BindingMode.TwoWay);
 
         /// <summary>
         /// Identifies the <see cref="Second"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty SecondProperty = DependencyProperty.Register("Second", typeof(double?), typeof(DateTimeEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged));
+        public static readonly AvaloniaProperty SecondProperty = AvaloniaProperty.Register<DateTimeEditor, double?>(nameof(Second), defaultBindingMode: BindingMode.TwoWay);
 
         /// <summary>
         /// Gets or sets whether the drop-down of this control editor is currently open.
@@ -113,105 +115,73 @@ namespace Stride.Core.Presentation.Controls
         /// Gets or sets the second displayed in the <see cref="DateTimeEditor"/>.
         /// </summary>
         public double? Second { get { return (double?)GetValue(SecondProperty); } set { SetValue(SecondProperty, value); } }
+        
+        static DateTimeEditor()
+        {
+            ValueProperty.Changed.AddClassHandler<DateTimeEditor>((x, e) => x.OnValueChanged());
+            YearProperty.Changed.AddClassHandler<DateTimeEditor>(OnComponentChanged);
+            MonthProperty.Changed.AddClassHandler<DateTimeEditor>(OnComponentChanged);
+            DayProperty.Changed.AddClassHandler<DateTimeEditor>(OnComponentChanged);
+            HourProperty.Changed.AddClassHandler<DateTimeEditor>(OnComponentChanged);
+            MinuteProperty.Changed.AddClassHandler<DateTimeEditor>(OnComponentChanged);
+            SecondProperty.Changed.AddClassHandler<DateTimeEditor>(OnComponentChanged);
+        }
 
-        /// <inheritdoc/>
-        public override void OnApplyTemplate()
+        protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
             templateApplied = false;
-            base.OnApplyTemplate();
+            base.OnApplyTemplate(e);
             templateApplied = true;
         }
-
-        /// <inheritdoc/>
-        protected override void OnIsKeyboardFocusWithinChanged(DependencyPropertyChangedEventArgs e)
+        
+        private static void OnComponentChanged(DateTimeEditor editor, AvaloniaPropertyChangedEventArgs e)
         {
-            base.OnIsKeyboardFocusWithinChanged(e);
-            if (IsDropDownOpen && !IsKeyboardFocusWithin)
+            editor.OnComponentChanged(e);
+        }
+        
+        protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+        {
+            base.OnPropertyChanged(change);
+
+            if (change.Property == IsKeyboardFocusWithinProperty)
             {
-                SetCurrentValue(IsDropDownOpenProperty, false);
+                if (IsDropDownOpen && !IsKeyboardFocusWithin)
+                    SetCurrentValue(IsDropDownOpenProperty, false);
             }
         }
-
-        /// <summary>
-        /// Updates the properties corresponding to the components of the date time from the given date time value.
-        /// </summary>
-        /// <param name="value">The date time from which to update component properties.</param>
-        private void UpdateComponentsFromValue(DateTime? value)
+        
+        private DateTime? UpdateValueFromComponent(AvaloniaProperty property)
         {
-            if (value != null)
-            {
-                SetCurrentValue(YearProperty, value.Value.Year);
-                SetCurrentValue(MonthProperty, value.Value.Month);
-                SetCurrentValue(DayProperty, value.Value.Day);
-                SetCurrentValue(HourProperty, value.Value.Hour);
-                SetCurrentValue(MinuteProperty, value.Value.Minute);
-                SetCurrentValue(SecondProperty, (double)(value.Value.Ticks % TimeSpan.TicksPerMinute) / TimeSpan.TicksPerSecond);
-            }
-        }
+            if (!Value.HasValue)
+                return null;
 
-        /// <summary>
-        /// Updates the <see cref="Value"/> property according to a change in the given component property.
-        /// </summary>
-        /// <param name="property">The component property from which to update the <see cref="Value"/>.</param>
-        private DateTime? UpdateValueFromComponent(DependencyProperty property)
-        {
-            // NOTE: Precision must be on OS tick level.
+            var v = Value.Value;
 
-            if (property == YearProperty)
-            {
-                if (!Year.HasValue || !Value.HasValue)
-                    return null;
-                long ticks = new DateTime(Year.Value, Value.Value.Month, Math.Min(DateTime.DaysInMonth(Year.Value, Value.Value.Month), Value.Value.Day), Value.Value.Hour, Value.Value.Minute, 0).Ticks;
-                return new DateTime(ticks + Value.Value.Ticks % TimeSpan.TicksPerMinute);
-            }
+            if (property == YearProperty && Year.HasValue)
+                return new DateTime(Year.Value, v.Month, Math.Min(DateTime.DaysInMonth(Year.Value, v.Month), v.Day), v.Hour, v.Minute, v.Second);
 
-            if (property == MonthProperty)
-            {
-                if (!Month.HasValue || !Value.HasValue)
-                    return null;
-                long ticks = new DateTime(Value.Value.Year, Month.Value, Math.Min(DateTime.DaysInMonth(Value.Value.Year, Month.Value), Value.Value.Day), Value.Value.Hour, Value.Value.Minute, 0).Ticks;
-                return new DateTime(ticks + Value.Value.Ticks % TimeSpan.TicksPerMinute);
-            }
+            if (property == MonthProperty && Month.HasValue)
+                return new DateTime(v.Year, Month.Value, Math.Min(DateTime.DaysInMonth(v.Year, Month.Value), v.Day), v.Hour, v.Minute, v.Second);
 
-            if (property == DayProperty)
-            {
-                if (!Day.HasValue || !Value.HasValue)
-                    return null;
-                long ticks = new DateTime(Value.Value.Year, Value.Value.Month, Math.Min(DateTime.DaysInMonth(Value.Value.Year, Value.Value.Month), Day.Value), Value.Value.Hour, Value.Value.Minute, 0).Ticks;
-                return new DateTime(ticks + Value.Value.Ticks % TimeSpan.TicksPerMinute);
-            }
+            if (property == DayProperty && Day.HasValue)
+                return new DateTime(v.Year, v.Month, Math.Min(DateTime.DaysInMonth(v.Year, v.Month), Day.Value), v.Hour, v.Minute, v.Second);
 
-            if (property == HourProperty)
-            {
-                if (!Hour.HasValue || !Value.HasValue)
-                    return null;
-                long ticks = new DateTime(Value.Value.Year, Value.Value.Month, Value.Value.Day, Hour.Value, Value.Value.Minute, 0).Ticks;
-                return new DateTime(ticks + Value.Value.Ticks % TimeSpan.TicksPerMinute);
-            }
+            if (property == HourProperty && Hour.HasValue)
+                return new DateTime(v.Year, v.Month, v.Day, Hour.Value, v.Minute, v.Second);
 
-            if (property == MinuteProperty)
+            if (property == MinuteProperty && Minute.HasValue)
+                return new DateTime(v.Year, v.Month, v.Day, v.Hour, Minute.Value, v.Second);
+
+            if (property == SecondProperty && Second.HasValue)
             {
-                if (!Minute.HasValue || !Value.HasValue)
-                    return null;
-                long ticks = new DateTime(Value.Value.Year, Value.Value.Month, Value.Value.Day, Value.Value.Hour, Minute.Value, 0).Ticks;
-                return new DateTime(ticks + Value.Value.Ticks % TimeSpan.TicksPerMinute);
-            }
-            
-            if (property == SecondProperty)
-            {
-                if (!Second.HasValue || !Value.HasValue)
-                    return null;
-                long ticks = Value.Value.Ticks - (Value.Value.Ticks % TimeSpan.TicksPerMinute);
+                long ticks = v.Ticks - (v.Ticks % TimeSpan.TicksPerMinute);
                 return new DateTime(ticks + (long)(Second.Value * TimeSpan.TicksPerSecond));
             }
 
-            throw new ArgumentException("Property unsupported by method UpdateValueFromComponent.");
+            return null;
         }
 
-        /// <summary>
-        /// Raised when the <see cref="Value"/> property is modified.
-        /// </summary>
-        private void OnValueValueChanged()
+        private void OnValueChanged()
         {
             var isInitializing = !templateApplied && initializingProperty == null;
             if (isInitializing)
@@ -224,16 +194,11 @@ namespace Stride.Core.Presentation.Controls
                 interlock = false;
             }
 
-            UpdateBinding(ValueProperty);
             if (isInitializing)
                 initializingProperty = null;
         }
 
-        /// <summary>
-        /// Raised when either of the <see cref="Year"/>, <see cref="Month"/>, <see cref="Day"/>, <see cref="Hour"/>, <see cref="Minute"/> or <see cref="Second"/> properties are modified.
-        /// </summary>
-        /// <param name="e">The event data.</param>
-        private void OnComponentPropertyChanged(DependencyPropertyChangedEventArgs e)
+        private void OnComponentChanged(AvaloniaPropertyChangedEventArgs e)
         {
             var isInitializing = !templateApplied && initializingProperty == null;
             if (isInitializing)
@@ -247,44 +212,22 @@ namespace Stride.Core.Presentation.Controls
                 interlock = false;
             }
 
-            UpdateBinding(e.Property);
             if (isInitializing)
                 initializingProperty = null;
         }
 
-        /// <summary>
-        /// Updates the binding of the given dependency property.
-        /// </summary>
-        /// <param name="dependencyProperty">The dependency property.</param>
-        private void UpdateBinding(DependencyProperty dependencyProperty)
+        private void UpdateComponentsFromValue(DateTime? value)
         {
-            if (dependencyProperty != initializingProperty)
-            {
-                var expression = GetBindingExpression(dependencyProperty);
-                expression?.UpdateSource();
-            }
-        }
+            if (value == null)
+                return;
 
-        /// <summary>
-        /// Raised by <see cref="YearProperty"/>, <see cref="MonthProperty"/>, <see cref="DayProperty"/>, <see cref="HourProperty"/>, <see cref="MinuteProperty"/> or <see cref="SecondProperty"/> when the <see cref="Year"/>, <see cref="Month"/>, <see cref="Day"/>, <see cref="Hour"/>, <see cref="Minute"/> or <see cref="Second"/> dependency property is modified.
-        /// </summary>
-        /// <param name="sender">The dependency object where the event handler is attached.</param>
-        /// <param name="e">The event data.</param>
-        private static void OnComponentPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
-        {
-            var editor = (DateTimeEditor)sender;
-            editor.OnComponentPropertyChanged(e);
-        }
-
-        /// <summary>
-        /// Raised by <see cref="ValueProperty"/> when the <see cref="Value"/> dependency property is modified.
-        /// </summary>
-        /// <param name="sender">The dependency object where the event handler is attached.</param>
-        /// <param name="e">The event data.</param>
-        private static void OnValuePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
-        {
-            var editor = (DateTimeEditor)sender;
-            editor.OnValueValueChanged();
+            SetCurrentValue(YearProperty, value.Value.Year);
+            SetCurrentValue(MonthProperty, value.Value.Month);
+            SetCurrentValue(DayProperty, value.Value.Day);
+            SetCurrentValue(HourProperty, value.Value.Hour);
+            SetCurrentValue(MinuteProperty, value.Value.Minute);
+            SetCurrentValue(SecondProperty,
+                (double)(value.Value.Ticks % TimeSpan.TicksPerMinute) / TimeSpan.TicksPerSecond);
         }
     }
 }

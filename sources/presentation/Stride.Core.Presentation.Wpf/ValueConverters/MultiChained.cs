@@ -1,9 +1,10 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
+using System.Collections.Generic;
 using System.Globalization;
-using System.Windows.Data;
-using System.Windows.Markup;
+using Avalonia.Data.Converters;
+using Avalonia.Markup.Xaml;
 using Stride.Core.Annotations;
 
 namespace Stride.Core.Presentation.ValueConverters
@@ -273,7 +274,7 @@ namespace Stride.Core.Presentation.ValueConverters
         }
 
         /// <inheritdoc/>
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(IList<object> values, Type targetType, object parameter, CultureInfo culture)
         {
             if (MultiConverter == null) throw new InvalidOperationException("No multi value converter has been set.");
             var result = MultiConverter.Convert(values, MultiConverterTargetType ?? typeof(object), MultiConverterParameter, culture);
@@ -281,11 +282,9 @@ namespace Stride.Core.Presentation.ValueConverters
         }
 
         /// <inheritdoc/>
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-        {
-            if (MultiConverter == null) throw new InvalidOperationException("No multi value converter has been set.");
-            var result = chainedConverter.ConvertBack(value, MultiConverterTargetType ?? typeof(object), parameter, culture);
-            return MultiConverter.ConvertBack(result, targetTypes, MultiConverterParameter, culture);
-        }
+        // public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        // {
+        //     Only OneWay binding is supported 
+        // }
     }
 }

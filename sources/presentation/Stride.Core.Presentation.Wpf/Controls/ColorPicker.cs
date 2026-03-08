@@ -1,20 +1,22 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
-using System.Windows.Controls;
-using System.Windows;
-using System.Windows.Data;
-using System.Windows.Media;
+using System.Runtime.InteropServices;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Metadata;
+using Avalonia.Controls.Primitives;
+using Avalonia.Data;
+using Avalonia.Input;
+using Avalonia.Media;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using Stride.Core.Mathematics;
-
-using System.Windows.Media.Imaging;
-using System.Windows.Input;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Extensions;
 using Stride.Core.Presentation.Internal;
 using Color = Stride.Core.Mathematics.Color;
-using Point = System.Windows.Point;
-using Rectangle = System.Windows.Shapes.Rectangle;
+using Point = Avalonia.Point;
 
 namespace Stride.Core.Presentation.Controls
 {
@@ -24,84 +26,80 @@ namespace Stride.Core.Presentation.Controls
     [TemplatePart(Name = "PART_ColorPickerSelector", Type = typeof(Canvas))]
     [TemplatePart(Name = "PART_ColorPickerRenderSurface", Type = typeof(Rectangle))]
     [TemplatePart(Name = "PART_ColorPreviewRenderSurface", Type = typeof(Rectangle))]
-    [TemplatePart(Name = "PART_HuePickerSelector", Type = typeof(FrameworkElement))]
+    [TemplatePart(Name = "PART_HuePickerSelector", Type = typeof(Control))]
     [TemplatePart(Name = "PART_HuePickerRenderSurface", Type = typeof(Rectangle))]
-    public sealed class ColorPicker : Control
+    public sealed class ColorPicker : TemplatedControl
     {
-        static ColorPicker()
-        {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(ColorPicker), new FrameworkPropertyMetadata(typeof(ColorPicker)));
-        }
 
         private Canvas colorPickerSelector;
-        private Rectangle colorPickerRenderSurface;
-        private Rectangle colorPreviewRenderSurface;
-        private FrameworkElement huePickerRenderSurface;
-        private Rectangle huePickerSelector;
+        private Border colorPickerRenderSurface;
+        private Border colorPreviewRenderSurface;
+        private Control huePickerRenderSurface;
+        private Border huePickerSelector;
         private bool interlock;
         private bool suspendBindingUpdates;
         private bool templateApplied;
-        private DependencyProperty initializingProperty;
+        private AvaloniaProperty initializingProperty;
 
         /// <summary>
         /// Identifies the <see cref="Color"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ColorProperty = DependencyProperty.Register("Color", typeof(Color4), typeof(ColorPicker), new FrameworkPropertyMetadata(default(Color4), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnColorPropertyChanged, CoreceColorValue, false, UpdateSourceTrigger.Explicit));
+        public static readonly AvaloniaProperty ColorProperty = AvaloniaProperty.Register<ColorPicker, Color4>("Color", defaultBindingMode: BindingMode.TwoWay);
 
         /// <summary>
         /// Identifies the <see cref="Hue"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty HueProperty = DependencyProperty.Register("Hue", typeof(float), typeof(ColorPicker), new FrameworkPropertyMetadata(0.0f, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnHSVPropertyChanged, CoerceHueValue));
+        public static readonly AvaloniaProperty HueProperty = AvaloniaProperty.Register<ColorPicker, float>("Hue", defaultBindingMode: BindingMode.TwoWay);
 
         /// <summary>
         /// Identifies the <see cref="Saturation"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty SaturationProperty = DependencyProperty.Register("Saturation", typeof(float), typeof(ColorPicker), new FrameworkPropertyMetadata(0.0f, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnHSVPropertyChanged, CoercePercentageValue));
+        public static readonly AvaloniaProperty SaturationProperty = AvaloniaProperty.Register<ColorPicker, float>("Saturation", defaultBindingMode: BindingMode.TwoWay);
 
         /// <summary>
         /// Identifies the <see cref="Brightness"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty BrightnessProperty = DependencyProperty.Register("Brightness", typeof(float), typeof(ColorPicker), new FrameworkPropertyMetadata(0.0f, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnHSVPropertyChanged, CoercePercentageValue));
-
+        public static readonly AvaloniaProperty BrightnessProperty = AvaloniaProperty.Register<ColorPicker, float>("Brightness", defaultBindingMode: BindingMode.TwoWay);
+        
         /// <summary>
         /// Identifies the <see cref="Red"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty RedProperty = DependencyProperty.Register("Red", typeof(byte), typeof(ColorPicker), new FrameworkPropertyMetadata((byte)0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnRGBAPropertyChanged));
+        public static readonly AvaloniaProperty RedProperty = AvaloniaProperty.Register<ColorPicker, byte>("Red", defaultBindingMode: BindingMode.TwoWay);
 
         /// <summary>
         /// Identifies the <see cref="Green"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty GreenProperty = DependencyProperty.Register("Green", typeof(byte), typeof(ColorPicker), new FrameworkPropertyMetadata((byte)0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnRGBAPropertyChanged));
+        public static readonly AvaloniaProperty GreenProperty = AvaloniaProperty.Register<ColorPicker, byte>("Green", defaultBindingMode: BindingMode.TwoWay);
 
         /// <summary>
         /// Identifies the <see cref="Blue"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty BlueProperty = DependencyProperty.Register("Blue", typeof(byte), typeof(ColorPicker), new FrameworkPropertyMetadata((byte)0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnRGBAPropertyChanged));
+        public static readonly AvaloniaProperty BlueProperty = AvaloniaProperty.Register<ColorPicker, byte>("Blue", defaultBindingMode: BindingMode.TwoWay);
 
         /// <summary>
         /// Identifies the <see cref="Alpha"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty AlphaProperty = DependencyProperty.Register("Alpha", typeof(byte), typeof(ColorPicker), new FrameworkPropertyMetadata((byte)0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnRGBAPropertyChanged));
+        public static readonly AvaloniaProperty AlphaProperty = AvaloniaProperty.Register<ColorPicker, byte>("Alpha", defaultBindingMode: BindingMode.TwoWay);
 
         /// <summary>
         /// Identifies the <see cref="ShowAlpha"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ShowAlphaProperty = DependencyProperty.Register("ShowAlpha", typeof(bool), typeof(ColorPicker), new FrameworkPropertyMetadata(BooleanBoxes.TrueBox, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+        public static readonly AvaloniaProperty ShowAlphaProperty = AvaloniaProperty.Register<ColorPicker, bool>("ShowAlpha", true, defaultBindingMode: BindingMode.TwoWay);
 
         /// <summary>
         /// Identifies the <see cref="InputColumnWidth"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty InputColumnWidthProperty = DependencyProperty.Register("InputColumnWidth", typeof(GridLength), typeof(ColorPicker), new FrameworkPropertyMetadata(GridLength.Auto));
+        public static readonly AvaloniaProperty InputColumnWidthProperty = AvaloniaProperty.Register<ColorPicker, GridLength>("InputColumnWidth", GridLength.Auto);
 
         /// <summary>
         /// Identifies the <see cref="PickupAreaSize"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty PickupAreaSizeProperty = DependencyProperty.Register("PickupAreaSize", typeof(Size), typeof(ColorPicker), new FrameworkPropertyMetadata(default(Size)));
+        public static readonly AvaloniaProperty PickupAreaSizeProperty = AvaloniaProperty.Register<ColorPicker, Size>("PickupAreaSize");
 
         /// <summary>
         /// Identifies the <see cref="StripsHeight"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty StripsHeightProperty = DependencyProperty.Register("StripsHeight", typeof(double), typeof(ColorPicker), new FrameworkPropertyMetadata((double)0));
+        public static readonly AvaloniaProperty StripsHeightProperty = AvaloniaProperty.Register<ColorPicker, double>("StripsHeight");
             
         /// <summary>
         /// Gets or sets the color associated to this color picker.
@@ -169,45 +167,57 @@ namespace Stride.Core.Presentation.Controls
         /// </summary>
         private ColorHSV InternalColor { get { return field; } set { field = value; var prev = interlock; interlock = true; Color = value.ToColor(); interlock = prev; } }
 
+        static ColorPicker()
+        {
+            ColorProperty.Changed.AddClassHandler<ColorPicker>(OnColorPropertyChanged);
+            HueProperty.Changed.AddClassHandler<ColorPicker>(OnHSVPropertyChanged);
+            SaturationProperty.Changed.AddClassHandler<ColorPicker>(OnHSVPropertyChanged);
+            BrightnessProperty.Changed.AddClassHandler<ColorPicker>(OnHSVPropertyChanged);
+            RedProperty.Changed.AddClassHandler<ColorPicker>(OnRGBAPropertyChanged);
+            GreenProperty.Changed.AddClassHandler<ColorPicker>(OnRGBAPropertyChanged);
+            BlueProperty.Changed.AddClassHandler<ColorPicker>(OnRGBAPropertyChanged);
+            AlphaProperty.Changed.AddClassHandler<ColorPicker>(OnRGBAPropertyChanged);
+        }
+        
         /// <inheritdoc/>
-        public override void OnApplyTemplate()
+        protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
             templateApplied = false;
-            base.OnApplyTemplate();
+            base.OnApplyTemplate(e);
 
             if (colorPickerRenderSurface != null)
             {
-                colorPickerRenderSurface.MouseDown -= OnColorPickerRenderSurfaceMouseDown;
-                colorPickerRenderSurface.MouseUp -= OnColorPickerRenderSurfaceMouseUp;
-                colorPickerRenderSurface.MouseMove -= OnColorPickerRenderSurfaceMouseMove;
+                colorPickerRenderSurface.PointerPressed -= OnColorPickerRenderSurfaceMouseDown;
+                colorPickerRenderSurface.PointerReleased -= OnColorPickerRenderSurfacePointerReleased;
+                colorPickerRenderSurface.PointerMoved -= OnColorPickerRenderSurfaceMouseMove;
             }
 
             if (huePickerRenderSurface != null)
             {
-                huePickerRenderSurface.MouseDown -= OnHuePickerRenderSurfaceMouseDown;
-                huePickerRenderSurface.MouseUp -= OnHuePickerRenderSurfaceMouseUp;
-                huePickerRenderSurface.MouseMove -= OnHuePickerRenderSurfaceMouseMove;
+                huePickerRenderSurface.PointerPressed -= OnHuePickerRenderSurfaceMouseDown;
+                huePickerRenderSurface.PointerReleased -= OnHuePickerRenderSurfacePointerReleased;
+                huePickerRenderSurface.PointerMoved -= OnHuePickerRenderSurfaceMouseMove;
 
             }
 
-            colorPickerRenderSurface = DependencyObjectExtensions.CheckTemplatePart<Rectangle>(GetTemplateChild("PART_ColorPickerRenderSurface"));
-            colorPreviewRenderSurface = DependencyObjectExtensions.CheckTemplatePart<Rectangle>(GetTemplateChild("PART_ColorPreviewRenderSurface"));
-            colorPickerSelector = DependencyObjectExtensions.CheckTemplatePart<Canvas>(GetTemplateChild("PART_ColorPickerSelector"));
-            huePickerSelector = DependencyObjectExtensions.CheckTemplatePart<Rectangle>(GetTemplateChild("PART_HuePickerSelector"));
-            huePickerRenderSurface = DependencyObjectExtensions.CheckTemplatePart<FrameworkElement>(GetTemplateChild("PART_HuePickerRenderSurface"));
+            colorPickerRenderSurface = DependencyObjectExtensions.CheckTemplatePart<Border>( e.NameScope.Find<Border>("PART_ColorPickerRenderSurface"));
+            colorPreviewRenderSurface = DependencyObjectExtensions.CheckTemplatePart<Border>( e.NameScope.Find<Border>("PART_ColorPreviewRenderSurface"));
+            colorPickerSelector = DependencyObjectExtensions.CheckTemplatePart<Canvas>( e.NameScope.Find<Canvas>("PART_ColorPickerSelector"));
+            huePickerSelector = DependencyObjectExtensions.CheckTemplatePart<Border>( e.NameScope.Find<Border>("PART_HuePickerSelector"));
+            huePickerRenderSurface = DependencyObjectExtensions.CheckTemplatePart<Control>( e.NameScope.Find<Control>("PART_HuePickerRenderSurface"));
 
             if (colorPickerRenderSurface != null)
             {
-                colorPickerRenderSurface.MouseDown += OnColorPickerRenderSurfaceMouseDown;
-                colorPickerRenderSurface.MouseUp += OnColorPickerRenderSurfaceMouseUp;
-                colorPickerRenderSurface.MouseMove += OnColorPickerRenderSurfaceMouseMove;
+                colorPickerRenderSurface.PointerPressed += OnColorPickerRenderSurfaceMouseDown;
+                colorPickerRenderSurface.PointerReleased += OnColorPickerRenderSurfacePointerReleased;
+                colorPickerRenderSurface.PointerMoved += OnColorPickerRenderSurfaceMouseMove;
             }
 
             if (huePickerRenderSurface != null)
             {
-                huePickerRenderSurface.MouseDown += OnHuePickerRenderSurfaceMouseDown;
-                huePickerRenderSurface.MouseUp += OnHuePickerRenderSurfaceMouseUp;
-                huePickerRenderSurface.MouseMove += OnHuePickerRenderSurfaceMouseMove;
+                huePickerRenderSurface.PointerPressed += OnHuePickerRenderSurfaceMouseDown;
+                huePickerRenderSurface.PointerReleased += OnHuePickerRenderSurfacePointerReleased;
+                huePickerRenderSurface.PointerMoved += OnHuePickerRenderSurfaceMouseMove;
             }
 
             RenderColorPickerSurface();
@@ -225,43 +235,44 @@ namespace Stride.Core.Presentation.Controls
         }
 
         /// <summary>
-        /// Handles the <see cref="Rectangle.MouseDown"/> event of the color surface.
+        /// Handles the <see cref="Rectangle.PointerPressed"/> event of the color surface.
         /// </summary>
         /// <param name="sender">The object where the event handler is attached.</param>
         /// <param name="e">The event data.</param>
-        private void OnColorPickerRenderSurfaceMouseDown(object sender, [NotNull] MouseButtonEventArgs e)
+        private void OnColorPickerRenderSurfaceMouseDown(object sender, [NotNull] PointerEventArgs e)
         {
-            if (e.LeftButton == MouseButtonState.Pressed)
+            if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
             {
-                colorPickerRenderSurface.CaptureMouse();
+                e.GetCurrentPoint(this).Pointer.Capture(colorPickerRenderSurface);
                 suspendBindingUpdates = true;
                 UpdateColorPickerFromMouse(e.GetPosition(colorPickerRenderSurface));
             }
         }
 
         /// <summary>
-        /// Handles the <see cref="Rectangle.MouseUp"/> event of the color surface.
+        /// Handles the <see cref="Rectangle.PointerReleased"/> event of the color surface.
         /// </summary>
         /// <param name="sender">The object where the event handler is attached.</param>
         /// <param name="e">The event data.</param>
-        private void OnColorPickerRenderSurfaceMouseUp(object sender, [NotNull] MouseButtonEventArgs e)
+        private void OnColorPickerRenderSurfacePointerReleased(object sender, [NotNull] PointerReleasedEventArgs e)
         {
-            if (e.LeftButton == MouseButtonState.Released)
+            if (e.InitialPressMouseButton == MouseButton.Left)
             {
-                colorPickerRenderSurface.ReleaseMouseCapture();
+                e.GetCurrentPoint(this).Pointer.Capture(null);
                 suspendBindingUpdates = false;
                 UpdateAllBindings();
             }
         }
 
         /// <summary>
-        /// Handles the <see cref="Rectangle.MouseMove"/> event of the color surface.
+        /// Handles the <see cref="Rectangle.PointerMove"/> event of the color surface.
         /// </summary>
         /// <param name="sender">The object where the event handler is attached.</param>
         /// <param name="e">The event data.</param>
-        private void OnColorPickerRenderSurfaceMouseMove(object sender, [NotNull] MouseEventArgs e)
+        private void OnColorPickerRenderSurfaceMouseMove(object sender, [NotNull] PointerEventArgs e)
         {
-            if (e.LeftButton == MouseButtonState.Pressed && colorPickerRenderSurface.IsMouseCaptured)
+            var point = e.GetCurrentPoint(colorPickerRenderSurface);
+            if (point.Properties.IsLeftButtonPressed && e.Pointer.Captured == colorPickerRenderSurface)
             {
                 UpdateColorPickerFromMouse(e.GetPosition(colorPickerRenderSurface));
             }
@@ -271,7 +282,7 @@ namespace Stride.Core.Presentation.Controls
         /// Updates the <see cref="Color"/> value from the given position in the color surface.
         /// </summary>
         /// <param name="position">The position of the cursor in the color surface.</param>
-        private void UpdateColorPickerFromMouse(Point position)
+        private void UpdateColorPickerFromMouse(Avalonia.Point position)
         {
             Canvas.SetLeft(colorPickerSelector, MathUtil.Clamp(position.X, 0.0f, colorPickerRenderSurface.Width));
             Canvas.SetTop(colorPickerSelector, MathUtil.Clamp(position.Y, 0.0f, colorPickerRenderSurface.Height));
@@ -287,43 +298,44 @@ namespace Stride.Core.Presentation.Controls
 
 
         /// <summary>
-        /// Handles the <see cref="Rectangle.MouseDown"/> event of the hue surface.
+        /// Handles the <see cref="Rectangle.PointerPressed"/> event of the hue surface.
         /// </summary>
         /// <param name="sender">The object where the event handler is attached.</param>
         /// <param name="e">The event data.</param>
-        private void OnHuePickerRenderSurfaceMouseDown(object sender, [NotNull] MouseButtonEventArgs e)
+        private void OnHuePickerRenderSurfaceMouseDown(object sender, [NotNull] PointerEventArgs e)
         {
-            if (e.LeftButton == MouseButtonState.Pressed)
+            if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
             {
-                huePickerRenderSurface.CaptureMouse();
+                e.GetCurrentPoint(this).Pointer.Capture(huePickerRenderSurface);
                 suspendBindingUpdates = true;
                 UpdateHuePickerFromMouse(e.GetPosition(huePickerRenderSurface));
             }
         }
 
         /// <summary>
-        /// Handles the <see cref="Rectangle.MouseUp"/> event of the hue surface.
+        /// Handles the <see cref="Rectangle.PointerReleased"/> event of the hue surface.
         /// </summary>
         /// <param name="sender">The object where the event handler is attached.</param>
         /// <param name="e">The event data.</param>
-        private void OnHuePickerRenderSurfaceMouseUp(object sender, [NotNull] MouseButtonEventArgs e)
+        private void OnHuePickerRenderSurfacePointerReleased(object sender, [NotNull] PointerReleasedEventArgs e)
         {
-            if (e.LeftButton == MouseButtonState.Released)
+            if (e.InitialPressMouseButton == MouseButton.Left)
             {
-                huePickerRenderSurface.ReleaseMouseCapture();
+                e.GetCurrentPoint(this).Pointer.Capture(null);
                 suspendBindingUpdates = false;
                 UpdateAllBindings();
             }
         }
 
         /// <summary>
-        /// Handles the <see cref="Rectangle.MouseMove"/> event of the hue surface.
+        /// Handles the <see cref="Rectangle.PointerMove"/> event of the hue surface.
         /// </summary>
         /// <param name="sender">The object where the event handler is attached.</param>
         /// <param name="e">The event data.</param>
-        private void OnHuePickerRenderSurfaceMouseMove(object sender, [NotNull] MouseEventArgs e)
+        private void OnHuePickerRenderSurfaceMouseMove(object sender, [NotNull] PointerEventArgs e)
         {
-            if (e.LeftButton == MouseButtonState.Pressed && huePickerRenderSurface.IsMouseCaptured)
+            var point = e.GetCurrentPoint(huePickerRenderSurface);
+            if (point.Properties.IsLeftButtonPressed && e.Pointer.Captured == huePickerRenderSurface)
             {
                 UpdateHuePickerFromMouse(e.GetPosition(huePickerRenderSurface));
             }
@@ -348,10 +360,7 @@ namespace Stride.Core.Presentation.Controls
         /// </summary>
         private void RenderColorPickerSurface()
         {
-            if (colorPreviewRenderSurface != null)
-            {
-                colorPreviewRenderSurface.Fill = new SolidColorBrush(Color.ToSystemColor());
-            }
+            colorPreviewRenderSurface?.Background = new SolidColorBrush(Color.ToSystemColor());
             if (colorPickerRenderSurface != null)
             {
                 // Ensure the color picker is loaded 
@@ -363,24 +372,11 @@ namespace Stride.Core.Presentation.Controls
                     PixelFormat pf = PixelFormats.Bgr32;
                     int rawStride = (width * pf.BitsPerPixel + 7) / 8;
                     var rawImage = new byte[rawStride * height];
+                    var writeableBitmap = new WriteableBitmap(new PixelSize(width, height), new Vector(96, 96), PixelFormat.Rgba8888);
+                    using var fb = writeableBitmap.Lock();
+                    Marshal.Copy(rawImage, 0, fb.Address, rawImage.Length);
 
-                    for (int j = 0; j < height; ++j)
-                    {
-                        float y = j / (float)(height - 1);
-
-                        for (int i = 0; i < width; ++i)
-                        {
-                            float x = i / (float)(width - 1);
-
-                            var color4 = new ColorHSV(Hue, x, y, 1.0f).ToColor();
-                            var color = new Color(color4);
-                            rawImage[(i + j * width) * 4 + 0] = color.B;
-                            rawImage[(i + j * width) * 4 + 1] = color.G;
-                            rawImage[(i + j * width) * 4 + 2] = color.R;
-                        }
-                    }
-
-                    colorPickerRenderSurface.Fill = new DrawingBrush(new ImageDrawing(BitmapSource.Create(width, height, 96, 96, pf, null, rawImage, rawStride), new Rect(0.0f, 0.0f, width, height)));
+                    colorPickerRenderSurface.Background = new ImageBrush { Source = writeableBitmap, Stretch = Stretch.Fill };
                 }
             }
         }
@@ -415,10 +411,11 @@ namespace Stride.Core.Presentation.Controls
             {
                 RenderColorPickerSurface();
             }
-            else if (colorPreviewRenderSurface != null)
+            else
             {
-                colorPreviewRenderSurface.Fill = new SolidColorBrush(Color.ToSystemColor());
+                colorPreviewRenderSurface?.Background = new SolidColorBrush(Color.ToSystemColor());
             }
+
             UpdateBinding(ColorProperty);
 
             if (isInitializing)
@@ -429,7 +426,7 @@ namespace Stride.Core.Presentation.Controls
         /// Raised when the <see cref="Red"/>, <see cref="Green"/>, <see cref="Blue"/> or <see cref="Alpha"/> properties are modified.
         /// </summary>
         /// <param name="e">The dependency property that has changed.</param>
-        private void OnRGBAValueChanged(DependencyPropertyChangedEventArgs e)
+        private void OnRGBAValueChanged(AvaloniaPropertyChangedEventArgs e)
         {
             bool isInitializing = !templateApplied && initializingProperty == null;
             if (isInitializing)
@@ -466,7 +463,7 @@ namespace Stride.Core.Presentation.Controls
         /// Raised when the <see cref="Hue"/>, <see cref="Saturation"/>, or <see cref="Brightness"/> properties are modified.
         /// </summary>
         /// <param name="e">The dependency property that has changed.</param>
-        private void OnHSVValueChanged(DependencyPropertyChangedEventArgs e)
+        private void OnHSVValueChanged(AvaloniaPropertyChangedEventArgs e)
         {
             bool isInitializing = !templateApplied && initializingProperty == null;
             if (isInitializing)
@@ -515,11 +512,11 @@ namespace Stride.Core.Presentation.Controls
         /// Updates the binding of the given dependency property, if binding updates are not currently suspended by user actions.
         /// </summary>
         /// <param name="dependencyProperty">The dependency property.</param>
-        private void UpdateBinding(DependencyProperty dependencyProperty)
+        private void UpdateBinding(AvaloniaProperty dependencyProperty)
         {
             if (!suspendBindingUpdates && dependencyProperty != initializingProperty)
             {
-                var expression = GetBindingExpression(dependencyProperty);
+                var expression = BindingOperations.GetBindingExpressionBase(this, dependencyProperty);
                 expression?.UpdateSource();
             }
         }
@@ -544,7 +541,7 @@ namespace Stride.Core.Presentation.Controls
         /// </summary>
         /// <param name="sender">The dependency object where the event handler is attached.</param>
         /// <param name="e">The event data.</param>
-        private static void OnColorPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void OnColorPropertyChanged(AvaloniaObject sender, AvaloniaPropertyChangedEventArgs e)
         {
             var colorPicker = (ColorPicker)sender;
             colorPicker.OnColorChanged();
@@ -556,7 +553,7 @@ namespace Stride.Core.Presentation.Controls
         /// </summary>
         /// <param name="sender">The dependency object where the event handler is attached.</param>
         /// <param name="e">The event data.</param>
-        private static void OnHSVPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void OnHSVPropertyChanged(AvaloniaObject sender, AvaloniaPropertyChangedEventArgs e)
         {
             var colorPicker = (ColorPicker)sender;
             colorPicker.OnHSVValueChanged(e);
@@ -568,7 +565,7 @@ namespace Stride.Core.Presentation.Controls
         /// </summary>
         /// <param name="sender">The dependency object where the event handler is attached.</param>
         /// <param name="e">The event data.</param>
-        private static void OnRGBAPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void OnRGBAPropertyChanged(AvaloniaObject sender, AvaloniaPropertyChangedEventArgs e)
         {
             var colorPicker = (ColorPicker)sender;
             colorPicker.OnRGBAValueChanged(e);
@@ -578,7 +575,7 @@ namespace Stride.Core.Presentation.Controls
         /// Coerce the value of the Color so its components are always equals to the float value of a byte divided by 255.
         /// </summary>
         [NotNull]
-        private static object CoreceColorValue(DependencyObject sender, [NotNull] object baseValue)
+        private static object CoreceColorValue(AvaloniaObject sender, [NotNull] object baseValue)
         {
             return new Color(((Color4)baseValue).ToArray()).ToColor4();
         }
@@ -587,7 +584,7 @@ namespace Stride.Core.Presentation.Controls
         /// Coerce the value of the Hue so it is always contained in the -360, +360 interval
         /// </summary>
         [NotNull]
-        private static object CoerceHueValue(DependencyObject sender, [NotNull] object baseValue)
+        private static object CoerceHueValue(AvaloniaObject sender, [NotNull] object baseValue)
         {
             return ((float)baseValue + 360.0f) % 360.0f;
         }
@@ -596,7 +593,7 @@ namespace Stride.Core.Presentation.Controls
         /// Coerce the saturation and brightness values so they are always contained between 0 and 100
         /// </summary>
         [NotNull]
-        private static object CoercePercentageValue(DependencyObject sender, [NotNull] object baseValue)
+        private static object CoercePercentageValue(AvaloniaObject sender, [NotNull] object baseValue)
         {
             return MathUtil.Clamp((float)baseValue, 0.0f, 100.0f);
         }

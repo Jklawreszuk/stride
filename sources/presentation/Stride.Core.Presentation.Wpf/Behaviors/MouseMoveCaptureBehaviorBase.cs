@@ -2,10 +2,10 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-using System.Windows;
-using System.Windows.Input;
-using Microsoft.Xaml.Behaviors;
-using Stride.Core.Annotations;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Xaml.Interactivity;
 using Stride.Core.Presentation.Internal;
 using NotNullAttribute = Stride.Core.Annotations.NotNullAttribute;
 
@@ -16,37 +16,39 @@ namespace Stride.Core.Presentation.Behaviors
     /// </summary>
     /// <typeparam name="TElement"></typeparam>
     public abstract class MouseMoveCaptureBehaviorBase<TElement> : Behavior<TElement>
-        where TElement : UIElement
+        where TElement : Control
     {
+        private IPointer? pointer;
+        
         /// <summary>
         /// Identifies the <see cref="IsEnabled"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty IsEnabledProperty =
-            DependencyProperty.Register(nameof(IsEnabled), typeof(bool), typeof(MouseMoveCaptureBehaviorBase<TElement>), new PropertyMetadata(BooleanBoxes.TrueBox, IsEnabledChanged));
+        public static readonly AvaloniaProperty IsEnabledProperty =
+            AvaloniaProperty.Register<MouseMoveCaptureBehaviorBase<TElement>, bool>(nameof(IsEnabled), true);
 
         /// <summary>
         /// Identifies the <see cref="IsInProgress"/> dependency property key.
         /// </summary>
-        protected static readonly DependencyPropertyKey IsInProgressPropertyKey =
-            DependencyProperty.RegisterReadOnly(nameof(IsInProgress), typeof(bool), typeof(MouseMoveCaptureBehaviorBase<TElement>), new PropertyMetadata(BooleanBoxes.FalseBox));
+        protected static readonly AvaloniaProperty IsInProgressPropertyKey =
+            AvaloniaProperty.RegisterDirect<MouseMoveCaptureBehaviorBase<TElement>, bool>(nameof(IsInProgress), o => o.IsInProgress);
 
         /// <summary>
         /// Identifies the <see cref="IsInProgress"/> dependency property.
         /// </summary>
         [SuppressMessage("ReSharper", "StaticMemberInGenericType")]
-        public static readonly DependencyProperty IsInProgressProperty = IsInProgressPropertyKey.DependencyProperty;
+        public static readonly AvaloniaProperty IsInProgressProperty = IsInProgressPropertyKey;
 
         /// <summary>
         /// Identifies the <see cref="Modifiers"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ModifiersProperty =
-            DependencyProperty.Register(nameof(Modifiers), typeof(ModifierKeys?), typeof(MouseMoveCaptureBehaviorBase<TElement>), new PropertyMetadata(null));
+        public static readonly AvaloniaProperty ModifiersProperty =
+            AvaloniaProperty.Register<MouseMoveCaptureBehaviorBase<TElement>, KeyModifiers?>(nameof(Modifiers));
 
         /// <summary>
         /// Identifies the <see cref="UsePreviewEvents"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty UsePreviewEventsProperty =
-            DependencyProperty.Register(nameof(UsePreviewEvents), typeof(bool), typeof(MouseMoveCaptureBehaviorBase<TElement>), new PropertyMetadata(BooleanBoxes.FalseBox, UsePreviewEventsChanged));
+        public static readonly AvaloniaProperty UsePreviewEventsProperty =
+            AvaloniaProperty.Register<MouseMoveCaptureBehaviorBase<TElement>, bool>(nameof(UsePreviewEvents));
         
         /// <summary>
         /// <c>true</c> if this behavior is enabled; otherwise, <c>false</c>.
@@ -58,24 +60,31 @@ namespace Stride.Core.Presentation.Behaviors
         /// </summary>
         public bool IsInProgress { get { return (bool)GetValue(IsInProgressProperty); } private set { SetValue(IsInProgressPropertyKey, value.Box()); } }
 
-        public ModifierKeys? Modifiers { get { return (ModifierKeys?)GetValue(ModifiersProperty); } set { SetValue(ModifiersProperty, value); } }
-
+        public KeyModifiers? Modifiers { get { return (KeyModifiers?)GetValue(ModifiersProperty); } set { SetValue(ModifiersProperty, value); } }
+        
+        static MouseMoveCaptureBehaviorBase()
+        {
+            IsEnabledProperty.Changed.AddClassHandler<AvaloniaObject>(IsEnabledChanged);
+            UsePreviewEventsProperty.Changed.AddClassHandler<AvaloniaObject>(UsePreviewEventsChanged);
+        }
+        
         public bool UsePreviewEvents
         {
             get { return (bool)GetValue(UsePreviewEventsProperty); }
             set { SetValue(UsePreviewEventsProperty, value.Box()); }
         }
 
-        private static void IsEnabledChanged([NotNull] DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void IsEnabledChanged([NotNull] AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var behavior = (MouseMoveCaptureBehaviorBase<TElement>)d;
+            
             if ((bool)e.NewValue != true)
             {
                 behavior.Cancel();
             }
         }
 
-        private static void UsePreviewEventsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void UsePreviewEventsChanged(AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var behavior = (MouseMoveCaptureBehaviorBase<TElement>)d;
             behavior.UnsubscribeFromMouseEvents((bool)e.OldValue);
@@ -85,7 +94,7 @@ namespace Stride.Core.Presentation.Behaviors
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected bool AreModifiersValid()
         {
-            return Modifiers == null || (Modifiers == ModifierKeys.None ? Keyboard.Modifiers == ModifierKeys.None : Keyboard.Modifiers.HasFlag(Modifiers));
+            return false; //todo: return Modifiers == null || (Modifiers == KeyModifiers.None ? Keyboard.Modifiers == KeyModifiers.None : Keyboard.Modifiers.HasFlag(Modifiers));
         }
 
         protected void Cancel()
@@ -95,6 +104,7 @@ namespace Stride.Core.Presentation.Behaviors
 
             ReleaseMouseCapture();
             CancelOverride();
+            pointer = null;
         }
 
         protected virtual void CancelOverride()
@@ -105,10 +115,10 @@ namespace Stride.Core.Presentation.Behaviors
         /// <summary>
         /// Captures the mouse to the <see cref="Behavior{TElement}.AssociatedObject"/>.
         /// </summary>
-        protected void CaptureMouse()
+        protected void CaptureMouse(PointerPressedEventArgs e)
         {
             AssociatedObject.Focus();
-            AssociatedObject.CaptureMouse();
+            e.Pointer.Capture(AssociatedObject);
             IsInProgress = true;
         }
 
@@ -116,23 +126,23 @@ namespace Stride.Core.Presentation.Behaviors
         protected override void OnAttached()
         {
             SubscribeToMouseEvents(UsePreviewEvents);
-            AssociatedObject.PreviewMouseUp += MouseUp;
-            AssociatedObject.LostMouseCapture += OnLostMouseCapture;
+            AssociatedObject.AddHandler(InputElement.PointerReleasedEvent, PointerReleased, handledEventsToo: true);
+            AssociatedObject.PointerCaptureLost += OnLostMouseCapture;
         }
 
         ///  <inheritdoc/>
         protected override void OnDetaching()
         {
             UnsubscribeFromMouseEvents(UsePreviewEvents);
-            AssociatedObject.PreviewMouseUp -= MouseUp;
-            AssociatedObject.LostMouseCapture -= OnLostMouseCapture;
+            AssociatedObject.RemoveHandler(InputElement.PointerReleasedEvent, PointerReleased);
+            AssociatedObject.PointerCaptureLost -= OnLostMouseCapture;
         }
 
-        protected abstract void OnMouseDown([NotNull] MouseButtonEventArgs e);
+        protected abstract void OnPointerPressed([NotNull] PointerPressedEventArgs e);
 
-        protected abstract void OnMouseMove([NotNull] MouseEventArgs e);
+        protected abstract void OnMouseMove([NotNull] PointerEventArgs e);
 
-        protected abstract void OnMouseUp([NotNull] MouseButtonEventArgs e);
+        protected abstract void OnPointerReleased([NotNull] PointerEventArgs e);
 
         /// <summary>
         /// Releases the mouse capture, if the <see cref="Behavior{TElement}.AssociatedObject"/> held the capture. 
@@ -140,21 +150,21 @@ namespace Stride.Core.Presentation.Behaviors
         protected void ReleaseMouseCapture()
         {
             IsInProgress = false;
-            if (AssociatedObject.IsMouseCaptured)
+            if (pointer?.Captured == AssociatedObject)
             {
-                AssociatedObject.ReleaseMouseCapture();
+                pointer?.Capture(null);
             }
         }
 
-        private void MouseDown(object sender, [NotNull] MouseButtonEventArgs e)
+        private void PointerPressed(object sender, [NotNull] PointerPressedEventArgs e)
         {
             if (!IsEnabled || IsInProgress)
                 return;
 
-            OnMouseDown(e);
+            OnPointerPressed(e);
         }
 
-        private void MouseMove(object sender, [NotNull] MouseEventArgs e)
+        private void PointerMove(object sender, [NotNull] PointerEventArgs e)
         {
             if (!IsEnabled || !IsInProgress)
                 return;
@@ -162,17 +172,17 @@ namespace Stride.Core.Presentation.Behaviors
             OnMouseMove(e);
         }
 
-        private void MouseUp(object sender, [NotNull] MouseButtonEventArgs e)
+        private void PointerReleased(object sender, [NotNull] PointerEventArgs e)
         {
-            if (!IsEnabled || !IsInProgress || !AssociatedObject.IsMouseCaptured)
+            if (!IsEnabled || !IsInProgress || e.Pointer.Captured != AssociatedObject)
                 return;
 
-            OnMouseUp(e);
+            OnPointerReleased(e);
         }
 
-        private void OnLostMouseCapture(object sender, [NotNull] MouseEventArgs e)
+        private void OnLostMouseCapture(object sender, [NotNull] PointerCaptureLostEventArgs e)
         {
-            if (!ReferenceEquals(Mouse.Captured, sender))
+            if (e.Pointer.Captured != sender)
             {
                 Cancel();
             }
@@ -185,13 +195,13 @@ namespace Stride.Core.Presentation.Behaviors
 
             if (usePreviewEvents)
             {
-                AssociatedObject.PreviewMouseDown += MouseDown;
-                AssociatedObject.PreviewMouseMove += MouseMove;
+                AssociatedObject.PointerPressed += PointerPressed;
+                AssociatedObject.PointerMoved += PointerMove;
             }
             else
             {
-                AssociatedObject.MouseDown += MouseDown;
-                AssociatedObject.MouseMove += MouseMove;
+                AssociatedObject.PointerPressed += PointerPressed;
+                AssociatedObject.PointerMoved += PointerMove;
             }
         }
 
@@ -202,13 +212,13 @@ namespace Stride.Core.Presentation.Behaviors
 
             if (usePreviewEvents)
             {
-                AssociatedObject.PreviewMouseDown -= MouseDown;
-                AssociatedObject.PreviewMouseMove -= MouseMove;
+                AssociatedObject.PointerPressed -= PointerPressed;
+                AssociatedObject.PointerMoved -= PointerMove;
             }
             else
             {
-                AssociatedObject.MouseDown -= MouseDown;
-                AssociatedObject.MouseMove -= MouseMove;
+                AssociatedObject.PointerPressed -= PointerPressed;
+                AssociatedObject.PointerMoved -= PointerMove;
             }
         }
     }

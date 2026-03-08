@@ -4,37 +4,32 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Windows;
-using System.Windows.Input;
-using System.Windows.Interop;
-using System.Windows.Media;
-using System.Windows.Threading;
-using Stride.Core.Annotations;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Interactivity;
+using Avalonia.Threading;
 using Stride.Core.Mathematics;
-using Stride.Core.Presentation.Internal;
-using Stride.Core.Presentation.Interop;
-using Point = System.Windows.Point;
+using Point = Stride.Core.Mathematics.Point;
 
 namespace Stride.Core.Presentation.Controls
 {
     /// <summary>
-    /// A <see cref="FrameworkElement"/> that can host a game engine window. This control is faster than <see cref="HwndHost"/> but might behave
+    /// A <see cref="Control"/> that can host a game engine window. This control is faster than <see cref="HwndHost"/> but might behave
     /// a bit less nicely on certain cases (such as resize, etc.).
     /// </summary>
-    public class GameEngineHost : FrameworkElement, IDisposable, IWin32Window, IKeyboardInputSink
+    public class GameEngineHost : Control, IDisposable//, IWin32Window, IKeyboardInputSink
     {
-        private readonly List<HwndSource> contextMenuSources = new List<HwndSource>();
         private bool updateRequested;
         private int mouseMoveCount;
         private Point contextMenuPosition;
-        private DpiScale dpiScale;
+        //private DpiScale dpiScale;
         private Int4 lastBoundingBox;
         private bool attached;
         private bool isDisposed;
 
         static GameEngineHost()
         {
-            FocusableProperty.OverrideMetadata(typeof(GameEngineHost), new FrameworkPropertyMetadata(BooleanBoxes.TrueBox));
         }
 
         /// <summary>
@@ -49,12 +44,12 @@ namespace Stride.Core.Presentation.Controls
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
             LayoutUpdated += OnLayoutUpdated;
-            IsVisibleChanged += OnIsVisibleChanged;
+            IsVisibleProperty.Changed.AddClassHandler<AvaloniaObject>(OnIsVisibleChanged);
         }
 
         public IntPtr Handle { get; }
 
-        IKeyboardInputSite IKeyboardInputSink.KeyboardInputSite { get; set; }
+        //IKeyboardInputSite IKeyboardInputSink.KeyboardInputSite { get; set; }
 
         public void Dispose()
         {
@@ -64,19 +59,19 @@ namespace Stride.Core.Presentation.Controls
             Loaded -= OnLoaded;
             Unloaded -= OnUnloaded;
             LayoutUpdated -= OnLayoutUpdated;
-            IsVisibleChanged -= OnIsVisibleChanged;
+            //IsVisibleChanged -= OnIsVisibleChanged;
             // TODO: This seems to be blocking when exiting the Game Studio, but doesn't seem to be necessary
             //NativeHelper.SetParent(Handle, IntPtr.Zero);
-            NativeHelper.DestroyWindow(Handle);
+            //NativeHelper.DestroyWindow(Handle);
             isDisposed = true;
         }
 
         /// <inheritdoc />
-        protected override void OnDpiChanged(DpiScale oldDpi, DpiScale newDpi)
-        {
-            dpiScale = newDpi;
-            UpdateWindowPosition();
-        }
+        // protected override void OnDpiChanged(DpiScale oldDpi, DpiScale newDpi)
+        // {
+        //     dpiScale = newDpi;
+        //     UpdateWindowPosition();
+        // }
 
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
         {
@@ -95,7 +90,7 @@ namespace Stride.Core.Presentation.Controls
             UpdateWindowPosition();
         }
 
-        private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private void OnIsVisibleChanged(object sender, AvaloniaPropertyChangedEventArgs e)
         {
             var newValue = (bool)e.NewValue;
             if (newValue)
@@ -114,30 +109,22 @@ namespace Stride.Core.Presentation.Controls
             if (attached)
                 return;
 
-            var hwndSource = GetHwndSource();
-            if (hwndSource == null)
-                return;
-                
-            var hwndParent = hwndSource.Handle;
-            if (hwndParent == IntPtr.Zero)
-                return;
-
             // Get current DPI
-            dpiScale = VisualTreeHelper.GetDpi(this);
+            //dpiScale = VisualTreeHelper.GetDpi(this);
 
-            var style = NativeHelper.GetWindowLong(Handle, NativeHelper.GWL_STYLE);
-            // Removes Caption bar and the sizing border
-            // Must be a child window to be hosted
-            style |= NativeHelper.WS_CHILD;
+            // var style = NativeHelper.GetWindowLong(Handle, NativeHelper.GWL_STYLE);
+            // // Removes Caption bar and the sizing border
+            // // Must be a child window to be hosted
+            // style |= NativeHelper.WS_CHILD;
 
-            NativeHelper.SetWindowLong(Handle, NativeHelper.GWL_STYLE, style);
-            NativeHelper.ShowWindow(Handle, NativeHelper.SW_HIDE);
+            // NativeHelper.SetWindowLong(Handle, NativeHelper.GWL_STYLE, style);
+            // NativeHelper.ShowWindow(Handle, NativeHelper.SW_HIDE);
 
-            // Update the parent to be the parent of the host
-            NativeHelper.SetParent(Handle, hwndParent);
-
-            // Register keyboard sink to make shortcuts work
-            ((IKeyboardInputSink)this).KeyboardInputSite = ((IKeyboardInputSink)hwndSource).RegisterKeyboardInputSink(this);
+            // // Update the parent to be the parent of the host
+            // NativeHelper.SetParent(Handle, hwndParent);
+            //
+            // // Register keyboard sink to make shortcuts work
+            // ((IKeyboardInputSink)this).KeyboardInputSite = ((IKeyboardInputSink)hwndSource).RegisterKeyboardInputSink(this);
             attached = true;
         }
 
@@ -147,12 +134,12 @@ namespace Stride.Core.Presentation.Controls
                 return;
 
             // Hide window, clear parent
-            NativeHelper.ShowWindow(Handle, NativeHelper.SW_HIDE);
+            //NativeHelper.ShowWindow(Handle, NativeHelper.SW_HIDE);
 
             // Unregister keyboard sink
-            var site = ((IKeyboardInputSink)this).KeyboardInputSite;
-            ((IKeyboardInputSink)this).KeyboardInputSite = null;
-            site?.Unregister();
+            //var site = ((IKeyboardInputSink)this).KeyboardInputSite;
+            //((IKeyboardInputSink)this).KeyboardInputSite = null;
+            //site?.Unregister();
 
             // Make sure we will actually attach next time Attach() is called
             lastBoundingBox = Int4.Zero;
@@ -166,45 +153,44 @@ namespace Stride.Core.Presentation.Controls
 
             updateRequested = true;
 
-            Dispatcher.InvokeAsync(() =>
+            Dispatcher.UIThread.InvokeAsync(() =>
             {
-                updateRequested = false;
-                Visual root = null;
-                var shouldShow = true;
-                var parent = (Visual)VisualTreeHelper.GetParent(this);
-                while (parent != null)
-                {
-                    root = parent;
+                // updateRequested = false;
+                // Visual root = null;
+                // var shouldShow = true;
+                // var parent = (Visual)VisualTreeHelper.GetParent(this);
+                // while (parent != null)
+                // {
+                //     root = parent;
+                //
+                //     if (parent is Control parentElement)
+                //     {
+                //         if (!parentElement.IsLoaded || !parentElement.IsVisible)
+                //             shouldShow = false;
+                //     }
+                //
+                //     parent = VisualTreeHelper.GetParent(root) as Visual;
+                // }
 
-                    var parentElement = parent as FrameworkElement;
-                    if (parentElement != null)
-                    {
-                        if (!parentElement.IsLoaded || !parentElement.IsVisible)
-                            shouldShow = false;
-                    }
+                // if (root == null)
+                //     return;
 
-                    parent = VisualTreeHelper.GetParent(root) as Visual;
-                }
-
-                if (root == null)
-                    return;
-
-                // Find proper position for the game
-                var positionTransform = TransformToAncestor(root);
-                var areaPosition = positionTransform.Transform(new Point(0, 0));
-                var boundingBox = new Int4((int)(areaPosition.X*dpiScale.DpiScaleX), (int)(areaPosition.Y*dpiScale.DpiScaleY), (int)(ActualWidth*dpiScale.DpiScaleX), (int)(ActualHeight*dpiScale.DpiScaleY));
-                if (boundingBox != lastBoundingBox)
-                {
-                    lastBoundingBox = boundingBox;
-                    // Move the window asynchronously, without activating it, without touching the Z order
-                    // TODO: do we want SWP_NOCOPYBITS?
-                    const int flags = NativeHelper.SWP_ASYNCWINDOWPOS | NativeHelper.SWP_NOACTIVATE | NativeHelper.SWP_NOZORDER;
-                    NativeHelper.SetWindowPos(Handle, NativeHelper.HWND_TOP, boundingBox.X, boundingBox.Y, boundingBox.Z, boundingBox.W, flags);
-                }
+                // // Find proper position for the game
+                // //var positionTransform = TransformToAncestor(root);
+                // //var areaPosition = positionTransform.Transform(new Point(0, 0));
+                // var boundingBox = new Int4((int)(areaPosition.X*dpiScale.DpiScaleX), (int)(areaPosition.Y*dpiScale.DpiScaleY), (int)(Bounds.Width*dpiScale.DpiScaleX), (int)(Bounds.Height*dpiScale.DpiScaleY));
+                // if (boundingBox != lastBoundingBox)
+                // {
+                //     lastBoundingBox = boundingBox;
+                //     // Move the window asynchronously, without activating it, without touching the Z order
+                //     // TODO: do we want SWP_NOCOPYBITS?
+                //     //const int flags = NativeHelper.SWP_ASYNCWINDOWPOS | NativeHelper.SWP_NOACTIVATE | NativeHelper.SWP_NOZORDER;
+                //     //NativeHelper.SetWindowPos(Handle, NativeHelper.HWND_TOP, boundingBox.X, boundingBox.Y, boundingBox.Z, boundingBox.W, flags);
+                // }
                 
                 if (attached)
                 {
-                    NativeHelper.ShowWindow(Handle, shouldShow ? NativeHelper.SW_SHOWNOACTIVATE : NativeHelper.SW_HIDE);
+                    //NativeHelper.ShowWindow(Handle, shouldShow ? NativeHelper.SW_SHOWNOACTIVATE : NativeHelper.SW_HIDE);
                 }
             }, DispatcherPriority.Input); // This code must be dispatched after the DispatcherPriority.Loaded to properly work since it's checking the IsLoaded flag!
         }
@@ -218,167 +204,129 @@ namespace Stride.Core.Presentation.Controls
         /// <param name="lParam">The long parameter of the message.</param>
         public void ForwardMessage(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam)
         {
-            DispatcherOperation task;
-            switch (msg)
-            {
-                case NativeHelper.WM_RBUTTONDOWN:
-                    // Workaround for #94 - Missing input in editor when the window is a child of the gamestudio
-                    // We're disabling the `WS_CHILD` flag when the user is navigating around the scene (holding right click+wasd)
-                    // TODO: Find a proper solution to replace this workaround. Good luck.
-                    int style = NativeHelper.GetWindowLong(Handle, NativeHelper.GWL_STYLE);
-                    style &= ~NativeHelper.WS_CHILD;
-                    NativeHelper.SetWindowLong(Handle, NativeHelper.GWL_STYLE, style);
-
-                    mouseMoveCount = 0;
-                    task = Dispatcher.InvokeAsync(() =>
-                    {
-                        RaiseMouseButtonEvent(Mouse.PreviewMouseDownEvent, MouseButton.Right);
-                        RaiseMouseButtonEvent(Mouse.MouseDownEvent, MouseButton.Right);
-                    });
-                    task.Wait(TimeSpan.FromSeconds(1.0f));
-                    break;
-                case NativeHelper.WM_RBUTTONUP:
-                    // Workaround for #94 - Missing input in editor when the window is a child of the gamestudio
-                    // We're re-enabling the `WS_CHILD` flag when the user finished navigating around the scene (released right click)
-                    int style2 = NativeHelper.GetWindowLong(Handle, NativeHelper.GWL_STYLE);
-                    style2 |= NativeHelper.WS_CHILD;
-                    NativeHelper.SetWindowLong(Handle, NativeHelper.GWL_STYLE, style2);
-
-                    task = Dispatcher.InvokeAsync(() =>
-                    {
-                        RaiseMouseButtonEvent(Mouse.PreviewMouseUpEvent, MouseButton.Right);
-                        RaiseMouseButtonEvent(Mouse.MouseUpEvent, MouseButton.Right);
-                    });
-                    task.Wait(TimeSpan.FromSeconds(1.0f));
-                    break;
-                case NativeHelper.WM_LBUTTONDOWN:
-                    task = Dispatcher.InvokeAsync(() =>
-                    {
-                        RaiseMouseButtonEvent(Mouse.PreviewMouseDownEvent, MouseButton.Left);
-                        RaiseMouseButtonEvent(Mouse.MouseDownEvent, MouseButton.Left);
-                    });
-                    task.Wait(TimeSpan.FromSeconds(1.0f));
-                    break;
-                case NativeHelper.WM_LBUTTONUP:
-                    task = Dispatcher.InvokeAsync(() =>
-                    {
-                        RaiseMouseButtonEvent(Mouse.PreviewMouseUpEvent, MouseButton.Left);
-                        RaiseMouseButtonEvent(Mouse.MouseUpEvent, MouseButton.Left);
-                    });
-                    task.Wait(TimeSpan.FromSeconds(1.0f));
-                    break;
-                case NativeHelper.WM_MOUSEMOVE:
-                    ++mouseMoveCount;
-                    break;
-                case NativeHelper.WM_CONTEXTMENU:
-                    // TODO: Tracking drag offset would be better, but might be difficult since we replace the mouse to its initial position each time it is moved.
-                    if (mouseMoveCount < 3)
-                    {
-                        Dispatcher.InvokeAsync(() =>
-                        {
-                            DependencyObject dependencyObject = this;
-                            while (dependencyObject != null)
-                            {
-                                var element = dependencyObject as FrameworkElement;
-                                if (element?.ContextMenu != null)
-                                {
-                                    element.Focus();
-                                    // Data context will not be properly set if the popup is open this way, so let's set it ourselves
-                                    element.ContextMenu.SetCurrentValue(DataContextProperty, element.DataContext);
-                                    element.ContextMenu.IsOpen = true;
-                                    var source = (HwndSource)PresentationSource.FromVisual(element.ContextMenu);
-                                    if (source != null)
-                                    {
-                                        source.AddHook(ContextMenuWndProc);
-                                        contextMenuPosition = Mouse.GetPosition(this);
-                                        lock (contextMenuSources)
-                                        {
-                                            contextMenuSources.Add(source);
-                                        }
-                                    }
-                                    break;
-                                }
-                                dependencyObject = VisualTreeHelper.GetParent(dependencyObject);
-                            }
-                        });
-                    }
-                    break;
-                default:
-                    var parent = NativeHelper.GetParent(hwnd);
-                    NativeHelper.PostMessage(parent, msg, wParam, lParam);
-                    break;
-            }
+            // DispatcherOperation task;
+            // switch (msg)
+            // {
+            //     case NativeHelper.WM_RBUTTONDOWN:
+            //         // Workaround for #94 - Missing input in editor when the window is a child of the gamestudio
+            //         // We're disabling the `WS_CHILD` flag when the user is navigating around the scene (holding right click+wasd)
+            //         // TODO: Find a proper solution to replace this workaround. Good luck.
+            //         int style = NativeHelper.GetWindowLong(Handle, NativeHelper.GWL_STYLE);
+            //         style &= ~NativeHelper.WS_CHILD;
+            //         NativeHelper.SetWindowLong(Handle, NativeHelper.GWL_STYLE, style);
+            //
+            //         mouseMoveCount = 0;
+            //         task = Dispatcher.UIThread.InvokeAsync(() =>
+            //         {
+            //             RaiseMouseButtonEvent(Mouse.PreviewMouseDownEvent, MouseButton.Right);
+            //             RaiseMouseButtonEvent(Mouse.MouseDownEvent, MouseButton.Right);
+            //         });
+            //         task.Wait(TimeSpan.FromSeconds(1.0f));
+            //         break;
+            //     case NativeHelper.WM_RBUTTONUP:
+            //         // Workaround for #94 - Missing input in editor when the window is a child of the gamestudio
+            //         // We're re-enabling the `WS_CHILD` flag when the user finished navigating around the scene (released right click)
+            //         int style2 = NativeHelper.GetWindowLong(Handle, NativeHelper.GWL_STYLE);
+            //         style2 |= NativeHelper.WS_CHILD;
+            //         NativeHelper.SetWindowLong(Handle, NativeHelper.GWL_STYLE, style2);
+            //
+            //         task = Dispatcher.UIThread.InvokeAsync(() =>
+            //         {
+            //             RaiseMouseButtonEvent(Mouse.PreviewPointerReleasedEvent, MouseButton.Right);
+            //             RaiseMouseButtonEvent(Mouse.PointerReleasedEvent, MouseButton.Right);
+            //         });
+            //         task.Wait(TimeSpan.FromSeconds(1.0f));
+            //         break;
+            //     case NativeHelper.WM_LBUTTONDOWN:
+            //         task = Dispatcher.UIThread.InvokeAsync(() =>
+            //         {
+            //             RaiseMouseButtonEvent(Mouse.PreviewMouseDownEvent, MouseButton.Left);
+            //             RaiseMouseButtonEvent(Mouse.MouseDownEvent, MouseButton.Left);
+            //         });
+            //         task.Wait(TimeSpan.FromSeconds(1.0f));
+            //         break;
+            //     case NativeHelper.WM_LBUTTONUP:
+            //         task = Dispatcher.UIThread.InvokeAsync(() =>
+            //         {
+            //             RaiseMouseButtonEvent(Mouse.PreviewPointerReleasedEvent, MouseButton.Left);
+            //             RaiseMouseButtonEvent(Mouse.PointerReleasedEvent, MouseButton.Left);
+            //         });
+            //         task.Wait(TimeSpan.FromSeconds(1.0f));
+            //         break;
+            //     case NativeHelper.WM_MOUSEMOVE:
+            //         ++mouseMoveCount;
+            //         break;
+            //     case NativeHelper.WM_CONTEXTMENU:
+            //         // TODO: Tracking drag offset would be better, but might be difficult since we replace the mouse to its initial position each time it is moved.
+            //         if (mouseMoveCount < 3)
+            //         {
+            //             Dispatcher.UIThread.InvokeAsync(() =>
+            //             {
+            //                 AvaloniaObject dependencyObject = this;
+            //                 while (dependencyObject != null)
+            //                 {
+            //                     var element = dependencyObject as Control;
+            //                     if (element?.ContextMenu != null)
+            //                     {
+            //                         element.Focus();
+            //                         // Data context will not be properly set if the popup is open this way, so let's set it ourselves
+            //                         element.ContextMenu.SetCurrentValue(DataContextProperty, element.DataContext);
+            //                         element.ContextMenu.IsOpen = true;
+            //                         var source = (HwndSource)PresentationSource.FromVisual(element.ContextMenu);
+            //                         if (source != null)
+            //                         {
+            //                             source.AddHook(ContextMenuWndProc);
+            //                             contextMenuPosition = Mouse.GetPosition(this);
+            //                             lock (contextMenuSources)
+            //                             {
+            //                                 contextMenuSources.Add(source);
+            //                             }
+            //                         }
+            //                         break;
+            //                     }
+            //                     dependencyObject = VisualTreeHelper.GetParent(dependencyObject);
+            //                 }
+            //             });
+            //         }
+            //         break;
+            //     default:
+            //         var parent = NativeHelper.GetParent(hwnd);
+            //         NativeHelper.PostMessage(parent, msg, wParam, lParam);
+            //         break;
+            // }
         }
 
         private void RaiseMouseButtonEvent(RoutedEvent routedEvent, MouseButton button)
         {
-            RaiseEvent(new MouseButtonEventArgs(Mouse.PrimaryDevice, Environment.TickCount, button)
-            {
-                RoutedEvent = routedEvent,
-                Source = this,
-            });
+            // RaiseEvent(new PointerEventArgs(Mouse.PrimaryDevice, Environment.TickCount, button)
+            // {
+            //     RoutedEvent = routedEvent,
+            //     Source = this,
+            // });
         }
 
         private IntPtr ContextMenuWndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            switch (msg)
-            {
-                case NativeHelper.WM_LBUTTONDOWN:
-                case NativeHelper.WM_RBUTTONDOWN:
-                    // We need to change from the context menu coordinates to the HwndHost coordinates and re-encode lParam
-                    var position = new Point(-(short)(lParam.ToInt64() & 0xFFFF), -((lParam.ToInt64() & 0xFFFF0000) >> 16));
-                    var offset = contextMenuPosition - position;
-                    lParam = new IntPtr((short)offset.X + (((short)offset.Y) << 16));
-                    var threadId = NativeHelper.GetWindowThreadProcessId(Handle, IntPtr.Zero);
-                    NativeHelper.PostThreadMessage(threadId, msg, wParam, lParam);
-                    break;
-                case NativeHelper.WM_DESTROY:
-                    lock (contextMenuSources)
-                    {
-                        var source = contextMenuSources.First(x => x.Handle == hwnd);
-                        source.RemoveHook(ContextMenuWndProc);
-                    }
-                    break;
-            }
+            // switch (msg)
+            // {
+            //     case NativeHelper.WM_LBUTTONDOWN:
+            //     case NativeHelper.WM_RBUTTONDOWN:
+            //         // We need to change from the context menu coordinates to the HwndHost coordinates and re-encode lParam
+            //         var position = new Point(-(short)(lParam.ToInt64() & 0xFFFF), -((lParam.ToInt64() & 0xFFFF0000) >> 16));
+            //         var offset = contextMenuPosition - position;
+            //         lParam = new IntPtr((short)offset.X + (((short)offset.Y) << 16));
+            //         var threadId = NativeHelper.GetWindowThreadProcessId(Handle, IntPtr.Zero);
+            //         NativeHelper.PostThreadMessage(threadId, msg, wParam, lParam);
+            //         break;
+            //     case NativeHelper.WM_DESTROY:
+            //         lock (contextMenuSources)
+            //         {
+            //             var source = contextMenuSources.First(x => x.Handle == hwnd);
+            //             source.RemoveHook(ContextMenuWndProc);
+            //         }
+            //         break;
+            // }
             return IntPtr.Zero;
-        }
-
-        [CanBeNull]
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private HwndSource GetHwndSource()
-        {
-            return (HwndSource)PresentationSource.FromVisual(this);
-        }
-
-        IKeyboardInputSite IKeyboardInputSink.RegisterKeyboardInputSink(IKeyboardInputSink sink)
-        {
-            throw new NotSupportedException();
-        }
-
-        bool IKeyboardInputSink.TranslateAccelerator(ref MSG msg, ModifierKeys modifiers)
-        {
-            return false;
-        }
-
-        bool IKeyboardInputSink.TabInto(TraversalRequest request)
-        {
-            return false;
-        }
-
-        bool IKeyboardInputSink.OnMnemonic(ref MSG msg, ModifierKeys modifiers)
-        {
-            return false;
-        }
-
-        bool IKeyboardInputSink.TranslateChar(ref MSG msg, ModifierKeys modifiers)
-        {
-            return false;
-        }
-
-        bool IKeyboardInputSink.HasFocusWithin()
-        {
-            var focus = NativeHelper.GetFocus();
-            return Handle != IntPtr.Zero && (focus == Handle || NativeHelper.IsChild(Handle, focus));
         }
     }
 }

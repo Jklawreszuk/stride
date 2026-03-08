@@ -1,8 +1,10 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
-using System.Windows.Controls.Primitives;
-using System.Windows.Input;
-using Microsoft.Xaml.Behaviors;
+
+using Avalonia.Controls.Primitives;
+using Avalonia.Input;
+using Avalonia.Interactivity;
+using Avalonia.Xaml.Interactivity;
 using Stride.Core.Annotations;
 
 namespace Stride.Core.Presentation.Behaviors
@@ -20,23 +22,26 @@ namespace Stride.Core.Presentation.Behaviors
         protected override void OnAttached()
         {
             base.OnAttached();
-            AssociatedObject.PreviewMouseLeftButtonDown += MouseDown;
-            AssociatedObject.PreviewMouseLeftButtonUp += MouseUp;
+            AssociatedObject.AddHandler(InputElement.PointerPressedEvent, PointerPressed, RoutingStrategies.Tunnel);
+            AssociatedObject.AddHandler(InputElement.PointerReleasedEvent, PointerReleased, RoutingStrategies.Tunnel);
         }
 
-        private void MouseUp(object sender, [NotNull] MouseButtonEventArgs e)
+        private void PointerReleased(object sender, [NotNull] PointerEventArgs e)
+        {
+            if (e.GetCurrentPoint(AssociatedObject).Properties.IsLeftButtonPressed)
+            {
+                mouseDownOccurred = true;
+            }
+        }
+
+        private void PointerPressed(object sender, PointerEventArgs e)
         {
             if (!mouseDownOccurred)
             {
-                // Stop capturing mouse so that a click somewhere else doesn't reopen the popup
-                AssociatedObject.ReleaseMouseCapture();
+                e.Pointer.Capture(null);
             }
-            mouseDownOccurred = false;
-        }
 
-        private void MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            mouseDownOccurred = true;
+            mouseDownOccurred = false;
         }
     }
 }

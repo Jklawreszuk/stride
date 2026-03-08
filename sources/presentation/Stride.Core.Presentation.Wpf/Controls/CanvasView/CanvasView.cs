@@ -31,16 +31,19 @@ SOFTWARE.
 
 using System;
 using System.Threading;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Threading;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Metadata;
+using Avalonia.Controls.Primitives;
+using Avalonia.Interactivity;
+using Avalonia.Threading;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Drawing;
 
 namespace Stride.Core.Presentation.Controls
 {
     [TemplatePart(Name = GridPartName, Type = typeof(Grid))]
-    public sealed class CanvasView : Control, IDrawingView
+    public sealed class CanvasView : TemplatedControl, IDrawingView
     {
         /// <summary>
         /// The name of the part for the <see cref="Canvas"/>.
@@ -50,8 +53,8 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="Model"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ModelProperty =
-            DependencyProperty.Register(nameof(Model), typeof(IDrawingModel), typeof(CanvasView), new PropertyMetadata(null, OnModelPropertyChanged));
+        public static readonly AvaloniaProperty ModelProperty =
+            AvaloniaProperty.Register<CanvasView, IDrawingModel>(nameof(Model));
 
         /// <summary>
         /// The grid.
@@ -66,20 +69,16 @@ namespace Stride.Core.Presentation.Controls
         /// </summary>
         private int isDrawingInvalidated;
 
-        static CanvasView()
-        {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(CanvasView), new FrameworkPropertyMetadata(typeof(CanvasView)));
-        }
-
         public CanvasView()
         {
             Loaded += OnLoaded;
             SizeChanged += OnSizeChanged;
+            ModelProperty.Changed.AddClassHandler<AvaloniaObject>(OnModelPropertyChanged);
         }
 
         public IDrawingModel Model { get { return (IDrawingModel)GetValue(ModelProperty); } set { SetValue(ModelProperty, value); } }
 
-        private static void OnModelPropertyChanged([NotNull] DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void OnModelPropertyChanged([NotNull] AvaloniaObject sender, AvaloniaPropertyChangedEventArgs e)
         {
             var view = (CanvasView)sender;
 
@@ -92,11 +91,11 @@ namespace Stride.Core.Presentation.Controls
             view.InvalidateDrawing();
         }
 
-        public override void OnApplyTemplate()
+        protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
-            base.OnApplyTemplate();
+            base.OnApplyTemplate(e);
 
-            grid = GetTemplateChild(GridPartName) as Grid;
+            grid = e.NameScope.Find<Grid>(GridPartName);
             if (grid == null)
                 throw new InvalidOperationException($"A part named '{GridPartName}' must be present in the ControlTemplate, and must be of type '{typeof(Grid).FullName}'.");
 
@@ -108,7 +107,7 @@ namespace Stride.Core.Presentation.Controls
 
         protected override Size ArrangeOverride(Size arrangeBounds)
         {
-            if (ActualWidth > 0 && ActualHeight > 0)
+            if (Bounds.Width > 0 && Bounds.Height > 0)
             {
                 if (Interlocked.CompareExchange(ref this.isDrawingInvalidated, 0, 1) == 1)
                 {
@@ -132,7 +131,7 @@ namespace Stride.Core.Presentation.Controls
 
         private void DoInvalidateDrawing()
         {
-            if (ActualWidth <= 0 || ActualHeight <= 0)
+            if (Bounds.Width <= 0 || Bounds.Height <= 0)
                 return;
 
             if (renderer == null)
@@ -140,7 +139,7 @@ namespace Stride.Core.Presentation.Controls
 
             if (Interlocked.CompareExchange(ref isDrawingInvalidated, 1, 0) == 0)
             {
-                Dispatcher.InvokeAsync(() =>
+                Dispatcher.UIThread.InvokeAsync(() =>
                 {
                     // Updates the model before rendering
                     UpdateModel(true);
@@ -184,7 +183,7 @@ namespace Stride.Core.Presentation.Controls
             // Clear the canvas
             renderer.Clear();
             // Render the model
-            Model?.Render(renderer, ActualWidth, ActualHeight);
+            Model?.Render(renderer, Bounds.Width, Bounds.Height);
         }
     }
 }

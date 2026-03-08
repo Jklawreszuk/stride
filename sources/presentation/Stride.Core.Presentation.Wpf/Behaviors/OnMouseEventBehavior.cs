@@ -2,52 +2,48 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System.Windows;
 using System.Windows.Input;
-using Microsoft.Xaml.Behaviors;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Interactivity;
+using Avalonia.Xaml.Interactivity;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Internal;
 
 namespace Stride.Core.Presentation.Behaviors
 {
-    public enum MouseEventType
+    public enum PointerEventType
     {
         None,
-        MouseDown,
-        MouseUp,
-        MouseMove,
-        MouseLeftButtonDown,
-        MouseLeftButtonUp,
-        MouseRightButtonDown,
-        MouseRightButtonUp,
-        PreviewMouseDown,
-        PreviewMouseUp,
-        PreviewMouseMove,
-        PreviewMouseLeftButtonDown,
-        PreviewMouseLeftButtonUp,
-        PreviewMouseRightButtonDown,
-        PreviewMouseRightButtonUp,
+        PointerPressed,
+        PointerReleased,
+        PointerMoved,
+        PreviewPointerPressed,
+        PreviewPointerReleased,
+        PreviewPointerMoved,
     }
 
-    public class OnMouseEventBehavior : Behavior<FrameworkElement>
+    public class OnMouseEventBehavior : Behavior<Control>
     {
-        public static readonly DependencyProperty EventTypeProperty = DependencyProperty.Register(nameof(EventType), typeof(MouseEventType), typeof(OnMouseEventBehavior), new FrameworkPropertyMetadata(MouseEventType.None, EventTypeChanged));
+        public static readonly AvaloniaProperty EventTypeProperty = AvaloniaProperty.Register<OnMouseEventBehavior, PointerEventType>(nameof(EventType));
 
         /// <summary>
         /// Identifies the <see cref="Command"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty CommandProperty = DependencyProperty.Register(nameof(Command), typeof(ICommand), typeof(OnMouseEventBehavior));
+        public static readonly AvaloniaProperty CommandProperty = AvaloniaProperty.Register<OnMouseEventBehavior, ICommand>(nameof(Command));
 
         /// <summary>
         /// Identifies the <see cref="HandleEvent"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty HandleEventProperty = DependencyProperty.Register(nameof(HandleEvent), typeof(bool), typeof(OnMouseEventBehavior));
+        public static readonly AvaloniaProperty HandleEventProperty = AvaloniaProperty.Register<OnMouseEventBehavior, bool>(nameof(HandleEvent));
 
         /// <summary>
         /// Identifies the <see cref="Modifiers"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ModifiersProperty =
-               DependencyProperty.Register(nameof(Modifiers), typeof(ModifierKeys?), typeof(OnMouseEventBehavior), new PropertyMetadata(null));
+        public static readonly AvaloniaProperty ModifiersProperty =
+               AvaloniaProperty.Register<OnMouseEventBehavior, KeyModifiers?>(nameof(Modifiers));
 
-        public MouseEventType EventType { get { return (MouseEventType)GetValue(EventTypeProperty); } set { SetValue(EventTypeProperty, value); } }
+        public PointerEventType EventType { get { return (PointerEventType)GetValue(EventTypeProperty); } set { SetValue(EventTypeProperty, value); } }
 
         /// <summary>
         /// Gets or sets the command to invoke when the event is raised.
@@ -59,13 +55,18 @@ namespace Stride.Core.Presentation.Behaviors
         /// </summary>
         public bool HandleEvent { get { return (bool)GetValue(HandleEventProperty); } set { SetValue(HandleEventProperty, value.Box()); } }
 
-        public ModifierKeys? Modifiers { get { return (ModifierKeys?)GetValue(ModifiersProperty); } set { SetValue(ModifiersProperty, value); } }
+        public KeyModifiers? Modifiers { get { return (KeyModifiers?)GetValue(ModifiersProperty); } set { SetValue(ModifiersProperty, value); } }
 
-        protected bool AreModifiersValid()
+        static OnMouseEventBehavior()
         {
-            if (Modifiers == null)
+            EventTypeProperty.Changed.AddClassHandler<AvaloniaObject>(EventTypeChanged);
+        }
+        
+        protected bool AreModifiersValid(KeyModifiers? modifiers)
+        {
+            if (modifiers == null)
                 return true;
-            return Modifiers == ModifierKeys.None ? Keyboard.Modifiers == ModifierKeys.None : Keyboard.Modifiers.HasFlag(Modifiers);
+            return Modifiers == KeyModifiers.None ? modifiers == KeyModifiers.None : (modifiers & Modifiers.Value) == Modifiers.Value;;
         }
 
         protected override void OnAttached()
@@ -80,127 +81,76 @@ namespace Stride.Core.Presentation.Behaviors
             base.OnAttached();
         }
 
-        private static void EventTypeChanged([NotNull] DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void EventTypeChanged([NotNull] AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var behavior = (OnMouseEventBehavior)d;
             if (behavior.AssociatedObject == null)
                 return;
 
-            var oldValue = (MouseEventType)e.OldValue;
+            var oldValue = (PointerEventType)e.OldValue;
             behavior.UnregisterHandler(oldValue);
-            var newValue = (MouseEventType)e.NewValue;
+            var newValue = (PointerEventType)e.NewValue;
             behavior.RegisterHandler(newValue);
         }
 
-        private void RegisterHandler(MouseEventType type)
+        private void RegisterHandler(PointerEventType type)
         {
             switch (type)
             {
-                case MouseEventType.MouseDown:
-                    AssociatedObject.MouseDown += MouseButtonHandler;
+                case PointerEventType.PointerPressed:
+                    AssociatedObject.PointerPressed += MouseButtonHandler;
                     break;
-                case MouseEventType.MouseUp:
-                    AssociatedObject.MouseUp += MouseButtonHandler;
+                case PointerEventType.PointerReleased:
+                    AssociatedObject.PointerReleased += MouseButtonHandler;
                     break;
-                case MouseEventType.MouseMove:
-                    AssociatedObject.MouseMove += MouseMoveHandler;
+                case PointerEventType.PointerMoved:
+                    AssociatedObject.PointerMoved += MouseMoveHandler;
                     break;
-                case MouseEventType.MouseLeftButtonDown:
-                    AssociatedObject.MouseLeftButtonDown += MouseMoveHandler;
+                case PointerEventType.PreviewPointerPressed:
+                    AssociatedObject.AddHandler(InputElement.PointerPressedEvent, MouseButtonHandler, RoutingStrategies.Tunnel);
                     break;
-                case MouseEventType.MouseLeftButtonUp:
-                    AssociatedObject.MouseLeftButtonUp += MouseMoveHandler;
+                case PointerEventType.PreviewPointerReleased:
+                    AssociatedObject.AddHandler(InputElement.PointerReleasedEvent, MouseButtonHandler, RoutingStrategies.Tunnel);
                     break;
-                case MouseEventType.MouseRightButtonDown:
-                    AssociatedObject.MouseRightButtonDown += MouseMoveHandler;
-                    break;
-                case MouseEventType.MouseRightButtonUp:
-                    AssociatedObject.MouseRightButtonUp += MouseMoveHandler;
-                    break;
-                case MouseEventType.PreviewMouseDown:
-                    AssociatedObject.PreviewMouseDown += MouseButtonHandler;
-                    break;
-                case MouseEventType.PreviewMouseUp:
-                    AssociatedObject.PreviewMouseUp += MouseButtonHandler;
-                    break;
-                case MouseEventType.PreviewMouseMove:
-                    AssociatedObject.PreviewMouseMove += MouseMoveHandler;
-                    break;
-                case MouseEventType.PreviewMouseLeftButtonDown:
-                    AssociatedObject.PreviewMouseLeftButtonDown += MouseButtonHandler;
-                    break;
-                case MouseEventType.PreviewMouseLeftButtonUp:
-                    AssociatedObject.PreviewMouseLeftButtonUp += MouseButtonHandler;
-                    break;
-                case MouseEventType.PreviewMouseRightButtonDown:
-                    AssociatedObject.PreviewMouseRightButtonDown += MouseButtonHandler;
-                    break;
-                case MouseEventType.PreviewMouseRightButtonUp:
-                    AssociatedObject.PreviewMouseRightButtonUp += MouseButtonHandler;
+                case PointerEventType.PreviewPointerMoved:
+                    AssociatedObject.AddHandler(InputElement.PointerMovedEvent, MouseButtonHandler, RoutingStrategies.Tunnel);
                     break;
             }
         }
 
-        private void UnregisterHandler(MouseEventType type)
+        private void UnregisterHandler(PointerEventType type)
         {
             switch (type)
             {
-                case MouseEventType.MouseDown:
-                    AssociatedObject.MouseDown -= MouseButtonHandler;
+                case PointerEventType.PointerPressed:
+                    AssociatedObject.PointerPressed -= MouseButtonHandler;
                     break;
-                case MouseEventType.MouseUp:
-                    AssociatedObject.MouseUp -= MouseButtonHandler;
+                case PointerEventType.PointerReleased:
+                    AssociatedObject.PointerReleased -= MouseButtonHandler;
                     break;
-                case MouseEventType.MouseMove:
-                    AssociatedObject.MouseMove -= MouseMoveHandler;
+                case PointerEventType.PreviewPointerPressed:
+                    AssociatedObject.RemoveHandler(InputElement.PointerPressedEvent, MouseButtonHandler);
                     break;
-                case MouseEventType.MouseLeftButtonDown:
-                    AssociatedObject.MouseLeftButtonDown -= MouseMoveHandler;
+                case PointerEventType.PreviewPointerReleased:
+                    AssociatedObject.RemoveHandler(InputElement.PointerReleasedEvent, MouseButtonHandler);
                     break;
-                case MouseEventType.MouseLeftButtonUp:
-                    AssociatedObject.MouseLeftButtonUp -= MouseMoveHandler;
-                    break;
-                case MouseEventType.MouseRightButtonDown:
-                    AssociatedObject.MouseRightButtonDown -= MouseMoveHandler;
-                    break;
-                case MouseEventType.MouseRightButtonUp:
-                    AssociatedObject.MouseRightButtonUp -= MouseMoveHandler;
-                    break;
-                case MouseEventType.PreviewMouseDown:
-                    AssociatedObject.PreviewMouseDown -= MouseButtonHandler;
-                    break;
-                case MouseEventType.PreviewMouseUp:
-                    AssociatedObject.PreviewMouseUp -= MouseButtonHandler;
-                    break;
-                case MouseEventType.PreviewMouseMove:
-                    AssociatedObject.PreviewMouseMove -= MouseMoveHandler;
-                    break;
-                case MouseEventType.PreviewMouseLeftButtonDown:
-                    AssociatedObject.PreviewMouseLeftButtonDown -= MouseButtonHandler;
-                    break;
-                case MouseEventType.PreviewMouseLeftButtonUp:
-                    AssociatedObject.PreviewMouseLeftButtonUp -= MouseButtonHandler;
-                    break;
-                case MouseEventType.PreviewMouseRightButtonDown:
-                    AssociatedObject.PreviewMouseRightButtonDown -= MouseButtonHandler;
-                    break;
-                case MouseEventType.PreviewMouseRightButtonUp:
-                    AssociatedObject.PreviewMouseRightButtonUp -= MouseButtonHandler;
+                case PointerEventType.PreviewPointerMoved:
+                    AssociatedObject.RemoveHandler(InputElement.PointerMovedEvent, MouseButtonHandler);
                     break;
             }
         }
 
-        private void MouseButtonHandler(object sender, [NotNull] MouseButtonEventArgs e)
+        private void MouseButtonHandler(object sender, [NotNull] PointerEventArgs e)
         {
-            if (!AreModifiersValid())
+            if (!AreModifiersValid(e.KeyModifiers))
                 return;
 
             MouseMoveHandler(sender, e);
         }
 
-        private void MouseMoveHandler(object sender, [NotNull] MouseEventArgs e)
+        private void MouseMoveHandler(object sender, [NotNull] PointerEventArgs e)
         {
-            if (!AreModifiersValid())
+            if (!AreModifiersValid(e.KeyModifiers))
                 return;
 
             if (HandleEvent)

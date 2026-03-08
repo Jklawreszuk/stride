@@ -2,6 +2,7 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
 using System.Windows;
+using Avalonia;
 using Stride.Core.Annotations;
 using Stride.Core.Mathematics;
 
@@ -12,21 +13,23 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="X"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty XProperty = DependencyProperty.Register(nameof(X), typeof(float?), typeof(Vector2Editor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
+        public static readonly AvaloniaProperty XProperty = AvaloniaProperty.Register<Vector2Editor, float?>("X");
 
         /// <summary>
         /// Identifies the <see cref="Y"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty YProperty = DependencyProperty.Register(nameof(Y), typeof(float?), typeof(Vector2Editor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
-
+        public static readonly AvaloniaProperty YProperty = AvaloniaProperty.Register<Vector2Editor, float?>("Y");
+        
         /// <summary>
         /// Identifies the <see cref="Length"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty LengthProperty = DependencyProperty.Register(nameof(Length), typeof(float?), typeof(Vector2Editor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceLengthValue));
-
+        public static readonly AvaloniaProperty LengthProperty = AvaloniaProperty.Register<Vector2Editor, float?>("Length");
+        
         static Vector2Editor()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(Vector2Editor), new FrameworkPropertyMetadata(typeof(Vector2Editor)));
+            XProperty.Changed.AddClassHandler<Vector2Editor>((o, e) => OnComponentPropertyChanged(o, e));
+            YProperty.Changed.AddClassHandler<Vector2Editor>((o, e) => OnComponentPropertyChanged(o, e));
+            LengthProperty.Changed.AddClassHandler<Vector2Editor>((o, e) => OnComponentPropertyChanged(o, e));
         }
 
         /// <summary>
@@ -56,27 +59,27 @@ namespace Stride.Core.Presentation.Controls
         }
 
         /// <inheritdoc/>
-        protected override Vector2? UpdateValueFromComponent(DependencyProperty property)
+        protected override Vector2? UpdateValueFromComponent(AvaloniaProperty property)
         {
             switch (EditingMode)
             {
                 case VectorEditingMode.Normal:
                     if (property == XProperty)
-                        return X.HasValue && Value.HasValue ? (Vector2?)new Vector2(X.Value, Value.Value.Y) : null;
+                        return X.HasValue && Value.HasValue ? new Vector2(X.Value, Value.Value.Y) : null;
                     if (property == YProperty)
-                        return Y.HasValue && Value.HasValue ? (Vector2?)new Vector2(Value.Value.X, Y.Value) : null;
+                        return Y.HasValue && Value.HasValue ? new Vector2(Value.Value.X, Y.Value) : null;
                     break;
 
                 case VectorEditingMode.AllComponents:
                     if (property == XProperty)
-                        return X.HasValue ? (Vector2?)new Vector2(X.Value) : null;
+                        return X.HasValue ? new Vector2(X.Value) : null;
                     if (property == YProperty)
-                        return Y.HasValue ? (Vector2?)new Vector2(Y.Value) : null;
+                        return Y.HasValue ? new Vector2(Y.Value) : null;
                     break;
 
                 case VectorEditingMode.Length:
                     if (property == LengthProperty)
-                        return Length.HasValue ? (Vector2?)FromLength(Value ?? Vector2.One, Length.Value) : null;
+                        return Length.HasValue ? FromLength(Value ?? Vector2.One, Length.Value) : null;
                     break;
 
                 default:
@@ -96,7 +99,7 @@ namespace Stride.Core.Presentation.Controls
         /// Coerce the value of the Length so it is always positive
         /// </summary>
         [NotNull]
-        private static object CoerceLengthValue(DependencyObject sender, object baseValue)
+        private static object CoerceLengthValue(AvaloniaObject sender, object baseValue)
         {
             baseValue = CoerceComponentValue(sender, baseValue);
             return Math.Max(0.0f, (float)baseValue);

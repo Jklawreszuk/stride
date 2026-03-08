@@ -3,8 +3,9 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.Windows;
-using System.Windows.Media;
+using Avalonia;
+using Avalonia.Layout;
+using Avalonia.Media;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Drawing;
 

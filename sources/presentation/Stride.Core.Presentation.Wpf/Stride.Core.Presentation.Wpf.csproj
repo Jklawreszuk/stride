@@ -19,8 +19,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Avalonia.Controls.DataGrid" />
+    <PackageReference Include="Xaml.Behaviors" />
     <Page Include="**\*.xaml" SubType="Designer" Generator="MSBuild:Compile" />
-    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" />
+    <PackageReference Include="CommunityToolkit.Mvvm" />
     <Compile Update="**\*.xaml.cs" SubType="Code" DependentUpon="%(Filename)" />
   </ItemGroup>
 

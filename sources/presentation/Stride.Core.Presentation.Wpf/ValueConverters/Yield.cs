@@ -4,13 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Windows;
-using System.Windows.Data;
+using Avalonia;
 using Stride.Core.Extensions;
 
 namespace Stride.Core.Presentation.ValueConverters
 {
-    [ValueConversion(typeof(object), typeof(IEnumerable<object>))]
     public class Yield : OneWayValueConverter<Yield>
     {
         /// <inheritdoc />

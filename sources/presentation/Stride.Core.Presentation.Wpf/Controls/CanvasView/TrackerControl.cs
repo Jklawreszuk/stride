@@ -29,14 +29,17 @@ SOFTWARE.
 */
 #endregion
 
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Shapes;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Metadata;
+using Avalonia.Controls.Primitives;
+using Avalonia.Controls.Shapes;
+using Avalonia.Input;
+using Avalonia.Media;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Extensions;
 using Stride.Core.Presentation.Internal;
+using Stride.Core.Presentation.ValueConverters;
 
 namespace Stride.Core.Presentation.Controls
 {
@@ -44,7 +47,7 @@ namespace Stride.Core.Presentation.Controls
 
     [TemplatePart(Name = HorizontalLinePartName, Type = typeof(Line))]
     [TemplatePart(Name = VerticalLinePartName, Type = typeof(Line))]
-    public class TrackerControl : Control
+    public class TrackerControl : TemplatedControl
     {
         /// <summary>
         /// The name of the part for the horizontal line.
@@ -59,55 +62,56 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="HorizontalLineVisibility"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty HorizontalLineVisibilityProperty =
-            DependencyProperty.Register(nameof(HorizontalLineVisibility), typeof(Visibility), typeof(TrackerControl), new PropertyMetadata(VisibilityBoxes.VisibleBox));
+        public static readonly AvaloniaProperty HorizontalLineVisibilityProperty =
+            AvaloniaProperty.Register<TrackerControl,  bool>(nameof(HorizontalLineVisibility));
 
         /// <summary>
         /// Identifies the <see cref="LineExtents"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty LineExtentsProperty =
-            DependencyProperty.Register(nameof(LineExtents), typeof(Rect), typeof(TrackerControl));
+        public static readonly AvaloniaProperty LineExtentsProperty =
+            AvaloniaProperty.Register<TrackerControl,  Rect>(nameof(LineExtents));
 
         /// <summary>
         /// Identifies the <see cref="LineStroke"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty LineStrokeProperty =
-            DependencyProperty.Register(nameof(LineStroke), typeof(Brush), typeof(TrackerControl));
+        public static readonly AvaloniaProperty LineStrokeProperty =
+            AvaloniaProperty.Register<TrackerControl, Brush>(nameof(LineStroke));
 
         /// <summary>
         /// Identifies the <see cref="LineThickness"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty LineThicknessProperty =
-            DependencyProperty.Register(nameof(LineThickness), typeof(Thickness), typeof(TrackerControl));
+        public static readonly AvaloniaProperty LineThicknessProperty =
+            AvaloniaProperty.Register<TrackerControl, Thickness>(nameof(LineThickness));
 
         /// <summary>
         /// Identifies the <see cref="Position"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty PositionProperty =
-            DependencyProperty.Register(nameof(Position), typeof(Point), typeof(TrackerControl), new PropertyMetadata(new Point(), OnPositionChanged));
+        public static readonly AvaloniaProperty PositionProperty =
+            AvaloniaProperty.Register<TrackerControl, Point>(nameof(Position));
 
         /// <summary>
         /// Identifies the <see cref="TrackMouse"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty TrackMouseProperty =
-            DependencyProperty.Register(nameof(TrackMouse), typeof(bool), typeof(TrackerControl), new PropertyMetadata(BooleanBoxes.FalseBox, OnTrackMouseChanged));
+        public static readonly AvaloniaProperty TrackMouseProperty =
+            AvaloniaProperty.Register<TrackerControl, bool>(nameof(TrackMouse));
 
         /// <summary>
         /// Identifies the <see cref="VerticalLineVisibility"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty VerticalLineVisibilityProperty =
-            DependencyProperty.Register(nameof(VerticalLineVisibility), typeof(Visibility), typeof(TrackerControl), new PropertyMetadata(VisibilityBoxes.VisibleBox));
+        public static readonly AvaloniaProperty VerticalLineVisibilityProperty =
+            AvaloniaProperty.Register<TrackerControl, bool>(nameof(VerticalLineVisibility));
 
         private Line horizontalLine;
         private Line verticalLine;
-        private FrameworkElement parent;
+        private Control parent;
 
         static TrackerControl()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(TrackerControl), new FrameworkPropertyMetadata(typeof(TrackerControl)));
+            PositionProperty.Changed.AddClassHandler<TrackerControl>(OnPositionChanged);
+            TrackMouseProperty.Changed.AddClassHandler<AvaloniaObject>(OnTrackMouseChanged);
         }
 
-        public Visibility HorizontalLineVisibility { get { return (Visibility)GetValue(HorizontalLineVisibilityProperty); }  set { SetValue(HorizontalLineVisibilityProperty, value); } }
+        public bool HorizontalLineVisibility { get { return (bool)GetValue(HorizontalLineVisibilityProperty); }  set { SetValue(HorizontalLineVisibilityProperty, value); } }
         
         public Rect LineExtents { get { return (Rect)GetValue(LineExtentsProperty); }  set { SetValue(LineExtentsProperty, value); } }
 
@@ -119,33 +123,33 @@ namespace Stride.Core.Presentation.Controls
 
         public bool TrackMouse { get { return (bool)GetValue(TrackMouseProperty); } set { SetValue(TrackMouseProperty, value.Box()); } }
         
-        public Visibility VerticalLineVisibility { get { return (Visibility)GetValue(VerticalLineVisibilityProperty); }  set { SetValue(VerticalLineVisibilityProperty, value); } }
+        public bool VerticalLineVisibility { get { return (bool)GetValue(VerticalLineVisibilityProperty); }  set { SetValue(VerticalLineVisibilityProperty, value); } }
 
-        private static void OnPositionChanged([NotNull] DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void OnPositionChanged([NotNull] AvaloniaObject sender, AvaloniaPropertyChangedEventArgs e)
         {
             ((TrackerControl)sender).OnPositionChanged();
         }
 
-        private static void OnTrackMouseChanged([NotNull] DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void OnTrackMouseChanged([NotNull] AvaloniaObject sender, AvaloniaPropertyChangedEventArgs e)
         {
             ((TrackerControl)sender).OnTrackMouseChanged(e);
         }
 
-        public override void OnApplyTemplate()
+        protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
-            base.OnApplyTemplate();
+            base.OnApplyTemplate(e);
 
-            horizontalLine = GetTemplateChild(HorizontalLinePartName) as Line;
-            verticalLine = GetTemplateChild(VerticalLinePartName) as Line;
+            horizontalLine =  e.NameScope.Find<Line>(HorizontalLinePartName);
+            verticalLine =  e.NameScope.Find<Line>(VerticalLinePartName);
 
             if (parent != null && TrackMouse)
-                parent.MouseMove -= OnMouseMove;
-            parent = this.FindVisualParentOfType<FrameworkElement>();
+                parent.PointerMoved -= OnMouseMove;
+            parent = this.FindVisualParentOfType<Control>();
             if (TrackMouse)
-                parent.MouseMove += OnMouseMove;
+                parent.PointerMoved += OnMouseMove;
         }
 
-        private void OnMouseMove(object sender, [NotNull] MouseEventArgs e)
+        private void OnMouseMove(object sender, [NotNull] PointerEventArgs e)
         {
             if (!TrackMouse)
                 return;
@@ -157,15 +161,15 @@ namespace Stride.Core.Presentation.Controls
             UpdatePositionAndBorder();
         }
 
-        private void OnTrackMouseChanged(DependencyPropertyChangedEventArgs e)
+        private void OnTrackMouseChanged(AvaloniaPropertyChangedEventArgs e)
         {
             if (parent == null)
                 return;
 
             if ((bool)e.NewValue)
-                parent.MouseMove += OnMouseMove;
+                parent.PointerMoved += OnMouseMove;
             else
-                parent.MouseMove -= OnMouseMove;
+                parent.PointerMoved -= OnMouseMove;
         }
 
         private void UpdatePositionAndBorder()
@@ -173,44 +177,46 @@ namespace Stride.Core.Presentation.Controls
             if (parent == null)
                 return;
 
-            var width = parent.ActualWidth;
-            var height = parent.ActualHeight;
+            var width = parent.Bounds.Width;
+            var height = parent.Bounds.Height;
             var lineExtents = LineExtents;
             var pos = Position;
 
             if (horizontalLine != null)
             {
+                double x1, x2;
                 if (LineExtents.Width > 0)
                 {
-                    horizontalLine.X1 = lineExtents.Left;
-                    horizontalLine.X2 = lineExtents.Right;
-                    pos.Y = MathUtil.Clamp(pos.Y, lineExtents.Top, lineExtents.Bottom);
+                    x1 = lineExtents.Left;
+                    x2 = lineExtents.Right;
+                    pos = pos.WithY(MathUtil.Clamp(pos.Y, lineExtents.Top, lineExtents.Bottom));
                 }
                 else
                 {
-                    horizontalLine.X1 = 0;
-                    horizontalLine.X2 = width;
+                    x1 = 0;
+                    x2 = width;
                 }
 
-                horizontalLine.Y1 = pos.Y;
-                horizontalLine.Y2 = pos.Y;
+                horizontalLine.StartPoint = new Point(x1, pos.Y);
+                horizontalLine.EndPoint = new Point(x2, pos.Y);
             }
 
             if (verticalLine != null)
             {
+                double y1, y2;
                 if (LineExtents.Width > 0)
                 {
-                    verticalLine.Y1 = lineExtents.Top;
-                    verticalLine.Y2 = lineExtents.Bottom;
-                    pos.X = MathUtil.Clamp(pos.X, lineExtents.Left, lineExtents.Right);
+                    y1 = lineExtents.Top;
+                    y2 = lineExtents.Bottom;
+                    pos = pos.WithX(MathUtil.Clamp(pos.X, lineExtents.Left, lineExtents.Right));
                 }
                 else
                 {
-                    verticalLine.Y1 = 0;
-                    verticalLine.Y2 = height;
+                    y1 = 0;
+                    y2 = height;
                 }
-                verticalLine.X1 = pos.X;
-                verticalLine.X2 = pos.X;
+                verticalLine.StartPoint = new Point(pos.X, y1);
+                verticalLine.EndPoint = new Point(pos.X, y2);
             }
         }
     }

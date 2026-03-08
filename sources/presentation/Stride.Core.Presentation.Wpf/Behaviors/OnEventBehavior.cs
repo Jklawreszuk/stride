@@ -2,8 +2,11 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
 using System.Linq;
-using System.Windows;
-using Microsoft.Xaml.Behaviors;
+using System.Reflection;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Interactivity;
+using Avalonia.Xaml.Interactivity;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Core;
 using Stride.Core.Presentation.Internal;
@@ -14,24 +17,24 @@ namespace Stride.Core.Presentation.Behaviors
     /// An abstract behavior that allows to perform actions when an event is raised. It supports both <see cref="RoutedEvent"/> and standard <c>event</c>,
     /// and allow to catch routed event triggered by any control.
     /// </summary>
-    public abstract class OnEventBehavior : Behavior<DependencyObject>
+    public abstract class OnEventBehavior : Behavior<AvaloniaObject>
     {
         /// <summary>
         /// Identifies the <see cref="EventName"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty EventNameProperty = DependencyProperty.Register("EventName", typeof(string), typeof(OnEventBehavior));
+        public static readonly StyledProperty<string> EventNameProperty = AvaloniaProperty.Register<OnEventBehavior, string>("EventName");
 
         /// <summary>
         /// Identifies the <see cref="EventOwnerType"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty EventOwnerTypeProperty = DependencyProperty.Register("EventOwnerType", typeof(Type), typeof(OnEventBehavior));
+        public static readonly AvaloniaProperty EventOwnerTypeProperty = AvaloniaProperty.Register<OnEventBehavior, Type>("EventOwnerType");
 
         /// <summary>
         /// Identifies the <see cref="HandleEvent"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty HandleEventProperty = DependencyProperty.Register("HandleEvent", typeof(bool), typeof(OnEventBehavior));
+        public static readonly AvaloniaProperty HandleEventProperty = AvaloniaProperty.Register<OnEventBehavior, bool>("HandleEvent");
 
-        private readonly RoutedEventHandler routedEventHandler;
+        private readonly EventHandler<RoutedEventArgs> routedEventHandler;
         private AnonymousEventHandler eventHandler;
         private RoutedEvent routedEvent;
 
@@ -43,7 +46,7 @@ namespace Stride.Core.Presentation.Behaviors
         /// <summary>
         /// Gets or sets the name of the event to handle.
         /// </summary>
-        public string EventName { get { return (string)GetValue(EventNameProperty); } set { SetValue(EventNameProperty, value); } }
+        public string EventName { get { return GetValue(EventNameProperty); } set { SetValue(EventNameProperty, value); } }
 
         /// <summary>
         /// Gets or sets the type that owns the event when <see cref="EventName"/> describes a <see cref="RoutedEvent"/>.
@@ -66,29 +69,29 @@ namespace Stride.Core.Presentation.Behaviors
             if (EventName == null)
                 throw new ArgumentException($"The EventName property must be set on behavior '{GetType().FullName}'.");
 
-            var eventOwnerType = EventOwnerType ?? AssociatedObject.GetType();
+            var ownerType = EventOwnerType ?? AssociatedObject?.GetType();
 
-            var uiElement = AssociatedObject as UIElement;
+            var control = AssociatedObject as Control;
 
-            var routedEvents = EventManager.GetRoutedEvents().Where(x => x.Name == EventName && x.OwnerType.IsAssignableFrom(eventOwnerType)).ToArray();
+            var routedEventResult = ownerType?
+                .GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
+                .FirstOrDefault(f =>
+                    typeof(RoutedEvent).IsAssignableFrom(f.FieldType) &&
+                    f.Name == EventName + "Event")?.
+                GetValue(null) as RoutedEvent;
 
-            if (uiElement != null && routedEvents.Length > 0)
+            if (control != null && routedEventResult != null)
             {
-                if (routedEvents.Length > 1)
-                    throw new NotImplementedException("TODO: several events found, find a way to decide the most relevant one.");
-
-                routedEvent = routedEvents.First();
-                uiElement.AddHandler(routedEvent, routedEventHandler);
+                control.AddHandler(routedEventResult, routedEventHandler);
+                return;
             }
-            else
-            {
-                var eventInfo = AssociatedObject.GetType().GetEvent(EventName);
 
-                if (eventInfo == null)
-                    throw new InvalidOperationException($"Impossible to find a valid event named '{EventName}'.");
+            var eventInfo = AssociatedObject?.GetType().GetEvent(EventName);
 
-                eventHandler = AnonymousEventHandler.RegisterEventHandler(eventInfo, AssociatedObject, OnEvent);
-            }
+            if (eventInfo == null)
+                throw new InvalidOperationException($"Impossible to find a valid event named '{EventName}'.");
+
+            eventHandler = AnonymousEventHandler.RegisterEventHandler(eventInfo, AssociatedObject, OnEvent);
         }
 
         /// <inheritdoc/>
@@ -96,8 +99,8 @@ namespace Stride.Core.Presentation.Behaviors
         {
             if (routedEvent != null)
             {
-                var uiElement = (UIElement)AssociatedObject;
-                uiElement.RemoveHandler(routedEvent, routedEventHandler);
+                var control = (Control)AssociatedObject;
+                control?.RemoveHandler(routedEvent, routedEventHandler);
                 routedEvent = null;
             }
             else if (eventHandler != null)

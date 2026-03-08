@@ -3,9 +3,11 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using Microsoft.Xaml.Behaviors;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Threading;
+using Avalonia.Xaml.Interactivity;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Extensions;
 using Stride.Core.Presentation.Internal;
@@ -21,15 +23,15 @@ namespace Stride.Core.Presentation.Behaviors
         private CancellationTokenSource cancellationTokenSource;
         private Dock? edgeUnderMouse;
 
-        public static readonly DependencyProperty ScrollBorderThicknessProperty = DependencyProperty.Register("ScrollBorderThickness", typeof(Thickness), typeof(DragOverAutoScrollBehavior), new PropertyMetadata(new Thickness(32)));
+        public static readonly AvaloniaProperty ScrollBorderThicknessProperty = AvaloniaProperty.Register<DragOverAutoScrollBehavior, Thickness>("ScrollBorderThickness", new Thickness(32));
 
-        public static readonly DependencyProperty DelaySecondsProperty = DependencyProperty.Register("DelaySeconds", typeof(double), typeof(DragOverAutoScrollBehavior), new PropertyMetadata(0.5));
+        public static readonly AvaloniaProperty DelaySecondsProperty = AvaloniaProperty.Register<DragOverAutoScrollBehavior, double>("DelaySeconds",0.5);
 
-        public static readonly DependencyProperty ScrollingSpeedWidthProperty = DependencyProperty.Register("ScrollingSpeed", typeof(double), typeof(DragOverAutoScrollBehavior), new PropertyMetadata(300.0));
+        public static readonly AvaloniaProperty ScrollingSpeedWidthProperty = AvaloniaProperty.Register<DragOverAutoScrollBehavior, double>("ScrollingSpeed", 300.0);
 
-        public static readonly DependencyProperty VerticalScrollProperty = DependencyProperty.Register("VerticalScroll", typeof(bool), typeof(DragOverAutoScrollBehavior), new PropertyMetadata(BooleanBoxes.TrueBox));
+        public static readonly AvaloniaProperty VerticalScrollProperty = AvaloniaProperty.Register<DragOverAutoScrollBehavior, bool>("VerticalScroll", true);
 
-        public static readonly DependencyProperty HorizontalScrollProperty = DependencyProperty.Register("HorizontalScroll", typeof(bool), typeof(DragOverAutoScrollBehavior), new PropertyMetadata(BooleanBoxes.TrueBox));
+        public static readonly AvaloniaProperty HorizontalScrollProperty = AvaloniaProperty.Register<DragOverAutoScrollBehavior, bool>("HorizontalScroll", true);
 
         public Thickness ScrollBorderThickness { get { return (Thickness)GetValue(ScrollBorderThicknessProperty); } set { SetValue(ScrollBorderThicknessProperty, value); } }
         
@@ -44,9 +46,9 @@ namespace Stride.Core.Presentation.Behaviors
         protected override void OnAttached()
         {
             base.OnAttached();
-            AssociatedObject.AddHandler(UIElement.PreviewDragOverEvent, (DragEventHandler)DragOver);
-            AssociatedObject.AddHandler(UIElement.DragLeaveEvent, (DragEventHandler)DragLeave);
-            AssociatedObject.AddHandler(UIElement.DropEvent, (DragEventHandler)Drop);
+            AssociatedObject.AddHandler(DragDrop.DragOverEvent, DragOver);
+            AssociatedObject.AddHandler(DragDrop.DragLeaveEvent, DragLeave);
+            AssociatedObject.AddHandler(DragDrop.DropEvent, Drop);
         }
 
         private void Drop(object sender, DragEventArgs e)
@@ -56,9 +58,9 @@ namespace Stride.Core.Presentation.Behaviors
 
         protected override void OnDetaching()
         {
-            AssociatedObject.RemoveHandler(UIElement.PreviewDragOverEvent, (DragEventHandler)DragOver);
-            AssociatedObject.RemoveHandler(UIElement.DragLeaveEvent, (DragEventHandler)DragLeave);
-            AssociatedObject.RemoveHandler(UIElement.DropEvent, (DragEventHandler)Drop);
+            AssociatedObject.RemoveHandler(DragDrop.DragOverEvent, DragOver);
+            AssociatedObject.RemoveHandler(DragDrop.DragLeaveEvent, DragLeave);
+            AssociatedObject.RemoveHandler(DragDrop.DropEvent, Drop);
             base.OnDetaching();
         }
 
@@ -78,7 +80,7 @@ namespace Stride.Core.Presentation.Behaviors
         private void DragLeave(object sender, DragEventArgs e)
         {
             var position = AssociatedObject.GetCursorRelativePosition();
-            if (position.X <= 0 || position.Y <= 0 || position.X >= AssociatedObject.ActualWidth || position.Y >= AssociatedObject.ActualHeight)
+            if (position.X <= 0 || position.Y <= 0 || position.X >= AssociatedObject.Bounds.Width || position.Y >= AssociatedObject.Bounds.Height)
             {
                 edgeUnderMouse = null;
             }
@@ -116,7 +118,7 @@ namespace Stride.Core.Presentation.Behaviors
 
             while (scrollStarted)
             {
-                    Dispatcher.Invoke(() =>
+                    Dispatcher.UIThread.Invoke(() =>
                     {
                         if (edgeUnderMouse.HasValue)
                         {
@@ -124,16 +126,16 @@ namespace Stride.Core.Presentation.Behaviors
                             switch (edgeUnderMouse.Value)
                             {
                                 case Dock.Left:
-                                    scrollViewer.ScrollToHorizontalOffset(scrollViewer.HorizontalOffset - offset);
+                                    scrollViewer.Offset = new Vector(scrollViewer.Offset.X - offset, scrollViewer.Offset.Y);
                                     break;
                                 case Dock.Top:
-                                    scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset - offset);
+                                    scrollViewer.Offset = new Vector(scrollViewer.Offset.X + offset, scrollViewer.Offset.Y);
                                     break;
                                 case Dock.Right:
-                                    scrollViewer.ScrollToHorizontalOffset(scrollViewer.HorizontalOffset + offset);
+                                    scrollViewer.Offset = new Vector(scrollViewer.Offset.X, scrollViewer.Offset.Y - offset);
                                     break;
                                 case Dock.Bottom:
-                                    scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset + offset);
+                                    scrollViewer.Offset = new Vector(scrollViewer.Offset.X, scrollViewer.Offset.Y + offset);
                                     break;
                                 default:
                                     throw new ArgumentOutOfRangeException();
@@ -151,11 +153,11 @@ namespace Stride.Core.Presentation.Behaviors
             var scrollViewer = AssociatedObject.FindVisualChildOfType<ScrollViewer>();
             if (point.X >= 0 && point.X <= ScrollBorderThickness.Left)
                 return Dock.Left;
-            if (point.X <= scrollViewer.RenderSize.Width && scrollViewer.RenderSize.Width - point.X <= ScrollBorderThickness.Right)
+            if (point.X <= scrollViewer.Width && scrollViewer.Width - point.X <= ScrollBorderThickness.Right)
                 return Dock.Right;
             if (point.Y >= 0 && point.Y <= ScrollBorderThickness.Top)
                 return Dock.Top;
-            if (point.Y <= scrollViewer.RenderSize.Height && scrollViewer.RenderSize.Height - point.Y <= ScrollBorderThickness.Bottom)
+            if (point.Y <= scrollViewer.Height && scrollViewer.Height - point.Y <= ScrollBorderThickness.Bottom)
                 return Dock.Bottom;
 
             return null;

@@ -5,10 +5,10 @@ using Stride.Core.Mathematics;
 
 namespace Stride.Core.Presentation.Extensions
 {
-    using WindowsPoint = System.Windows.Point;
-    using WindowsRect = System.Windows.Rect;
-    using WindowsThickness = System.Windows.Thickness;
-    using WindowsVector = System.Windows.Vector;
+    using WindowsPoint = Avalonia.Point;
+    using WindowsRect = Avalonia.Rect;
+    using WindowsThickness = Avalonia.Thickness;
+    using WindowsVector = Avalonia.Vector;
 
     public static class MathExtensions
     {

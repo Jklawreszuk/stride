@@ -2,127 +2,132 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
 using System.Reflection;
-using System.Windows;
-using System.Windows.Data;
 using System.Windows.Input;
-
+using Avalonia;
+using Avalonia.Data;
+using Avalonia.Input;
+using Avalonia.Interactivity;
+using Avalonia.Markup.Xaml.Templates;
 using Stride.Core.Presentation.Core;
 using Stride.Core.Presentation.Internal;
+using CancelRoutedEventArgs = Stride.Core.Presentation.Core.CancelRoutedEventArgs;
 
 namespace Stride.Core.Presentation.Controls
 {
     /// <summary>
-    /// An implementation of the <see cref="System.Windows.Controls.TextBox"/> control
+    /// An implementation of the <see cref="Avalonia.Controls.TextBox"/> control
     /// that provides additional features such as a proper validation/cancellation workflow.
     /// </summary>
-    public class TextBoxBase : System.Windows.Controls.TextBox
+    public class TextBoxBase : Avalonia.Controls.TextBox
     {
         private bool validating;
+        private NavigationMethod lastNavMethod;
 
         /// <summary>
         /// Identifies the <see cref="HasText"/> dependency property.
         /// </summary>
-        private static readonly DependencyPropertyKey HasTextPropertyKey = DependencyProperty.RegisterReadOnly("HasText", typeof(bool), typeof(TextBoxBase), new PropertyMetadata(BooleanBoxes.FalseBox));
+        private static readonly AvaloniaProperty HasTextPropertyKey = AvaloniaProperty.RegisterDirect<TextBoxBase, bool>("HasText", o => o.HasText);
 
         /// <summary>
         /// Identifies the <see cref="GetFocusOnLoad"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty GetFocusOnLoadProperty = DependencyProperty.Register("GetFocusOnLoad", typeof(bool), typeof(TextBoxBase), new PropertyMetadata(BooleanBoxes.FalseBox));
+        public static readonly AvaloniaProperty GetFocusOnLoadProperty = AvaloniaProperty.Register<TextBoxBase, bool>("GetFocusOnLoad");
 
         /// <summary>
         /// Identifies the <see cref="SelectAllOnFocus"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty SelectAllOnFocusProperty = DependencyProperty.Register("SelectAllOnFocus", typeof(bool), typeof(TextBoxBase), new PropertyMetadata(BooleanBoxes.FalseBox));
+        public static readonly AvaloniaProperty SelectAllOnFocusProperty = AvaloniaProperty.Register<TextBoxBase, bool>("SelectAllOnFocus");
 
         /// <summary>
         /// Identifies the <see cref="WatermarkContent"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty WatermarkContentProperty = DependencyProperty.Register("WatermarkContent", typeof(object), typeof(TextBoxBase), new PropertyMetadata(null));
+        public static readonly AvaloniaProperty WatermarkContentProperty = AvaloniaProperty.Register<TextBoxBase, object>("WatermarkContent");
 
         /// <summary>
         /// Identifies the <see cref="WatermarkContentTemplate"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty WatermarkContentTemplateProperty = DependencyProperty.Register("WatermarkContentTemplate", typeof(DataTemplate), typeof(TextBoxBase), new PropertyMetadata(null));
+        public static readonly AvaloniaProperty WatermarkContentTemplateProperty = AvaloniaProperty.Register<TextBoxBase, DataTemplate>("WatermarkContentTemplate");
 
         /// <summary>
         /// Identifies the <see cref="ValidateWithEnter"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ValidateWithEnterProperty = DependencyProperty.Register("ValidateWithEnter", typeof(bool), typeof(TextBoxBase), new PropertyMetadata(BooleanBoxes.TrueBox));
+        public static readonly AvaloniaProperty ValidateWithEnterProperty = AvaloniaProperty.Register<TextBoxBase, bool>("ValidateWithEnter", true);
 
         /// <summary>
         /// Identifies the <see cref="ValidateOnTextChange"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ValidateOnTextChangeProperty = DependencyProperty.Register("ValidateOnTextChange", typeof(bool), typeof(TextBoxBase), new PropertyMetadata(BooleanBoxes.FalseBox));
+        public static readonly AvaloniaProperty ValidateOnTextChangeProperty = AvaloniaProperty.Register<TextBoxBase, bool>("ValidateOnTextChange");
 
         /// <summary>
         /// Identifies the <see cref="ValidateOnLostFocus"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ValidateOnLostFocusProperty = DependencyProperty.Register("ValidateOnLostFocus", typeof(bool), typeof(TextBoxBase), new PropertyMetadata(BooleanBoxes.TrueBox, OnLostFocusActionChanged));
+        public static readonly AvaloniaProperty ValidateOnLostFocusProperty = AvaloniaProperty.Register<TextBoxBase, bool>("ValidateOnLostFocus", true);
 
         /// <summary>
         /// Identifies the <see cref="CancelWithEscape"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty CancelWithEscapeProperty = DependencyProperty.Register("CancelWithEscape", typeof(bool), typeof(TextBoxBase), new PropertyMetadata(BooleanBoxes.TrueBox));
+        public static readonly AvaloniaProperty CancelWithEscapeProperty = AvaloniaProperty.Register<TextBoxBase, bool>("CancelWithEscape", true);
 
         /// <summary>
         /// Identifies the <see cref="CancelOnLostFocus"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty CancelOnLostFocusProperty = DependencyProperty.Register("CancelOnLostFocus", typeof(bool), typeof(TextBoxBase), new PropertyMetadata(BooleanBoxes.FalseBox, OnLostFocusActionChanged));
+        public static readonly AvaloniaProperty CancelOnLostFocusProperty = AvaloniaProperty.Register<TextBoxBase, bool>("CancelOnLostFocus");
 
         /// <summary>
         /// Identifies the <see cref="ValidateCommand"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ValidateCommandProperty = DependencyProperty.Register("ValidateCommand", typeof(ICommand), typeof(TextBoxBase));
+        public static readonly AvaloniaProperty ValidateCommandProperty = AvaloniaProperty.Register<TextBoxBase, ICommand>("ValidateCommand");
 
         /// <summary>
         /// Identifies the <see cref="ValidateCommandParameter"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ValidateCommandParameterProprty = DependencyProperty.Register("ValidateCommandParameter", typeof(object), typeof(TextBoxBase));
+        public static readonly AvaloniaProperty ValidateCommandParameterProprty = AvaloniaProperty.Register<TextBoxBase, object>("ValidateCommandParameter");
 
         /// <summary>
         /// Identifies the <see cref="CancelCommand"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty CancelCommandProperty = DependencyProperty.Register("CancelCommand", typeof(ICommand), typeof(TextBoxBase));
+        public static readonly AvaloniaProperty CancelCommandProperty = AvaloniaProperty.Register<TextBoxBase, ICommand>("CancelCommand");
 
         /// <summary>
         /// Identifies the <see cref="CancelCommandParameter"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty CancelCommandParameterProprty = DependencyProperty.Register("CancelCommandParameter", typeof(object), typeof(TextBoxBase));
+        public static readonly AvaloniaProperty CancelCommandParameterProprty = AvaloniaProperty.Register<TextBoxBase, object>("CancelCommandParameter");
 
         /// <summary>
         /// Raised just before the TextBox changes are validated. This event is cancellable
         /// </summary>
-        public static readonly RoutedEvent ValidatingEvent = EventManager.RegisterRoutedEvent("Validating", RoutingStrategy.Bubble, typeof(CancelRoutedEventHandler), typeof(TextBox));
+        public static readonly RoutedEvent ValidatingEvent = RoutedEvent.Register<TextBoxBase, RoutedEventArgs>("Validating", RoutingStrategies.Bubble);
 
         /// <summary>
         /// Raised when TextBox changes have been validated.
         /// </summary>
-        public static readonly RoutedEvent ValidatedEvent = EventManager.RegisterRoutedEvent("Validated", RoutingStrategy.Bubble, typeof(ValidationRoutedEventHandler<string>), typeof(TextBox));
+        public static readonly RoutedEvent ValidatedEvent = RoutedEvent.Register<TextBoxBase, RoutedEventArgs>("Validated", RoutingStrategies.Bubble);
 
         /// <summary>
         /// Raised when the TextBox changes are cancelled.
         /// </summary>
-        public static readonly RoutedEvent CancelledEvent = EventManager.RegisterRoutedEvent("Cancelled", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(TextBox));
+        public static readonly RoutedEvent CancelledEvent = RoutedEvent.Register<TextBoxBase, RoutedEventArgs>("Cancelled", RoutingStrategies.Bubble);
 
         /// <summary>
         /// Raised when TextBox Text to value binding fails during validation.
         /// </summary>
-        public static readonly RoutedEvent TextToSourceValueConversionFailedEvent = EventManager.RegisterRoutedEvent("TextBindingFailed", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(TextBox));
+        public static readonly RoutedEvent TextToSourceValueConversionFailedEvent = RoutedEvent.Register<TextBoxBase, RoutedEventArgs>("TextBindingFailed", RoutingStrategies.Bubble);
 
         static TextBoxBase()
         {
-            TextProperty.OverrideMetadata(typeof(TextBoxBase), new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.Journal, OnTextChanged, null, true, UpdateSourceTrigger.Explicit));
+            TextProperty.Changed.AddClassHandler<AvaloniaObject>(OnTextChanged);
         }
 
         public TextBoxBase()
         {
             Loaded += OnLoaded;
+            AddHandler(PointerPressedEvent, OnPreviewKeyDown, RoutingStrategies.Tunnel);
         }
 
         /// <summary>
         /// Gets whether this TextBox contains a non-empty text.
         /// </summary>
-        public bool HasText { get { return (bool)GetValue(HasTextPropertyKey.DependencyProperty); } private set { SetValue(HasTextPropertyKey, value.Box()); } }
+        public bool HasText { get { return (bool)GetValue(HasTextPropertyKey); } private set { SetValue(HasTextPropertyKey, value.Box()); } }
 
         /// <summary>
         /// Gets or sets whether the associated text box should get keyboard focus when this behavior is attached.
@@ -202,12 +207,12 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Raised when the TextBox changes are cancelled.
         /// </summary>
-        public event RoutedEventHandler Cancelled { add { AddHandler(CancelledEvent, value); } remove { RemoveHandler(CancelledEvent, value); } }
+        public event EventHandler<RoutedEventArgs> Cancelled { add { AddHandler(CancelledEvent, value); } remove { RemoveHandler(CancelledEvent, value); } }
 
         /// <summary>
         /// Raised when TextBox Text to value binding fails during validation.
         /// </summary>
-        public event RoutedEventHandler TextToSourceValueConversionFailed { add { AddHandler(TextToSourceValueConversionFailedEvent, value); } remove { RemoveHandler(TextToSourceValueConversionFailedEvent, value); } }
+        public event EventHandler<RoutedEventArgs> TextToSourceValueConversionFailed { add { AddHandler(TextToSourceValueConversionFailedEvent, value); } remove { RemoveHandler(TextToSourceValueConversionFailedEvent, value); } }
 
         protected internal bool HasChangesToValidate { get; set; }
 
@@ -239,7 +244,7 @@ namespace Stride.Core.Presentation.Controls
             var coercedText = CoerceTextForValidation(Text);
             SetCurrentValue(TextProperty, coercedText);
 
-            BindingExpression expression = GetBindingExpression(TextProperty);
+            BindingExpressionBase expression = BindingOperations.GetBindingExpressionBase(this, TextProperty);
             try
             {
                 expression?.UpdateSource();
@@ -279,7 +284,7 @@ namespace Stride.Core.Presentation.Controls
             if (IsReadOnly)
                 return;
 
-            BindingExpression expression = GetBindingExpression(TextProperty);
+            BindingExpressionBase expression = BindingOperations.GetBindingExpressionBase(this, TextProperty);
             expression?.UpdateTarget();
 
             ClearUndoStack();
@@ -342,10 +347,8 @@ namespace Stride.Core.Presentation.Controls
         }
 
         /// <inheritdoc/>
-        protected override void OnPreviewKeyDown(KeyEventArgs e)
+        protected void OnPreviewKeyDown(KeyEventArgs e)
         {
-            base.OnPreviewKeyDown(e);
-
             if (IsReadOnly)
             {
                 e.Handled = true;
@@ -362,17 +365,18 @@ namespace Stride.Core.Presentation.Controls
             }
         }
 
-        protected override void OnGotKeyboardFocus(KeyboardFocusChangedEventArgs e)
+        protected override void OnGotFocus(GotFocusEventArgs e)
         {
-            base.OnGotKeyboardFocus(e);
-
-            if (SelectAllOnFocus)
+            lastNavMethod = e.NavigationMethod;
+            if (SelectAllOnFocus && e.NavigationMethod == NavigationMethod.Tab)
             {
                 SelectAll();
             }
+
+            base.OnGotFocus(e);
         }
 
-        protected override void OnMouseDown(MouseButtonEventArgs e)
+        protected override void OnPointerPressed(PointerPressedEventArgs e)
         {
             if (!IsKeyboardFocusWithin)
             {
@@ -384,11 +388,15 @@ namespace Stride.Core.Presentation.Controls
                 }
                 Focus();
             }
-            base.OnMouseDown(e);
+            base.OnPointerPressed(e);
         }
 
-        protected override void OnLostKeyboardFocus(KeyboardFocusChangedEventArgs e)
+        protected override void OnLostFocus(RoutedEventArgs e)
         {
+            if (lastNavMethod != NavigationMethod.Tab)
+            {
+                return;
+            }
             if (ValidateOnLostFocus && !validating)
             {
                 Validate();
@@ -397,8 +405,8 @@ namespace Stride.Core.Presentation.Controls
             {
                 Cancel();
             }
-
-            base.OnLostKeyboardFocus(e);
+            
+            base.OnLostFocus(e);
         }
 
         private void ClearUndoStack()
@@ -412,11 +420,11 @@ namespace Stride.Core.Presentation.Controls
         {
             if (GetFocusOnLoad)
             {
-                Keyboard.Focus(this);
+                Focus();
             }
         }
 
-        private static void OnTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnTextChanged(AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var input = (TextBoxBase)d;
             input.HasText = e.NewValue != null && ((string)e.NewValue).Length > 0;
@@ -428,7 +436,7 @@ namespace Stride.Core.Presentation.Controls
                 input.Validate();
         }
 
-        private static void OnLostFocusActionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnLostFocusActionChanged(AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var input = (TextBoxBase)d;
             if (e.Property == ValidateOnLostFocusProperty && (bool)e.NewValue)

@@ -1,99 +1,98 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System.Collections.Generic;
-using System.Windows;
-
-using Stride.Core.Mathematics;
+using Avalonia;
+using Matrix = Stride.Core.Mathematics.Matrix;
 
 namespace Stride.Core.Presentation.Controls
 {
     public class MatrixEditor : VectorEditorBase<Matrix?>
     {
-        private static readonly Dictionary<DependencyProperty, int> PropertyToIndex;
+        private static readonly Dictionary<AvaloniaProperty, int> PropertyToIndex;
 
         /// <summary>
         /// Identifies the <see cref="M11"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty M11Property = DependencyProperty.Register("M11", typeof(float?), typeof(MatrixEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
+        public static readonly AvaloniaProperty M11Property = AvaloniaProperty.Register<MatrixEditor, float?>("M11");
 
         /// <summary>
         /// Identifies the <see cref="M12"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty M12Property = DependencyProperty.Register("M12", typeof(float?), typeof(MatrixEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
-
+        public static readonly AvaloniaProperty M12Property = AvaloniaProperty.Register<MatrixEditor, float?>("M12");
+        
         /// <summary>
         /// Identifies the <see cref="M13"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty M13Property = DependencyProperty.Register("M13", typeof(float?), typeof(MatrixEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
-
+        public static readonly AvaloniaProperty M13Property = AvaloniaProperty.Register<MatrixEditor, float?>("M13");
+        
         /// <summary>
         /// Identifies the <see cref="M14"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty M14Property = DependencyProperty.Register("M14", typeof(float?), typeof(MatrixEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
-
+        public static readonly AvaloniaProperty M14Property = AvaloniaProperty.Register<MatrixEditor, float?>("M14");
+        
         /// <summary>
         /// Identifies the <see cref="M21"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty M21Property = DependencyProperty.Register("M21", typeof(float?), typeof(MatrixEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
-
+        public static readonly AvaloniaProperty M21Property = AvaloniaProperty.Register<MatrixEditor, float?>("M21");
+        
         /// <summary>
         /// Identifies the <see cref="M22"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty M22Property = DependencyProperty.Register("M22", typeof(float?), typeof(MatrixEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
-
+        public static readonly AvaloniaProperty M22Property = AvaloniaProperty.Register<MatrixEditor, float?>("M22");
+        
         /// <summary>
         /// Identifies the <see cref="M23"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty M23Property = DependencyProperty.Register("M23", typeof(float?), typeof(MatrixEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
-
+        public static readonly AvaloniaProperty M23Property = AvaloniaProperty.Register<MatrixEditor, float?>("M23");
+        
         /// <summary>
         /// Identifies the <see cref="M24"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty M24Property = DependencyProperty.Register("M24", typeof(float?), typeof(MatrixEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
-
+        public static readonly AvaloniaProperty M24Property = AvaloniaProperty.Register<MatrixEditor, float?>("M24");
+        
         /// <summary>
         /// Identifies the <see cref="M31"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty M31Property = DependencyProperty.Register("M31", typeof(float?), typeof(MatrixEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
-
+        public static readonly AvaloniaProperty M31Property = AvaloniaProperty.Register<MatrixEditor, float?>("M31");
+        
         /// <summary>
         /// Identifies the <see cref="M32"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty M32Property = DependencyProperty.Register("M32", typeof(float?), typeof(MatrixEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
-
+        public static readonly AvaloniaProperty M32Property = AvaloniaProperty.Register<MatrixEditor, float?>("M32");
+        
         /// <summary>
         /// Identifies the <see cref="M33"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty M33Property = DependencyProperty.Register("M33", typeof(float?), typeof(MatrixEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
-
+        public static readonly AvaloniaProperty M33Property = AvaloniaProperty.Register<MatrixEditor, float?>("M33");
+        
         /// <summary>
         /// Identifies the <see cref="M34"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty M34Property = DependencyProperty.Register("M34", typeof(float?), typeof(MatrixEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
-
+        public static readonly AvaloniaProperty M34Property = AvaloniaProperty.Register<MatrixEditor, float?>("M34");
+        
         /// <summary>
         /// Identifies the <see cref="M41"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty M41Property = DependencyProperty.Register("M41", typeof(float?), typeof(MatrixEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
-
+        public static readonly AvaloniaProperty M41Property = AvaloniaProperty.Register<MatrixEditor, float?>("M41");
+        
         /// <summary>
         /// Identifies the <see cref="M42"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty M42Property = DependencyProperty.Register("M42", typeof(float?), typeof(MatrixEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
-
+        public static readonly AvaloniaProperty M42Property = AvaloniaProperty.Register<MatrixEditor, float?>("M42");
+        
         /// <summary>
         /// Identifies the <see cref="M43"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty M43Property = DependencyProperty.Register("M43", typeof(float?), typeof(MatrixEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
-
+        public static readonly AvaloniaProperty M43Property = AvaloniaProperty.Register<MatrixEditor, float?>("M43");
+        
         /// <summary>
         /// Identifies the <see cref="M44"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty M44Property = DependencyProperty.Register("M44", typeof(float?), typeof(MatrixEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
-
+        public static readonly AvaloniaProperty M44Property = AvaloniaProperty.Register<MatrixEditor, float?>("M44");
+        
         static MatrixEditor()
         {
-            PropertyToIndex = new Dictionary<DependencyProperty, int> {
+            PropertyToIndex = new Dictionary<AvaloniaProperty, int> {
                 { M11Property, 0 }, { M12Property, 1 }, { M13Property, 2 }, { M14Property, 3 },
                 { M21Property, 4 }, { M22Property, 5 }, { M23Property, 6 }, { M24Property, 7 },
                 { M31Property, 8 }, { M32Property, 9 }, { M33Property, 10 }, { M34Property, 11 },
@@ -194,7 +193,7 @@ namespace Stride.Core.Presentation.Controls
         }
 
         /// <inheritdoc/>
-        protected override Matrix? UpdateValueFromComponent(DependencyProperty property)
+        protected override Matrix? UpdateValueFromComponent(AvaloniaProperty property)
         {
             if (!Value.HasValue || !((float?)GetValue(property)).HasValue)
                 return null;

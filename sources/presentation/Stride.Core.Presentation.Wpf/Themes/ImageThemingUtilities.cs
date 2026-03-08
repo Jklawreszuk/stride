@@ -2,13 +2,11 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
-using System.Windows;
-using System.Windows.Media;
 using Stride.Core.Presentation.Drawing;
 
 namespace Stride.Core.Presentation.Themes
 {
-    using Media = System.Windows.Media;
+    using Media = Avalonia.Media;
 
     public static class ImageThemingUtilities
     {
@@ -28,10 +26,9 @@ namespace Stride.Core.Presentation.Themes
                 if (isDark == IsDark(theme.BackgroundLuminosity))
                     return drawing;
             }
-            var newDrawing = drawing.CloneCurrentValue();
-            TransformParts(newDrawing, theme);
-            ThemeController.SetIsDark(newDrawing, !isDark);
-            return newDrawing;
+            TransformParts(drawing, theme);
+            ThemeController.SetIsDark(drawing, !isDark);
+            return drawing;
         }
 
         /// <summary>
@@ -41,18 +38,18 @@ namespace Stride.Core.Presentation.Themes
         /// <param name="theme"></param>
         private static void TransformParts(Media.Drawing drawing, IconTheme theme)
         {
-            if (drawing is GeometryDrawing gd && gd.Brush is SolidColorBrush s)
+            if (drawing is Media.GeometryDrawing gd && gd.Brush is Media.SolidColorBrush s)
             {
                 var hsl = s.Color.ToHslColor();
                 var newL = TransformLuminosity(hsl, theme.BackgroundLuminosity);
                 var newColor = new HslColor(hsl.Hue, hsl.Saturation, newL, hsl.Alpha).ToColor();
                 s.Color = newColor;
             }
-            else if (drawing is DrawingGroup dg)
+            else if (drawing is Media.DrawingGroup dg)
             {
                 foreach (Media.Drawing dr in dg.Children)
                 {
-                    if (dr is DrawingGroup || dr is GeometryDrawing)
+                    if (dr is Media.DrawingGroup or Media.GeometryDrawing)
                     {
                         TransformParts(dr, theme);
                     }
