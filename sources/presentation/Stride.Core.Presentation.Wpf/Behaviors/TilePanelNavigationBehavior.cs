@@ -6,6 +6,10 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+using Avalonia;
+using Avalonia.Input;
+using Avalonia.Layout;
+using Avalonia.Styling;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Controls;
 
@@ -17,7 +21,7 @@ namespace Stride.Core.Presentation.Behaviors
 
         protected override void OnAttachedAndLoaded()
         {
-            DependencyObject parent = AssociatedObject;
+            AvaloniaObject parent = AssociatedObject;
             while (parent != null)
             {
                 parent = VisualTreeHelper.GetParent(parent);
@@ -55,7 +59,7 @@ namespace Stride.Core.Presentation.Behaviors
                 return;
 
             // Find the currently focused element (logical focus)
-            var focusedElement = FocusManager.GetFocusedElement(window) as DependencyObject;
+            var focusedElement = FocusManager.GetFocusedElement(window) as AvaloniaObject;
             if (focusedElement == null)
                 return;
 

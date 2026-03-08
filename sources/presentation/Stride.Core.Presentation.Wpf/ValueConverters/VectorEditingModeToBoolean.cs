@@ -2,32 +2,23 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
 using System.Globalization;
-using System.Windows.Data;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Controls;
 
 namespace Stride.Core.Presentation.ValueConverters
 {
-    [ValueConversion(typeof(VectorEditingMode), typeof(bool?))]
     public class VectorEditingModeToBool : ValueConverterBase<VectorEditingModeToBool>
     {
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var toolMode = (VectorEditingMode)System.Convert.ChangeType(value, typeof(VectorEditingMode));
-            switch (toolMode)
+            return toolMode switch
             {
-                case VectorEditingMode.Normal:
-                    return false;
-
-                case VectorEditingMode.AllComponents:
-                    return true;
-
-                case VectorEditingMode.Length:
-                    return null;
-
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+                VectorEditingMode.Normal => false,
+                VectorEditingMode.AllComponents => true,
+                VectorEditingMode.Length => null,
+                _ => throw new ArgumentOutOfRangeException()
+            };
         }
 
         [NotNull]

@@ -5,12 +5,14 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Documents;
-using System.Windows.Media;
-using System.Windows.Threading;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Documents;
+using Avalonia.Controls.Metadata;
+using Avalonia.Interactivity;
+using Avalonia.Media;
+using Avalonia.Media.TextFormatting;
+using Avalonia.Threading;
 using Stride.Core.Annotations;
 using Stride.Core.Diagnostics;
 using Stride.Core.Extensions;
@@ -38,117 +40,117 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="LogMessages"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty LogMessagesProperty = DependencyProperty.Register("LogMessages", typeof(ICollection<ILogMessage>), typeof(TextLogViewer), new PropertyMetadata(null, LogMessagesPropertyChanged));
+        public static readonly AvaloniaProperty LogMessagesProperty = AvaloniaProperty.Register("LogMessages", typeof(ICollection<ILogMessage>), typeof(TextLogViewer), new PropertyMetadata(null, LogMessagesPropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="AutoScroll"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty AutoScrollProperty = DependencyProperty.Register("AutoScroll", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox));
+        public static readonly AvaloniaProperty AutoScrollProperty = AvaloniaProperty.Register("AutoScroll", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox));
 
         /// <summary>
         /// Identifies the <see cref="IsToolBarVisible"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty IsToolBarVisibleProperty = DependencyProperty.Register("IsToolBarVisible", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox));
+        public static readonly AvaloniaProperty IsToolBarVisibleProperty = AvaloniaProperty.Register("IsToolBarVisible", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox));
 
         /// <summary>
         /// Identifies the <see cref="CanClearLog"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty CanClearLogProperty = DependencyProperty.Register("CanClearLog", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox));
+        public static readonly AvaloniaProperty CanClearLogProperty = AvaloniaProperty.Register("CanClearLog", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox));
 
         /// <summary>
         /// Identifies the <see cref="CanFilterLog"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty CanFilterLogProperty = DependencyProperty.Register("CanFilterLog", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox));
+        public static readonly AvaloniaProperty CanFilterLogProperty = AvaloniaProperty.Register("CanFilterLog", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox));
 
         /// <summary>
         /// Identifies the <see cref="CanSearchLog"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty CanSearchLogProperty = DependencyProperty.Register("CanSearchLog", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox));
+        public static readonly AvaloniaProperty CanSearchLogProperty = AvaloniaProperty.Register("CanSearchLog", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox));
 
         /// <summary>
         /// Identifies the <see cref="SearchToken"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty SearchTokenProperty = DependencyProperty.Register("SearchToken", typeof(string), typeof(TextLogViewer), new PropertyMetadata("", SearchTokenChanged));
+        public static readonly AvaloniaProperty SearchTokenProperty = AvaloniaProperty.Register("SearchToken", typeof(string), typeof(TextLogViewer), new PropertyMetadata("", SearchTokenChanged));
 
         /// <summary>
         /// Identifies the <see cref="SearchMatchCase"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty SearchMatchCaseProperty = DependencyProperty.Register("SearchMatchCase", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.FalseBox, SearchTokenChanged));
+        public static readonly AvaloniaProperty SearchMatchCaseProperty = AvaloniaProperty.Register("SearchMatchCase", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.FalseBox, SearchTokenChanged));
 
         /// <summary>
         /// Identifies the <see cref="SearchMatchWord"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty SearchMatchWordProperty = DependencyProperty.Register("SearchMatchWord", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.FalseBox, SearchTokenChanged));
+        public static readonly AvaloniaProperty SearchMatchWordProperty = AvaloniaProperty.Register("SearchMatchWord", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.FalseBox, SearchTokenChanged));
 
         /// <summary>
         /// Identifies the <see cref="SearchMatchBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty SearchMatchBrushProperty = DependencyProperty.Register("SearchMatchBrush", typeof(Brush), typeof(TextLogViewer), new PropertyMetadata(Brushes.LightSteelBlue, TextPropertyChanged));
+        public static readonly AvaloniaProperty SearchMatchBrushProperty = AvaloniaProperty.Register("SearchMatchBrush", typeof(Brush), typeof(TextLogViewer), new PropertyMetadata(Brushes.LightSteelBlue, TextPropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="DebugBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty DebugBrushProperty = DependencyProperty.Register("DebugBrush", typeof(Brush), typeof(TextLogViewer), new PropertyMetadata(Brushes.White, TextPropertyChanged));
+        public static readonly AvaloniaProperty DebugBrushProperty = AvaloniaProperty.Register("DebugBrush", typeof(Brush), typeof(TextLogViewer), new PropertyMetadata(Brushes.White, TextPropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="VerboseBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty VerboseBrushProperty = DependencyProperty.Register("VerboseBrush", typeof(Brush), typeof(TextLogViewer), new PropertyMetadata(Brushes.White, TextPropertyChanged));
+        public static readonly AvaloniaProperty VerboseBrushProperty = AvaloniaProperty.Register("VerboseBrush", typeof(Brush), typeof(TextLogViewer), new PropertyMetadata(Brushes.White, TextPropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="InfoBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty InfoBrushProperty = DependencyProperty.Register("InfoBrush", typeof(Brush), typeof(TextLogViewer), new PropertyMetadata(Brushes.White, TextPropertyChanged));
+        public static readonly AvaloniaProperty InfoBrushProperty = AvaloniaProperty.Register("InfoBrush", typeof(Brush), typeof(TextLogViewer), new PropertyMetadata(Brushes.White, TextPropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="WarningBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty WarningBrushProperty = DependencyProperty.Register("WarningBrush", typeof(Brush), typeof(TextLogViewer), new PropertyMetadata(Brushes.White, TextPropertyChanged));
+        public static readonly AvaloniaProperty WarningBrushProperty = AvaloniaProperty.Register("WarningBrush", typeof(Brush), typeof(TextLogViewer), new PropertyMetadata(Brushes.White, TextPropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="ErrorBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ErrorBrushProperty = DependencyProperty.Register("ErrorBrush", typeof(Brush), typeof(TextLogViewer), new PropertyMetadata(Brushes.White, TextPropertyChanged));
+        public static readonly AvaloniaProperty ErrorBrushProperty = AvaloniaProperty.Register("ErrorBrush", typeof(Brush), typeof(TextLogViewer), new PropertyMetadata(Brushes.White, TextPropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="FatalBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty FatalBrushProperty = DependencyProperty.Register("FatalBrush", typeof(Brush), typeof(TextLogViewer), new PropertyMetadata(Brushes.White, TextPropertyChanged));
+        public static readonly AvaloniaProperty FatalBrushProperty = AvaloniaProperty.Register("FatalBrush", typeof(Brush), typeof(TextLogViewer), new PropertyMetadata(Brushes.White, TextPropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="ShowDebugMessages"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ShowDebugMessagesProperty = DependencyProperty.Register("ShowDebugMessages", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox, TextPropertyChanged));
+        public static readonly AvaloniaProperty ShowDebugMessagesProperty = AvaloniaProperty.Register("ShowDebugMessages", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox, TextPropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="ShowVerboseMessages"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ShowVerboseMessagesProperty = DependencyProperty.Register("ShowVerboseMessages", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox, TextPropertyChanged));
+        public static readonly AvaloniaProperty ShowVerboseMessagesProperty = AvaloniaProperty.Register("ShowVerboseMessages", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox, TextPropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="ShowInfoMessages"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ShowInfoMessagesProperty = DependencyProperty.Register("ShowInfoMessages", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox, TextPropertyChanged));
+        public static readonly AvaloniaProperty ShowInfoMessagesProperty = AvaloniaProperty.Register("ShowInfoMessages", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox, TextPropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="ShowWarningMessages"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ShowWarningMessagesProperty = DependencyProperty.Register("ShowWarningMessages", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox, TextPropertyChanged));
+        public static readonly AvaloniaProperty ShowWarningMessagesProperty = AvaloniaProperty.Register("ShowWarningMessages", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox, TextPropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="ShowErrorMessages"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ShowErrorMessagesProperty = DependencyProperty.Register("ShowErrorMessages", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox, TextPropertyChanged));
+        public static readonly AvaloniaProperty ShowErrorMessagesProperty = AvaloniaProperty.Register("ShowErrorMessages", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox, TextPropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="ShowFatalMessages"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ShowFatalMessagesProperty = DependencyProperty.Register("ShowFatalMessages", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox, TextPropertyChanged));
+        public static readonly AvaloniaProperty ShowFatalMessagesProperty = AvaloniaProperty.Register("ShowFatalMessages", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox, TextPropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="ShowStacktrace"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ShowStacktraceProperty = DependencyProperty.Register("ShowStacktrace", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox, TextPropertyChanged));
+        public static readonly AvaloniaProperty ShowStacktraceProperty = AvaloniaProperty.Register("ShowStacktrace", typeof(bool), typeof(TextLogViewer), new PropertyMetadata(BooleanBoxes.TrueBox, TextPropertyChanged));
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TextLogViewer"/> class.
@@ -507,7 +509,7 @@ namespace Stride.Core.Presentation.Controls
             }
         }
 
-        private static void TextPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void TextPropertyChanged(AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var logViewer = (TextLogViewer)d;
             logViewer.ResetText();
@@ -517,7 +519,7 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Raised when the <see cref="LogMessages"/> dependency property is changed.
         /// </summary>
-        private static void LogMessagesPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void LogMessagesPropertyChanged(AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var logViewer = (TextLogViewer)d;
             var oldValue = e.OldValue as ICollection<ILogMessage>;
@@ -548,7 +550,7 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Raised when the <see cref="SearchToken"/> property is changed.
         /// </summary>
-        private static void SearchTokenChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void SearchTokenChanged(AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var logViewer = (TextLogViewer)d;
             logViewer.ResetText();

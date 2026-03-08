@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Media;
 using Stride.Core.Annotations;
 
 namespace Stride.Core.Presentation.Controls
@@ -22,74 +22,74 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="TextTrimming"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty TextTrimmingProperty = DependencyProperty.RegisterAttached("TextTrimming", typeof(TextTrimming), typeof(Trimming), new PropertyMetadata(TextTrimming.None));
+        public static readonly AvaloniaProperty TextTrimmingProperty = AvaloniaProperty.RegisterAttached("TextTrimming", typeof(TextTrimming), typeof(Trimming), new PropertyMetadata(TextTrimming.None));
 
         /// <summary>
         /// Identifies the <see cref="TrimmingSource"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty TrimmingSourceProperty = DependencyProperty.RegisterAttached("TrimmingSource", typeof(TrimmingSource), typeof(Trimming), new PropertyMetadata(TrimmingSource.End));
+        public static readonly AvaloniaProperty TrimmingSourceProperty = AvaloniaProperty.RegisterAttached("TrimmingSource", typeof(TrimmingSource), typeof(Trimming), new PropertyMetadata(TrimmingSource.End));
 
         /// <summary>
         /// Identifies the <see cref="WordSeparators"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty WordSeparatorsProperty = DependencyProperty.RegisterAttached("WordSeparators", typeof(string), typeof(Trimming), new PropertyMetadata(" \t"));
+        public static readonly AvaloniaProperty WordSeparatorsProperty = AvaloniaProperty.RegisterAttached("WordSeparators", typeof(string), typeof(Trimming), new PropertyMetadata(" \t"));
 
         /// <summary>
-        /// Gets the current value of the <see cref="TextTrimming"/> dependency property attached to the given <see cref="DependencyObject"/>.
+        /// Gets the current value of the <see cref="TextTrimming"/> dependency property attached to the given <see cref="AvaloniaObject"/>.
         /// </summary>
-        /// <param name="target">The target <see cref="DependencyObject"/>.</param>
+        /// <param name="target">The target <see cref="AvaloniaObject"/>.</param>
         /// <returns>The value of the <see cref="TextTrimming"/> dependency property.</returns>
-        public static TextTrimming GetTextTrimming([NotNull] DependencyObject target)
+        public static TextTrimming GetTextTrimming([NotNull] AvaloniaObject target)
         {
             return (TextTrimming)target.GetValue(TextTrimmingProperty);
         }
 
         /// <summary>
-        /// Sets the value of the <see cref="TextTrimming"/> dependency property attached to the given <see cref="DependencyObject"/>.
+        /// Sets the value of the <see cref="TextTrimming"/> dependency property attached to the given <see cref="AvaloniaObject"/>.
         /// </summary>
-        /// <param name="target">The target <see cref="DependencyObject"/>.</param>
+        /// <param name="target">The target <see cref="AvaloniaObject"/>.</param>
         /// <param name="value">The value to set.</param>
-        public static void SetTextTrimming([NotNull] DependencyObject target, TextTrimming value)
+        public static void SetTextTrimming([NotNull] AvaloniaObject target, TextTrimming value)
         {
             target.SetValue(TextTrimmingProperty, value);
         }
 
         /// <summary>
-        /// Gets the current value of the <see cref="TrimmingSource"/> dependency property attached to the given <see cref="DependencyObject"/>.
+        /// Gets the current value of the <see cref="TrimmingSource"/> dependency property attached to the given <see cref="AvaloniaObject"/>.
         /// </summary>
-        /// <param name="target">The target <see cref="DependencyObject"/>.</param>
+        /// <param name="target">The target <see cref="AvaloniaObject"/>.</param>
         /// <returns>The value of the <see cref="TrimmingSource"/> dependency property.</returns>
-        public static TrimmingSource GetTrimmingSource([NotNull] DependencyObject target)
+        public static TrimmingSource GetTrimmingSource([NotNull] AvaloniaObject target)
         {
             return (TrimmingSource)target.GetValue(TrimmingSourceProperty);
         }
 
         /// <summary>
-        /// Sets the value of the <see cref="TrimmingSource"/> dependency property attached to the given <see cref="DependencyObject"/>.
+        /// Sets the value of the <see cref="TrimmingSource"/> dependency property attached to the given <see cref="AvaloniaObject"/>.
         /// </summary>
-        /// <param name="target">The target <see cref="DependencyObject"/>.</param>
+        /// <param name="target">The target <see cref="AvaloniaObject"/>.</param>
         /// <param name="value">The value to set.</param>
-        public static void SetTrimmingSource([NotNull] DependencyObject target, TrimmingSource value)
+        public static void SetTrimmingSource([NotNull] AvaloniaObject target, TrimmingSource value)
         {
             target.SetValue(TrimmingSourceProperty, value);
         }
 
         /// <summary>
-        /// Gets the current value of the <see cref="WordSeparators"/> dependency property attached to the given <see cref="DependencyObject"/>.
+        /// Gets the current value of the <see cref="WordSeparators"/> dependency property attached to the given <see cref="AvaloniaObject"/>.
         /// </summary>
-        /// <param name="target">The target <see cref="DependencyObject"/>.</param>
+        /// <param name="target">The target <see cref="AvaloniaObject"/>.</param>
         /// <returns>The value of the <see cref="WordSeparators"/> dependency property.</returns>
-        public static string GetWordSeparators([NotNull] DependencyObject target)
+        public static string GetWordSeparators([NotNull] AvaloniaObject target)
         {
             return (string)target.GetValue(WordSeparatorsProperty);
         }
 
         /// <summary>
-        /// Sets the value of the <see cref="WordSeparators"/> dependency property attached to the given <see cref="DependencyObject"/>.
+        /// Sets the value of the <see cref="WordSeparators"/> dependency property attached to the given <see cref="AvaloniaObject"/>.
         /// </summary>
-        /// <param name="target">The target <see cref="DependencyObject"/>.</param>
+        /// <param name="target">The target <see cref="AvaloniaObject"/>.</param>
         /// <param name="value">The value to set.</param>
-        public static void SetWordSeparators([NotNull] DependencyObject target, string value)
+        public static void SetWordSeparators([NotNull] AvaloniaObject target, string value)
         {
             target.SetValue(WordSeparatorsProperty, value);
         }

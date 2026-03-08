@@ -2,9 +2,8 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
 using System.Globalization;
-using System.Windows;
-using System.Windows.Media;
-
+using Avalonia;
+using Avalonia.Media;
 using Stride.Core.Mathematics;
 using Stride.Core.Presentation.Extensions;
 
@@ -20,14 +19,13 @@ namespace Stride.Core.Presentation.ValueConverters
         /// <inheritdoc/>
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var brush = value as SolidColorBrush;
-            if (brush != null)
+            if (value is SolidColorBrush brush)
                 value = brush.Color;
             
             if (value is Color)
             {
                 var color = (Color)value;
-                if (targetType == typeof(System.Windows.Media.Color))
+                if (targetType == typeof(Avalonia.Media.Color))
                     return color.ToSystemColor();
                 if (targetType == typeof(Color))
                     return color;
@@ -43,7 +41,7 @@ namespace Stride.Core.Presentation.ValueConverters
             if (value is Color3)
             {
                 var color = (Color3)value;
-                if (targetType == typeof(System.Windows.Media.Color))
+                if (targetType == typeof(Avalonia.Media.Color))
                     return color.ToSystemColor();
                 if (targetType == typeof(Color))
                     return (Color)color;
@@ -59,7 +57,7 @@ namespace Stride.Core.Presentation.ValueConverters
             if (value is Color4)
             {
                 var color = (Color4)value;
-                if (targetType == typeof(System.Windows.Media.Color))
+                if (targetType == typeof(Avalonia.Media.Color))
                     return color.ToSystemColor();
                 if (targetType == typeof(Color))
                     return (Color)color;
@@ -72,14 +70,14 @@ namespace Stride.Core.Presentation.ValueConverters
                 if (targetType == typeof(string))
                     return ColorExtensions.RgbaToString(color.ToRgba());
             }
-            if (value is System.Windows.Media.Color)
+            if (value is Avalonia.Media.Color)
             {
-                var wpfColor = (System.Windows.Media.Color)value;
+                var wpfColor = (Avalonia.Media.Color)value;
                 if (targetType.IsAssignableFrom(typeof(SolidColorBrush)))
                     return new SolidColorBrush(wpfColor);
 
                 var color = new Color(wpfColor.R, wpfColor.G, wpfColor.B, wpfColor.A);
-                if (targetType == typeof(System.Windows.Media.Color))
+                if (targetType == typeof(Avalonia.Media.Color))
                     return color;
                 if (targetType == typeof(Color))
                     return color;
@@ -100,9 +98,9 @@ namespace Stride.Core.Presentation.ValueConverters
                     return new Color3(intValue);
                 if (targetType == typeof(Color4))
                     return new Color4(intValue);
-                if (targetType == typeof(System.Windows.Media.Color))
+                if (targetType == typeof(Avalonia.Media.Color))
                 {
-                    return System.Windows.Media.Color.FromArgb(
+                    return Avalonia.Media.Color.FromArgb(
                         (byte)((intValue >> 24) & 255),
                         (byte)(intValue & 255),
                         (byte)((intValue >> 8) & 255),
@@ -110,7 +108,7 @@ namespace Stride.Core.Presentation.ValueConverters
                 }
                 if (targetType.IsAssignableFrom(typeof(SolidColorBrush)))
                 {
-                    return new SolidColorBrush(System.Windows.Media.Color.FromArgb(
+                    return new SolidColorBrush(Avalonia.Media.Color.FromArgb(
                         (byte)((intValue >> 24) & 255),
                         (byte)(intValue & 255),
                         (byte)((intValue >> 8) & 255),

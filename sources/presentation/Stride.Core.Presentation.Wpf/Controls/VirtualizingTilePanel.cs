@@ -1,12 +1,9 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Media;
-using System.Windows.Threading;
-using Stride.Core.Annotations;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Layout;
 
 namespace Stride.Core.Presentation.Controls
 {
@@ -21,7 +18,7 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="Orientation"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty OrientationProperty = DependencyProperty.Register(
+        public static readonly AvaloniaProperty OrientationProperty = AvaloniaProperty.Register(
             "Orientation",
             typeof(Orientation),
             typeof(VirtualizingTilePanel),
@@ -30,7 +27,7 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="MinimumItemSpacing"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty MinimumItemSpacingProperty = DependencyProperty.Register(
+        public static readonly AvaloniaProperty MinimumItemSpacingProperty = AvaloniaProperty.Register(
             "MinimumItemSpacing",
             typeof(double),
             typeof(VirtualizingTilePanel),
@@ -40,7 +37,7 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="MaximumItemSpacing"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty MaximumItemSpacingProperty = DependencyProperty.Register(
+        public static readonly AvaloniaProperty MaximumItemSpacingProperty = AvaloniaProperty.Register(
             "MaximumItemSpacing",
             typeof(double),
             typeof(VirtualizingTilePanel),
@@ -50,7 +47,7 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="ItemSlotSize"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ItemSlotSizeProperty = DependencyProperty.Register(
+        public static readonly AvaloniaProperty ItemSlotSizeProperty = AvaloniaProperty.Register(
             "ItemSlotSize",
             typeof(Size),
             typeof(VirtualizingTilePanel),
@@ -338,7 +335,7 @@ namespace Stride.Core.Presentation.Controls
                 extent = localExtent;
                 ScrollOwner?.InvalidateScrollInfo();
 
-                Dispatcher.CurrentDispatcher.BeginInvoke((Action)InvalidateMeasure);
+                Dispatcher.UIThread.BeginInvoke((Action)InvalidateMeasure);
 
                 SetHorizontalOffset(offset.X);
                 SetVerticalOffset(offset.Y);

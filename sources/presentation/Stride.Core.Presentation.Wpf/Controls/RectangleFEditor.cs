@@ -12,22 +12,22 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="RectX"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty RectXProperty = DependencyProperty.Register("RectX", typeof(float?), typeof(RectangleFEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
+        public static readonly AvaloniaProperty RectXProperty = AvaloniaProperty.Register("RectX", typeof(float?), typeof(RectangleFEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
 
         /// <summary>
         /// Identifies the <see cref="RectY"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty RectYProperty = DependencyProperty.Register("RectY", typeof(float?), typeof(RectangleFEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
+        public static readonly AvaloniaProperty RectYProperty = AvaloniaProperty.Register("RectY", typeof(float?), typeof(RectangleFEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
 
         /// <summary>
         /// Identifies the <see cref="RectWidth"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty RectWidthProperty = DependencyProperty.Register("RectWidth", typeof(float?), typeof(RectangleFEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
+        public static readonly AvaloniaProperty RectWidthProperty = AvaloniaProperty.Register("RectWidth", typeof(float?), typeof(RectangleFEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
 
         /// <summary>
         /// Identifies the <see cref="RectHeight"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty RectHeightProperty = DependencyProperty.Register("RectHeight", typeof(float?), typeof(RectangleFEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
+        public static readonly AvaloniaProperty RectHeightProperty = AvaloniaProperty.Register("RectHeight", typeof(float?), typeof(RectangleFEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
 
         /// <summary>
         /// Gets or sets the X component of the <see cref="RectangleF"/> associated to this control.
@@ -62,7 +62,7 @@ namespace Stride.Core.Presentation.Controls
         }
 
         /// <inheritdoc/>
-        protected override RectangleF? UpdateValueFromComponent(DependencyProperty property)
+        protected override RectangleF? UpdateValueFromComponent(AvaloniaProperty property)
         {
             if (property == RectXProperty)
                 return RectX.HasValue && Value.HasValue ? (RectangleF?)new RectangleF(RectX.Value, Value.Value.Y, Value.Value.Width, Value.Value.Height) : null;

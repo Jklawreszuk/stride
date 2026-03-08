@@ -1,9 +1,8 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using System.Windows;
-using System.Windows.Documents;
-using System.Windows.Media;
+using Avalonia;
+using Avalonia.Media;
 using Stride.Core.Annotations;
 
 namespace Stride.Core.Presentation.Adorners
@@ -16,82 +15,82 @@ namespace Stride.Core.Presentation.Adorners
         /// <summary>
         /// Identifies the <see cref="AcceptBorderBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty AcceptBorderBrushProperty = DependencyProperty.Register("AcceptBorderBrush", typeof(Brush), typeof(HighlightBorderAdorner), new PropertyMetadata(Brushes.PaleGreen, PropertyChanged));
+        public static readonly AvaloniaProperty AcceptBorderBrushProperty = AvaloniaProperty.Register("AcceptBorderBrush", typeof(Brush), typeof(HighlightBorderAdorner), new PropertyMetadata(Brushes.PaleGreen, PropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="AcceptBorderBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty AcceptBorderThicknessProperty = DependencyProperty.Register("AcceptBorderThickness", typeof(double), typeof(HighlightBorderAdorner), new PropertyMetadata(2.0, PropertyChanged));
+        public static readonly AvaloniaProperty AcceptBorderThicknessProperty = AvaloniaProperty.Register("AcceptBorderThickness", typeof(double), typeof(HighlightBorderAdorner), new PropertyMetadata(2.0, PropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="AcceptBorderBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty AcceptBorderCornerRadiusProperty = DependencyProperty.Register("AcceptBorderCornerRadius", typeof(double), typeof(HighlightBorderAdorner), new PropertyMetadata(3.0, PropertyChanged));
+        public static readonly AvaloniaProperty AcceptBorderCornerRadiusProperty = AvaloniaProperty.Register("AcceptBorderCornerRadius", typeof(double), typeof(HighlightBorderAdorner), new PropertyMetadata(3.0, PropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="AcceptBorderBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty AcceptBackgroundBrushProperty = DependencyProperty.Register("AcceptBackgroundBrush", typeof(Brush), typeof(HighlightBorderAdorner), new PropertyMetadata(Brushes.MediumSeaGreen, PropertyChanged));
+        public static readonly AvaloniaProperty AcceptBackgroundBrushProperty = AvaloniaProperty.Register("AcceptBackgroundBrush", typeof(Brush), typeof(HighlightBorderAdorner), new PropertyMetadata(Brushes.MediumSeaGreen, PropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="AcceptBorderBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty AcceptBackgroundOpacityProperty = DependencyProperty.Register("AcceptBackgroundOpacity", typeof(double), typeof(HighlightBorderAdorner), new PropertyMetadata(0.3, PropertyChanged));
+        public static readonly AvaloniaProperty AcceptBackgroundOpacityProperty = AvaloniaProperty.Register("AcceptBackgroundOpacity", typeof(double), typeof(HighlightBorderAdorner), new PropertyMetadata(0.3, PropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="RefuseBorderBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty RefuseBorderBrushProperty = DependencyProperty.Register("RefuseBorderBrush", typeof(Brush), typeof(HighlightBorderAdorner), new PropertyMetadata(Brushes.Red, PropertyChanged));
+        public static readonly AvaloniaProperty RefuseBorderBrushProperty = AvaloniaProperty.Register("RefuseBorderBrush", typeof(Brush), typeof(HighlightBorderAdorner), new PropertyMetadata(Brushes.Red, PropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="RefuseBorderBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty RefuseBorderThicknessProperty = DependencyProperty.Register("RefuseBorderThickness", typeof(double), typeof(HighlightBorderAdorner), new PropertyMetadata(2.0, PropertyChanged));
+        public static readonly AvaloniaProperty RefuseBorderThicknessProperty = AvaloniaProperty.Register("RefuseBorderThickness", typeof(double), typeof(HighlightBorderAdorner), new PropertyMetadata(2.0, PropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="RefuseBorderBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty RefuseBorderCornerRadiusProperty = DependencyProperty.Register("RefuseBorderCornerRadius", typeof(double), typeof(HighlightBorderAdorner), new PropertyMetadata(3.0, PropertyChanged));
+        public static readonly AvaloniaProperty RefuseBorderCornerRadiusProperty = AvaloniaProperty.Register("RefuseBorderCornerRadius", typeof(double), typeof(HighlightBorderAdorner), new PropertyMetadata(3.0, PropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="RefuseBorderBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty RefuseBackgroundBrushProperty = DependencyProperty.Register("RefuseBackgroundBrush", typeof(Brush), typeof(HighlightBorderAdorner), new PropertyMetadata(Brushes.IndianRed, PropertyChanged));
+        public static readonly AvaloniaProperty RefuseBackgroundBrushProperty = AvaloniaProperty.Register("RefuseBackgroundBrush", typeof(Brush), typeof(HighlightBorderAdorner), new PropertyMetadata(Brushes.IndianRed, PropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="RefuseBorderBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty RefuseBackgroundOpacityProperty = DependencyProperty.Register("RefuseBackgroundOpacity", typeof(double), typeof(HighlightBorderAdorner), new PropertyMetadata(0.3, PropertyChanged));
+        public static readonly AvaloniaProperty RefuseBackgroundOpacityProperty = AvaloniaProperty.Register("RefuseBackgroundOpacity", typeof(double), typeof(HighlightBorderAdorner), new PropertyMetadata(0.3, PropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="BorderBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty BorderBrushProperty = DependencyProperty.Register("BorderBrush", typeof(Brush), typeof(HighlightBorderAdorner), new PropertyMetadata(Brushes.SteelBlue, PropertyChanged));
+        public static readonly AvaloniaProperty BorderBrushProperty = AvaloniaProperty.Register("BorderBrush", typeof(Brush), typeof(HighlightBorderAdorner), new PropertyMetadata(Brushes.SteelBlue, PropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="BorderThickness"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty BorderThicknessProperty = DependencyProperty.Register("BorderThickness", typeof(double), typeof(HighlightBorderAdorner), new PropertyMetadata(2.0, PropertyChanged));
+        public static readonly AvaloniaProperty BorderThicknessProperty = AvaloniaProperty.Register("BorderThickness", typeof(double), typeof(HighlightBorderAdorner), new PropertyMetadata(2.0, PropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="BorderCornerRadius"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty BorderCornerRadiusProperty = DependencyProperty.Register("BorderCornerRadius", typeof(double), typeof(HighlightBorderAdorner), new PropertyMetadata(3.0, PropertyChanged));
+        public static readonly AvaloniaProperty BorderCornerRadiusProperty = AvaloniaProperty.Register("BorderCornerRadius", typeof(double), typeof(HighlightBorderAdorner), new PropertyMetadata(3.0, PropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="BackgroundBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty BackgroundBrushProperty = DependencyProperty.Register("BackgroundBrush", typeof(Brush), typeof(HighlightBorderAdorner), new PropertyMetadata(Brushes.LightSteelBlue, PropertyChanged));
+        public static readonly AvaloniaProperty BackgroundBrushProperty = AvaloniaProperty.Register("BackgroundBrush", typeof(Brush), typeof(HighlightBorderAdorner), new PropertyMetadata(Brushes.LightSteelBlue, PropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="BorderBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty BackgroundOpacityProperty = DependencyProperty.Register("BackgroundOpacity", typeof(double), typeof(HighlightBorderAdorner), new PropertyMetadata(0.3, PropertyChanged));
+        public static readonly AvaloniaProperty BackgroundOpacityProperty = AvaloniaProperty.Register("BackgroundOpacity", typeof(double), typeof(HighlightBorderAdorner), new PropertyMetadata(0.3, PropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="State"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty StateProperty = DependencyProperty.Register("State", typeof(HighlightAdornerState), typeof(HighlightBorderAdorner), new PropertyMetadata(HighlightAdornerState.Hidden, PropertyChanged));
+        public static readonly AvaloniaProperty StateProperty = AvaloniaProperty.Register("State", typeof(HighlightAdornerState), typeof(HighlightBorderAdorner), new PropertyMetadata(HighlightAdornerState.Hidden, PropertyChanged));
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HighlightBorderAdorner"/> class.
@@ -231,7 +230,7 @@ namespace Stride.Core.Presentation.Adorners
             }
         }
 
-        private static void PropertyChanged([NotNull] DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void PropertyChanged([NotNull] AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var adorner = (Adorner)d;
             adorner.InvalidateVisual();

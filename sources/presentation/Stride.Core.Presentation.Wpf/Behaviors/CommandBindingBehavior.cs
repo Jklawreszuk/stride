@@ -2,6 +2,7 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System.Windows;
 using System.Windows.Input;
+using Avalonia;
 using Microsoft.Xaml.Behaviors;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Commands;
@@ -20,23 +21,23 @@ namespace Stride.Core.Presentation.Behaviors
         /// <summary>
         /// Identifies the <see cref="Command"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty CommandProperty =
-            DependencyProperty.Register(nameof(Command), typeof(ICommandBase), typeof(CommandBindingBehavior), new PropertyMetadata(null, CommandChanged));
+        public static readonly AvaloniaProperty CommandProperty =
+            AvaloniaProperty.Register(nameof(Command), typeof(ICommandBase), typeof(CommandBindingBehavior), new PropertyMetadata(null, CommandChanged));
         /// <summary>
         /// Identifies the <see cref="ContinueRouting"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ContinueRoutingProperty =
-            DependencyProperty.Register(nameof(ContinueRouting), typeof(bool), typeof(CommandBindingBehavior), new PropertyMetadata(BooleanBoxes.TrueBox));
+        public static readonly AvaloniaProperty ContinueRoutingProperty =
+            AvaloniaProperty.Register(nameof(ContinueRouting), typeof(bool), typeof(CommandBindingBehavior), new PropertyMetadata(BooleanBoxes.TrueBox));
         /// <summary>
         /// Identifies the <see cref="IsEnabled"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty IsEnabledProperty =
-            DependencyProperty.Register(nameof(IsEnabled), typeof(bool), typeof(CommandBindingBehavior), new PropertyMetadata(BooleanBoxes.TrueBox));
+        public static readonly AvaloniaProperty IsEnabledProperty =
+            AvaloniaProperty.Register(nameof(IsEnabled), typeof(bool), typeof(CommandBindingBehavior), new PropertyMetadata(BooleanBoxes.TrueBox));
         /// <summary>
         /// Identifies the <see cref="RoutedCommand"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty RoutedCommandProperty =
-            DependencyProperty.Register(nameof(RoutedCommand), typeof(RoutedCommand), typeof(CommandBindingBehavior));
+        public static readonly AvaloniaProperty RoutedCommandProperty =
+            AvaloniaProperty.Register(nameof(RoutedCommand), typeof(RoutedCommand), typeof(CommandBindingBehavior));
 
         /// <summary>
         /// Gets or sets the <see cref="ICommandBase"/> to bind.
@@ -72,7 +73,7 @@ namespace Stride.Core.Presentation.Behaviors
             AssociatedObject.CommandBindings.Remove(commandBinding);
         }
 
-        private static void CommandChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void CommandChanged(AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             CommandManager.InvalidateRequerySuggested();
         }

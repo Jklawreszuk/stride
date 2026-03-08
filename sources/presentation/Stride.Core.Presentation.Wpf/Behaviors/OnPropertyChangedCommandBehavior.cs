@@ -21,27 +21,27 @@ namespace Stride.Core.Presentation.Behaviors
     public class OnPropertyChangedCommandBehavior : Behavior<FrameworkElement>
     {
         private readonly DependencyPropertyWatcher propertyWatcher = new DependencyPropertyWatcher();
-        private DependencyProperty dependencyProperty;
+        private AvaloniaProperty dependencyProperty;
 
         /// <summary>
         /// Identifies the <see cref="Command"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty CommandProperty = DependencyProperty.Register(nameof(Command), typeof(ICommand), typeof(OnPropertyChangedCommandBehavior));
+        public static readonly AvaloniaProperty CommandProperty = AvaloniaProperty.Register(nameof(Command), typeof(ICommand), typeof(OnPropertyChangedCommandBehavior));
 
         /// <summary>
         /// Identifies the <see cref="CommandParameter"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty CommandParameterProperty = DependencyProperty.Register(nameof(CommandParameter), typeof(object), typeof(OnPropertyChangedCommandBehavior));
+        public static readonly AvaloniaProperty CommandParameterProperty = AvaloniaProperty.Register(nameof(CommandParameter), typeof(object), typeof(OnPropertyChangedCommandBehavior));
             
         /// <summary>
         /// Identifies the <see cref="ExecuteOnlyOnSourceUpdate"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ExecuteOnlyOnSourceUpdateProperty = DependencyProperty.Register(nameof(ExecuteOnlyOnSourceUpdate), typeof(bool), typeof(OnPropertyChangedCommandBehavior));
+        public static readonly AvaloniaProperty ExecuteOnlyOnSourceUpdateProperty = AvaloniaProperty.Register(nameof(ExecuteOnlyOnSourceUpdate), typeof(bool), typeof(OnPropertyChangedCommandBehavior));
 
         /// <summary>
         /// Identifies the <see cref="PassValueAsParameter"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty PassValueAsParameterProperty = DependencyProperty.Register(nameof(PassValueAsParameter), typeof(bool), typeof(OnPropertyChangedCommandBehavior));
+        public static readonly AvaloniaProperty PassValueAsParameterProperty = AvaloniaProperty.Register(nameof(PassValueAsParameter), typeof(bool), typeof(OnPropertyChangedCommandBehavior));
         
         /// <summary>
         /// Gets or sets the name of the dependency property that will trigger the associated command.

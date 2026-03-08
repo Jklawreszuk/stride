@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System.Windows;
+using Avalonia;
 using Microsoft.Xaml.Behaviors;
 using Stride.Core.Presentation.Internal;
 
@@ -11,13 +12,13 @@ namespace Stride.Core.Presentation.Behaviors
     /// In such a case, the attachement is delayed until the <see cref="FrameworkElement.Loaded"/> event is raised.
     /// </summary>
     /// <typeparam name="T">The type of instance to attach to.</typeparam>
-    public abstract class DeferredBehaviorBase<T> : Behavior<T> where T : DependencyObject
+    public abstract class DeferredBehaviorBase<T> : Behavior<T> where T : AvaloniaObject
     {
         /// <summary>
         /// Represents the <see cref="AttachOnEveryLoadedEvent"/> property.
         /// </summary>
-        public static readonly DependencyProperty AttachOnEveryLoadedEventProperty =
-            DependencyProperty.Register(nameof(AttachOnEveryLoadedEvent), typeof(bool), typeof(DeferredBehaviorBase<T>), new PropertyMetadata(BooleanBoxes.FalseBox));
+        public static readonly AvaloniaProperty AttachOnEveryLoadedEventProperty =
+            AvaloniaProperty.Register(nameof(AttachOnEveryLoadedEvent), typeof(bool), typeof(DeferredBehaviorBase<T>), new PropertyMetadata(BooleanBoxes.FalseBox));
 
         private bool currentlyLoaded;
 

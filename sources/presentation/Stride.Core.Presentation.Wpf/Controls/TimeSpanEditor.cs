@@ -1,9 +1,9 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Markup.Xaml.Templates;
 
 namespace Stride.Core.Presentation.Controls
 {
@@ -11,42 +11,42 @@ namespace Stride.Core.Presentation.Controls
     {
         private bool interlock;
         private bool templateApplied;
-        private DependencyProperty initializingProperty;
+        private AvaloniaProperty initializingProperty;
 
         /// <summary>
         /// Identifies the <see cref="WatermarkContent"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty WatermarkContentProperty = DependencyProperty.Register("WatermarkContent", typeof(object), typeof(TimeSpanEditor), new PropertyMetadata(null));
+        public static readonly AvaloniaProperty WatermarkContentProperty = AvaloniaProperty.Register("WatermarkContent", typeof(object), typeof(TimeSpanEditor), new PropertyMetadata(null));
 
         /// <summary>
         /// Identifies the <see cref="WatermarkContentTemplate"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty WatermarkContentTemplateProperty = DependencyProperty.Register("WatermarkContentTemplate", typeof(DataTemplate), typeof(TimeSpanEditor), new PropertyMetadata(null));
+        public static readonly AvaloniaProperty WatermarkContentTemplateProperty = AvaloniaProperty.Register("WatermarkContentTemplate", typeof(DataTemplate), typeof(TimeSpanEditor), new PropertyMetadata(null));
 
         /// <summary>
         /// Identifies the <see cref="Value"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register("Value", typeof(TimeSpan?), typeof(TimeSpanEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnValuePropertyChanged, null, false, UpdateSourceTrigger.Explicit));
+        public static readonly AvaloniaProperty ValueProperty = AvaloniaProperty.Register("Value", typeof(TimeSpan?), typeof(TimeSpanEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnValuePropertyChanged, null, false, UpdateSourceTrigger.Explicit));
 
         /// <summary>
         /// Identifies the <see cref="Days"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty DaysProperty = DependencyProperty.Register("Days", typeof(int?), typeof(TimeSpanEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged));
+        public static readonly AvaloniaProperty DaysProperty = AvaloniaProperty.Register("Days", typeof(int?), typeof(TimeSpanEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="Hours"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty HoursProperty = DependencyProperty.Register("Hours", typeof(int?), typeof(TimeSpanEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged));
+        public static readonly AvaloniaProperty HoursProperty = AvaloniaProperty.Register("Hours", typeof(int?), typeof(TimeSpanEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="Minutes"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty MinutesProperty = DependencyProperty.Register("Minutes", typeof(int?), typeof(TimeSpanEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged));
+        public static readonly AvaloniaProperty MinutesProperty = AvaloniaProperty.Register("Minutes", typeof(int?), typeof(TimeSpanEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="Seconds"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty SecondsProperty = DependencyProperty.Register("Seconds", typeof(double?), typeof(TimeSpanEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged));
+        public static readonly AvaloniaProperty SecondsProperty = AvaloniaProperty.Register("Seconds", typeof(double?), typeof(TimeSpanEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged));
 
         /// <summary>
         /// Gets or sets the content to display when the TextBox is empty.
@@ -110,7 +110,7 @@ namespace Stride.Core.Presentation.Controls
         /// Updates the <see cref="Value"/> property according to a change in the given component property.
         /// </summary>
         /// <param name="property">The component property from which to update the <see cref="Value"/>.</param>
-        private TimeSpan? UpdateValueFromComponent(DependencyProperty property)
+        private TimeSpan? UpdateValueFromComponent(AvaloniaProperty property)
         {
             // NOTE: Precision must be on OS tick level.
 
@@ -151,7 +151,7 @@ namespace Stride.Core.Presentation.Controls
         /// Raised when either of the <see cref="Days"/>, <see cref="Hours"/>, <see cref="Minutes"/> or <see cref="Seconds"/> properties are modified.
         /// </summary>
         /// <param name="e">The event data.</param>
-        private void OnComponentPropertyChanged(DependencyPropertyChangedEventArgs e)
+        private void OnComponentPropertyChanged(AvaloniaPropertyChangedEventArgs e)
         {
             var isInitializing = !templateApplied && initializingProperty == null;
             if (isInitializing)
@@ -174,7 +174,7 @@ namespace Stride.Core.Presentation.Controls
         /// Updates the binding of the given dependency property.
         /// </summary>
         /// <param name="dependencyProperty">The dependency property.</param>
-        private void UpdateBinding(DependencyProperty dependencyProperty)
+        private void UpdateBinding(AvaloniaProperty dependencyProperty)
         {
             if (dependencyProperty != initializingProperty)
             {
@@ -188,7 +188,7 @@ namespace Stride.Core.Presentation.Controls
         /// </summary>
         /// <param name="sender">The dependency object where the event handler is attached.</param>
         /// <param name="e">The event data.</param>
-        private static void OnComponentPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void OnComponentPropertyChanged(AvaloniaObject sender, AvaloniaPropertyChangedEventArgs e)
         {
             var editor = (TimeSpanEditor)sender;
             editor.OnComponentPropertyChanged(e);
@@ -199,7 +199,7 @@ namespace Stride.Core.Presentation.Controls
         /// </summary>
         /// <param name="sender">The dependency object where the event handler is attached.</param>
         /// <param name="e">The event data.</param>
-        private static void OnValuePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void OnValuePropertyChanged(AvaloniaObject sender, AvaloniaPropertyChangedEventArgs e)
         {
             var editor = (TimeSpanEditor)sender;
             editor.OnValueValueChanged();

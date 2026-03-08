@@ -2,12 +2,10 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
 using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Interop;
+using Avalonia.Controls;
+using Avalonia.Controls.Presenters;
 using Stride.Core.Annotations;
-using Stride.Core.Presentation.Extensions;
 using Stride.Core.Presentation.Interop;
 
 namespace Stride.Core.Presentation.Commands
@@ -58,32 +56,32 @@ namespace Stride.Core.Presentation.Commands
 
         private static bool CanMinimize([NotNull] Window window)
         {
-            return HasFlag(window, NativeHelper.WS_MINIMIZEBOX);
+            return window.CanMinimize;
         }
 
         private static void Minimize([NotNull] Window window)
         {
-            System.Windows.SystemCommands.MinimizeWindow(window);
+            window.WindowState = WindowState.Minimized;
         }
 
         private static bool CanMaximize([NotNull] Window window)
         {
-            return HasFlag(window, NativeHelper.WS_MAXIMIZEBOX);
+            return window.CanMaximize;
         }
 
         private static void Maximize([NotNull] Window window)
         {
-            System.Windows.SystemCommands.MaximizeWindow(window);
+            window.WindowState = WindowState.Maximized;
         }
 
         private static bool CanRestore([NotNull] Window window)
         {
-            return HasFlag(window, NativeHelper.WS_MAXIMIZEBOX);
+            return window.CanMaximize;
         }
 
         private static void Restore([NotNull] Window window)
         {
-            System.Windows.SystemCommands.RestoreWindow(window);
+            window.WindowState = WindowState.Normal;
         }
 
         private static bool CanClose([NotNull] Window window)
@@ -93,30 +91,25 @@ namespace Stride.Core.Presentation.Commands
 
         private static void Close([NotNull] Window window)
         {
-            System.Windows.SystemCommands.CloseWindow(window);
+            window.Close();
         }
 
         private static bool CanShowSystemMenu([NotNull] Window window)
         {
-            return HasFlag(window, NativeHelper.WS_SYSMENU);
+            return false;//not supported
         }
 
         private static void ShowSystemMenu([NotNull] Window window)
         {
+            //TODO: DO WE REALLY NEED THIS ? 
+            
             // Note: as we fetch for the content presenter, this command is a bit dependent of the window control template.
             // But both our template and the default (Aero) seems to use one so this is probably ok.
-            var presenter = window.FindVisualChildrenOfType<ContentPresenter>().FirstOrDefault(x => Equals(x.FindVisualParentOfType<Control>(), window));
-            if (presenter == null)
-                throw new InvalidOperationException("The given window does not contain a ContentPresenter.");
-
-            System.Windows.SystemCommands.ShowSystemMenu(window, presenter.PointToScreen(new Point(0, 0)));
-        }
-
-        private static bool HasFlag([NotNull] Window window, int flag)
-        {
-            var hwnd = new WindowInteropHelper(window).Handle;
-            var hasFlag = (NativeHelper.GetWindowLong(hwnd, NativeHelper.GWL_STYLE) & flag) != 0;
-            return hasFlag;
+            // var presenter = window.FindVisualChildrenOfType<ContentPresenter>().FirstOrDefault(x => Equals(x.FindVisualParentOfType<Control>(), window));
+            // if (presenter == null)
+            //     throw new InvalidOperationException("The given window does not contain a ContentPresenter.");
+            //
+            // System.Windows.SystemCommands.ShowSystemMenu(window, presenter.PointToScreen(new Point(0, 0)));
         }
     }
 }

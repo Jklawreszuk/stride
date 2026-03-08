@@ -2,6 +2,7 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
 using System.Windows;
+using Avalonia;
 using Microsoft.Xaml.Behaviors;
 using Stride.Core.Annotations;
 using Stride.Core.Mathematics;
@@ -13,8 +14,8 @@ namespace Stride.Core.Presentation.Behaviors
         /// <summary>
         /// Identifies the <see cref="SizeRatio"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty SizeRatioProperty =
-            DependencyProperty.Register(nameof(SizeRatio), typeof(Size), typeof(ResizeBehavior));
+        public static readonly AvaloniaProperty SizeRatioProperty =
+            AvaloniaProperty.Register(nameof(SizeRatio), typeof(Size), typeof(ResizeBehavior));
 
         public Size SizeRatio { get { return (Size)GetValue(SizeRatioProperty); } set { SetValue(SizeRatioProperty, value); } }
 

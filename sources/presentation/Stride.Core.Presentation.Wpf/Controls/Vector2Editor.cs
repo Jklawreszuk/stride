@@ -2,6 +2,7 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
 using System.Windows;
+using Avalonia;
 using Stride.Core.Annotations;
 using Stride.Core.Mathematics;
 
@@ -12,17 +13,17 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="X"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty XProperty = DependencyProperty.Register(nameof(X), typeof(float?), typeof(Vector2Editor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
+        public static readonly AvaloniaProperty XProperty = AvaloniaProperty.Register(nameof(X), typeof(float?), typeof(Vector2Editor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
 
         /// <summary>
         /// Identifies the <see cref="Y"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty YProperty = DependencyProperty.Register(nameof(Y), typeof(float?), typeof(Vector2Editor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
+        public static readonly AvaloniaProperty YProperty = AvaloniaProperty.Register(nameof(Y), typeof(float?), typeof(Vector2Editor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
 
         /// <summary>
         /// Identifies the <see cref="Length"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty LengthProperty = DependencyProperty.Register(nameof(Length), typeof(float?), typeof(Vector2Editor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceLengthValue));
+        public static readonly AvaloniaProperty LengthProperty = AvaloniaProperty.Register(nameof(Length), typeof(float?), typeof(Vector2Editor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceLengthValue));
 
         static Vector2Editor()
         {
@@ -56,7 +57,7 @@ namespace Stride.Core.Presentation.Controls
         }
 
         /// <inheritdoc/>
-        protected override Vector2? UpdateValueFromComponent(DependencyProperty property)
+        protected override Vector2? UpdateValueFromComponent(AvaloniaProperty property)
         {
             switch (EditingMode)
             {
@@ -96,7 +97,7 @@ namespace Stride.Core.Presentation.Controls
         /// Coerce the value of the Length so it is always positive
         /// </summary>
         [NotNull]
-        private static object CoerceLengthValue(DependencyObject sender, object baseValue)
+        private static object CoerceLengthValue(AvaloniaObject sender, object baseValue)
         {
             baseValue = CoerceComponentValue(sender, baseValue);
             return Math.Max(0.0f, (float)baseValue);

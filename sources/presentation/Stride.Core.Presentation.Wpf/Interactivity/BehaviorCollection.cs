@@ -3,8 +3,8 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Windows;
-using Microsoft.Xaml.Behaviors;
+using Avalonia;
+using Avalonia.Xaml.Interactivity;
 using Stride.Core.Annotations;
 
 namespace Stride.Core.Presentation.Interactivity
@@ -20,7 +20,7 @@ namespace Stride.Core.Presentation.Interactivity
             collection.CollectionChanged += BehaviorCollectionChanged;
         }
 
-        public DependencyObject AssociatedObject { get; private set; }
+        public AvaloniaObject AssociatedObject { get; private set; }
 
         [NotNull]
         public BehaviorCollection Clone()
@@ -33,7 +33,7 @@ namespace Stride.Core.Presentation.Interactivity
             return clone;
         }
 
-        public void Attach([NotNull] DependencyObject dependencyObject)
+        public void Attach([NotNull] AvaloniaObject dependencyObject)
         {
             if (dependencyObject == null) throw new ArgumentNullException(nameof(dependencyObject));
             // Aleady attached

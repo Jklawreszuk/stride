@@ -2,8 +2,7 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
 using System.Globalization;
-using System.Windows;
-using System.Windows.Data;
+using Avalonia;
 using Stride.Core.Annotations;
 
 namespace Stride.Core.Presentation.ValueConverters
@@ -14,7 +13,6 @@ namespace Stride.Core.Presentation.ValueConverters
     /// markup extension to easily pass one, with the following syntax: {sd:Size (arguments)}. The resulting size will
     /// be the parameter size multiplied bu the scalar double value.
     /// </summary>
-    [ValueConversion(typeof(double), typeof(Size))]
     public class NumericToSize : ValueConverterBase<NumericToSize>
     {
         /// <inheritdoc/>

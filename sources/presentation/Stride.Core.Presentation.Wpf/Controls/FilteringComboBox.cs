@@ -3,16 +3,19 @@
 using System;
 using System.Collections;
 using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Input;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Metadata;
+using Avalonia.Data;
+using Avalonia.Input;
+using Avalonia.Interactivity;
+using Avalonia.Styling;
 using Stride.Core.Annotations;
 using Stride.Core.Extensions;
 using Stride.Core.Presentation.Core;
 using Stride.Core.Presentation.Extensions;
 using Stride.Core.Presentation.Internal;
+using CancelRoutedEventArgs = Stride.Core.Presentation.Core.CancelRoutedEventArgs;
 
 namespace Stride.Core.Presentation.Controls
 {
@@ -23,7 +26,7 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// A dependency property used to safely evaluate the value of an item given a path.
         /// </summary>
-        private static readonly DependencyProperty InternalValuePathProperty = DependencyProperty.Register("InternalValuePath", typeof(object), typeof(FilteringComboBox));
+        private static readonly AvaloniaProperty InternalValuePathProperty = AvaloniaProperty.Register("InternalValuePath", typeof(object), typeof(FilteringComboBox));
         /// <summary>
         /// The input text box.
         /// </summary>
@@ -52,68 +55,68 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="RequireSelectedItemToValidate"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty RequireSelectedItemToValidateProperty = DependencyProperty.Register("RequireSelectedItemToValidate", typeof(bool), typeof(FilteringComboBox));
+        public static readonly AvaloniaProperty RequireSelectedItemToValidateProperty = AvaloniaProperty.Register("RequireSelectedItemToValidate", typeof(bool), typeof(FilteringComboBox));
 
         /// <summary>
         /// Identifies the <see cref="Text"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty TextProperty = DependencyProperty.Register("Text", typeof(string), typeof(FilteringComboBox), new FrameworkPropertyMetadata { DefaultUpdateSourceTrigger = UpdateSourceTrigger.Explicit, BindsTwoWayByDefault = true });
+        public static readonly AvaloniaProperty TextProperty = AvaloniaProperty.Register("Text", typeof(string), typeof(FilteringComboBox), new FrameworkPropertyMetadata { DefaultUpdateSourceTrigger = UpdateSourceTrigger.Explicit, BindsTwoWayByDefault = true });
 
         /// <summary>
         /// Identifies the <see cref="IsDropDownOpen"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty IsDropDownOpenProperty = DependencyProperty.Register("IsDropDownOpen", typeof(bool), typeof(FilteringComboBox), new FrameworkPropertyMetadata(BooleanBoxes.FalseBox, OnIsDropDownOpenChanged));
+        public static readonly AvaloniaProperty IsDropDownOpenProperty = AvaloniaProperty.Register("IsDropDownOpen", typeof(bool), typeof(FilteringComboBox), new FrameworkPropertyMetadata(BooleanBoxes.FalseBox, OnIsDropDownOpenChanged));
 
         /// <summary>
         /// Identifies the <see cref="OpenDropDownOnFocus"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty OpenDropDownOnFocusProperty = DependencyProperty.Register("OpenDropDownOnFocus", typeof(bool), typeof(FilteringComboBox));
+        public static readonly AvaloniaProperty OpenDropDownOnFocusProperty = AvaloniaProperty.Register("OpenDropDownOnFocus", typeof(bool), typeof(FilteringComboBox));
 
         /// <summary>
         /// Identifies the <see cref="ClearTextAfterValidation"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ClearTextAfterValidationProperty = DependencyProperty.Register("ClearTextAfterValidation", typeof(bool), typeof(FilteringComboBox));
+        public static readonly AvaloniaProperty ClearTextAfterValidationProperty = AvaloniaProperty.Register("ClearTextAfterValidation", typeof(bool), typeof(FilteringComboBox));
 
         /// <summary>
         /// Identifies the <see cref="WatermarkContent"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty WatermarkContentProperty = DependencyProperty.Register("WatermarkContent", typeof(object), typeof(FilteringComboBox), new PropertyMetadata(null));
+        public static readonly AvaloniaProperty WatermarkContentProperty = AvaloniaProperty.Register("WatermarkContent", typeof(object), typeof(FilteringComboBox), new PropertyMetadata(null));
 
         /// <summary>
         /// Identifies the <see cref="IsFiltering"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty IsFilteringProperty = DependencyProperty.Register("IsFiltering", typeof(bool), typeof(FilteringComboBox), new FrameworkPropertyMetadata(true, OnIsFilteringChanged));
+        public static readonly AvaloniaProperty IsFilteringProperty = AvaloniaProperty.Register("IsFiltering", typeof(bool), typeof(FilteringComboBox), new FrameworkPropertyMetadata(true, OnIsFilteringChanged));
 
         /// <summary>
         /// Identifies the <see cref="ItemsToExclude"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ItemsToExcludeProperty = DependencyProperty.Register("ItemsToExclude", typeof(IEnumerable), typeof(FilteringComboBox));
+        public static readonly AvaloniaProperty ItemsToExcludeProperty = AvaloniaProperty.Register("ItemsToExclude", typeof(IEnumerable), typeof(FilteringComboBox));
 
         /// <summary>
         /// Identifies the <see cref="Sort"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty SortProperty = DependencyProperty.Register("Sort", typeof(FilteringComboBoxSort), typeof(FilteringComboBox), new FrameworkPropertyMetadata(OnItemsSourceRefresh));
+        public static readonly AvaloniaProperty SortProperty = AvaloniaProperty.Register("Sort", typeof(FilteringComboBoxSort), typeof(FilteringComboBox), new FrameworkPropertyMetadata(OnItemsSourceRefresh));
 
         /// <summary>
         /// Identifies the <see cref="SortMemberPath"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty SortMemberPathProperty = DependencyProperty.Register("SortMemberPath", typeof(string), typeof(FilteringComboBox));
+        public static readonly AvaloniaProperty SortMemberPathProperty = AvaloniaProperty.Register("SortMemberPath", typeof(string), typeof(FilteringComboBox));
 
         /// <summary>
         /// Identifies the <see cref="ValidatedValue"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ValidatedValueProperty = DependencyProperty.Register("ValidatedValue", typeof(object), typeof(FilteringComboBox));
+        public static readonly AvaloniaProperty ValidatedValueProperty = AvaloniaProperty.Register("ValidatedValue", typeof(object), typeof(FilteringComboBox));
 
         /// <summary>
         /// Identifies the <see cref="ValidatedItem"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ValidatedItemProperty = DependencyProperty.Register("ValidatedItem", typeof(object), typeof(FilteringComboBox));
+        public static readonly AvaloniaProperty ValidatedItemProperty = AvaloniaProperty.Register("ValidatedItem", typeof(object), typeof(FilteringComboBox));
 
         /// <summary>
         /// Identifies the <see cref="ValidateOnLostFocus"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ValidateOnLostFocusProperty =
-            DependencyProperty.Register(nameof(ValidateOnLostFocus), typeof(bool), typeof(FilteringComboBox), new PropertyMetadata(BooleanBoxes.TrueBox));
+        public static readonly AvaloniaProperty ValidateOnLostFocusProperty =
+            AvaloniaProperty.Register(nameof(ValidateOnLostFocus), typeof(bool), typeof(FilteringComboBox), new PropertyMetadata(BooleanBoxes.TrueBox));
 
 
         /// <summary>
@@ -213,7 +216,7 @@ namespace Stride.Core.Presentation.Controls
             }
         }
 
-        private static void OnIsDropDownOpenChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnIsDropDownOpenChanged(AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var filteringComboBox = (FilteringComboBox)d;
             if ((bool)e.NewValue && filteringComboBox.ItemsSource != null)
@@ -222,7 +225,7 @@ namespace Stride.Core.Presentation.Controls
             }
         }
 
-        private static void OnIsFilteringChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnIsFilteringChanged(AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var filteringComboBox = (FilteringComboBox)d;
             if (filteringComboBox.ItemsSource != null)
@@ -262,7 +265,7 @@ namespace Stride.Core.Presentation.Controls
             listBoxClicking = false;
         }
 
-        private static void OnItemsSourceRefresh(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnItemsSourceRefresh(AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var filteringComboBox = (FilteringComboBox)d;
             filteringComboBox.OnItemsSourceChanged(filteringComboBox.ItemsSource, filteringComboBox.ItemsSource);

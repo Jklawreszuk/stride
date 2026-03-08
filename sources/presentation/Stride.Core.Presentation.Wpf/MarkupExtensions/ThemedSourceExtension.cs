@@ -2,8 +2,8 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
-using System.Windows.Markup;
-using System.Windows.Media;
+using Avalonia.Markup.Xaml;
+using Avalonia.Media;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Themes;
 
@@ -11,19 +11,18 @@ namespace Stride.Core.Presentation.MarkupExtensions
 {
     using static Stride.Core.Presentation.Themes.IconThemeSelector;
 
-    [MarkupExtensionReturnType(typeof(ImageSource))]
     public class ThemedSourceExtension : MarkupExtension
     {
         public ThemedSourceExtension() { }
 
-        public ThemedSourceExtension(ImageSource source, ThemeBase theme)
+        public ThemedSourceExtension(IImage source, ThemeBase theme)
         {
             Source = source;
             Theme = theme.GetIconTheme();
         }
 
         [ConstructorArgument("source")]
-        private ImageSource Source { get; }
+        private IImage Source { get; }
 
         [ConstructorArgument("theme")]
         private IconTheme Theme { get; }
@@ -38,10 +37,8 @@ namespace Stride.Core.Presentation.MarkupExtensions
                     Drawing = ImageThemingUtilities.TransformDrawing(drawingImage.Drawing, Theme)
                 };
             }
-            else
-            {
-                return Source;
-            }
+
+            return Source;
         }
     }
 }

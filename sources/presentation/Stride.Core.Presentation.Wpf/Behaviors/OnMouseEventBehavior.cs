@@ -2,6 +2,7 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System.Windows;
 using System.Windows.Input;
+using Avalonia;
 using Microsoft.Xaml.Behaviors;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Internal;
@@ -29,23 +30,23 @@ namespace Stride.Core.Presentation.Behaviors
 
     public class OnMouseEventBehavior : Behavior<FrameworkElement>
     {
-        public static readonly DependencyProperty EventTypeProperty = DependencyProperty.Register(nameof(EventType), typeof(MouseEventType), typeof(OnMouseEventBehavior), new FrameworkPropertyMetadata(MouseEventType.None, EventTypeChanged));
+        public static readonly AvaloniaProperty EventTypeProperty = AvaloniaProperty.Register(nameof(EventType), typeof(MouseEventType), typeof(OnMouseEventBehavior), new FrameworkPropertyMetadata(MouseEventType.None, EventTypeChanged));
 
         /// <summary>
         /// Identifies the <see cref="Command"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty CommandProperty = DependencyProperty.Register(nameof(Command), typeof(ICommand), typeof(OnMouseEventBehavior));
+        public static readonly AvaloniaProperty CommandProperty = AvaloniaProperty.Register(nameof(Command), typeof(ICommand), typeof(OnMouseEventBehavior));
 
         /// <summary>
         /// Identifies the <see cref="HandleEvent"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty HandleEventProperty = DependencyProperty.Register(nameof(HandleEvent), typeof(bool), typeof(OnMouseEventBehavior));
+        public static readonly AvaloniaProperty HandleEventProperty = AvaloniaProperty.Register(nameof(HandleEvent), typeof(bool), typeof(OnMouseEventBehavior));
 
         /// <summary>
         /// Identifies the <see cref="Modifiers"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ModifiersProperty =
-               DependencyProperty.Register(nameof(Modifiers), typeof(ModifierKeys?), typeof(OnMouseEventBehavior), new PropertyMetadata(null));
+        public static readonly AvaloniaProperty ModifiersProperty =
+               AvaloniaProperty.Register(nameof(Modifiers), typeof(ModifierKeys?), typeof(OnMouseEventBehavior), new PropertyMetadata(null));
 
         public MouseEventType EventType { get { return (MouseEventType)GetValue(EventTypeProperty); } set { SetValue(EventTypeProperty, value); } }
 
@@ -80,7 +81,7 @@ namespace Stride.Core.Presentation.Behaviors
             base.OnAttached();
         }
 
-        private static void EventTypeChanged([NotNull] DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void EventTypeChanged([NotNull] AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var behavior = (OnMouseEventBehavior)d;
             if (behavior.AssociatedObject == null)

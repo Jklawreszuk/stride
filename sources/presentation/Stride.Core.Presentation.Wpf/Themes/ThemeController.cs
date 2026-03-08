@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using System.Windows;
+using Avalonia;
 
 namespace Stride.Core.Presentation.Themes
 {
@@ -14,15 +14,15 @@ namespace Stride.Core.Presentation.Themes
         /// The main purpose of this property is for Luminosity Check feature of
         /// <see cref="ImageThemingUtilities.TransformDrawing(Media.Drawing, IconTheme, bool)"/>.
         /// </summary>
-        public static readonly DependencyProperty IsDarkProperty =
-            DependencyProperty.RegisterAttached("IsDark", typeof(bool), typeof(ThemeController), new PropertyMetadata(false));
+        public static readonly AvaloniaProperty IsDarkProperty =
+            AvaloniaProperty.RegisterAttached("IsDark", typeof(bool), typeof(ThemeController), new PropertyMetadata(false));
 
-        public static bool GetIsDark(DependencyObject obj)
+        public static bool GetIsDark(AvaloniaObject obj)
         {
             return (bool)obj.GetValue(IsDarkProperty);
         }
 
-        public static void SetIsDark(DependencyObject obj, bool value)
+        public static void SetIsDark(AvaloniaObject obj, bool value)
         {
             obj.SetValue(IsDarkProperty, value);
         }

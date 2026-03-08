@@ -2,8 +2,7 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
 using System.Globalization;
-using System.Windows;
-using System.Windows.Data;
+using Avalonia;
 using Stride.Core.Annotations;
 
 namespace Stride.Core.Presentation.ValueConverters
@@ -11,7 +10,6 @@ namespace Stride.Core.Presentation.ValueConverters
     /// <summary>
     /// This converter will multiply a given numeric value by the numeric value given as parameter.
     /// </summary>
-    [ValueConversion(typeof(double), typeof(double))]
     public class Multiply : ValueConverterBase<Multiply>
     {
         /// <inheritdoc/>

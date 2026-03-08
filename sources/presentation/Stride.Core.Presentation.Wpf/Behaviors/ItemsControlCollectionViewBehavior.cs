@@ -4,6 +4,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using Avalonia;
 using Microsoft.Xaml.Behaviors;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Core;
@@ -14,9 +15,9 @@ namespace Stride.Core.Presentation.Behaviors
     {
         private readonly DependencyPropertyWatcher propertyWatcher = new DependencyPropertyWatcher();
 
-        public static readonly DependencyProperty GroupingPropertyNameProperty = DependencyProperty.Register("GroupingPropertyName", typeof(string), typeof(ItemsControlCollectionViewBehavior), new PropertyMetadata(null, GroupingPropertyNameChanged));
+        public static readonly AvaloniaProperty GroupingPropertyNameProperty = AvaloniaProperty.Register("GroupingPropertyName", typeof(string), typeof(ItemsControlCollectionViewBehavior), new PropertyMetadata(null, GroupingPropertyNameChanged));
 
-        public static readonly DependencyProperty FilterPredicateProperty = DependencyProperty.Register("FilterPredicate", typeof(Predicate<object>), typeof(ItemsControlCollectionViewBehavior), new PropertyMetadata(null, FilterPredicateChanged));
+        public static readonly AvaloniaProperty FilterPredicateProperty = AvaloniaProperty.Register("FilterPredicate", typeof(Predicate<object>), typeof(ItemsControlCollectionViewBehavior), new PropertyMetadata(null, FilterPredicateChanged));
 
         public string GroupingPropertyName { get { return (string)GetValue(GroupingPropertyNameProperty); } set { SetValue(GroupingPropertyNameProperty, value); } }
   
@@ -71,13 +72,13 @@ namespace Stride.Core.Presentation.Behaviors
             UpdateCollectionView();
         }
 
-        private static void GroupingPropertyNameChanged([NotNull] DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void GroupingPropertyNameChanged([NotNull] AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var behavior = (ItemsControlCollectionViewBehavior)d;
             behavior.UpdateCollectionView();
         }
 
-        private static void FilterPredicateChanged([NotNull] DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void FilterPredicateChanged([NotNull] AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var behavior = (ItemsControlCollectionViewBehavior)d;
             behavior.UpdateCollectionView();

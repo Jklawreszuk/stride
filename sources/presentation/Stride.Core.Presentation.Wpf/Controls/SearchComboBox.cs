@@ -2,11 +2,13 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
 using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
 using System.Windows.Input;
+using Avalonia.Controls;
+using Avalonia.Controls.Metadata;
+using Avalonia.Data;
+using Avalonia.Input;
+using Avalonia.Interactivity;
+using Avalonia.Styling;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Core;
 using Stride.Core.Presentation.Extensions;
@@ -30,48 +32,48 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="AlternativeCommand"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty AlternativeCommandProperty =
-            DependencyProperty.Register("AlternativeCommand", typeof(ICommand), typeof(SearchComboBox));
+        public static readonly AvaloniaProperty AlternativeCommandProperty =
+            AvaloniaProperty.Register("AlternativeCommand", typeof(ICommand), typeof(SearchComboBox));
         /// <summary>
         /// Identifies the <see cref="AlternativeModifiers"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty AlternativeModifiersProperty =
-            DependencyProperty.Register("AlternativeModifiers", typeof(ModifierKeys), typeof(SearchComboBox), new PropertyMetadata(ModifierKeys.Shift));
+        public static readonly AvaloniaProperty AlternativeModifiersProperty =
+            AvaloniaProperty.Register("AlternativeModifiers", typeof(ModifierKeys), typeof(SearchComboBox), new PropertyMetadata(ModifierKeys.Shift));
         /// <summary>
         /// Identifies the <see cref="ClearTextAfterSelection"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ClearTextAfterSelectionProperty =
-            DependencyProperty.Register("ClearTextAfterSelection", typeof(bool), typeof(SearchComboBox));
+        public static readonly AvaloniaProperty ClearTextAfterSelectionProperty =
+            AvaloniaProperty.Register("ClearTextAfterSelection", typeof(bool), typeof(SearchComboBox));
         /// <summary>
         /// Identifies the <see cref="Command"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty CommandProperty =
-            DependencyProperty.Register("Command", typeof(ICommand), typeof(SearchComboBox));
+        public static readonly AvaloniaProperty CommandProperty =
+            AvaloniaProperty.Register("Command", typeof(ICommand), typeof(SearchComboBox));
         /// <summary>
         /// Identifies the <see cref="IsAlternative"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty IsAlternativeProperty =
-            DependencyProperty.Register("IsAlternative", typeof(bool), typeof(SearchComboBox), new PropertyMetadata(BooleanBoxes.FalseBox));
+        public static readonly AvaloniaProperty IsAlternativeProperty =
+            AvaloniaProperty.Register("IsAlternative", typeof(bool), typeof(SearchComboBox), new PropertyMetadata(BooleanBoxes.FalseBox));
         /// <summary>
         /// Identifies the <see cref="IsDropDownOpen"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty IsDropDownOpenProperty =
-            DependencyProperty.Register("IsDropDownOpen", typeof(bool), typeof(SearchComboBox));
+        public static readonly AvaloniaProperty IsDropDownOpenProperty =
+            AvaloniaProperty.Register("IsDropDownOpen", typeof(bool), typeof(SearchComboBox));
         /// <summary>
         /// Identifies the <see cref="OpenDropDownOnFocus"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty OpenDropDownOnFocusProperty =
-            DependencyProperty.Register("OpenDropDownOnFocus", typeof(bool), typeof(SearchComboBox));
+        public static readonly AvaloniaProperty OpenDropDownOnFocusProperty =
+            AvaloniaProperty.Register("OpenDropDownOnFocus", typeof(bool), typeof(SearchComboBox));
         /// <summary>
         /// Identifies the <see cref="SearchText"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty SearchTextProperty =
-            DependencyProperty.Register("SearchText", typeof(string), typeof(SearchComboBox), new FrameworkPropertyMetadata { BindsTwoWayByDefault = true });
+        public static readonly AvaloniaProperty SearchTextProperty =
+            AvaloniaProperty.Register("SearchText", typeof(string), typeof(SearchComboBox), new FrameworkPropertyMetadata { BindsTwoWayByDefault = true });
         /// <summary>
         /// Identifies the <see cref="WatermarkContent"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty WatermarkContentProperty =
-            DependencyProperty.Register("WatermarkContent", typeof(object), typeof(SearchComboBox));
+        public static readonly AvaloniaProperty WatermarkContentProperty =
+            AvaloniaProperty.Register("WatermarkContent", typeof(object), typeof(SearchComboBox));
 
         /// <summary>
         /// The input text box.

@@ -1,8 +1,8 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
-using System.Windows;
-using System.Windows.Controls.Primitives;
+using Avalonia.Controls.Metadata;
+using Avalonia.Controls.Primitives;
 
 namespace Stride.Core.Presentation.Controls
 {
@@ -17,8 +17,8 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="EditingMode"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty EditingModeProperty =
-            DependencyProperty.Register(nameof(EditingMode), typeof(VectorEditingMode), typeof(VectorEditor<T>), new FrameworkPropertyMetadata(VectorEditingMode.Normal, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+        public static readonly AvaloniaProperty EditingModeProperty =
+            AvaloniaProperty.Register(nameof(EditingMode), typeof(VectorEditingMode), typeof(VectorEditor<T>), new FrameworkPropertyMetadata(VectorEditingMode.Normal, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
         
         public VectorEditingMode EditingMode { get { return (VectorEditingMode)GetValue(EditingModeProperty); } set { SetValue(EditingModeProperty, value); } }
 

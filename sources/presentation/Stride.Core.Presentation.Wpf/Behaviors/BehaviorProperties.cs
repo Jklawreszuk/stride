@@ -4,10 +4,7 @@
 using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Interop;
-using System.Windows.Media;
+using Avalonia;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Extensions;
 using Stride.Core.Presentation.Internal;
@@ -23,54 +20,54 @@ namespace Stride.Core.Presentation.Behaviors
         /// <summary>
         /// When attached to a <see cref="ScrollViewer"/> or a control that contains a <see cref="ScrollViewer"/>, this property allows to control whether the scroll viewer should handle scrolling with the mouse wheel.
         /// </summary>
-        public static DependencyProperty HandlesMouseWheelScrollingProperty = DependencyProperty.RegisterAttached("HandlesMouseWheelScrolling", typeof(bool), typeof(BehaviorProperties), new PropertyMetadata(BooleanBoxes.TrueBox, HandlesMouseWheelScrollingChanged));
+        public static AvaloniaProperty HandlesMouseWheelScrollingProperty = AvaloniaProperty.RegisterAttached("HandlesMouseWheelScrolling", typeof(bool), typeof(BehaviorProperties), new PropertyMetadata(BooleanBoxes.TrueBox, HandlesMouseWheelScrollingChanged));
 
         /// <summary>
         /// When attached to a <see cref="Window"/> that have the <see cref="Window.WindowStyle"/> value set to <see cref="WindowStyle.None"/>, prevent the window to expand over the taskbar when maximized.
         /// </summary>
-        public static DependencyProperty KeepTaskbarWhenMaximizedProperty = DependencyProperty.RegisterAttached("KeepTaskbarWhenMaximized", typeof(bool), typeof(BehaviorProperties), new PropertyMetadata(BooleanBoxes.FalseBox, KeepTaskbarWhenMaximizedChanged));
+        public static AvaloniaProperty KeepTaskbarWhenMaximizedProperty = AvaloniaProperty.RegisterAttached("KeepTaskbarWhenMaximized", typeof(bool), typeof(BehaviorProperties), new PropertyMetadata(BooleanBoxes.FalseBox, KeepTaskbarWhenMaximizedChanged));
 
         /// <summary>
-        /// Gets the current value of the <see cref="HandlesMouseWheelScrollingProperty"/> dependency property attached to the given <see cref="DependencyObject"/>.
+        /// Gets the current value of the <see cref="HandlesMouseWheelScrollingProperty"/> dependency property attached to the given <see cref="AvaloniaObject"/>.
         /// </summary>
-        /// <param name="target">The target <see cref="DependencyObject"/>.</param>
+        /// <param name="target">The target <see cref="AvaloniaObject"/>.</param>
         /// <returns>The value of the <see cref="HandlesMouseWheelScrollingProperty"/> dependency property.</returns>
-        public static bool GetHandlesMouseWheelScrolling([NotNull] DependencyObject target)
+        public static bool GetHandlesMouseWheelScrolling([NotNull] AvaloniaObject target)
         {
             return (bool)target.GetValue(HandlesMouseWheelScrollingProperty);
         }
 
         /// <summary>
-        /// Sets the value of the <see cref="HandlesMouseWheelScrollingProperty"/> dependency property attached to the given <see cref="DependencyObject"/>.
+        /// Sets the value of the <see cref="HandlesMouseWheelScrollingProperty"/> dependency property attached to the given <see cref="AvaloniaObject"/>.
         /// </summary>
-        /// <param name="target">The target <see cref="DependencyObject"/>.</param>
+        /// <param name="target">The target <see cref="AvaloniaObject"/>.</param>
         /// <param name="value">The value to set.</param>
-        public static void SetHandlesMouseWheelScrolling([NotNull] DependencyObject target, bool value)
+        public static void SetHandlesMouseWheelScrolling([NotNull] AvaloniaObject target, bool value)
         {
             target.SetValue(HandlesMouseWheelScrollingProperty, value);
         }
 
         /// <summary>
-        /// Gets the current value of the <see cref="KeepTaskbarWhenMaximizedProperty"/> dependency property attached to the given <see cref="DependencyObject"/>.
+        /// Gets the current value of the <see cref="KeepTaskbarWhenMaximizedProperty"/> dependency property attached to the given <see cref="AvaloniaObject"/>.
         /// </summary>
-        /// <param name="target">The target <see cref="DependencyObject"/>.</param>
+        /// <param name="target">The target <see cref="AvaloniaObject"/>.</param>
         /// <returns>The value of the <see cref="KeepTaskbarWhenMaximizedProperty"/> dependency property.</returns>
-        public static bool GetKeepTaskbarWhenMaximized([NotNull] DependencyObject target)
+        public static bool GetKeepTaskbarWhenMaximized([NotNull] AvaloniaObject target)
         {
             return (bool)target.GetValue(KeepTaskbarWhenMaximizedProperty);
         }
 
         /// <summary>
-        /// Sets the value of the <see cref="KeepTaskbarWhenMaximizedProperty"/> dependency property attached to the given <see cref="DependencyObject"/>.
+        /// Sets the value of the <see cref="KeepTaskbarWhenMaximizedProperty"/> dependency property attached to the given <see cref="AvaloniaObject"/>.
         /// </summary>
-        /// <param name="target">The target <see cref="DependencyObject"/>.</param>
+        /// <param name="target">The target <see cref="AvaloniaObject"/>.</param>
         /// <param name="value">The value to set.</param>
-        public static void SetKeepTaskbarWhenMaximized([NotNull] DependencyObject target, bool value)
+        public static void SetKeepTaskbarWhenMaximized([NotNull] AvaloniaObject target, bool value)
         {
             target.SetValue(KeepTaskbarWhenMaximizedProperty, value);
         }
 
-        private static void HandlesMouseWheelScrollingChanged([NotNull] DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void HandlesMouseWheelScrollingChanged([NotNull] AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var scrollViewer = d as ScrollViewer ?? d.FindVisualChildOfType<ScrollViewer>();
 
@@ -88,7 +85,7 @@ namespace Stride.Core.Presentation.Behaviors
                     // Let's delay the behavior till the scroll viewer is loaded.
                     frameworkElement.Loaded += (sender, args) =>
                     {
-                        var dependencyObject = (DependencyObject)sender;
+                        var dependencyObject = (AvaloniaObject)sender;
                         var loadedScrollViewer = dependencyObject.FindVisualChildOfType<ScrollViewer>();
                         if (loadedScrollViewer != null)
                             typeof(ScrollViewer).GetProperty("HandlesMouseWheelScrolling", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(loadedScrollViewer, e.NewValue);
@@ -97,7 +94,7 @@ namespace Stride.Core.Presentation.Behaviors
             }
         }
 
-        private static void KeepTaskbarWhenMaximizedChanged([NotNull] DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void KeepTaskbarWhenMaximizedChanged([NotNull] AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var window = d as Window;
             if (window == null)

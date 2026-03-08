@@ -3,9 +3,9 @@
 
 using System;
 using System.Runtime.CompilerServices;
-using System.Windows;
-using System.Windows.Documents;
-using System.Windows.Media;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Interop;
 

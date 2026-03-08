@@ -36,36 +36,30 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Markup;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using Avalonia;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Internal;
 
 namespace Stride.Core.Presentation
 {
-    public sealed class XamlMarkdown : DependencyObject
+    public sealed class XamlMarkdown : AvaloniaObject
     {
         /// <summary>
         /// Identifies the <see cref="BaseUrl"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty BaseUrlProperty =
-            DependencyProperty.Register(nameof(BaseUrl), typeof(string), typeof(XamlMarkdown), new PropertyMetadata(null));
+        public static readonly AvaloniaProperty BaseUrlProperty =
+            AvaloniaProperty.Register(nameof(BaseUrl), typeof(string), typeof(XamlMarkdown), new PropertyMetadata(null));
         /// <summary>
         /// Identifies the <see cref="HyperlinkCommand"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty HyperlinkCommandProperty =
-            DependencyProperty.Register(nameof(HyperlinkCommand), typeof(ICommand), typeof(XamlMarkdown), new PropertyMetadata(null));
+        public static readonly AvaloniaProperty HyperlinkCommandProperty =
+            AvaloniaProperty.Register(nameof(HyperlinkCommand), typeof(ICommand), typeof(XamlMarkdown), new PropertyMetadata(null));
         /// <summary>
         /// Identifies the <see cref="StrictBoldItalic"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty StrictBoldItalicProperty =
-            DependencyProperty.Register(nameof(StrictBoldItalic), typeof(bool), typeof(XamlMarkdown), new PropertyMetadata(BooleanBoxes.FalseBox));
+        public static readonly AvaloniaProperty StrictBoldItalicProperty =
+            AvaloniaProperty.Register(nameof(StrictBoldItalic), typeof(bool), typeof(XamlMarkdown), new PropertyMetadata(BooleanBoxes.FalseBox));
 
         /// <summary>
         /// maximum nested depth of [] and () supported by the transform; implementation detail

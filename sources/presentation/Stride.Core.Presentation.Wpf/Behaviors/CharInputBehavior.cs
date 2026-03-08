@@ -2,10 +2,9 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System.Globalization;
-using System.Linq;
-using System.Windows.Controls;
 using Microsoft.Xaml.Behaviors;
 using Stride.Core.Annotations;
+using Stride.Core.Presentation.Controls;
 
 namespace Stride.Core.Presentation.Behaviors
 {

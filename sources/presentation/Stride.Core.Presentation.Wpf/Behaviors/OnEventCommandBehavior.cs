@@ -13,12 +13,12 @@ namespace Stride.Core.Presentation.Behaviors
         /// <summary>
         /// Identifies the <see cref="Command"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty CommandProperty = DependencyProperty.Register("Command", typeof(ICommand), typeof(OnEventCommandBehavior));
+        public static readonly AvaloniaProperty CommandProperty = AvaloniaProperty.Register("Command", typeof(ICommand), typeof(OnEventCommandBehavior));
 
         /// <summary>
         /// Identifies the <see cref="CommandParameter"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty CommandParameterProperty = DependencyProperty.Register("CommandParameter", typeof(object), typeof(OnEventCommandBehavior));
+        public static readonly AvaloniaProperty CommandParameterProperty = AvaloniaProperty.Register("CommandParameter", typeof(object), typeof(OnEventCommandBehavior));
 
         /// <summary>
         /// Gets or sets the command to invoke when the event is raised.

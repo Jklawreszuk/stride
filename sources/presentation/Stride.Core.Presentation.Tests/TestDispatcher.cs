@@ -96,7 +96,7 @@ namespace Stride.Core.Presentation.Tests
 
         static void ShutdownDispatcher(IDispatcherService dispatcher)
         {
-            dispatcher.Invoke(() => Dispatcher.CurrentDispatcher.InvokeShutdown());
+            dispatcher.Invoke(() => Dispatcher.UIThread.InvokeShutdown());
         }
 
         static IDispatcherService CreateDispatcher()

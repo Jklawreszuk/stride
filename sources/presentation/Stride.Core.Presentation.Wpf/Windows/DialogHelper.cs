@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Interop;
 using System.Windows.Threading;
+using Avalonia.Threading;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Services;
 using Stride.Core.Translation;

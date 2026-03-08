@@ -16,7 +16,7 @@ namespace Stride.Core.Presentation.Behaviors
     {
         private ITransaction transaction;
 
-        public static DependencyProperty UndoRedoServiceProperty = DependencyProperty.Register(nameof(UndoRedoService), typeof(IUndoRedoService), typeof(NumericTextBoxTransactionalRepeatButtonsBehavior));
+        public static AvaloniaProperty UndoRedoServiceProperty = AvaloniaProperty.Register(nameof(UndoRedoService), typeof(IUndoRedoService), typeof(NumericTextBoxTransactionalRepeatButtonsBehavior));
 
         public IUndoRedoService UndoRedoService { get { return (IUndoRedoService)GetValue(UndoRedoServiceProperty); } set { SetValue(UndoRedoServiceProperty, value); } }
 

@@ -4,18 +4,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
+using Avalonia;
+using Avalonia.Controls.Templates;
+using Avalonia.Markup.Xaml.Templates;
+using Avalonia.VisualTree;
 using Stride.Core.Annotations;
 using Stride.Core.Extensions;
 
 namespace Stride.Core.Presentation.View
 {
     /// <summary>
-    /// An implementation of <see cref="DataTemplateSelector"/> that can select a template from a set of statically registered <see cref="ITemplateProvider"/> objects.
+    /// An implementation of <see cref="IDataTemplate"/> that can select a template from a set of statically registered <see cref="ITemplateProvider"/> objects.
     /// </summary>
-    public class TemplateProviderSelector : DataTemplateSelector
+    public class TemplateProviderSelector : IDataTemplate
     {
        
         /// <summary>
@@ -65,7 +66,7 @@ namespace Stride.Core.Presentation.View
             }
         }
 
-        public override DataTemplate SelectTemplate(object item, DependencyObject container)
+        public override DataTemplate SelectTemplate(object item, AvaloniaObject container)
         {
             if (item == null)
                 return null;
@@ -110,17 +111,16 @@ namespace Stride.Core.Presentation.View
         }
 
         [CanBeNull]
-        private ITemplateProvider FindTemplateProvider([NotNull] object item, DependencyObject container)
+        private ITemplateProvider FindTemplateProvider([NotNull] object item, AvaloniaObject container)
         {
             var usedProvidersForItem = usedProviders.GetOrCreateValue(item);
 
             var shouldClear = true;
-            WeakReference lastContainer;
             // We check if this item has been templated recently.
-            if (lastContainers.TryGetValue(item, out lastContainer) && lastContainer.IsAlive)
+            if (lastContainers.TryGetValue(item, out var lastContainer) && lastContainer.IsAlive)
             {
                 // If so, check if the last container used is a parent of the container to use now.
-                var parent = VisualTreeHelper.GetParent(container);
+                var parent = (container as Visual).GetVisualParent();
                 while (parent != null)
                 {
                     // If so, we are applying template recursively. We want don't want to use the same template
@@ -130,7 +130,7 @@ namespace Stride.Core.Presentation.View
                         shouldClear = false;
                         break;
                     }
-                    parent = VisualTreeHelper.GetParent(parent);
+                    parent = parent.GetVisualParent();
                 }
             }
             // In any other case, we clear the list of used providers.

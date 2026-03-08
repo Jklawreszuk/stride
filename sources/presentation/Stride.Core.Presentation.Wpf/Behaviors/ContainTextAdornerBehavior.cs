@@ -2,11 +2,9 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
 using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using Microsoft.Xaml.Behaviors;
-using System.Windows.Media;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Xaml.Interactivity;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Adorners;
 using Stride.Core.Presentation.Core;
@@ -22,18 +20,18 @@ namespace Stride.Core.Presentation.Behaviors
         /// <summary>
         /// Identifies the <see cref="BorderBrush"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty BorderBrushProperty = 
-            DependencyProperty.Register(nameof(BorderBrush), typeof(Brush), typeof(ContainTextAdornerBehavior), new PropertyMetadata(Brushes.SteelBlue, PropertyChanged));
+        public static readonly AvaloniaProperty BorderBrushProperty = 
+            AvaloniaProperty.Register(nameof(BorderBrush), typeof(Brush), typeof(ContainTextAdornerBehavior), new PropertyMetadata(Brushes.SteelBlue, PropertyChanged));
         /// <summary>
         /// Identifies the <see cref="BorderCornerRadius"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty BorderCornerRadiusProperty =
-            DependencyProperty.Register(nameof(BorderCornerRadius), typeof(double), typeof(ContainTextAdornerBehavior), new PropertyMetadata(3.0, PropertyChanged));
+        public static readonly AvaloniaProperty BorderCornerRadiusProperty =
+            AvaloniaProperty.Register(nameof(BorderCornerRadius), typeof(double), typeof(ContainTextAdornerBehavior), new PropertyMetadata(3.0, PropertyChanged));
         /// <summary>
         /// Identifies the <see cref="BorderThickness"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty BorderThicknessProperty =
-            DependencyProperty.Register(nameof(BorderThickness), typeof(double), typeof(ContainTextAdornerBehavior), new PropertyMetadata(2.0, PropertyChanged));
+        public static readonly AvaloniaProperty BorderThicknessProperty =
+            AvaloniaProperty.Register(nameof(BorderThickness), typeof(double), typeof(ContainTextAdornerBehavior), new PropertyMetadata(2.0, PropertyChanged));
         
         /// <summary>
         /// Gets or sets the border brush when the adorner visible.
@@ -82,7 +80,7 @@ namespace Stride.Core.Presentation.Behaviors
             }
         }
 
-        private static void PropertyChanged([NotNull] DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void PropertyChanged([NotNull] AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var behavior = (ContainTextAdornerBehavior)d;
             var adorner = behavior.adorner;

@@ -2,10 +2,8 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
 using System.Reflection;
-using System.Windows;
-using System.Windows.Data;
 using System.Windows.Input;
-
+using Avalonia;
 using Stride.Core.Presentation.Core;
 using Stride.Core.Presentation.Internal;
 
@@ -15,79 +13,79 @@ namespace Stride.Core.Presentation.Controls
     /// An implementation of the <see cref="System.Windows.Controls.TextBox"/> control
     /// that provides additional features such as a proper validation/cancellation workflow.
     /// </summary>
-    public class TextBoxBase : System.Windows.Controls.TextBox
+    public class TextBoxBase : Avalonia.Controls.TextBox
     {
         private bool validating;
 
         /// <summary>
         /// Identifies the <see cref="HasText"/> dependency property.
         /// </summary>
-        private static readonly DependencyPropertyKey HasTextPropertyKey = DependencyProperty.RegisterReadOnly("HasText", typeof(bool), typeof(TextBoxBase), new PropertyMetadata(BooleanBoxes.FalseBox));
+        private static readonly DependencyPropertyKey HasTextPropertyKey = AvaloniaProperty.RegisterReadOnly("HasText", typeof(bool), typeof(TextBoxBase), new PropertyMetadata(BooleanBoxes.FalseBox));
 
         /// <summary>
         /// Identifies the <see cref="GetFocusOnLoad"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty GetFocusOnLoadProperty = DependencyProperty.Register("GetFocusOnLoad", typeof(bool), typeof(TextBoxBase), new PropertyMetadata(BooleanBoxes.FalseBox));
+        public static readonly AvaloniaProperty GetFocusOnLoadProperty = AvaloniaProperty.Register("GetFocusOnLoad", typeof(bool), typeof(TextBoxBase), new PropertyMetadata(BooleanBoxes.FalseBox));
 
         /// <summary>
         /// Identifies the <see cref="SelectAllOnFocus"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty SelectAllOnFocusProperty = DependencyProperty.Register("SelectAllOnFocus", typeof(bool), typeof(TextBoxBase), new PropertyMetadata(BooleanBoxes.FalseBox));
+        public static readonly AvaloniaProperty SelectAllOnFocusProperty = AvaloniaProperty.Register("SelectAllOnFocus", typeof(bool), typeof(TextBoxBase), new PropertyMetadata(BooleanBoxes.FalseBox));
 
         /// <summary>
         /// Identifies the <see cref="WatermarkContent"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty WatermarkContentProperty = DependencyProperty.Register("WatermarkContent", typeof(object), typeof(TextBoxBase), new PropertyMetadata(null));
+        public static readonly AvaloniaProperty WatermarkContentProperty = AvaloniaProperty.Register("WatermarkContent", typeof(object), typeof(TextBoxBase), new PropertyMetadata(null));
 
         /// <summary>
         /// Identifies the <see cref="WatermarkContentTemplate"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty WatermarkContentTemplateProperty = DependencyProperty.Register("WatermarkContentTemplate", typeof(DataTemplate), typeof(TextBoxBase), new PropertyMetadata(null));
+        public static readonly AvaloniaProperty WatermarkContentTemplateProperty = AvaloniaProperty.Register("WatermarkContentTemplate", typeof(DataTemplate), typeof(TextBoxBase), new PropertyMetadata(null));
 
         /// <summary>
         /// Identifies the <see cref="ValidateWithEnter"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ValidateWithEnterProperty = DependencyProperty.Register("ValidateWithEnter", typeof(bool), typeof(TextBoxBase), new PropertyMetadata(BooleanBoxes.TrueBox));
+        public static readonly AvaloniaProperty ValidateWithEnterProperty = AvaloniaProperty.Register("ValidateWithEnter", typeof(bool), typeof(TextBoxBase), new PropertyMetadata(BooleanBoxes.TrueBox));
 
         /// <summary>
         /// Identifies the <see cref="ValidateOnTextChange"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ValidateOnTextChangeProperty = DependencyProperty.Register("ValidateOnTextChange", typeof(bool), typeof(TextBoxBase), new PropertyMetadata(BooleanBoxes.FalseBox));
+        public static readonly AvaloniaProperty ValidateOnTextChangeProperty = AvaloniaProperty.Register("ValidateOnTextChange", typeof(bool), typeof(TextBoxBase), new PropertyMetadata(BooleanBoxes.FalseBox));
 
         /// <summary>
         /// Identifies the <see cref="ValidateOnLostFocus"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ValidateOnLostFocusProperty = DependencyProperty.Register("ValidateOnLostFocus", typeof(bool), typeof(TextBoxBase), new PropertyMetadata(BooleanBoxes.TrueBox, OnLostFocusActionChanged));
+        public static readonly AvaloniaProperty ValidateOnLostFocusProperty = AvaloniaProperty.Register("ValidateOnLostFocus", typeof(bool), typeof(TextBoxBase), new PropertyMetadata(BooleanBoxes.TrueBox, OnLostFocusActionChanged));
 
         /// <summary>
         /// Identifies the <see cref="CancelWithEscape"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty CancelWithEscapeProperty = DependencyProperty.Register("CancelWithEscape", typeof(bool), typeof(TextBoxBase), new PropertyMetadata(BooleanBoxes.TrueBox));
+        public static readonly AvaloniaProperty CancelWithEscapeProperty = AvaloniaProperty.Register("CancelWithEscape", typeof(bool), typeof(TextBoxBase), new PropertyMetadata(BooleanBoxes.TrueBox));
 
         /// <summary>
         /// Identifies the <see cref="CancelOnLostFocus"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty CancelOnLostFocusProperty = DependencyProperty.Register("CancelOnLostFocus", typeof(bool), typeof(TextBoxBase), new PropertyMetadata(BooleanBoxes.FalseBox, OnLostFocusActionChanged));
+        public static readonly AvaloniaProperty CancelOnLostFocusProperty = AvaloniaProperty.Register("CancelOnLostFocus", typeof(bool), typeof(TextBoxBase), new PropertyMetadata(BooleanBoxes.FalseBox, OnLostFocusActionChanged));
 
         /// <summary>
         /// Identifies the <see cref="ValidateCommand"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ValidateCommandProperty = DependencyProperty.Register("ValidateCommand", typeof(ICommand), typeof(TextBoxBase));
+        public static readonly AvaloniaProperty ValidateCommandProperty = AvaloniaProperty.Register("ValidateCommand", typeof(ICommand), typeof(TextBoxBase));
 
         /// <summary>
         /// Identifies the <see cref="ValidateCommandParameter"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ValidateCommandParameterProprty = DependencyProperty.Register("ValidateCommandParameter", typeof(object), typeof(TextBoxBase));
+        public static readonly AvaloniaProperty ValidateCommandParameterProprty = AvaloniaProperty.Register("ValidateCommandParameter", typeof(object), typeof(TextBoxBase));
 
         /// <summary>
         /// Identifies the <see cref="CancelCommand"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty CancelCommandProperty = DependencyProperty.Register("CancelCommand", typeof(ICommand), typeof(TextBoxBase));
+        public static readonly AvaloniaProperty CancelCommandProperty = AvaloniaProperty.Register("CancelCommand", typeof(ICommand), typeof(TextBoxBase));
 
         /// <summary>
         /// Identifies the <see cref="CancelCommandParameter"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty CancelCommandParameterProprty = DependencyProperty.Register("CancelCommandParameter", typeof(object), typeof(TextBoxBase));
+        public static readonly AvaloniaProperty CancelCommandParameterProprty = AvaloniaProperty.Register("CancelCommandParameter", typeof(object), typeof(TextBoxBase));
 
         /// <summary>
         /// Raised just before the TextBox changes are validated. This event is cancellable
@@ -122,7 +120,7 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Gets whether this TextBox contains a non-empty text.
         /// </summary>
-        public bool HasText { get { return (bool)GetValue(HasTextPropertyKey.DependencyProperty); } private set { SetValue(HasTextPropertyKey, value.Box()); } }
+        public bool HasText { get { return (bool)GetValue(HasTextPropertyKey.AvaloniaProperty); } private set { SetValue(HasTextPropertyKey, value.Box()); } }
 
         /// <summary>
         /// Gets or sets whether the associated text box should get keyboard focus when this behavior is attached.
@@ -416,7 +414,7 @@ namespace Stride.Core.Presentation.Controls
             }
         }
 
-        private static void OnTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnTextChanged(AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var input = (TextBoxBase)d;
             input.HasText = e.NewValue != null && ((string)e.NewValue).Length > 0;
@@ -428,7 +426,7 @@ namespace Stride.Core.Presentation.Controls
                 input.Validate();
         }
 
-        private static void OnLostFocusActionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnLostFocusActionChanged(AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var input = (TextBoxBase)d;
             if (e.Property == ValidateOnLostFocusProperty && (bool)e.NewValue)

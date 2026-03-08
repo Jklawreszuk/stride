@@ -1,20 +1,20 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Documents;
 
 namespace Stride.Core.Presentation.Controls
 {
     public static class TextBlockFormatting
     {
-        public static Inline GetFormattedText(DependencyObject obj)
+        public static Inline GetFormattedText(AvaloniaObject obj)
         {
             return (Inline)obj.GetValue(FormattedTextProperty);
         }
 
-        public static void SetFormattedText(DependencyObject obj, Inline value)
+        public static void SetFormattedText(AvaloniaObject obj, Inline value)
         {
             obj.SetValue(FormattedTextProperty, value);
         }
@@ -22,17 +22,16 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the dependency property which permits to directly bind a inline to a <see cref="TextBox"/>.
         /// </summary>
-        public static readonly DependencyProperty FormattedTextProperty =
-            DependencyProperty.RegisterAttached(
+        public static readonly AvaloniaProperty FormattedTextProperty =
+            AvaloniaProperty.RegisterAttached(
                 "FormattedText",
                 typeof(Inline),
                 typeof(TextBlockFormatting),
                 new PropertyMetadata(null, OnFormattedTextChanged));
 
-        private static void OnFormattedTextChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
+        private static void OnFormattedTextChanged(AvaloniaObject o, AvaloniaPropertyChangedEventArgs e)
         {
-            var textBlock = o as TextBlock;
-            if (textBlock == null) return;
+            if (o is not TextBlock textBlock) return;
 
             var inline = (Inline)e.NewValue;
             if (inline == null)

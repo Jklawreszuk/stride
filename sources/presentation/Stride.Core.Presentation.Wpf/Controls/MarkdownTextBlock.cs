@@ -1,10 +1,10 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Input;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Metadata;
 using Stride.Core.Annotations;
 
 namespace Stride.Core.Presentation.Controls
@@ -20,23 +20,23 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="BaseUrl"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty BaseUrlProperty =
-            DependencyProperty.Register(nameof(BaseUrl), typeof(string), typeof(MarkdownTextBlock), new PropertyMetadata(BaseUrlChanged));
+        public static readonly AvaloniaProperty BaseUrlProperty =
+            AvaloniaProperty.Register(nameof(BaseUrl), typeof(string), typeof(MarkdownTextBlock), new PropertyMetadata(BaseUrlChanged));
         /// <summary>
         /// Identifies the <see cref="HyperlinkCommand"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty HyperlinkCommandProperty =
-            DependencyProperty.Register(nameof(HyperlinkCommand), typeof(ICommand), typeof(MarkdownTextBlock), new PropertyMetadata(HyperlinkCommandChanged));
+        public static readonly AvaloniaProperty HyperlinkCommandProperty =
+            AvaloniaProperty.Register(nameof(HyperlinkCommand), typeof(ICommand), typeof(MarkdownTextBlock), new PropertyMetadata(HyperlinkCommandChanged));
         /// <summary>
         /// Identifies the <see cref="Markdown"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty MarkdownProperty =
-            DependencyProperty.Register(nameof(Markdown), typeof(XamlMarkdown), typeof(MarkdownTextBlock), new PropertyMetadata(MarkdownChanged));
+        public static readonly AvaloniaProperty MarkdownProperty =
+            AvaloniaProperty.Register(nameof(Markdown), typeof(XamlMarkdown), typeof(MarkdownTextBlock), new PropertyMetadata(MarkdownChanged));
         /// <summary>
         /// Identifies the <see cref="Text"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty TextProperty =
-            DependencyProperty.Register(nameof(Text), typeof(string), typeof(MarkdownTextBlock), new PropertyMetadata(TextChanged));
+        public static readonly AvaloniaProperty TextProperty =
+            AvaloniaProperty.Register(nameof(Text), typeof(string), typeof(MarkdownTextBlock), new PropertyMetadata(TextChanged));
 
         public string BaseUrl
         {
@@ -94,7 +94,7 @@ namespace Stride.Core.Presentation.Controls
             ResetMessage();
         }
 
-        private static void BaseUrlChanged([NotNull] DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void BaseUrlChanged([NotNull] AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var control = d as MarkdownTextBlock;
             if (control == null) throw new ArgumentNullException(nameof(control));
@@ -106,7 +106,7 @@ namespace Stride.Core.Presentation.Controls
             control.ResetMessage();
         }
 
-        private static void HyperlinkCommandChanged([NotNull] DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void HyperlinkCommandChanged([NotNull] AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var control = d as MarkdownTextBlock;
             if (control == null) throw new ArgumentNullException(nameof(control));
@@ -118,7 +118,7 @@ namespace Stride.Core.Presentation.Controls
             control.ResetMessage();
         }
 
-        private static void MarkdownChanged([NotNull] DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void MarkdownChanged([NotNull] AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var control = d as MarkdownTextBlock;
             if (control == null) throw new ArgumentNullException(nameof(control));
@@ -131,7 +131,7 @@ namespace Stride.Core.Presentation.Controls
             control.ResetMessage();
         }
 
-        private static void TextChanged([NotNull] DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void TextChanged([NotNull] AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var control = d as MarkdownTextBlock;
             if (control == null) throw new ArgumentNullException(nameof(control));

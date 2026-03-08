@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
+using Avalonia;
 using Microsoft.Xaml.Behaviors;
 using Stride.Core;
 using Stride.Core.Presentation.Extensions;
@@ -16,13 +17,13 @@ namespace Stride.Core.Presentation.Behaviors
     /// and resuming that <c>Binding</c> when it loses focus.
     /// </summary>
     /// <remarks>The host element must be of type <c>UIElement</c> and the <c>DependencyProprty</c> defined by PropertyName property must be set to a <c>BindingBase</c> object.</remarks>
-    public class OnFocusBindingInterruptionBehavior : Behavior<DependencyObject>
+    public class OnFocusBindingInterruptionBehavior : Behavior<AvaloniaObject>
     {
         private IDisposable subscriber;
-        private DependencyProperty property;
+        private AvaloniaProperty property;
 
         /// <summary>
-        /// Gets or sets the name of the DependencyProperty on which the Binding has to be interrupted.
+        /// Gets or sets the name of the AvaloniaProperty on which the Binding has to be interrupted.
         /// </summary>
         public string PropertyName { get; set; }
         /// <summary>

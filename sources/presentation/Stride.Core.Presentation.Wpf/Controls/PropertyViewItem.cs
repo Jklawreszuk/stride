@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
+using Avalonia;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Collections;
 using Stride.Core.Presentation.Extensions;
@@ -22,32 +23,32 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="Highlightable"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty HighlightableProperty = DependencyProperty.Register("Highlightable", typeof(bool), typeof(PropertyViewItem), new FrameworkPropertyMetadata(BooleanBoxes.TrueBox));
+        public static readonly AvaloniaProperty HighlightableProperty = AvaloniaProperty.Register("Highlightable", typeof(bool), typeof(PropertyViewItem), new FrameworkPropertyMetadata(BooleanBoxes.TrueBox));
 
         /// <summary>
         /// Identifies the <see cref="IsHighlighted"/> dependency property.
         /// </summary>
-        public static readonly DependencyPropertyKey IsHighlightedPropertyKey = DependencyProperty.RegisterReadOnly("IsHighlighted", typeof(bool), typeof(PropertyViewItem), new FrameworkPropertyMetadata(BooleanBoxes.FalseBox));
+        public static readonly DependencyPropertyKey IsHighlightedPropertyKey = AvaloniaProperty.RegisterReadOnly("IsHighlighted", typeof(bool), typeof(PropertyViewItem), new FrameworkPropertyMetadata(BooleanBoxes.FalseBox));
 
         /// <summary>
         /// Identifies the <see cref="IsHovered"/> dependency property.
         /// </summary>
-        public static readonly DependencyPropertyKey IsHoveredPropertyKey = DependencyProperty.RegisterReadOnly("IsHovered", typeof(bool), typeof(PropertyViewItem), new FrameworkPropertyMetadata(BooleanBoxes.FalseBox));
+        public static readonly DependencyPropertyKey IsHoveredPropertyKey = AvaloniaProperty.RegisterReadOnly("IsHovered", typeof(bool), typeof(PropertyViewItem), new FrameworkPropertyMetadata(BooleanBoxes.FalseBox));
 
         /// <summary>
         /// Identifies the <see cref="IsKeyboardActive"/> dependency property.
         /// </summary>
-        public static readonly DependencyPropertyKey IsKeyboardActivePropertyKey = DependencyProperty.RegisterReadOnly("IsKeyboardActive", typeof(bool), typeof(PropertyViewItem), new FrameworkPropertyMetadata(BooleanBoxes.FalseBox));
+        public static readonly DependencyPropertyKey IsKeyboardActivePropertyKey = AvaloniaProperty.RegisterReadOnly("IsKeyboardActive", typeof(bool), typeof(PropertyViewItem), new FrameworkPropertyMetadata(BooleanBoxes.FalseBox));
 
         /// <summary>
         /// Identifies the <see cref="Offset"/> dependency property.
         /// </summary>
-        public static readonly DependencyPropertyKey OffsetPropertyKey = DependencyProperty.RegisterReadOnly("Offset", typeof(double), typeof(PropertyViewItem), new FrameworkPropertyMetadata(0.0));
+        public static readonly DependencyPropertyKey OffsetPropertyKey = AvaloniaProperty.RegisterReadOnly("Offset", typeof(double), typeof(PropertyViewItem), new FrameworkPropertyMetadata(0.0));
 
         /// <summary>
         /// Identifies the <see cref="Increment"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty IncrementProperty = DependencyProperty.Register("Increment", typeof(double), typeof(PropertyViewItem), new FrameworkPropertyMetadata(0.0, OnIncrementChanged));
+        public static readonly AvaloniaProperty IncrementProperty = AvaloniaProperty.Register("Increment", typeof(double), typeof(PropertyViewItem), new FrameworkPropertyMetadata(0.0, OnIncrementChanged));
 
         static PropertyViewItem()
         {
@@ -87,22 +88,22 @@ namespace Stride.Core.Presentation.Controls
         /// </summary>
         /// <seealso cref="Highlightable"/>
         /// <seealso cref="IsHovered"/>
-        public bool IsHighlighted => (bool)GetValue(IsHighlightedPropertyKey.DependencyProperty);
+        public bool IsHighlighted => (bool)GetValue(IsHighlightedPropertyKey.AvaloniaProperty);
 
         /// <summary>
         /// Gets whether the mouse cursor is currently over this control.
         /// </summary>
-        public bool IsHovered => (bool)GetValue(IsHoveredPropertyKey.DependencyProperty);
+        public bool IsHovered => (bool)GetValue(IsHoveredPropertyKey.AvaloniaProperty);
 
         /// <summary>
         /// Gets whether this control is the closest control to the control that has the keyboard focus.
         /// </summary>
-        public bool IsKeyboardActive => (bool)GetValue(IsKeyboardActivePropertyKey.DependencyProperty);
+        public bool IsKeyboardActive => (bool)GetValue(IsKeyboardActivePropertyKey.AvaloniaProperty);
 
         /// <summary>
         /// Gets the absolute offset of this <see cref="PropertyViewItem"/>.
         /// </summary>
-        public double Offset { get { return (double)GetValue(OffsetPropertyKey.DependencyProperty); } private set { SetValue(OffsetPropertyKey, value); } }
+        public double Offset { get { return (double)GetValue(OffsetPropertyKey.AvaloniaProperty); } private set { SetValue(OffsetPropertyKey, value); } }
 
         /// <summary>
         /// Gets or set the increment value used to calculate the <see cref="Offset "/>of the <see cref="PropertyViewItem"/> contained in the <see cref="Properties"/> of this control..
@@ -110,7 +111,7 @@ namespace Stride.Core.Presentation.Controls
         public double Increment { get { return (double)GetValue(IncrementProperty); } set { SetValue(IncrementProperty, value); } }
 
         /// <inheritdoc/>
-        protected override DependencyObject GetContainerForItemOverride()
+        protected override AvaloniaObject GetContainerForItemOverride()
         {
             var item = new PropertyViewItem(PropertyView) { Offset = Offset + Increment };
             return item;
@@ -123,7 +124,7 @@ namespace Stride.Core.Presentation.Controls
         }
 
         /// <inheritdoc/>
-        protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
+        protected override void PrepareContainerForItemOverride(AvaloniaObject element, object item)
         {
             base.PrepareContainerForItemOverride(element, item);
             var container = (PropertyViewItem)element;
@@ -132,7 +133,7 @@ namespace Stride.Core.Presentation.Controls
         }
 
         /// <inheritdoc/>
-        protected override void ClearContainerForItemOverride(DependencyObject element, object item)
+        protected override void ClearContainerForItemOverride(AvaloniaObject element, object item)
         {
             var container = (PropertyViewItem)element;
             RaiseEvent(new PropertyViewItemEventArgs(PropertyView.ClearItemEvent, this, (PropertyViewItem)element, item));
@@ -158,7 +159,7 @@ namespace Stride.Core.Presentation.Controls
         //    return (AutomationPeer)new TreeViewItemAutomationPeer(this);
         //}
 
-        private static void OnIncrementChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnIncrementChanged(AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var item = (PropertyViewItem)d;
             var delta = (double)e.NewValue - (double)e.OldValue;

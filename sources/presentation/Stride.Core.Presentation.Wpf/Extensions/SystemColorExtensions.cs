@@ -6,7 +6,7 @@ using Stride.Core.Mathematics;
 
 namespace Stride.Core.Presentation.Extensions
 {
-    using SystemColor = System.Windows.Media.Color;
+    using SystemColor = Avalonia.Media.Color;
 
     public static class SystemColorExtensions
     {

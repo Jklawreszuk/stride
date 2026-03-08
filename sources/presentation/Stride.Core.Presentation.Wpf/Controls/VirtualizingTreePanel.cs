@@ -6,10 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Media;
+using Avalonia;
+using Avalonia.Controls;
 using Stride.Core.Annotations;
 
 namespace Stride.Core.Presentation.Controls

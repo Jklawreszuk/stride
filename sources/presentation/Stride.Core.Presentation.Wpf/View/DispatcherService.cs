@@ -4,7 +4,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Threading;
+using Avalonia.Threading;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Services;
 
@@ -24,7 +24,7 @@ namespace Stride.Core.Presentation.View
         [NotNull]
         public static DispatcherService Create()
         {
-            return new DispatcherService(Dispatcher.CurrentDispatcher);
+            return new DispatcherService(Dispatcher.UIThread);
         }
 
         /// <summary>
@@ -60,21 +60,21 @@ namespace Stride.Core.Presentation.View
         public Task InvokeAsync(Action callback, CancellationToken token = default)
         {
             var operation = dispatcher.InvokeAsync(callback, DispatcherPriority.Normal, token);
-            return operation.Task;
+            return operation.GetTask();
         }
 
         /// <inheritdoc/>
         public Task LowPriorityInvokeAsync(Action callback, CancellationToken token = default)
         {
             var operation = dispatcher.InvokeAsync(callback, DispatcherPriority.ApplicationIdle, token);
-            return operation.Task;
+            return operation.GetTask();
         }
 
         /// <inheritdoc/>
         public Task<TResult> InvokeAsync<TResult>(Func<TResult> callback, CancellationToken token = default)
         {
             var operation = dispatcher.InvokeAsync(callback, DispatcherPriority.Normal, token);
-            return operation.Task;
+            return operation.GetTask();
         }
 
         /// <inheritdoc/>
@@ -108,15 +108,15 @@ namespace Stride.Core.Presentation.View
         /// <inheritdoc/>
         public bool CheckAccess()
         {
-            return Thread.CurrentThread == dispatcher.Thread;
+            return dispatcher.CheckAccess();
         }
 
         /// <inheritdoc/>
         public void EnsureAccess(bool inDispatcherThread = true)
         {
-            if (inDispatcherThread && Thread.CurrentThread != dispatcher.Thread)
+            if (inDispatcherThread && !CheckAccess())
                 throw new InvalidOperationException("The current thread was expected to be the dispatcher thread.");
-            if (!inDispatcherThread && Thread.CurrentThread == dispatcher.Thread)
+            if (!inDispatcherThread && CheckAccess())
                 throw new InvalidOperationException("The current thread was expected to be different from the dispatcher thread.");
         }
     }

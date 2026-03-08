@@ -2,8 +2,8 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
-using System.Windows;
-using System.Windows.Interop;
+using Avalonia;
+using Avalonia.Controls;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Interop;
 

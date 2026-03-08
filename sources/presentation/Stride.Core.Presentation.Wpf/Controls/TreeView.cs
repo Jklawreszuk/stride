@@ -6,10 +6,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Metadata;
+using Avalonia.Controls.Presenters;
+using Avalonia.Input;
+using Avalonia.Interactivity;
+using Avalonia.Markup.Xaml.Templates;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Collections;
 using Stride.Core.Presentation.Extensions;
@@ -31,23 +34,23 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="SelectedItem"/> dependency property.
         /// </summary>
-        public static DependencyProperty SelectedItemProperty =
-            DependencyProperty.Register(nameof(SelectedItem), typeof(object), typeof(TreeView), new FrameworkPropertyMetadata(null, OnSelectedItemPropertyChanged));
+        public static AvaloniaProperty SelectedItemProperty =
+            AvaloniaProperty.Register(nameof(SelectedItem), typeof(object), typeof(TreeView), new FrameworkPropertyMetadata(null, OnSelectedItemPropertyChanged));
         /// <summary>
         /// Identifies the <see cref="SelectedItems"/> dependency property.
         /// </summary>
         public static DependencyPropertyKey SelectedItemsProperty =
-            DependencyProperty.RegisterReadOnly(nameof(SelectedItems), typeof(IList), typeof(TreeView), new FrameworkPropertyMetadata(null, OnSelectedItemsPropertyChanged));
+            AvaloniaProperty.RegisterReadOnly(nameof(SelectedItems), typeof(IList), typeof(TreeView), new FrameworkPropertyMetadata(null, OnSelectedItemsPropertyChanged));
         /// <summary>
         /// Identifes the <see cref="SelectionMode"/> dependency property.
         /// </summary>
-        public static DependencyProperty SelectionModeProperty =
-            DependencyProperty.Register(nameof(SelectionMode), typeof(SelectionMode), typeof(TreeView), new FrameworkPropertyMetadata(SelectionMode.Extended, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnSelectionModeChanged));
+        public static AvaloniaProperty SelectionModeProperty =
+            AvaloniaProperty.Register(nameof(SelectionMode), typeof(SelectionMode), typeof(TreeView), new FrameworkPropertyMetadata(SelectionMode.Extended, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnSelectionModeChanged));
         /// <summary>
         /// Identifies the <see cref="IsVirtualizing"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty IsVirtualizingProperty =
-            DependencyProperty.Register(nameof(IsVirtualizing), typeof(bool), typeof(TreeView), new PropertyMetadata(BooleanBoxes.FalseBox));
+        public static readonly AvaloniaProperty IsVirtualizingProperty =
+            AvaloniaProperty.Register(nameof(IsVirtualizing), typeof(bool), typeof(TreeView), new PropertyMetadata(BooleanBoxes.FalseBox));
         /// <summary>
         /// Identifies the <see cref="PrepareItem"/> routed event.
         /// This attached routed event may be raised by the PropertyGrid itself or by a PropertyItemBase containing sub-items.
@@ -115,7 +118,7 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Gets the list of selected items.
         /// </summary>
-        public IList SelectedItems { get { return (IList)GetValue(SelectedItemsProperty.DependencyProperty); } private set { SetValue(SelectedItemsProperty, value); } }
+        public IList SelectedItems { get { return (IList)GetValue(SelectedItemsProperty.AvaloniaProperty); } private set { SetValue(SelectedItemsProperty, value); } }
 
         /// <summary>
         /// Gets the selection mode for this control.
@@ -465,7 +468,7 @@ namespace Stride.Core.Presentation.Controls
         }
 
         /// <inheritdoc />
-        protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
+        protected override void PrepareContainerForItemOverride(AvaloniaObject element, object item)
         {
             base.PrepareContainerForItemOverride(element, item);
             //Send down the IsVirtualizing property if it's set on this element.
@@ -474,7 +477,7 @@ namespace Stride.Core.Presentation.Controls
         }
 
         /// <inheritdoc />
-        protected override void ClearContainerForItemOverride(DependencyObject element, object item)
+        protected override void ClearContainerForItemOverride(AvaloniaObject element, object item)
         {
             RaiseEvent(new TreeViewItemEventArgs(ClearItemEvent, this, (TreeViewItem)element, item));
             base.ClearContainerForItemOverride(element, item);
@@ -520,7 +523,7 @@ namespace Stride.Core.Presentation.Controls
         }
 
         /// <inheritdoc />
-        protected override DependencyObject GetContainerForItemOverride()
+        protected override AvaloniaObject GetContainerForItemOverride()
         {
             return new TreeViewItem();
         }
@@ -531,7 +534,7 @@ namespace Stride.Core.Presentation.Controls
             return item is TreeViewItem;
         }
 
-        private static void OnSelectedItemPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnSelectedItemPropertyChanged(AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var treeView = (TreeView)d;
             if (treeView.updatingSelection)
@@ -568,7 +571,7 @@ namespace Stride.Core.Presentation.Controls
             treeView.updatingSelection = false;
         }
 
-        private static void OnSelectedItemsPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnSelectedItemsPropertyChanged(AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var treeView = (TreeView)d;
             if (e.OldValue != null)
@@ -590,7 +593,7 @@ namespace Stride.Core.Presentation.Controls
             }
         }
 
-        private static void OnSelectionModeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnSelectionModeChanged(AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var newValue = (SelectionMode)e.NewValue;
             switch (newValue)

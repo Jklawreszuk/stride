@@ -6,19 +6,20 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Shapes;
+using Avalonia;
 
 namespace Stride.Core.Presentation.Behaviors
 {
     public sealed class SelectionRectangleBehavior : MouseMoveCaptureBehaviorBase<UIElement>
     {
-        public static readonly DependencyProperty CanvasProperty =
-            DependencyProperty.Register(nameof(Canvas), typeof(Canvas), typeof(SelectionRectangleBehavior), new PropertyMetadata(OnCanvasChanged));
+        public static readonly AvaloniaProperty CanvasProperty =
+            AvaloniaProperty.Register(nameof(Canvas), typeof(Canvas), typeof(SelectionRectangleBehavior), new PropertyMetadata(OnCanvasChanged));
 
-        public static readonly DependencyProperty CommandProperty =
-            DependencyProperty.Register(nameof(Command), typeof(ICommand), typeof(SelectionRectangleBehavior));
+        public static readonly AvaloniaProperty CommandProperty =
+            AvaloniaProperty.Register(nameof(Command), typeof(ICommand), typeof(SelectionRectangleBehavior));
 
-        public static readonly DependencyProperty RectangleStyleProperty =
-            DependencyProperty.Register(nameof(RectangleStyle), typeof(Style), typeof(SelectionRectangleBehavior));
+        public static readonly AvaloniaProperty RectangleStyleProperty =
+            AvaloniaProperty.Register(nameof(RectangleStyle), typeof(Style), typeof(SelectionRectangleBehavior));
 
         private Point originPoint;
         private Rectangle selectionRectangle;
@@ -36,7 +37,7 @@ namespace Stride.Core.Presentation.Behaviors
         
         public bool IsDragging { get; private set; }
 
-        private static void OnCanvasChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        private static void OnCanvasChanged(AvaloniaObject obj, AvaloniaPropertyChangedEventArgs e)
         {
             var behavior = (SelectionRectangleBehavior)obj;
             behavior.OnCanvasChanged(e);
@@ -125,7 +126,7 @@ namespace Stride.Core.Presentation.Behaviors
             selectionRectangle.IsHitTestVisible = false;
         }
 
-        private void OnCanvasChanged(DependencyPropertyChangedEventArgs e)
+        private void OnCanvasChanged(AvaloniaPropertyChangedEventArgs e)
         {
             var oldCanvas = e.OldValue as Canvas;
             if (oldCanvas != null && selectionRectangle != null)

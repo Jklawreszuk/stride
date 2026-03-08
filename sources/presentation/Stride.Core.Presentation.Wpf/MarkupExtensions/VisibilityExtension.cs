@@ -2,13 +2,11 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
-using System.Windows;
-using System.Windows.Markup;
+using Avalonia.Markup.Xaml;
 using Stride.Core.Presentation.Internal;
 
 namespace Stride.Core.Presentation.MarkupExtensions
 {
-    [MarkupExtensionReturnType(typeof(Visibility))]
     public class CollapsedExtension : MarkupExtension
     {
         /// <inheritdoc />
@@ -18,7 +16,6 @@ namespace Stride.Core.Presentation.MarkupExtensions
         }
     }
 
-    [MarkupExtensionReturnType(typeof(Visibility))]
     public class HiddenExtension : MarkupExtension
     {
         /// <inheritdoc />
@@ -28,7 +25,6 @@ namespace Stride.Core.Presentation.MarkupExtensions
         }
     }
 
-    [MarkupExtensionReturnType(typeof(Visibility))]
     public class VisibleExtension : MarkupExtension
     {
         /// <inheritdoc />

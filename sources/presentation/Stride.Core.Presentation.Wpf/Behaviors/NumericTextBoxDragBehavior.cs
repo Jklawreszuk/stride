@@ -8,6 +8,8 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using Avalonia;
+using Avalonia.Layout;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Controls;
 using Stride.Core.Presentation.Extensions;
@@ -33,7 +35,7 @@ namespace Stride.Core.Presentation.Behaviors
         /// <summary>
         /// Identifies the <see cref="NumericTextBox.MouseValidationTrigger"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty DragCursorProperty = DependencyProperty.Register(nameof(DragCursor), typeof(Cursor), typeof(NumericTextBox), new PropertyMetadata(Cursors.ScrollAll));
+        public static readonly AvaloniaProperty DragCursorProperty = AvaloniaProperty.Register(nameof(DragCursor), typeof(Cursor), typeof(NumericTextBox), new PropertyMetadata(Cursors.ScrollAll));
         
         /// <summary>
         /// Gets or sets the <see cref="Cursor"/> to display when the value can be modified via dragging.
@@ -193,7 +195,7 @@ namespace Stride.Core.Presentation.Behaviors
             AssociatedObject.contentHost.QueryCursor += HostQueryCursor;
         }
 
-        private void RootParentIsKeyboardFocusWithinChanged(object sender, DependencyPropertyChangedEventArgs args)
+        private void RootParentIsKeyboardFocusWithinChanged(object sender, AvaloniaPropertyChangedEventArgs args)
         {
             if ((bool)args.NewValue)
                 return;

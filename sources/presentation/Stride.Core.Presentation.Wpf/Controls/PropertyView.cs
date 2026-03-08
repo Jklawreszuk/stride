@@ -3,10 +3,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Stride.Core.Presentation.Collections;
 using Stride.Core.Presentation.Extensions;
 
@@ -19,22 +18,22 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="HighlightedItem"/> dependency property.
         /// </summary>
-        public static readonly DependencyPropertyKey HighlightedItemPropertyKey = DependencyProperty.RegisterReadOnly(nameof(HighlightedItem), typeof(PropertyViewItem), typeof(PropertyView), new PropertyMetadata(null));
+        public static readonly DependencyPropertyKey HighlightedItemPropertyKey = AvaloniaProperty.RegisterReadOnly(nameof(HighlightedItem), typeof(PropertyViewItem), typeof(PropertyView), new PropertyMetadata(null));
 
         /// <summary>
         /// Identifies the <see cref="HoveredItem"/> dependency property.
         /// </summary>
-        public static readonly DependencyPropertyKey HoveredItemPropertyKey = DependencyProperty.RegisterReadOnly(nameof(HoveredItem), typeof(PropertyViewItem), typeof(PropertyView), new PropertyMetadata(null));
+        public static readonly DependencyPropertyKey HoveredItemPropertyKey = AvaloniaProperty.RegisterReadOnly(nameof(HoveredItem), typeof(PropertyViewItem), typeof(PropertyView), new PropertyMetadata(null));
 
         /// <summary>
         /// Identifies the <see cref="KeyboardActiveItem"/> dependency property.
         /// </summary>
-        public static readonly DependencyPropertyKey KeyboardActiveItemPropertyKey = DependencyProperty.RegisterReadOnly(nameof(KeyboardActiveItem), typeof(PropertyViewItem), typeof(PropertyView), new PropertyMetadata(null));
+        public static readonly DependencyPropertyKey KeyboardActiveItemPropertyKey = AvaloniaProperty.RegisterReadOnly(nameof(KeyboardActiveItem), typeof(PropertyViewItem), typeof(PropertyView), new PropertyMetadata(null));
 
         /// <summary>
         /// Identifies the <see cref="NameColumnSize"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty NameColumnSizeProperty = DependencyProperty.Register(nameof(NameColumnSize), typeof(GridLength), typeof(PropertyView), new FrameworkPropertyMetadata(new GridLength(150), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+        public static readonly AvaloniaProperty NameColumnSizeProperty = AvaloniaProperty.Register(nameof(NameColumnSize), typeof(GridLength), typeof(PropertyView), new FrameworkPropertyMetadata(new GridLength(150), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
         /// <summary>
         /// Identifies the PreparePropertyItem event.
@@ -64,17 +63,17 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Gets the <see cref="PropertyViewItem"/> that is currently highlighted by the mouse cursor.
         /// </summary>
-        public PropertyViewItem HighlightedItem { get { return (PropertyViewItem)GetValue(HighlightedItemPropertyKey.DependencyProperty); } private set { SetValue(HighlightedItemPropertyKey, value); } }
+        public PropertyViewItem HighlightedItem { get { return (PropertyViewItem)GetValue(HighlightedItemPropertyKey.AvaloniaProperty); } private set { SetValue(HighlightedItemPropertyKey, value); } }
 
         /// <summary>
         /// Gets the <see cref="PropertyViewItem"/> that is currently hovered by the mouse cursor.
         /// </summary>
-        public PropertyViewItem HoveredItem { get { return (PropertyViewItem)GetValue(HoveredItemPropertyKey.DependencyProperty); } private set { SetValue(HoveredItemPropertyKey, value); } }
+        public PropertyViewItem HoveredItem { get { return (PropertyViewItem)GetValue(HoveredItemPropertyKey.AvaloniaProperty); } private set { SetValue(HoveredItemPropertyKey, value); } }
 
         /// <summary>
         /// Gets the <see cref="PropertyViewItem"/> that currently owns the control who have the keyboard focus.
         /// </summary>
-        public PropertyViewItem KeyboardActiveItem { get { return (PropertyViewItem)GetValue(KeyboardActiveItemPropertyKey.DependencyProperty); } private set { SetValue(KeyboardActiveItemPropertyKey, value); } }
+        public PropertyViewItem KeyboardActiveItem { get { return (PropertyViewItem)GetValue(KeyboardActiveItemPropertyKey.AvaloniaProperty); } private set { SetValue(KeyboardActiveItemPropertyKey, value); } }
 
         /// <summary>
         /// Gets or sets the shared size of the 'Name' column.
@@ -105,7 +104,7 @@ namespace Stride.Core.Presentation.Controls
             }
         }
 
-        internal void OnIsKeyboardFocusWithinChanged(object sender, DependencyPropertyChangedEventArgs e)
+        internal void OnIsKeyboardFocusWithinChanged(object sender, AvaloniaPropertyChangedEventArgs e)
         {
             if (Equals(sender, this) && !(bool)e.NewValue)
             {
@@ -114,7 +113,7 @@ namespace Stride.Core.Presentation.Controls
             }
 
             // We want to find the closest PropertyViewItem to the element who got the keyboard focus.
-            var focusedControl = Keyboard.FocusedElement as DependencyObject;
+            var focusedControl = Keyboard.FocusedElement as AvaloniaObject;
             if (focusedControl != null)
             {
                 var propertyItem = focusedControl as PropertyViewItem ?? focusedControl.FindVisualParentOfType<PropertyViewItem>();
@@ -132,7 +131,7 @@ namespace Stride.Core.Presentation.Controls
             HighlightItem(null);
         }
 
-        protected override DependencyObject GetContainerForItemOverride()
+        protected override AvaloniaObject GetContainerForItemOverride()
         {
             return new PropertyViewItem(this);
         }
@@ -142,7 +141,7 @@ namespace Stride.Core.Presentation.Controls
             return item is PropertyViewItem;
         }
 
-        protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
+        protected override void PrepareContainerForItemOverride(AvaloniaObject element, object item)
         {
             base.PrepareContainerForItemOverride(element, item);
             var container = (PropertyViewItem)element;
@@ -150,7 +149,7 @@ namespace Stride.Core.Presentation.Controls
             RaiseEvent(new PropertyViewItemEventArgs(PrepareItemEvent, this, container, item));
         }
 
-        protected override void ClearContainerForItemOverride(DependencyObject element, object item)
+        protected override void ClearContainerForItemOverride(AvaloniaObject element, object item)
         {
             var container = (PropertyViewItem)element;
             RaiseEvent(new PropertyViewItemEventArgs(ClearItemEvent, this, (PropertyViewItem)element, item));

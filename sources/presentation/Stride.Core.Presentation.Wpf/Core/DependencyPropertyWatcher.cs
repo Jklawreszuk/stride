@@ -2,9 +2,7 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Windows;
-using Microsoft.Xaml.Behaviors;
+using Avalonia;
 using Stride.Core.Annotations;
 using Stride.Core.Extensions;
 
@@ -12,8 +10,8 @@ namespace Stride.Core.Presentation.Core
 {
     public class DependencyPropertyWatcher : IAttachedObject
     {
-        private readonly List<Tuple<DependencyProperty, EventHandler>> handlers = new List<Tuple<DependencyProperty, EventHandler>>();
-        private readonly Dictionary<DependencyProperty, DependencyPropertyDescriptor> descriptors = new Dictionary<DependencyProperty, DependencyPropertyDescriptor>();
+        private readonly List<Tuple<AvaloniaProperty, EventHandler>> handlers = new List<Tuple<AvaloniaProperty, EventHandler>>();
+        private readonly Dictionary<AvaloniaProperty, DependencyPropertyDescriptor> descriptors = new Dictionary<AvaloniaProperty, DependencyPropertyDescriptor>();
         private FrameworkElement frameworkElement;
 
         private bool handlerRegistered;
@@ -27,9 +25,9 @@ namespace Stride.Core.Presentation.Core
             Attach(attachTo);
         }
 
-        public DependencyObject AssociatedObject => frameworkElement;
+        public AvaloniaObject AssociatedObject => frameworkElement;
 
-        public void Attach([NotNull] DependencyObject dependencyObject)
+        public void Attach([NotNull] AvaloniaObject dependencyObject)
         {
             if (dependencyObject == null) throw new ArgumentNullException(nameof(dependencyObject));
             if (ReferenceEquals(dependencyObject, frameworkElement))
@@ -56,7 +54,7 @@ namespace Stride.Core.Presentation.Core
             frameworkElement = null;
         }
 
-        public void RegisterValueChangedHandler(DependencyProperty property, EventHandler handler)
+        public void RegisterValueChangedHandler(AvaloniaProperty property, EventHandler handler)
         {
             handlers.Add(Tuple.Create(property, handler));
             if (handlerRegistered)
@@ -65,7 +63,7 @@ namespace Stride.Core.Presentation.Core
             }
         }
 
-        public void UnregisterValueChangedHander(DependencyProperty property, EventHandler handler)
+        public void UnregisterValueChangedHander(AvaloniaProperty property, EventHandler handler)
         {
             handlers.RemoveWhere(x => x.Item1 == property && x.Item2 == handler);
             if (handlerRegistered)
@@ -98,7 +96,7 @@ namespace Stride.Core.Presentation.Core
             }
         }
 
-        private void AttachHandler([NotNull] DependencyProperty property, [NotNull] EventHandler handler)
+        private void AttachHandler([NotNull] AvaloniaProperty property, [NotNull] EventHandler handler)
         {
             if (property == null) throw new ArgumentNullException(nameof(property));
             if (handler == null) throw new ArgumentNullException(nameof(handler));
@@ -113,7 +111,7 @@ namespace Stride.Core.Presentation.Core
             descriptor.AddValueChanged(AssociatedObject, handler);
         }
 
-        private void DetachHandler([NotNull] DependencyProperty property, [NotNull] EventHandler handler)
+        private void DetachHandler([NotNull] AvaloniaProperty property, [NotNull] EventHandler handler)
         {
             if (property == null) throw new ArgumentNullException(nameof(property));
             if (handler == null) throw new ArgumentNullException(nameof(handler));

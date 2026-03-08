@@ -3,9 +3,9 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Windows;
-using System.Windows.Input;
-using System.Windows.Media;
+using Avalonia;
+using Avalonia.Interactivity;
+using Avalonia.Media;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Internal;
 
@@ -30,12 +30,12 @@ namespace Stride.Core.Presentation.Controls
     {
         public object OldValue { get; private set; }
         public object NewValue { get; private set; }
-        public DependencyProperty DependencyProperty { get; private set; }
+        public AvaloniaProperty AvaloniaProperty { get; private set; }
 
-        public RoutedDependencyPropertyChangedEventArgs(RoutedEvent routedEvent, DependencyProperty dependencyProperty, object oldValue, object newValue)
+        public RoutedDependencyPropertyChangedEventArgs(RoutedEvent routedEvent, AvaloniaProperty dependencyProperty, object oldValue, object newValue)
         {
             RoutedEvent = routedEvent;
-            DependencyProperty = dependencyProperty;
+            AvaloniaProperty = dependencyProperty;
             OldValue = oldValue;
             NewValue = newValue;
         }
@@ -43,203 +43,203 @@ namespace Stride.Core.Presentation.Controls
 
     public class ScaleBar : FrameworkElement
     {
-        public static readonly DependencyProperty CustomDrawingContextProperty = DependencyProperty.Register(
+        public static readonly AvaloniaProperty CustomDrawingContextProperty = AvaloniaProperty.Register(
             "CustomDrawingContext",
             typeof(DrawingContext),
             typeof(ScaleBar),
             new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender));
 
-        public static readonly DependencyProperty BackgroundProperty = DependencyProperty.Register(
+        public static readonly AvaloniaProperty BackgroundProperty = AvaloniaProperty.Register(
             "Background",
             typeof(Brush),
             typeof(ScaleBar),
             new FrameworkPropertyMetadata(Brushes.Transparent, FrameworkPropertyMetadataOptions.AffectsRender));
 
-        public static readonly DependencyProperty LargeTickPenProperty = DependencyProperty.Register(
+        public static readonly AvaloniaProperty LargeTickPenProperty = AvaloniaProperty.Register(
             "LargeTickPen",
             typeof(Pen),
             typeof(ScaleBar),
             new FrameworkPropertyMetadata(new Pen(Brushes.Black, 1.0), FrameworkPropertyMetadataOptions.AffectsRender));
 
-        public static readonly DependencyProperty SmallTickPenProperty = DependencyProperty.Register(
+        public static readonly AvaloniaProperty SmallTickPenProperty = AvaloniaProperty.Register(
             "SmallTickPen",
             typeof(Pen),
             typeof(ScaleBar),
             new FrameworkPropertyMetadata(new Pen(Brushes.Gray, 1.0), FrameworkPropertyMetadataOptions.AffectsRender));
 
-        public static readonly DependencyProperty LargeTickTopProperty = DependencyProperty.Register(
+        public static readonly AvaloniaProperty LargeTickTopProperty = AvaloniaProperty.Register(
             "LargeTickTop",
             typeof(double),
             typeof(ScaleBar),
             new FrameworkPropertyMetadata(0.625, FrameworkPropertyMetadataOptions.AffectsRender));
 
-        public static readonly DependencyProperty LargeTickBottomProperty = DependencyProperty.Register(
+        public static readonly AvaloniaProperty LargeTickBottomProperty = AvaloniaProperty.Register(
             "LargeTickBottom",
             typeof(double),
             typeof(ScaleBar),
             new FrameworkPropertyMetadata(1.0, FrameworkPropertyMetadataOptions.AffectsRender));
 
-        public static readonly DependencyProperty SmallTickTopProperty = DependencyProperty.Register(
+        public static readonly AvaloniaProperty SmallTickTopProperty = AvaloniaProperty.Register(
             "SmallTickTop",
             typeof(double),
             typeof(ScaleBar),
             new FrameworkPropertyMetadata(0.75, FrameworkPropertyMetadataOptions.AffectsRender));
 
-        public static readonly DependencyProperty SmallTickBottomProperty = DependencyProperty.Register(
+        public static readonly AvaloniaProperty SmallTickBottomProperty = AvaloniaProperty.Register(
             "SmallTickBottom",
             typeof(double),
             typeof(ScaleBar),
             new FrameworkPropertyMetadata(1.0, FrameworkPropertyMetadataOptions.AffectsRender));
 
-        public static readonly DependencyProperty DecimalCountRoundingProperty = DependencyProperty.Register(
+        public static readonly AvaloniaProperty DecimalCountRoundingProperty = AvaloniaProperty.Register(
             "DecimalCountRounding",
             typeof(int),
             typeof(ScaleBar),
             new FrameworkPropertyMetadata(6, null, CoerceDecimalCountRoundingPropertyValue));
 
-        public static readonly DependencyProperty TextPositionOriginProperty = DependencyProperty.Register(
+        public static readonly AvaloniaProperty TextPositionOriginProperty = AvaloniaProperty.Register(
             "TextPositionOrigin",
             typeof(Point),
             typeof(ScaleBar),
             new FrameworkPropertyMetadata(new Point(0.5, 0.0), FrameworkPropertyMetadataOptions.AffectsRender));
 
-        public static readonly DependencyProperty TextPositionProperty = DependencyProperty.Register(
+        public static readonly AvaloniaProperty TextPositionProperty = AvaloniaProperty.Register(
             "TextPosition",
             typeof(double),
             typeof(ScaleBar),
             new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsRender));
 
-        public static readonly DependencyProperty ForegroundProperty = DependencyProperty.Register(
+        public static readonly AvaloniaProperty ForegroundProperty = AvaloniaProperty.Register(
             "Foreground",
             typeof(Brush),
             typeof(ScaleBar),
             new FrameworkPropertyMetadata(Brushes.Black, FrameworkPropertyMetadataOptions.AffectsRender));
 
-        public static readonly DependencyProperty FontProperty = DependencyProperty.Register(
+        public static readonly AvaloniaProperty FontProperty = AvaloniaProperty.Register(
             "Font",
             typeof(Typeface),
             typeof(ScaleBar),
             new FrameworkPropertyMetadata(new Typeface("Meiryo"), FrameworkPropertyMetadataOptions.AffectsRender));
 
-        public static readonly DependencyProperty FontSizeProperty = DependencyProperty.Register(
+        public static readonly AvaloniaProperty FontSizeProperty = AvaloniaProperty.Register(
             "FontSize",
             typeof(double),
             typeof(ScaleBar),
             new FrameworkPropertyMetadata(9.0, FrameworkPropertyMetadataOptions.AffectsRender));
 
-        public static readonly DependencyProperty StartUnitProperty = DependencyProperty.Register(
+        public static readonly AvaloniaProperty StartUnitProperty = AvaloniaProperty.Register(
             "StartUnit",
             typeof(double),
             typeof(ScaleBar),
             new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsRender));
 
-        public static readonly DependencyProperty MinimumUnitsPerTickProperty = DependencyProperty.Register(
+        public static readonly AvaloniaProperty MinimumUnitsPerTickProperty = AvaloniaProperty.Register(
             "MinimumUnitsPerTick",
             typeof(double),
             typeof(ScaleBar),
             new FrameworkPropertyMetadata(1e-12, FrameworkPropertyMetadataOptions.AffectsRender, OnUnitsPerTickPropertyChanged));
 
-        public static readonly DependencyProperty MaximumUnitsPerTickProperty = DependencyProperty.Register(
+        public static readonly AvaloniaProperty MaximumUnitsPerTickProperty = AvaloniaProperty.Register(
             "MaximumUnitsPerTick",
             typeof(double),
             typeof(ScaleBar),
             new FrameworkPropertyMetadata(1e12, FrameworkPropertyMetadataOptions.AffectsRender, OnUnitsPerTickPropertyChanged));
 
-        public static readonly DependencyProperty UnitsPerTickProperty = DependencyProperty.Register(
+        public static readonly AvaloniaProperty UnitsPerTickProperty = AvaloniaProperty.Register(
             "UnitsPerTick",
             typeof(double),
             typeof(ScaleBar),
             new FrameworkPropertyMetadata(1.0, FrameworkPropertyMetadataOptions.AffectsRender, OnUnitsPerTickPropertyChanged, CoerceUnitsPerTickPropertyValue));
 
-        public static readonly DependencyProperty PixelsPerTickProperty = DependencyProperty.Register(
+        public static readonly AvaloniaProperty PixelsPerTickProperty = AvaloniaProperty.Register(
             "PixelsPerTick",
             typeof(double),
             typeof(ScaleBar),
             new FrameworkPropertyMetadata(100.0, FrameworkPropertyMetadataOptions.AffectsRender, OnPixelsPerTickPropertyChanged, CoercePixelsPerTickPropertyValue));
 
-        private static readonly DependencyPropertyKey AdjustedUnitsPerTickPropertyKey = DependencyProperty.RegisterReadOnly(
+        private static readonly DependencyPropertyKey AdjustedUnitsPerTickPropertyKey = AvaloniaProperty.RegisterReadOnly(
             "AdjustedUnitsPerTick",
             typeof(double),
             typeof(ScaleBar),
             new PropertyMetadata());
-        public static readonly DependencyProperty AdjustedUnitsPerTickProperty = AdjustedUnitsPerTickPropertyKey.DependencyProperty;
+        public static readonly AvaloniaProperty AdjustedUnitsPerTickProperty = AdjustedUnitsPerTickPropertyKey.AvaloniaProperty;
 
-        private static readonly DependencyPropertyKey AdjustedPixelsPerTickPropertyKey = DependencyProperty.RegisterReadOnly(
+        private static readonly DependencyPropertyKey AdjustedPixelsPerTickPropertyKey = AvaloniaProperty.RegisterReadOnly(
             "AdjustedPixelsPerTick",
             typeof(double),
             typeof(ScaleBar),
             new PropertyMetadata());
-        public static readonly DependencyProperty AdjustedPixelsPerTickProperty = AdjustedPixelsPerTickPropertyKey.DependencyProperty;
+        public static readonly AvaloniaProperty AdjustedPixelsPerTickProperty = AdjustedPixelsPerTickPropertyKey.AvaloniaProperty;
 
-        private static readonly DependencyPropertyKey PixelsPerUnitPropertyKey = DependencyProperty.RegisterReadOnly(
+        private static readonly DependencyPropertyKey PixelsPerUnitPropertyKey = AvaloniaProperty.RegisterReadOnly(
             "PixelsPerUnit",
             typeof(double),
             typeof(ScaleBar),
             new PropertyMetadata());
-        public static readonly DependencyProperty PixelsPerUnitProperty = PixelsPerUnitPropertyKey.DependencyProperty;
+        public static readonly AvaloniaProperty PixelsPerUnitProperty = PixelsPerUnitPropertyKey.AvaloniaProperty;
 
-        private static readonly DependencyPropertyKey AdjustedPixelsPerUnitPropertyKey = DependencyProperty.RegisterReadOnly(
+        private static readonly DependencyPropertyKey AdjustedPixelsPerUnitPropertyKey = AvaloniaProperty.RegisterReadOnly(
             "AdjustedPixelsPerUnit",
             typeof(double),
             typeof(ScaleBar),
             new PropertyMetadata());
-        public static readonly DependencyProperty AdjustedPixelsPerUnitProperty = AdjustedPixelsPerUnitPropertyKey.DependencyProperty;
+        public static readonly AvaloniaProperty AdjustedPixelsPerUnitProperty = AdjustedPixelsPerUnitPropertyKey.AvaloniaProperty;
 
-        public static readonly DependencyProperty IsAliasedProperty = DependencyProperty.Register(
+        public static readonly AvaloniaProperty IsAliasedProperty = AvaloniaProperty.Register(
             "IsAliased",
             typeof(bool),
             typeof(ScaleBar),
             new FrameworkPropertyMetadata(BooleanBoxes.TrueBox, FrameworkPropertyMetadataOptions.AffectsRender, OnIsAliasedPropertyChanged));
 
-        public static readonly DependencyProperty IsTextVisibleProperty = DependencyProperty.Register(
+        public static readonly AvaloniaProperty IsTextVisibleProperty = AvaloniaProperty.Register(
             "IsTextVisible",
             typeof(bool),
             typeof(ScaleBar),
             new FrameworkPropertyMetadata(BooleanBoxes.TrueBox, FrameworkPropertyMetadataOptions.AffectsRender));
 
-        public static readonly DependencyProperty IsSmallTickVisibleProperty = DependencyProperty.Register(
+        public static readonly AvaloniaProperty IsSmallTickVisibleProperty = AvaloniaProperty.Register(
             "IsSmallTickVisible",
             typeof(bool),
             typeof(ScaleBar),
             new FrameworkPropertyMetadata(BooleanBoxes.TrueBox, FrameworkPropertyMetadataOptions.AffectsRender));
 
-        public static readonly DependencyProperty IsZoomingOnMouseWheelProperty = DependencyProperty.Register(
+        public static readonly AvaloniaProperty IsZoomingOnMouseWheelProperty = AvaloniaProperty.Register(
             "IsZoomingOnMouseWheel",
             typeof(bool),
             typeof(ScaleBar),
             new FrameworkPropertyMetadata(BooleanBoxes.FalseBox, FrameworkPropertyMetadataOptions.AffectsRender));
 
-        public static readonly DependencyProperty MouseWheelZoomCoeficientProperty = DependencyProperty.Register(
+        public static readonly AvaloniaProperty MouseWheelZoomCoeficientProperty = AvaloniaProperty.Register(
             "MouseWheelZoomCoeficient",
             typeof(double),
             typeof(ScaleBar),
             new FrameworkPropertyMetadata(1.1, FrameworkPropertyMetadataOptions.AffectsRender));
 
-        public static readonly DependencyProperty IsDraggingOnLeftMouseButtonProperty = DependencyProperty.Register(
+        public static readonly AvaloniaProperty IsDraggingOnLeftMouseButtonProperty = AvaloniaProperty.Register(
             "IsDraggingOnLeftMouseButton",
             typeof(bool),
             typeof(ScaleBar),
             new FrameworkPropertyMetadata(BooleanBoxes.FalseBox, FrameworkPropertyMetadataOptions.AffectsRender));
 
-        public static readonly DependencyProperty IsDraggingOnRightMouseButtonProperty = DependencyProperty.Register(
+        public static readonly AvaloniaProperty IsDraggingOnRightMouseButtonProperty = AvaloniaProperty.Register(
             "IsDraggingOnRightMouseButton",
             typeof(bool),
             typeof(ScaleBar),
             new FrameworkPropertyMetadata(BooleanBoxes.FalseBox, FrameworkPropertyMetadataOptions.AffectsRender));
 
-        public static readonly DependencyProperty UnitSystemProperty = DependencyProperty.Register(
+        public static readonly AvaloniaProperty UnitSystemProperty = AvaloniaProperty.Register(
             "UnitSystem",
             typeof(UnitSystem),
             typeof(ScaleBar),
             new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender, OnUnitSystemPropertyChanged));
 
-        public static readonly DependencyProperty SymbolProperty = DependencyProperty.Register(
+        public static readonly AvaloniaProperty SymbolProperty = AvaloniaProperty.Register(
             "UnitSymbol",
             typeof(string),
             typeof(ScaleBar),
             new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender));
 
-        public static readonly DependencyProperty TickTextUnitDividerProperty = DependencyProperty.Register(
+        public static readonly AvaloniaProperty TickTextUnitDividerProperty = AvaloniaProperty.Register(
             "TickTextUnitDivider",
             typeof(double),
             typeof(ScaleBar),
@@ -350,17 +350,17 @@ namespace Stride.Core.Presentation.Controls
             RaiseEvent(new CustomRenderRoutedEventArgs(AfterTicksRenderEvent, drawingContext));
         }
 
-        private void RaiseScaleChangingEvent(DependencyProperty dependencyProperty, object oldValue, object newValue)
+        private void RaiseScaleChangingEvent(AvaloniaProperty dependencyProperty, object oldValue, object newValue)
         {
             RaiseEvent(new RoutedDependencyPropertyChangedEventArgs(ScaleChangingEvent, dependencyProperty, oldValue, newValue));
         }
 
-        private void RaiseScaleChangedEvent(DependencyProperty dependencyProperty, object oldValue, object newValue)
+        private void RaiseScaleChangedEvent(AvaloniaProperty dependencyProperty, object oldValue, object newValue)
         {
             RaiseEvent(new RoutedDependencyPropertyChangedEventArgs(ScaleChangedEvent, dependencyProperty, oldValue, newValue));
         }
 
-        private void SetScaleChangingProperty([NotNull] DependencyProperty dependencyProperty, object value)
+        private void SetScaleChangingProperty([NotNull] AvaloniaProperty dependencyProperty, object value)
         {
             var oldValue = GetValue(dependencyProperty);
             RaiseScaleChangingEvent(dependencyProperty, oldValue, value);
@@ -368,7 +368,7 @@ namespace Stride.Core.Presentation.Controls
             RaiseScaleChangedEvent(dependencyProperty, oldValue, value);
         }
 
-        private void SetScaleChangingProperty([NotNull] DependencyPropertyKey dependencyPropertyKey, [NotNull] DependencyProperty dependencyProperty, object value)
+        private void SetScaleChangingProperty([NotNull] DependencyPropertyKey dependencyPropertyKey, [NotNull] AvaloniaProperty dependencyProperty, object value)
         {
             var oldValue = GetValue(dependencyProperty);
             RaiseScaleChangingEvent(dependencyProperty, oldValue, value);
@@ -610,45 +610,45 @@ namespace Stride.Core.Presentation.Controls
             PixelsPerUnit = PixelsPerTick / UnitsPerTick;
         }
 
-        private static void OnUnitSystemPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void OnUnitSystemPropertyChanged(AvaloniaObject sender, AvaloniaPropertyChangedEventArgs e)
         {
             var scalebar = (ScaleBar)sender;
             scalebar.AdjustUnitIntervalWithUnitSystem(scalebar.UnitsPerTick);
             scalebar.UpdatePixelInfo();
         }
 
-        private static void OnUnitsPerTickPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void OnUnitsPerTickPropertyChanged(AvaloniaObject sender, AvaloniaPropertyChangedEventArgs e)
         {
             var scalebar = (ScaleBar)sender;
             scalebar.AdjustUnitIntervalWithUnitSystem((double)e.NewValue);
             scalebar.UpdatePixelInfo();
         }
 
-        private static void OnPixelsPerTickPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void OnPixelsPerTickPropertyChanged(AvaloniaObject sender, AvaloniaPropertyChangedEventArgs e)
         {
             var scalebar = (ScaleBar)sender;
             scalebar.UpdatePixelInfo();
         }
 
-        private static void OnIsAliasedPropertyChanged([NotNull] DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void OnIsAliasedPropertyChanged([NotNull] AvaloniaObject sender, AvaloniaPropertyChangedEventArgs e)
         {
             RenderOptions.SetEdgeMode(sender, (bool)e.NewValue ? EdgeMode.Aliased : EdgeMode.Unspecified);
         }
 
-        private static object CoerceUnitsPerTickPropertyValue(DependencyObject sender, object value)
+        private static object CoerceUnitsPerTickPropertyValue(AvaloniaObject sender, object value)
         {
             var scalebar = (ScaleBar)sender;
             return scalebar.MinimumUnitsPerTick < scalebar.MaximumUnitsPerTick ? Math.Min(scalebar.MaximumUnitsPerTick, Math.Max(scalebar.MinimumUnitsPerTick, (double)value)) : value;
         }
 
         [NotNull]
-        private static object CoercePixelsPerTickPropertyValue(DependencyObject sender, [NotNull] object value)
+        private static object CoercePixelsPerTickPropertyValue(AvaloniaObject sender, [NotNull] object value)
         {
             return Math.Max(10.0, (double)value);
         }
 
         [NotNull]
-        private static object CoerceDecimalCountRoundingPropertyValue(DependencyObject sender, object value)
+        private static object CoerceDecimalCountRoundingPropertyValue(AvaloniaObject sender, object value)
         {
             return Math.Max(0, 12);
         }

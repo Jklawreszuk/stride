@@ -1,35 +1,30 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
-using System.Windows.Controls;
-using System.Windows.Markup;
-using System.Windows.Media;
+using Avalonia.Controls;
+using Avalonia.Markup.Xaml;
+using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Themes;
 
 namespace Stride.Core.Presentation.MarkupExtensions
 {
-    [MarkupExtensionReturnType(typeof(Image))]
     public class ImageExtension : MarkupExtension
     {
-        private readonly ImageSource source;
+        private readonly IImage source;
         private readonly int width;
         private readonly int height;
-        private readonly BitmapScalingMode scalingMode;
+        private readonly BitmapInterpolationMode scalingMode;
 
-        public ImageExtension(ImageSource source)
+        public ImageExtension(IImage source)
         {
             this.source = source;
             width = -1;
             height = -1;
         }
 
-        public ImageExtension(ImageSource source, int width, int height)
-            : this(source, width, height, BitmapScalingMode.Unspecified)
-        {
-        }
-
-        public ImageExtension(ImageSource source, int width, int height, BitmapScalingMode scalingMode)
+        public ImageExtension(IImage source, int width, int height, BitmapInterpolationMode scalingMode = BitmapInterpolationMode.Unspecified)
         {
             if (width < 0) throw new ArgumentOutOfRangeException(nameof(width));
             if (height < 0) throw new ArgumentOutOfRangeException(nameof(height));
@@ -47,11 +42,11 @@ namespace Stride.Core.Presentation.MarkupExtensions
             {
                 image.Source = new DrawingImage()
                 {
-                    Drawing = ImageThemingUtilities.TransformDrawing((source as DrawingImage)?.Drawing, ThemeController.CurrentTheme.GetThemeBase().GetIconTheme())
+                    Drawing = ImageThemingUtilities.TransformDrawing(drawingImage?.Drawing, ThemeController.CurrentTheme.GetThemeBase().GetIconTheme())
                 };
             }
 
-            RenderOptions.SetBitmapScalingMode(image, scalingMode);
+            RenderOptions.SetBitmapInterpolationMode(image, scalingMode);
             if (width >= 0 && height >= 0)
             {
                 image.Width = width;

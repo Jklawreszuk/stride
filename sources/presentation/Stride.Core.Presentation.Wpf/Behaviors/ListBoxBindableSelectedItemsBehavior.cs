@@ -4,6 +4,7 @@ using System;
 using System.Reflection;
 using System.Windows.Controls;
 using System.Windows.Data;
+using Avalonia.Controls;
 using Stride.Core.Annotations;
 
 namespace Stride.Core.Presentation.Behaviors

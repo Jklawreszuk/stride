@@ -6,6 +6,8 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using Avalonia;
+using Avalonia.Controls;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Collections;
 using Stride.Core.Presentation.Internal;
@@ -39,12 +41,12 @@ namespace Stride.Core.Presentation.Behaviors
         /// <summary>
         /// Identifies the <see cref="SelectedItems"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty SelectedItemsProperty = DependencyProperty.Register(nameof(SelectedItems), typeof(IObservableList<object>), typeof(BindableSelectedItemsBehavior<T>), new PropertyMetadata(null, SelectedItemsChanged));
+        public static readonly AvaloniaProperty SelectedItemsProperty = AvaloniaProperty.Register(nameof(SelectedItems), typeof(IObservableList<object>), typeof(BindableSelectedItemsBehavior<T>), new PropertyMetadata(null, SelectedItemsChanged));
 
         /// <summary>
         /// Identifies the <see cref="GiveFocusOnSelectionChange"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty GiveFocusOnSelectionChangeProperty = DependencyProperty.Register(nameof(GiveFocusOnSelectionChange), typeof(bool), typeof(BindableSelectedItemsBehavior<T>), new PropertyMetadata(BooleanBoxes.TrueBox));
+        public static readonly AvaloniaProperty GiveFocusOnSelectionChangeProperty = AvaloniaProperty.Register(nameof(GiveFocusOnSelectionChange), typeof(bool), typeof(BindableSelectedItemsBehavior<T>), new PropertyMetadata(BooleanBoxes.TrueBox));
 
         /// <summary>
         /// Gets or sets the view model collection that should be bound to the selected item collection of the control.
@@ -178,7 +180,7 @@ namespace Stride.Core.Presentation.Behaviors
         /// </summary>
         /// <param name="d">The sender of the event (this behavior).</param>
         /// <param name="e">The arguments of the event.</param>
-        private static void SelectedItemsChanged([NotNull] DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void SelectedItemsChanged([NotNull] AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var behavior = (BindableSelectedItemsBehavior<T>)d;
 

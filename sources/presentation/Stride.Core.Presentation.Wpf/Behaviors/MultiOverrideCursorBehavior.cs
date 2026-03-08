@@ -100,11 +100,11 @@ namespace Stride.Core.Presentation.Behaviors
 
     public class CursorOverrideRule : Freezable
     {
-        public static readonly DependencyProperty CursorProperty = DependencyProperty.Register("Cursor", typeof(Cursor), typeof(CursorOverrideRule), new PropertyMetadata(null));
+        public static readonly AvaloniaProperty CursorProperty = AvaloniaProperty.Register("Cursor", typeof(Cursor), typeof(CursorOverrideRule), new PropertyMetadata(null));
 
-        public static readonly DependencyProperty ForceCursorProperty = DependencyProperty.Register("ForceCursor", typeof(bool), typeof(CursorOverrideRule), new PropertyMetadata(BooleanBoxes.FalseBox));
+        public static readonly AvaloniaProperty ForceCursorProperty = AvaloniaProperty.Register("ForceCursor", typeof(bool), typeof(CursorOverrideRule), new PropertyMetadata(BooleanBoxes.FalseBox));
 
-        public static readonly DependencyProperty WhenProperty = DependencyProperty.Register("When", typeof(bool), typeof(CursorOverrideRule), new PropertyMetadata(BooleanBoxes.FalseBox));
+        public static readonly AvaloniaProperty WhenProperty = AvaloniaProperty.Register("When", typeof(bool), typeof(CursorOverrideRule), new PropertyMetadata(BooleanBoxes.FalseBox));
 
         public Cursor Cursor { get { return (Cursor)GetValue(CursorProperty); } set { SetValue(CursorProperty, value); } }
 

@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Xaml.Behaviors" />
     <Page Include="**\*.xaml" SubType="Designer" Generator="MSBuild:Compile" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" />
     <Compile Update="**\*.xaml.cs" SubType="Code" DependentUpon="%(Filename)" />

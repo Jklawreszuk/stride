@@ -5,11 +5,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Input;
-using System.Windows.Media;
+using Avalonia;
+using Avalonia.Input;
+using Avalonia.Media;
 using Stride.Core.Presentation.Interop;
 using Stride.Core.Annotations;
+using Stride.Core.Presentation.Services;
 
 namespace Stride.Core.Presentation.Windows
 {
@@ -20,8 +21,8 @@ namespace Stride.Core.Presentation.Windows
         /// <summary>
         /// Identifies the <see cref="Image"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ImageProperty =
-            DependencyProperty.Register(nameof(Image), typeof(ImageSource), typeof(MessageBox));
+        public static readonly StyledProperty<IImage> ImageProperty =
+            AvaloniaProperty.Register<MessageBox, IImage>(nameof(Image));
 
         protected MessageBox()
         {
@@ -34,40 +35,24 @@ namespace Stride.Core.Presentation.Windows
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Copy, (_, __) => SafeClipboard.SetDataObject(Content ?? string.Empty, true)));
         }
 
-        public ImageSource Image
+        public IImage Image
         {
-            get { return (ImageSource)GetValue(ImageProperty); }
+            get { return (IImage)GetValue(ImageProperty); }
             set { SetValue(ImageProperty, value); }
         }
 
         internal static void SetImage([NotNull] MessageBox messageBox, MessageBoxImage image)
         {
-            string imageKey;
-            switch (image)
+            string imageKey = image switch
             {
-                case MessageBoxImage.None:
-                    imageKey = null;
-                    break;
-
-                case MessageBoxImage.Error:
-                    imageKey = "ImageErrorDialog";
-                    break;
-
-                case MessageBoxImage.Question:
-                    imageKey = "ImageQuestionDialog";
-                    break;
-
-                case MessageBoxImage.Warning:
-                    imageKey = "ImageWarningDialog";
-                    break;
-
-                case MessageBoxImage.Information:
-                    imageKey = "ImageInformationDialog";
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(image), image, null);
-            }
-            messageBox.Image = imageKey != null ? (ImageSource)messageBox.TryFindResource(imageKey) : null;
+                MessageBoxImage.None => null,
+                MessageBoxImage.Error => "ImageErrorDialog",
+                MessageBoxImage.Question => "ImageQuestionDialog",
+                MessageBoxImage.Warning => "ImageWarningDialog",
+                MessageBoxImage.Information => "ImageInformationDialog",
+                _ => throw new ArgumentOutOfRangeException(nameof(image), image, null)
+            };
+            messageBox.Image = imageKey != null ? (IImage)messageBox.TryFindResource(imageKey) : null;
         }
 
         /// <summary>
@@ -97,14 +82,13 @@ namespace Stride.Core.Presentation.Windows
         {
             foreach (var button in buttons)
             {
-                Key key;
-                if (!Enum.TryParse(button.Key, out key))
+                if (!Enum.TryParse(button.Key, out Key key))
                     continue;
 
-                var binding = new KeyBinding(messageBox.ButtonCommand, key, ModifierKeys.Alt)
+                var binding = new KeyBinding(messageBox.ButtonCommand, key, KeyModifiers.Alt)
                 {
                     CommandParameter = button.Result,
-                    Modifiers = ModifierKeys.None, // because KeyBinding doesn't allow it in the constructor!
+                    Key = KeyModifiers.None, // because KeyBinding doesn't allow it in the constructor!
                 };
                 messageBox.InputBindings.Add(binding);
             }

@@ -29,11 +29,11 @@ SOFTWARE.
 */
 #endregion
 
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Shapes;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Metadata;
+using Avalonia.Controls.Shapes;
+using Avalonia.Media;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Extensions;
 using Stride.Core.Presentation.Internal;
@@ -59,44 +59,44 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="HorizontalLineVisibility"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty HorizontalLineVisibilityProperty =
-            DependencyProperty.Register(nameof(HorizontalLineVisibility), typeof(Visibility), typeof(TrackerControl), new PropertyMetadata(VisibilityBoxes.VisibleBox));
+        public static readonly AvaloniaProperty HorizontalLineVisibilityProperty =
+            AvaloniaProperty.Register(nameof(HorizontalLineVisibility), typeof(Visibility), typeof(TrackerControl), new PropertyMetadata(VisibilityBoxes.VisibleBox));
 
         /// <summary>
         /// Identifies the <see cref="LineExtents"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty LineExtentsProperty =
-            DependencyProperty.Register(nameof(LineExtents), typeof(Rect), typeof(TrackerControl));
+        public static readonly AvaloniaProperty LineExtentsProperty =
+            AvaloniaProperty.Register(nameof(LineExtents), typeof(Rect), typeof(TrackerControl));
 
         /// <summary>
         /// Identifies the <see cref="LineStroke"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty LineStrokeProperty =
-            DependencyProperty.Register(nameof(LineStroke), typeof(Brush), typeof(TrackerControl));
+        public static readonly AvaloniaProperty LineStrokeProperty =
+            AvaloniaProperty.Register(nameof(LineStroke), typeof(Brush), typeof(TrackerControl));
 
         /// <summary>
         /// Identifies the <see cref="LineThickness"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty LineThicknessProperty =
-            DependencyProperty.Register(nameof(LineThickness), typeof(Thickness), typeof(TrackerControl));
+        public static readonly AvaloniaProperty LineThicknessProperty =
+            AvaloniaProperty.Register(nameof(LineThickness), typeof(Thickness), typeof(TrackerControl));
 
         /// <summary>
         /// Identifies the <see cref="Position"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty PositionProperty =
-            DependencyProperty.Register(nameof(Position), typeof(Point), typeof(TrackerControl), new PropertyMetadata(new Point(), OnPositionChanged));
+        public static readonly AvaloniaProperty PositionProperty =
+            AvaloniaProperty.Register(nameof(Position), typeof(Point), typeof(TrackerControl), new PropertyMetadata(new Point(), OnPositionChanged));
 
         /// <summary>
         /// Identifies the <see cref="TrackMouse"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty TrackMouseProperty =
-            DependencyProperty.Register(nameof(TrackMouse), typeof(bool), typeof(TrackerControl), new PropertyMetadata(BooleanBoxes.FalseBox, OnTrackMouseChanged));
+        public static readonly AvaloniaProperty TrackMouseProperty =
+            AvaloniaProperty.Register(nameof(TrackMouse), typeof(bool), typeof(TrackerControl), new PropertyMetadata(BooleanBoxes.FalseBox, OnTrackMouseChanged));
 
         /// <summary>
         /// Identifies the <see cref="VerticalLineVisibility"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty VerticalLineVisibilityProperty =
-            DependencyProperty.Register(nameof(VerticalLineVisibility), typeof(Visibility), typeof(TrackerControl), new PropertyMetadata(VisibilityBoxes.VisibleBox));
+        public static readonly AvaloniaProperty VerticalLineVisibilityProperty =
+            AvaloniaProperty.Register(nameof(VerticalLineVisibility), typeof(Visibility), typeof(TrackerControl), new PropertyMetadata(VisibilityBoxes.VisibleBox));
 
         private Line horizontalLine;
         private Line verticalLine;
@@ -121,12 +121,12 @@ namespace Stride.Core.Presentation.Controls
         
         public Visibility VerticalLineVisibility { get { return (Visibility)GetValue(VerticalLineVisibilityProperty); }  set { SetValue(VerticalLineVisibilityProperty, value); } }
 
-        private static void OnPositionChanged([NotNull] DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void OnPositionChanged([NotNull] AvaloniaObject sender, AvaloniaPropertyChangedEventArgs e)
         {
             ((TrackerControl)sender).OnPositionChanged();
         }
 
-        private static void OnTrackMouseChanged([NotNull] DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void OnTrackMouseChanged([NotNull] AvaloniaObject sender, AvaloniaPropertyChangedEventArgs e)
         {
             ((TrackerControl)sender).OnTrackMouseChanged(e);
         }
@@ -157,7 +157,7 @@ namespace Stride.Core.Presentation.Controls
             UpdatePositionAndBorder();
         }
 
-        private void OnTrackMouseChanged(DependencyPropertyChangedEventArgs e)
+        private void OnTrackMouseChanged(AvaloniaPropertyChangedEventArgs e)
         {
             if (parent == null)
                 return;

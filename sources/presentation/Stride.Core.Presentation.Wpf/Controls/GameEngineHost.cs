@@ -4,16 +4,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Windows;
-using System.Windows.Input;
-using System.Windows.Interop;
-using System.Windows.Media;
-using System.Windows.Threading;
+using Avalonia;
+using Avalonia.Interactivity;
 using Stride.Core.Annotations;
 using Stride.Core.Mathematics;
 using Stride.Core.Presentation.Internal;
 using Stride.Core.Presentation.Interop;
-using Point = System.Windows.Point;
+using Point = Stride.Core.Mathematics.Point;
 
 namespace Stride.Core.Presentation.Controls
 {
@@ -95,7 +92,7 @@ namespace Stride.Core.Presentation.Controls
             UpdateWindowPosition();
         }
 
-        private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private void OnIsVisibleChanged(object sender, AvaloniaPropertyChangedEventArgs e)
         {
             var newValue = (bool)e.NewValue;
             if (newValue)
@@ -276,7 +273,7 @@ namespace Stride.Core.Presentation.Controls
                     {
                         Dispatcher.InvokeAsync(() =>
                         {
-                            DependencyObject dependencyObject = this;
+                            AvaloniaObject dependencyObject = this;
                             while (dependencyObject != null)
                             {
                                 var element = dependencyObject as FrameworkElement;

@@ -2,6 +2,7 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System.Windows;
 using System.Windows.Input;
+using Avalonia;
 using Microsoft.Xaml.Behaviors;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Internal;
@@ -10,11 +11,11 @@ namespace Stride.Core.Presentation.Behaviors
 {
     public class OverrideCursorBehavior : Behavior<FrameworkElement>
     {
-        public static readonly DependencyProperty CursorProperty = DependencyProperty.Register("Cursor", typeof(Cursor), typeof(OverrideCursorBehavior), new PropertyMetadata(PropertyChanged));
+        public static readonly AvaloniaProperty CursorProperty = AvaloniaProperty.Register("Cursor", typeof(Cursor), typeof(OverrideCursorBehavior), new PropertyMetadata(PropertyChanged));
 
-        public static readonly DependencyProperty ForceCursorProperty = DependencyProperty.Register("ForceCursor", typeof(bool), typeof(OverrideCursorBehavior), new PropertyMetadata(PropertyChanged));
+        public static readonly AvaloniaProperty ForceCursorProperty = AvaloniaProperty.Register("ForceCursor", typeof(bool), typeof(OverrideCursorBehavior), new PropertyMetadata(PropertyChanged));
 
-        public static readonly DependencyProperty IsActiveProperty = DependencyProperty.Register("IsActive", typeof(bool), typeof(OverrideCursorBehavior), new PropertyMetadata(BooleanBoxes.TrueBox, PropertyChanged));
+        public static readonly AvaloniaProperty IsActiveProperty = AvaloniaProperty.Register("IsActive", typeof(bool), typeof(OverrideCursorBehavior), new PropertyMetadata(BooleanBoxes.TrueBox, PropertyChanged));
 
         public Cursor Cursor { get { return (Cursor)GetValue(CursorProperty); } set { SetValue(CursorProperty, value); } }
 
@@ -33,7 +34,7 @@ namespace Stride.Core.Presentation.Behaviors
             AssociatedObject.Cursor = null;
             base.OnDetaching();
         }
-        private static void PropertyChanged([NotNull] DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void PropertyChanged([NotNull] AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var behavior = (OverrideCursorBehavior)d;
             behavior.UpdateCursorOverride();

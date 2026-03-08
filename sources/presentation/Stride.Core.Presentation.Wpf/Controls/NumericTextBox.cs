@@ -3,11 +3,13 @@
 
 using System;
 using System.Globalization;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
 using System.Windows.Input;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Metadata;
+using Avalonia.Controls.Primitives;
+using Avalonia.Input;
+using Avalonia.Interactivity;
 using Stride.Core.Annotations;
 using Stride.Core.Mathematics;
 using Stride.Core.Presentation.Core;
@@ -72,52 +74,52 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="Value"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(nameof(Value), typeof(double?), typeof(NumericTextBox), new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnValuePropertyChanged, null, true, UpdateSourceTrigger.Explicit));
+        public static readonly AvaloniaProperty ValueProperty = AvaloniaProperty.Register(nameof(Value), typeof(double?), typeof(NumericTextBox), new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnValuePropertyChanged, null, true, UpdateSourceTrigger.Explicit));
 
         /// <summary>
         /// Identifies the <see cref="DecimalPlaces"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty DecimalPlacesProperty = DependencyProperty.Register(nameof(DecimalPlaces), typeof(int), typeof(NumericTextBox), new FrameworkPropertyMetadata(-1, OnDecimalPlacesPropertyChanged));
+        public static readonly AvaloniaProperty DecimalPlacesProperty = AvaloniaProperty.Register(nameof(DecimalPlaces), typeof(int), typeof(NumericTextBox), new FrameworkPropertyMetadata(-1, OnDecimalPlacesPropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="Minimum"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty MinimumProperty = DependencyProperty.Register(nameof(Minimum), typeof(double), typeof(NumericTextBox), new FrameworkPropertyMetadata(double.MinValue, OnMinimumPropertyChanged));
+        public static readonly AvaloniaProperty MinimumProperty = AvaloniaProperty.Register(nameof(Minimum), typeof(double), typeof(NumericTextBox), new FrameworkPropertyMetadata(double.MinValue, OnMinimumPropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="Maximum"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty MaximumProperty = DependencyProperty.Register(nameof(Maximum), typeof(double), typeof(NumericTextBox), new FrameworkPropertyMetadata(double.MaxValue, OnMaximumPropertyChanged));
+        public static readonly AvaloniaProperty MaximumProperty = AvaloniaProperty.Register(nameof(Maximum), typeof(double), typeof(NumericTextBox), new FrameworkPropertyMetadata(double.MaxValue, OnMaximumPropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="ValueRatio"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ValueRatioProperty = DependencyProperty.Register(nameof(ValueRatio), typeof(double), typeof(NumericTextBox), new PropertyMetadata(default(double), ValueRatioChanged));
+        public static readonly AvaloniaProperty ValueRatioProperty = AvaloniaProperty.Register(nameof(ValueRatio), typeof(double), typeof(NumericTextBox), new PropertyMetadata(default(double), ValueRatioChanged));
 
         /// <summary>
         /// Identifies the <see cref="LargeChange"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty LargeChangeProperty = DependencyProperty.Register(nameof(LargeChange), typeof(double), typeof(NumericTextBox), new PropertyMetadata(10.0));
+        public static readonly AvaloniaProperty LargeChangeProperty = AvaloniaProperty.Register(nameof(LargeChange), typeof(double), typeof(NumericTextBox), new PropertyMetadata(10.0));
 
         /// <summary>
         /// Identifies the <see cref="SmallChange"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty SmallChangeProperty = DependencyProperty.Register(nameof(SmallChange), typeof(double), typeof(NumericTextBox), new PropertyMetadata(1.0));
+        public static readonly AvaloniaProperty SmallChangeProperty = AvaloniaProperty.Register(nameof(SmallChange), typeof(double), typeof(NumericTextBox), new PropertyMetadata(1.0));
 
         /// <summary>
         /// Identifies the <see cref="DisplayUpDownButtons"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty DisplayUpDownButtonsProperty = DependencyProperty.Register(nameof(DisplayUpDownButtons), typeof(bool), typeof(NumericTextBox), new PropertyMetadata(BooleanBoxes.TrueBox));
+        public static readonly AvaloniaProperty DisplayUpDownButtonsProperty = AvaloniaProperty.Register(nameof(DisplayUpDownButtons), typeof(bool), typeof(NumericTextBox), new PropertyMetadata(BooleanBoxes.TrueBox));
 
         /// <summary>
         /// Identifies the <see cref="AllowMouseDrag"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty AllowMouseDragProperty = DependencyProperty.Register(nameof(AllowMouseDrag), typeof(bool), typeof(NumericTextBox), new PropertyMetadata(BooleanBoxes.TrueBox));
+        public static readonly AvaloniaProperty AllowMouseDragProperty = AvaloniaProperty.Register(nameof(AllowMouseDrag), typeof(bool), typeof(NumericTextBox), new PropertyMetadata(BooleanBoxes.TrueBox));
 
         /// <summary>
         /// Identifies the <see cref="MouseValidationTrigger"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty MouseValidationTriggerProperty = DependencyProperty.Register(nameof(MouseValidationTrigger), typeof(MouseValidationTrigger), typeof(NumericTextBox), new PropertyMetadata(MouseValidationTrigger.OnMouseUp));
+        public static readonly AvaloniaProperty MouseValidationTriggerProperty = AvaloniaProperty.Register(nameof(MouseValidationTrigger), typeof(MouseValidationTrigger), typeof(NumericTextBox), new PropertyMetadata(MouseValidationTrigger.OnMouseUp));
 
         /// <summary>
         /// Raised when the <see cref="Value"/> property has changed.
@@ -445,18 +447,18 @@ namespace Stride.Core.Presentation.Controls
             return false;
         }
 
-        private static void OnValuePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void OnValuePropertyChanged(AvaloniaObject sender, AvaloniaPropertyChangedEventArgs e)
         {
             ((NumericTextBox)sender).OnValuePropertyChanged((double?)e.OldValue, (double?)e.NewValue);
         }
 
-        private static void OnDecimalPlacesPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void OnDecimalPlacesPropertyChanged(AvaloniaObject sender, AvaloniaPropertyChangedEventArgs e)
         {
             var numericInput = (NumericTextBox)sender;
             numericInput.CoerceValue(ValueProperty);
         }
 
-        private static void OnMinimumPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void OnMinimumPropertyChanged(AvaloniaObject sender, AvaloniaPropertyChangedEventArgs e)
         {
             var numericInput = (NumericTextBox)sender;
             var needValidation = false;
@@ -482,7 +484,7 @@ namespace Stride.Core.Presentation.Controls
             }
         }
 
-        private static void OnMaximumPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void OnMaximumPropertyChanged(AvaloniaObject sender, AvaloniaPropertyChangedEventArgs e)
         {
             var numericInput = (NumericTextBox)sender;
             var needValidation = false;
@@ -508,7 +510,7 @@ namespace Stride.Core.Presentation.Controls
             }
         }
 
-        private static void ValueRatioChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void ValueRatioChanged(AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var control = (NumericTextBox)d;
             if (control != null && !control.updatingValue)
@@ -553,7 +555,7 @@ namespace Stride.Core.Presentation.Controls
             UpdateValueCommand(sender, x => 0.0, false);
         }
 
-        private static void OnForbiddenPropertyChanged([NotNull] DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnForbiddenPropertyChanged([NotNull] AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var metadata = e.Property.GetMetadata(d);
             if (!Equals(e.NewValue, metadata.DefaultValue))

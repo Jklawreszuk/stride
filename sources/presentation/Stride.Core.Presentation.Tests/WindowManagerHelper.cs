@@ -32,7 +32,7 @@ namespace Stride.Core.Presentation.Tests
             var tcs = new TaskCompletionSource<Dispatcher>();
             var thread = new Thread(() =>
             {
-                tcs.SetResult(Dispatcher.CurrentDispatcher);
+                tcs.SetResult(Dispatcher.UIThread);
                 Dispatcher.Run();
             })
             {

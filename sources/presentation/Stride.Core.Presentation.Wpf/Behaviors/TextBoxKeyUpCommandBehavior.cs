@@ -2,6 +2,7 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System.Windows;
 using System.Windows.Input;
+using Avalonia.Input;
 using Microsoft.Xaml.Behaviors;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Controls;
@@ -13,12 +14,12 @@ namespace Stride.Core.Presentation.Behaviors
         /// <summary>
         /// Identifies the <see cref="Command"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty CommandProperty = DependencyProperty.Register("Command", typeof(ICommand), typeof(TextBoxKeyUpCommandBehavior));
+        public static readonly AvaloniaProperty CommandProperty = AvaloniaProperty.Register("Command", typeof(ICommand), typeof(TextBoxKeyUpCommandBehavior));
 
         /// <summary>
         /// Identifies the <see cref="Key"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty KeyProperty = DependencyProperty.Register("Key", typeof(Key), typeof(TextBoxKeyUpCommandBehavior), new PropertyMetadata(Key.Enter));
+        public static readonly AvaloniaProperty KeyProperty = AvaloniaProperty.Register("Key", typeof(Key), typeof(TextBoxKeyUpCommandBehavior), new PropertyMetadata(Key.Enter));
 
         /// <summary>
         /// Gets or sets the command to invoke.
@@ -26,7 +27,7 @@ namespace Stride.Core.Presentation.Behaviors
         public ICommand Command { get { return (ICommand)GetValue(CommandProperty); } set { SetValue(CommandProperty, value); } }
 
         /// <summary>
-        /// Gets or sets the key that should trigger this behavior. The default is <see cref="System.Windows.Input.Key.Enter"/>.
+        /// Gets or sets the key that should trigger this behavior. The default is <see cref="Avalonia.Input.Key.Enter"/>.
         /// </summary>
         public Key Key { get { return (Key)GetValue(KeyProperty); } set { SetValue(KeyProperty, value); } }
 

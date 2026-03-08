@@ -1,8 +1,9 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
+
+using Avalonia;
+using Avalonia.Controls.Primitives;
+using Avalonia.Interactivity;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Internal;
 
@@ -13,7 +14,7 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="IsExpanded"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty IsExpandedProperty = DependencyProperty.Register(nameof(IsExpanded), typeof(bool), typeof(ExpandableItemsControl), new FrameworkPropertyMetadata(BooleanBoxes.FalseBox, OnIsExpandedChanged));
+        public static readonly AvaloniaProperty IsExpandedProperty = AvaloniaProperty.Register(nameof(IsExpanded), typeof(bool), typeof(ExpandableItemsControl), new FrameworkPropertyMetadata(BooleanBoxes.FalseBox, OnIsExpandedChanged));
 
         /// <summary>
         /// Identifies the <see cref="Expanded"/> routed event.
@@ -71,7 +72,7 @@ namespace Stride.Core.Presentation.Controls
             base.OnMouseLeftButtonDown(e);
         }
 
-        private static void OnIsExpandedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnIsExpandedChanged(AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var item = (ExpandableItemsControl)d;
             var isExpanded = (bool)e.NewValue;

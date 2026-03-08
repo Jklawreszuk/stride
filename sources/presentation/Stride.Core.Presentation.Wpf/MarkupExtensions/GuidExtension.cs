@@ -3,11 +3,11 @@
 
 using System;
 using System.Windows.Markup;
+using Avalonia.Markup.Xaml;
 using Stride.Core.Annotations;
 
 namespace Stride.Core.Presentation.MarkupExtensions
 {
-    [MarkupExtensionReturnType(typeof(Guid))]
     public sealed class GuidExtension : MarkupExtension
     {
         public Guid Value { get; set; }

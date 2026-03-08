@@ -2,8 +2,7 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
 using System.Diagnostics;
-using System.Windows;
-using System.Windows.Threading;
+using Avalonia.Threading;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.View;
 using Stride.Core.Presentation.ViewModels;
@@ -20,7 +19,7 @@ namespace Stride.Core.Presentation.Commands
         private static ICommandBase OpenHyperlinkCommandFactory()
         {
             // TODO: have a proper way to initialize the services (maybe at application startup)
-            var serviceProvider = new ViewModelServiceProvider(new[] { new DispatcherService(Application.Current?.Dispatcher ?? Dispatcher.CurrentDispatcher) });
+            var serviceProvider = new ViewModelServiceProvider(new[] { new DispatcherService(Dispatcher.UIThread) });
             return new AnonymousCommand<string>(serviceProvider, OpenHyperlink, CanOpenHyperlink);
         }
 
@@ -38,12 +37,12 @@ namespace Stride.Core.Presentation.Commands
             }
             catch (System.ComponentModel.Win32Exception e)
             {
-                if (e.ErrorCode == -2147467259)
-                    MessageBox.Show(e.Message);
+                //if (e.ErrorCode == -2147467259)
+                    //MessageBox.Show(e.Message);
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.Message);
+                //MessageBox.Show(e.Message);
             }
         }
     }

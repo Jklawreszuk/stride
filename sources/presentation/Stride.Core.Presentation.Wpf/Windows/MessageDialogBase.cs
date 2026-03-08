@@ -2,8 +2,10 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System.Collections.Generic;
-using System.Windows;
-using System.Windows.Controls;
+using Avalonia;
+using Avalonia.Controls.Templates;
+using Avalonia.Markup.Xaml.Templates;
+using Avalonia.Threading;
 using Stride.Core.Presentation.Commands;
 using Stride.Core.Presentation.Controls;
 using Stride.Core.Presentation.View;
@@ -19,46 +21,42 @@ namespace Stride.Core.Presentation.Windows
         /// <summary>
         /// Identifies the <see cref="ButtonsSource"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ButtonsSourceProperty =
-            DependencyProperty.Register(nameof(ButtonsSource), typeof(IEnumerable<DialogButtonInfo>), typeof(MessageDialogBase));
+        public static readonly StyledProperty<IEnumerable<DialogButtonInfo>> ButtonsSourceProperty =
+            AvaloniaProperty.Register<MessageDialogBase, IEnumerable<DialogButtonInfo>>(nameof(ButtonsSource));
 
         /// <summary>
         /// Identifies the <see cref="MessageTemplate"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty MessageTemplateProperty =
-            DependencyProperty.Register(nameof(MessageTemplate), typeof(DataTemplate), typeof(MessageDialogBase));
+        public static readonly StyledProperty<DataTemplate> MessageTemplateProperty =
+            AvaloniaProperty.Register<MessageDialogBase, DataTemplate>(nameof(MessageTemplate));
 
         /// <summary>
         /// Identifies the <see cref="MessageTemplateSelector"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty MessageTemplateSelectorProperty =
-            DependencyProperty.Register(nameof(MessageTemplateSelector), typeof(DataTemplateSelector), typeof(MessageDialogBase));
-
-        /// <summary>
-        /// Identifies the <see cref="ButtonCommand"/> dependency property key.
-        /// </summary>
-        private static readonly DependencyPropertyKey ButtonCommandPropertyKey =
-            DependencyProperty.RegisterReadOnly(nameof(ButtonCommand), typeof(ICommandBase), typeof(MessageDialogBase), new PropertyMetadata());
+        public static readonly StyledProperty<IDataTemplate> MessageTemplateSelectorProperty =
+            AvaloniaProperty.Register<MessageDialogBase, IDataTemplate>(nameof(MessageTemplateSelector));
+        
         /// <summary>
         /// Identifies the <see cref="ButtonCommand"/> dependency property.
         /// </summary>
-        protected static readonly DependencyProperty ButtonCommandProperty = ButtonCommandPropertyKey.DependencyProperty;
+        public static readonly DirectProperty<MessageDialogBase, ICommandBase> ButtonCommandProperty =
+            AvaloniaProperty.RegisterDirect<MessageDialogBase, ICommandBase>(nameof(ButtonCommand), o => o.ButtonCommand);
 
         protected MessageDialogBase()
         {
-            var serviceProvider = new ViewModelServiceProvider(new[] { new DispatcherService(Dispatcher) });
+            var serviceProvider = new ViewModelServiceProvider([new DispatcherService(Dispatcher.UIThread)]);
             ButtonCommand = new AnonymousCommand<int>(serviceProvider, ButtonClick);
         }
 
-        public IEnumerable<DialogButtonInfo> ButtonsSource { get { return (IEnumerable<DialogButtonInfo>)GetValue(ButtonsSourceProperty); } set { SetValue(ButtonsSourceProperty, value); } }
+        public IEnumerable<DialogButtonInfo> ButtonsSource { get { return GetValue(ButtonsSourceProperty); } set { SetValue(ButtonsSourceProperty, value); } }
 
-        public DataTemplate MessageTemplate { get { return (DataTemplate)GetValue(MessageTemplateProperty); } set { SetValue(MessageTemplateProperty, value); } }
+        public DataTemplate MessageTemplate { get { return GetValue(MessageTemplateProperty); } set { SetValue(MessageTemplateProperty, value); } }
 
-        public DataTemplateSelector MessageTemplateSelector { get { return (DataTemplateSelector)GetValue(MessageTemplateSelectorProperty); } set { SetValue(MessageTemplateSelectorProperty, value); }} 
+        public IDataTemplate MessageTemplateSelector { get { return GetValue(MessageTemplateSelectorProperty); } set { SetValue(MessageTemplateSelectorProperty, value); }} 
 
         public int ButtonResult { get; private set; }
 
-        protected ICommandBase ButtonCommand { get { return (ICommandBase)GetValue(ButtonCommandProperty); } private set { SetValue(ButtonCommandPropertyKey, value); } }
+        protected ICommandBase ButtonCommand { get; }
 
         private void ButtonClick(int parameter)
         {

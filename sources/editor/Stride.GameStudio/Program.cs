@@ -143,7 +143,7 @@ public static class Program
                 //listen to logger for crash report
                 GlobalLogger.GlobalMessageLogged += GlobalLoggerOnGlobalMessageLogged;
 
-                mainDispatcher = Dispatcher.CurrentDispatcher;
+                mainDispatcher = Dispatcher.UIThread;
                 mainDispatcher.InvokeAsync(() => Startup(initialSessionPath));
 
                 using (new WindowManager(mainDispatcher))
@@ -355,10 +355,10 @@ public static class Program
     private static IViewModelServiceProvider InitializeServiceProvider()
     {
         // TODO: this should be done elsewhere
-        var dispatcherService = new DispatcherService(Dispatcher.CurrentDispatcher);
+        var dispatcherService = new DispatcherService(Dispatcher.UIThread);
         var dialogService = new StrideDialogService(dispatcherService, StrideGameStudio.EditorName);
         var pluginService = new PluginService();
-        var services = new List<object>{ new DispatcherService(Dispatcher.CurrentDispatcher), dialogService, pluginService };
+        var services = new List<object>{ new DispatcherService(Dispatcher.UIThread), dialogService, pluginService };
         if (renderDocManager != null)
             services.Add(renderDocManager);
         var serviceProvider = new ViewModelServiceProvider(services);

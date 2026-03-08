@@ -31,9 +31,11 @@ SOFTWARE.
 
 using System;
 using System.Threading;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Threading;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Metadata;
+using Avalonia.Interactivity;
+using Avalonia.Threading;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Drawing;
 
@@ -50,8 +52,8 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="Model"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ModelProperty =
-            DependencyProperty.Register(nameof(Model), typeof(IDrawingModel), typeof(CanvasView), new PropertyMetadata(null, OnModelPropertyChanged));
+        public static readonly AvaloniaProperty ModelProperty =
+            AvaloniaProp.Register(nameof(Model), typeof(IDrawingModel), typeof(CanvasView), new PropertyMetadata(null, OnModelPropertyChanged));
 
         /// <summary>
         /// The grid.
@@ -79,7 +81,7 @@ namespace Stride.Core.Presentation.Controls
 
         public IDrawingModel Model { get { return (IDrawingModel)GetValue(ModelProperty); } set { SetValue(ModelProperty, value); } }
 
-        private static void OnModelPropertyChanged([NotNull] DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void OnModelPropertyChanged([NotNull] AvaloniaObject sender, AvaloniaPropertyChangedEventArgs e)
         {
             var view = (CanvasView)sender;
 

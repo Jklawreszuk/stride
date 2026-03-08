@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
+using Avalonia;
 using Microsoft.Xaml.Behaviors;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Internal;
@@ -21,32 +22,32 @@ namespace Stride.Core.Presentation.Behaviors
         /// <summary>
         /// Identifies the <see cref="IsEnabled"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty IsEnabledProperty =
-            DependencyProperty.Register(nameof(IsEnabled), typeof(bool), typeof(MouseMoveCaptureBehaviorBase<TElement>), new PropertyMetadata(BooleanBoxes.TrueBox, IsEnabledChanged));
+        public static readonly AvaloniaProperty IsEnabledProperty =
+            AvaloniaProperty.Register(nameof(IsEnabled), typeof(bool), typeof(MouseMoveCaptureBehaviorBase<TElement>), new PropertyMetadata(BooleanBoxes.TrueBox, IsEnabledChanged));
 
         /// <summary>
         /// Identifies the <see cref="IsInProgress"/> dependency property key.
         /// </summary>
         protected static readonly DependencyPropertyKey IsInProgressPropertyKey =
-            DependencyProperty.RegisterReadOnly(nameof(IsInProgress), typeof(bool), typeof(MouseMoveCaptureBehaviorBase<TElement>), new PropertyMetadata(BooleanBoxes.FalseBox));
+            AvaloniaProperty.RegisterReadOnly(nameof(IsInProgress), typeof(bool), typeof(MouseMoveCaptureBehaviorBase<TElement>), new PropertyMetadata(BooleanBoxes.FalseBox));
 
         /// <summary>
         /// Identifies the <see cref="IsInProgress"/> dependency property.
         /// </summary>
         [SuppressMessage("ReSharper", "StaticMemberInGenericType")]
-        public static readonly DependencyProperty IsInProgressProperty = IsInProgressPropertyKey.DependencyProperty;
+        public static readonly AvaloniaProperty IsInProgressProperty = IsInProgressPropertyKey.AvaloniaProperty;
 
         /// <summary>
         /// Identifies the <see cref="Modifiers"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ModifiersProperty =
-            DependencyProperty.Register(nameof(Modifiers), typeof(ModifierKeys?), typeof(MouseMoveCaptureBehaviorBase<TElement>), new PropertyMetadata(null));
+        public static readonly AvaloniaProperty ModifiersProperty =
+            AvaloniaProperty.Register(nameof(Modifiers), typeof(ModifierKeys?), typeof(MouseMoveCaptureBehaviorBase<TElement>), new PropertyMetadata(null));
 
         /// <summary>
         /// Identifies the <see cref="UsePreviewEvents"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty UsePreviewEventsProperty =
-            DependencyProperty.Register(nameof(UsePreviewEvents), typeof(bool), typeof(MouseMoveCaptureBehaviorBase<TElement>), new PropertyMetadata(BooleanBoxes.FalseBox, UsePreviewEventsChanged));
+        public static readonly AvaloniaProperty UsePreviewEventsProperty =
+            AvaloniaProperty.Register(nameof(UsePreviewEvents), typeof(bool), typeof(MouseMoveCaptureBehaviorBase<TElement>), new PropertyMetadata(BooleanBoxes.FalseBox, UsePreviewEventsChanged));
         
         /// <summary>
         /// <c>true</c> if this behavior is enabled; otherwise, <c>false</c>.
@@ -66,7 +67,7 @@ namespace Stride.Core.Presentation.Behaviors
             set { SetValue(UsePreviewEventsProperty, value.Box()); }
         }
 
-        private static void IsEnabledChanged([NotNull] DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void IsEnabledChanged([NotNull] AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var behavior = (MouseMoveCaptureBehaviorBase<TElement>)d;
             if ((bool)e.NewValue != true)
@@ -75,7 +76,7 @@ namespace Stride.Core.Presentation.Behaviors
             }
         }
 
-        private static void UsePreviewEventsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void UsePreviewEventsChanged(AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var behavior = (MouseMoveCaptureBehaviorBase<TElement>)d;
             behavior.UnsubscribeFromMouseEvents((bool)e.OldValue);

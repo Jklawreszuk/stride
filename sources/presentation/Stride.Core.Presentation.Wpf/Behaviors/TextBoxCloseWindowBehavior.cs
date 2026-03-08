@@ -2,6 +2,7 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System.Windows;
 using System.Windows.Input;
+using Avalonia.Input;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Controls;
 using Stride.Core.Presentation.Internal;
@@ -17,7 +18,7 @@ namespace Stride.Core.Presentation.Behaviors
         /// <summary>
         /// Identifies the <see cref="IsEnabled"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty IsEnabledProperty = DependencyProperty.Register(nameof(IsEnabled), typeof(bool), typeof(TextBoxCloseWindowBehavior));
+        public static readonly AvaloniaProperty IsEnabledProperty = AvaloniaProperty.Register(nameof(IsEnabled), typeof(bool), typeof(TextBoxCloseWindowBehavior));
 
         /// <summary>
         /// Gets or sets whether this behavior is currently enabled.

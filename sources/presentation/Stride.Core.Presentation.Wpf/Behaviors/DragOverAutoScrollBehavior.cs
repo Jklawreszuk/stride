@@ -21,15 +21,15 @@ namespace Stride.Core.Presentation.Behaviors
         private CancellationTokenSource cancellationTokenSource;
         private Dock? edgeUnderMouse;
 
-        public static readonly DependencyProperty ScrollBorderThicknessProperty = DependencyProperty.Register("ScrollBorderThickness", typeof(Thickness), typeof(DragOverAutoScrollBehavior), new PropertyMetadata(new Thickness(32)));
+        public static readonly AvaloniaProperty ScrollBorderThicknessProperty = AvaloniaProperty.Register("ScrollBorderThickness", typeof(Thickness), typeof(DragOverAutoScrollBehavior), new PropertyMetadata(new Thickness(32)));
 
-        public static readonly DependencyProperty DelaySecondsProperty = DependencyProperty.Register("DelaySeconds", typeof(double), typeof(DragOverAutoScrollBehavior), new PropertyMetadata(0.5));
+        public static readonly AvaloniaProperty DelaySecondsProperty = AvaloniaProperty.Register("DelaySeconds", typeof(double), typeof(DragOverAutoScrollBehavior), new PropertyMetadata(0.5));
 
-        public static readonly DependencyProperty ScrollingSpeedWidthProperty = DependencyProperty.Register("ScrollingSpeed", typeof(double), typeof(DragOverAutoScrollBehavior), new PropertyMetadata(300.0));
+        public static readonly AvaloniaProperty ScrollingSpeedWidthProperty = AvaloniaProperty.Register("ScrollingSpeed", typeof(double), typeof(DragOverAutoScrollBehavior), new PropertyMetadata(300.0));
 
-        public static readonly DependencyProperty VerticalScrollProperty = DependencyProperty.Register("VerticalScroll", typeof(bool), typeof(DragOverAutoScrollBehavior), new PropertyMetadata(BooleanBoxes.TrueBox));
+        public static readonly AvaloniaProperty VerticalScrollProperty = AvaloniaProperty.Register("VerticalScroll", typeof(bool), typeof(DragOverAutoScrollBehavior), new PropertyMetadata(BooleanBoxes.TrueBox));
 
-        public static readonly DependencyProperty HorizontalScrollProperty = DependencyProperty.Register("HorizontalScroll", typeof(bool), typeof(DragOverAutoScrollBehavior), new PropertyMetadata(BooleanBoxes.TrueBox));
+        public static readonly AvaloniaProperty HorizontalScrollProperty = AvaloniaProperty.Register("HorizontalScroll", typeof(bool), typeof(DragOverAutoScrollBehavior), new PropertyMetadata(BooleanBoxes.TrueBox));
 
         public Thickness ScrollBorderThickness { get { return (Thickness)GetValue(ScrollBorderThicknessProperty); } set { SetValue(ScrollBorderThicknessProperty, value); } }
         

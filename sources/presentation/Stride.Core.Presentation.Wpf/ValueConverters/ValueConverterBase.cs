@@ -2,8 +2,8 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
 using System.Globalization;
-using System.Windows.Data;
-using System.Windows.Markup;
+using Avalonia.Data.Converters;
+using Avalonia.Markup.Xaml;
 using Stride.Core.Annotations;
 
 namespace Stride.Core.Presentation.ValueConverters
@@ -28,7 +28,7 @@ namespace Stride.Core.Presentation.ValueConverters
         /// <inheritdoc/>
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
-            return valueConverterInstance ?? (valueConverterInstance = new T());
+            return valueConverterInstance ??= new T();
         }
 
         /// <inheritdoc/>

@@ -14,17 +14,17 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="X"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty XProperty = DependencyProperty.Register("X", typeof(float?), typeof(RotationEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
+        public static readonly AvaloniaProperty XProperty = AvaloniaProperty.Register("X", typeof(float?), typeof(RotationEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
 
         /// <summary>
         /// Identifies the <see cref="Y"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty YProperty = DependencyProperty.Register("Y", typeof(float?), typeof(RotationEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
+        public static readonly AvaloniaProperty YProperty = AvaloniaProperty.Register("Y", typeof(float?), typeof(RotationEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
 
         /// <summary>
         /// Identifies the <see cref="Z"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ZProperty = DependencyProperty.Register("Z", typeof(float?), typeof(RotationEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
+        public static readonly AvaloniaProperty ZProperty = AvaloniaProperty.Register("Z", typeof(float?), typeof(RotationEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
 
         /// <summary>
         /// The X component (in Cartesian coordinate system) of the <see cref="Vector3"/> associated to this control.
@@ -65,7 +65,7 @@ namespace Stride.Core.Presentation.Controls
         }
 
         /// <inheritdoc/>
-        protected override Quaternion? UpdateValueFromComponent(DependencyProperty property)
+        protected override Quaternion? UpdateValueFromComponent(AvaloniaProperty property)
         {
             Vector3? newDecomposedRotation;
             if (property == XProperty)

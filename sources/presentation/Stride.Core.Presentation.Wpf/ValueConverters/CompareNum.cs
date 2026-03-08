@@ -2,7 +2,7 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
 using System.Globalization;
-using System.Windows.Data;
+using Avalonia.Data.Converters;
 using Stride.Core.Annotations;
 
 namespace Stride.Core.Presentation.ValueConverters

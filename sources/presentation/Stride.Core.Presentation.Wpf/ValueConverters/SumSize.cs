@@ -2,8 +2,7 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
 using System.Globalization;
-using System.Windows;
-using System.Windows.Data;
+using Avalonia;
 using Stride.Core.Annotations;
 
 namespace Stride.Core.Presentation.ValueConverters
@@ -12,7 +11,6 @@ namespace Stride.Core.Presentation.ValueConverters
     /// This converter will sum a given <see cref="Size"/> with a <see cref="Size"/> passed as parameter. You can use the <see cref="MarkupExtensions.SizeExtension"/>
     /// markup extension to easily pass one, with the following syntax: {sd:Size (arguments)}. 
     /// </summary>
-    [ValueConversion(typeof(Size), typeof(Size))]
     public class SumSize : ValueConverterBase<SumSize>
     {
         /// <inheritdoc/>

@@ -12,22 +12,22 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="X"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty XProperty = DependencyProperty.Register("X", typeof(int?), typeof(Int4Editor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
+        public static readonly AvaloniaProperty XProperty = AvaloniaProperty.Register("X", typeof(int?), typeof(Int4Editor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
 
         /// <summary>
         /// Identifies the <see cref="Y"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty YProperty = DependencyProperty.Register("Y", typeof(int?), typeof(Int4Editor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
+        public static readonly AvaloniaProperty YProperty = AvaloniaProperty.Register("Y", typeof(int?), typeof(Int4Editor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
 
         /// <summary>
         /// Identifies the <see cref="Z"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ZProperty = DependencyProperty.Register("Z", typeof(int?), typeof(Int4Editor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
+        public static readonly AvaloniaProperty ZProperty = AvaloniaProperty.Register("Z", typeof(int?), typeof(Int4Editor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
 
         /// <summary>
         /// Identifies the <see cref="W"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty WProperty = DependencyProperty.Register("W", typeof(int?), typeof(Int4Editor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
+        public static readonly AvaloniaProperty WProperty = AvaloniaProperty.Register("W", typeof(int?), typeof(Int4Editor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
 
         /// <summary>
         /// Gets or sets the X component of the <see cref="Int4"/> associated to this control.
@@ -62,7 +62,7 @@ namespace Stride.Core.Presentation.Controls
         }
 
         /// <inheritdoc/>
-        protected override Int4? UpdateValueFromComponent(DependencyProperty property)
+        protected override Int4? UpdateValueFromComponent(AvaloniaProperty property)
         {
             if (property == XProperty)
                 return X.HasValue && Value.HasValue ? (Int4?)new Int4(X.Value, Value.Value.Y, Value.Value.Z, Value.Value.W) : null;

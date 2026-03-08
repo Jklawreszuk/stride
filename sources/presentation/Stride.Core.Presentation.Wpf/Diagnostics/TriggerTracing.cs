@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Media.Animation;
 using System.Diagnostics;
 using System.Windows.Markup;
+using Avalonia;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Internal;
 
@@ -57,8 +58,8 @@ namespace Stride.Core.Presentation.Diagnostics
             trigger.SetValue(TriggerNameProperty, value);
         }
 
-        public static readonly DependencyProperty TriggerNameProperty =
-            DependencyProperty.RegisterAttached(
+        public static readonly AvaloniaProperty TriggerNameProperty =
+            AvaloniaProperty.RegisterAttached(
             "TriggerName",
             typeof(string),
             typeof(TriggerTracing),
@@ -88,14 +89,14 @@ namespace Stride.Core.Presentation.Diagnostics
             trigger.SetValue(TraceEnabledProperty, value);
         }
 
-        public static readonly DependencyProperty TraceEnabledProperty =
-            DependencyProperty.RegisterAttached(
+        public static readonly AvaloniaProperty TraceEnabledProperty =
+            AvaloniaProperty.RegisterAttached(
             "TraceEnabled",
             typeof(bool),
             typeof(TriggerTracing),
             new UIPropertyMetadata(BooleanBoxes.FalseBox, OnTraceEnabledChanged));
 
-        private static void OnTraceEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnTraceEnabledChanged(AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var triggerBase = d as TriggerBase;
 

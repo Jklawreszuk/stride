@@ -22,7 +22,7 @@ namespace Stride.LauncherApp.Views
         private static ICommandBase OpenHyperlinkCommandFactory()
         {
             // TODO: have a proper way to initialize the services (maybe at application startup)
-            var serviceProvider = new ViewModelServiceProvider(new[] { new DispatcherService(Application.Current?.Dispatcher ?? Dispatcher.CurrentDispatcher) });
+            var serviceProvider = new ViewModelServiceProvider(new[] { new DispatcherService(Application.Current?.Dispatcher ?? Dispatcher.UIThread) });
             return new AnonymousCommand<string>(serviceProvider, OpenHyperlink, CanOpenHyperlink);
         }
 

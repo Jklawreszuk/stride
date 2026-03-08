@@ -2,7 +2,7 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
 using System.Collections.Generic;
-using System.Windows;
+using Avalonia.Markup.Xaml.Templates;
 using Stride.Core.Annotations;
 
 namespace Stride.Core.Presentation.View

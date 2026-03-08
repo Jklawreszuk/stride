@@ -3,6 +3,7 @@
 using System;
 using System.Linq;
 using System.Windows;
+using Avalonia;
 using Microsoft.Xaml.Behaviors;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Core;
@@ -14,22 +15,22 @@ namespace Stride.Core.Presentation.Behaviors
     /// An abstract behavior that allows to perform actions when an event is raised. It supports both <see cref="RoutedEvent"/> and standard <c>event</c>,
     /// and allow to catch routed event triggered by any control.
     /// </summary>
-    public abstract class OnEventBehavior : Behavior<DependencyObject>
+    public abstract class OnEventBehavior : Behavior<AvaloniaObject>
     {
         /// <summary>
         /// Identifies the <see cref="EventName"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty EventNameProperty = DependencyProperty.Register("EventName", typeof(string), typeof(OnEventBehavior));
+        public static readonly AvaloniaProperty EventNameProperty = AvaloniaProperty.Register("EventName", typeof(string), typeof(OnEventBehavior));
 
         /// <summary>
         /// Identifies the <see cref="EventOwnerType"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty EventOwnerTypeProperty = DependencyProperty.Register("EventOwnerType", typeof(Type), typeof(OnEventBehavior));
+        public static readonly AvaloniaProperty EventOwnerTypeProperty = AvaloniaProperty.Register("EventOwnerType", typeof(Type), typeof(OnEventBehavior));
 
         /// <summary>
         /// Identifies the <see cref="HandleEvent"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty HandleEventProperty = DependencyProperty.Register("HandleEvent", typeof(bool), typeof(OnEventBehavior));
+        public static readonly AvaloniaProperty HandleEventProperty = AvaloniaProperty.Register("HandleEvent", typeof(bool), typeof(OnEventBehavior));
 
         private readonly RoutedEventHandler routedEventHandler;
         private AnonymousEventHandler eventHandler;

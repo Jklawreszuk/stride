@@ -1,20 +1,18 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
-using System.Windows.Controls;
-using System.Windows;
-using System.Windows.Data;
-using System.Windows.Media;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Metadata;
+using Avalonia.Data;
+using Avalonia.Media;
+using Avalonia.Platform;
 using Stride.Core.Mathematics;
-
-using System.Windows.Media.Imaging;
-using System.Windows.Input;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Extensions;
 using Stride.Core.Presentation.Internal;
 using Color = Stride.Core.Mathematics.Color;
-using Point = System.Windows.Point;
-using Rectangle = System.Windows.Shapes.Rectangle;
+using Point = Stride.Core.Mathematics.Point;
 
 namespace Stride.Core.Presentation.Controls
 {
@@ -41,67 +39,67 @@ namespace Stride.Core.Presentation.Controls
         private bool interlock;
         private bool suspendBindingUpdates;
         private bool templateApplied;
-        private DependencyProperty initializingProperty;
+        private AvaloniaProperty initializingProperty;
 
         /// <summary>
         /// Identifies the <see cref="Color"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ColorProperty = DependencyProperty.Register("Color", typeof(Color4), typeof(ColorPicker), new FrameworkPropertyMetadata(default(Color4), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnColorPropertyChanged, CoreceColorValue, false, UpdateSourceTrigger.Explicit));
+        public static readonly AvaloniaProperty ColorProperty = AvaloniaProperty.Register("Color", typeof(Color4), typeof(ColorPicker), new FrameworkPropertyMetadata(default(Color4), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnColorPropertyChanged, CoreceColorValue, false, UpdateSourceTrigger.Explicit));
 
         /// <summary>
         /// Identifies the <see cref="Hue"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty HueProperty = DependencyProperty.Register("Hue", typeof(float), typeof(ColorPicker), new FrameworkPropertyMetadata(0.0f, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnHSVPropertyChanged, CoerceHueValue));
+        public static readonly AvaloniaProperty HueProperty = AvaloniaProperty.Register("Hue", typeof(float), typeof(ColorPicker), new FrameworkPropertyMetadata(0.0f, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnHSVPropertyChanged, CoerceHueValue));
 
         /// <summary>
         /// Identifies the <see cref="Saturation"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty SaturationProperty = DependencyProperty.Register("Saturation", typeof(float), typeof(ColorPicker), new FrameworkPropertyMetadata(0.0f, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnHSVPropertyChanged, CoercePercentageValue));
+        public static readonly AvaloniaProperty SaturationProperty = AvaloniaProperty.Register("Saturation", typeof(float), typeof(ColorPicker), new FrameworkPropertyMetadata(0.0f, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnHSVPropertyChanged, CoercePercentageValue));
 
         /// <summary>
         /// Identifies the <see cref="Brightness"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty BrightnessProperty = DependencyProperty.Register("Brightness", typeof(float), typeof(ColorPicker), new FrameworkPropertyMetadata(0.0f, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnHSVPropertyChanged, CoercePercentageValue));
+        public static readonly AvaloniaProperty BrightnessProperty = AvaloniaProperty.Register("Brightness", typeof(float), typeof(ColorPicker), new FrameworkPropertyMetadata(0.0f, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnHSVPropertyChanged, CoercePercentageValue));
 
         /// <summary>
         /// Identifies the <see cref="Red"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty RedProperty = DependencyProperty.Register("Red", typeof(byte), typeof(ColorPicker), new FrameworkPropertyMetadata((byte)0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnRGBAPropertyChanged));
+        public static readonly AvaloniaProperty RedProperty = AvaloniaProperty.Register("Red", typeof(byte), typeof(ColorPicker), new FrameworkPropertyMetadata((byte)0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnRGBAPropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="Green"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty GreenProperty = DependencyProperty.Register("Green", typeof(byte), typeof(ColorPicker), new FrameworkPropertyMetadata((byte)0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnRGBAPropertyChanged));
+        public static readonly AvaloniaProperty GreenProperty = AvaloniaProperty.Register("Green", typeof(byte), typeof(ColorPicker), new FrameworkPropertyMetadata((byte)0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnRGBAPropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="Blue"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty BlueProperty = DependencyProperty.Register("Blue", typeof(byte), typeof(ColorPicker), new FrameworkPropertyMetadata((byte)0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnRGBAPropertyChanged));
+        public static readonly AvaloniaProperty BlueProperty = AvaloniaProperty.Register("Blue", typeof(byte), typeof(ColorPicker), new FrameworkPropertyMetadata((byte)0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnRGBAPropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="Alpha"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty AlphaProperty = DependencyProperty.Register("Alpha", typeof(byte), typeof(ColorPicker), new FrameworkPropertyMetadata((byte)0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnRGBAPropertyChanged));
+        public static readonly AvaloniaProperty AlphaProperty = AvaloniaProperty.Register("Alpha", typeof(byte), typeof(ColorPicker), new FrameworkPropertyMetadata((byte)0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnRGBAPropertyChanged));
 
         /// <summary>
         /// Identifies the <see cref="ShowAlpha"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty ShowAlphaProperty = DependencyProperty.Register("ShowAlpha", typeof(bool), typeof(ColorPicker), new FrameworkPropertyMetadata(BooleanBoxes.TrueBox, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+        public static readonly AvaloniaProperty ShowAlphaProperty = AvaloniaProperty.Register("ShowAlpha", typeof(bool), typeof(ColorPicker), new FrameworkPropertyMetadata(BooleanBoxes.TrueBox, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
         /// <summary>
         /// Identifies the <see cref="InputColumnWidth"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty InputColumnWidthProperty = DependencyProperty.Register("InputColumnWidth", typeof(GridLength), typeof(ColorPicker), new FrameworkPropertyMetadata(GridLength.Auto));
+        public static readonly AvaloniaProperty InputColumnWidthProperty = AvaloniaProperty.Register("InputColumnWidth", typeof(GridLength), typeof(ColorPicker), new FrameworkPropertyMetadata(GridLength.Auto));
 
         /// <summary>
         /// Identifies the <see cref="PickupAreaSize"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty PickupAreaSizeProperty = DependencyProperty.Register("PickupAreaSize", typeof(Size), typeof(ColorPicker), new FrameworkPropertyMetadata(default(Size)));
+        public static readonly AvaloniaProperty PickupAreaSizeProperty = AvaloniaProperty.Register("PickupAreaSize", typeof(Size), typeof(ColorPicker), new FrameworkPropertyMetadata(default(Size)));
 
         /// <summary>
         /// Identifies the <see cref="StripsHeight"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty StripsHeightProperty = DependencyProperty.Register("StripsHeight", typeof(double), typeof(ColorPicker), new FrameworkPropertyMetadata((double)0));
+        public static readonly AvaloniaProperty StripsHeightProperty = AvaloniaProperty.Register("StripsHeight", typeof(double), typeof(ColorPicker), new FrameworkPropertyMetadata((double)0));
             
         /// <summary>
         /// Gets or sets the color associated to this color picker.
@@ -429,7 +427,7 @@ namespace Stride.Core.Presentation.Controls
         /// Raised when the <see cref="Red"/>, <see cref="Green"/>, <see cref="Blue"/> or <see cref="Alpha"/> properties are modified.
         /// </summary>
         /// <param name="e">The dependency property that has changed.</param>
-        private void OnRGBAValueChanged(DependencyPropertyChangedEventArgs e)
+        private void OnRGBAValueChanged(AvaloniaPropertyChangedEventArgs e)
         {
             bool isInitializing = !templateApplied && initializingProperty == null;
             if (isInitializing)
@@ -466,7 +464,7 @@ namespace Stride.Core.Presentation.Controls
         /// Raised when the <see cref="Hue"/>, <see cref="Saturation"/>, or <see cref="Brightness"/> properties are modified.
         /// </summary>
         /// <param name="e">The dependency property that has changed.</param>
-        private void OnHSVValueChanged(DependencyPropertyChangedEventArgs e)
+        private void OnHSVValueChanged(AvaloniaPropertyChangedEventArgs e)
         {
             bool isInitializing = !templateApplied && initializingProperty == null;
             if (isInitializing)
@@ -515,7 +513,7 @@ namespace Stride.Core.Presentation.Controls
         /// Updates the binding of the given dependency property, if binding updates are not currently suspended by user actions.
         /// </summary>
         /// <param name="dependencyProperty">The dependency property.</param>
-        private void UpdateBinding(DependencyProperty dependencyProperty)
+        private void UpdateBinding(AvaloniaProperty dependencyProperty)
         {
             if (!suspendBindingUpdates && dependencyProperty != initializingProperty)
             {
@@ -544,7 +542,7 @@ namespace Stride.Core.Presentation.Controls
         /// </summary>
         /// <param name="sender">The dependency object where the event handler is attached.</param>
         /// <param name="e">The event data.</param>
-        private static void OnColorPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void OnColorPropertyChanged(AvaloniaObject sender, AvaloniaPropertyChangedEventArgs e)
         {
             var colorPicker = (ColorPicker)sender;
             colorPicker.OnColorChanged();
@@ -556,7 +554,7 @@ namespace Stride.Core.Presentation.Controls
         /// </summary>
         /// <param name="sender">The dependency object where the event handler is attached.</param>
         /// <param name="e">The event data.</param>
-        private static void OnHSVPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void OnHSVPropertyChanged(AvaloniaObject sender, AvaloniaPropertyChangedEventArgs e)
         {
             var colorPicker = (ColorPicker)sender;
             colorPicker.OnHSVValueChanged(e);
@@ -568,7 +566,7 @@ namespace Stride.Core.Presentation.Controls
         /// </summary>
         /// <param name="sender">The dependency object where the event handler is attached.</param>
         /// <param name="e">The event data.</param>
-        private static void OnRGBAPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void OnRGBAPropertyChanged(AvaloniaObject sender, AvaloniaPropertyChangedEventArgs e)
         {
             var colorPicker = (ColorPicker)sender;
             colorPicker.OnRGBAValueChanged(e);
@@ -578,7 +576,7 @@ namespace Stride.Core.Presentation.Controls
         /// Coerce the value of the Color so its components are always equals to the float value of a byte divided by 255.
         /// </summary>
         [NotNull]
-        private static object CoreceColorValue(DependencyObject sender, [NotNull] object baseValue)
+        private static object CoreceColorValue(AvaloniaObject sender, [NotNull] object baseValue)
         {
             return new Color(((Color4)baseValue).ToArray()).ToColor4();
         }
@@ -587,7 +585,7 @@ namespace Stride.Core.Presentation.Controls
         /// Coerce the value of the Hue so it is always contained in the -360, +360 interval
         /// </summary>
         [NotNull]
-        private static object CoerceHueValue(DependencyObject sender, [NotNull] object baseValue)
+        private static object CoerceHueValue(AvaloniaObject sender, [NotNull] object baseValue)
         {
             return ((float)baseValue + 360.0f) % 360.0f;
         }
@@ -596,7 +594,7 @@ namespace Stride.Core.Presentation.Controls
         /// Coerce the saturation and brightness values so they are always contained between 0 and 100
         /// </summary>
         [NotNull]
-        private static object CoercePercentageValue(DependencyObject sender, [NotNull] object baseValue)
+        private static object CoercePercentageValue(AvaloniaObject sender, [NotNull] object baseValue)
         {
             return MathUtil.Clamp((float)baseValue, 0.0f, 100.0f);
         }
