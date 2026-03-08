@@ -2,8 +2,7 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
-using System.Windows.Controls.Primitives;
-using System.Windows.Input;
+using Avalonia.Styling;
 using Stride.Core.Annotations;
 using Stride.Core.Extensions;
 
@@ -48,8 +47,7 @@ namespace Stride.Core.Presentation.Controls.Commands
         
         private static void OnClearSelectionCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            var selector = sender as Selector;
-            if (selector != null)
+            if (sender is Selector selector)
             {
                 selector.SelectedItem = null;
             }

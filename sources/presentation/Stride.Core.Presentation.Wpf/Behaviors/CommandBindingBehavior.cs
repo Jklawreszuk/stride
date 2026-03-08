@@ -3,6 +3,8 @@
 using System.Windows;
 using System.Windows.Input;
 using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Xaml.Interactivity;
 using Microsoft.Xaml.Behaviors;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Commands;
@@ -14,7 +16,7 @@ namespace Stride.Core.Presentation.Behaviors
     /// This command will bind a <see cref="ICommandBase"/> to a <see cref="RoutedCommand"/>. It works just as a <see cref="CommandBinding"/> except that the bound
     /// command is executed when the routed command is executed. The <b>CanExecute</b> handler also invoke the <b>CanExecute</b> method of the <see cref="ICommandBase"/>.
     /// </summary>
-    public class CommandBindingBehavior : Behavior<FrameworkElement>
+    public class CommandBindingBehavior : Behavior<Control>
     {
         private CommandBinding commandBinding;
 

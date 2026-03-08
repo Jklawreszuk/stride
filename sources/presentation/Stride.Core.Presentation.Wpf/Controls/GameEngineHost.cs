@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Stride.Core.Annotations;
 using Stride.Core.Mathematics;
@@ -15,10 +17,10 @@ using Point = Stride.Core.Mathematics.Point;
 namespace Stride.Core.Presentation.Controls
 {
     /// <summary>
-    /// A <see cref="FrameworkElement"/> that can host a game engine window. This control is faster than <see cref="HwndHost"/> but might behave
+    /// A <see cref="Control"/> that can host a game engine window. This control is faster than <see cref="HwndHost"/> but might behave
     /// a bit less nicely on certain cases (such as resize, etc.).
     /// </summary>
-    public class GameEngineHost : FrameworkElement, IDisposable, IWin32Window, IKeyboardInputSink
+    public class GameEngineHost : Control, IDisposable, IWin32Window, IKeyboardInputSink
     {
         private readonly List<HwndSource> contextMenuSources = new List<HwndSource>();
         private bool updateRequested;
@@ -173,8 +175,7 @@ namespace Stride.Core.Presentation.Controls
                 {
                     root = parent;
 
-                    var parentElement = parent as FrameworkElement;
-                    if (parentElement != null)
+                    if (parent is Control parentElement)
                     {
                         if (!parentElement.IsLoaded || !parentElement.IsVisible)
                             shouldShow = false;
@@ -276,7 +277,7 @@ namespace Stride.Core.Presentation.Controls
                             AvaloniaObject dependencyObject = this;
                             while (dependencyObject != null)
                             {
-                                var element = dependencyObject as FrameworkElement;
+                                var element = dependencyObject as Control;
                                 if (element?.ContextMenu != null)
                                 {
                                     element.Focus();
@@ -352,7 +353,7 @@ namespace Stride.Core.Presentation.Controls
             throw new NotSupportedException();
         }
 
-        bool IKeyboardInputSink.TranslateAccelerator(ref MSG msg, ModifierKeys modifiers)
+        bool IKeyboardInputSink.TranslateAccelerator(ref MSG msg, KeyModifiers modifiers)
         {
             return false;
         }
@@ -362,12 +363,12 @@ namespace Stride.Core.Presentation.Controls
             return false;
         }
 
-        bool IKeyboardInputSink.OnMnemonic(ref MSG msg, ModifierKeys modifiers)
+        bool IKeyboardInputSink.OnMnemonic(ref MSG msg, KeyModifiers modifiers)
         {
             return false;
         }
 
-        bool IKeyboardInputSink.TranslateChar(ref MSG msg, ModifierKeys modifiers)
+        bool IKeyboardInputSink.TranslateChar(ref MSG msg, KeyModifiers modifiers)
         {
             return false;
         }

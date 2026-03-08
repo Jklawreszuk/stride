@@ -19,7 +19,7 @@ namespace Stride.Core.Presentation.Controls
     {
         private bool gridParametersInvalidated;
 
-        public static readonly AvaloniaProperty UseFullRowProperty = AvaloniaProperty.RegisterAttached("UseFullRow", typeof(bool), typeof(KeyValueGrid));
+        public static readonly AttachedProperty<bool> UseFullRowProperty = AvaloniaProperty.RegisterAttached<KeyValueGrid, bool>("UseFullRow", typeof(KeyValueGrid));
 
         /// <summary>
         /// Initializes a new instance of the <see cref="KeyValueGrid"/> class.
@@ -32,7 +32,7 @@ namespace Stride.Core.Presentation.Controls
 
         public static bool GetUseFullRow([NotNull] AvaloniaObject obj)
         {
-            return (bool)obj.GetValue(UseFullRowProperty);
+            return obj.GetValue(UseFullRowProperty);
         }
 
         public static void SetUseFullRow([NotNull] AvaloniaObject obj, bool value)
@@ -69,7 +69,7 @@ namespace Stride.Core.Presentation.Controls
             // Update Grid.Row and Grid.Column dependency properties on each child control
             var row = 0;
             var column = 0;
-            foreach (UIElement element in children)
+            foreach (Control element in children)
             {
                 element.SetValue(ColumnProperty, column);
                 element.SetValue(RowProperty, row);
@@ -104,10 +104,10 @@ namespace Stride.Core.Presentation.Controls
         }
 
         /// <inheritdoc/>
-        protected override void OnVisualChildrenChanged(AvaloniaObject visualAdded, AvaloniaObject visualRemoved)
+        protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
         {
             gridParametersInvalidated = true;
-            base.OnVisualChildrenChanged(visualAdded, visualRemoved);
+            base.OnPropertyChanged(change);
         }
     }
 }

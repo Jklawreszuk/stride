@@ -2,6 +2,7 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Media;
 using Stride.Core.Annotations;
 
@@ -96,7 +97,7 @@ namespace Stride.Core.Presentation.Adorners
         /// Initializes a new instance of the <see cref="HighlightBorderAdorner"/> class.
         /// </summary>
         /// <param name="adornedElement"></param>
-        public HighlightBorderAdorner([NotNull] UIElement adornedElement)
+        public HighlightBorderAdorner([NotNull] Control adornedElement)
             : base(adornedElement)
         {
         }

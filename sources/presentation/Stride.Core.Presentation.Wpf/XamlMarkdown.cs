@@ -34,10 +34,18 @@ SOFTWARE.
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Input;
 using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Documents;
+using Avalonia.Controls.Shapes;
+using Avalonia.Media;
+using Avalonia.Metadata;
+using Avalonia.Styling;
+using CommunityToolkit.Mvvm.Input;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Internal;
 
@@ -80,16 +88,21 @@ namespace Stride.Core.Presentation
         /// <remarks><see cref="Application.Current"/> will be used for styles look-up.</remarks>
         public XamlMarkdown()
         {
-            HyperlinkCommand = NavigationCommands.GoToPage;
+            HyperlinkCommand = new RelayCommand<string>(GoToPage);
+        }
+        
+        private static void GoToPage(string uri)
+        {
+            Process.Start(new ProcessStartInfo(uri) { UseShellExecute = true });
         }
 
-        private readonly FrameworkElement resourcesProvider;
+        private readonly Control resourcesProvider;
 
         /// <summary>
         /// Creates an instance of <see cref="XamlMarkdown"/> with <paramref name="resourcesProvider"/> for styles look-up.
         /// </summary>
         /// <param name="resourcesProvider">The framework element used for styles look-up.</param>
-        public XamlMarkdown([NotNull] FrameworkElement resourcesProvider)
+        public XamlMarkdown([NotNull] Control resourcesProvider)
             : this()
         {
             if (resourcesProvider == null) throw new ArgumentNullException(nameof(resourcesProvider));

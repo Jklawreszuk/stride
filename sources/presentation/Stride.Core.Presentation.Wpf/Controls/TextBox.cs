@@ -41,7 +41,7 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="TrimmedText"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty TrimmedTextProperty = TrimmedTextPropertyKey.AvaloniaProperty;
+        public static readonly AvaloniaProperty TrimmedTextProperty = AvaloniaProperty;
 
         /// <summary>
         /// Clears the current <see cref="MediaTypeNames.Text"/> of a text box.
@@ -76,7 +76,7 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Gets the trimmed text to display when the control does not have the focus, depending of the value of the <see cref="TextTrimming"/> property.
         /// </summary>
-        public string TrimmedText { get { return (string)GetValue(TrimmedTextPropertyKey.AvaloniaProperty); } private set { SetValue(TrimmedTextPropertyKey, value); } }
+        public string TrimmedText { get { return (string)GetValue(AvaloniaProperty); } private set { SetValue(TrimmedTextPropertyKey, value); } }
 
         /// <inheritdoc/>
         public override void OnApplyTemplate()

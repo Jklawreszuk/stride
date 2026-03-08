@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Avalonia.Markup.Xaml.Templates;
 using Avalonia.VisualTree;
@@ -71,15 +72,11 @@ namespace Stride.Core.Presentation.View
             if (item == null)
                 return null;
 
-            var element = container as FrameworkElement;
-            if (element == null)
-                throw new ArgumentException(@"Container must be of type FrameworkElement", nameof(container));
+            if (container is not Control)
+                throw new ArgumentException(@"Container must be of type Control", nameof(container));
 
             var provider = FindTemplateProvider(item, container);
-            if (provider == null)
-                return null;
-
-            var template = provider.Template;
+            var template = provider?.Template;
             // We set the template we found into the content presenter itself to avoid re-entering the template selector if the property is refreshed.
             //var contentPresenter = container as ContentPresenter;
             //if (contentPresenter != null)

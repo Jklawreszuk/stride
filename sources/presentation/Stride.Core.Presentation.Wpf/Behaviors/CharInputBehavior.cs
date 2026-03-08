@@ -2,9 +2,11 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System.Globalization;
+using Avalonia.Controls;
+using Avalonia.Xaml.Interactivity;
 using Microsoft.Xaml.Behaviors;
 using Stride.Core.Annotations;
-using Stride.Core.Presentation.Controls;
+using TextBox = Stride.Core.Presentation.Controls.TextBox;
 
 namespace Stride.Core.Presentation.Behaviors
 {

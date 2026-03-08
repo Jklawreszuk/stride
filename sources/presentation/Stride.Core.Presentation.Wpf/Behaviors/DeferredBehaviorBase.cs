@@ -2,14 +2,16 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System.Windows;
 using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Xaml.Interactivity;
 using Microsoft.Xaml.Behaviors;
 using Stride.Core.Presentation.Internal;
 
 namespace Stride.Core.Presentation.Behaviors
 {
     /// <summary>
-    /// A <see cref="Behavior{T}"/> that support deferred attachement for a FrameworkElement derived class.
-    /// In such a case, the attachement is delayed until the <see cref="FrameworkElement.Loaded"/> event is raised.
+    /// A <see cref="Behavior{T}"/> that support deferred attachement for a Control derived class.
+    /// In such a case, the attachement is delayed until the <see cref="Control.Loaded"/> event is raised.
     /// </summary>
     /// <typeparam name="T">The type of instance to attach to.</typeparam>
     public abstract class DeferredBehaviorBase<T> : Behavior<T> where T : AvaloniaObject
@@ -23,7 +25,7 @@ namespace Stride.Core.Presentation.Behaviors
         private bool currentlyLoaded;
 
         /// <summary>
-        /// Gets or sets whether <see cref="OnAttachedAndLoaded"/> should be called each time the <see cref="FrameworkElement.Loaded"/> event is raised.
+        /// Gets or sets whether <see cref="OnAttachedAndLoaded"/> should be called each time the <see cref="Control.Loaded"/> event is raised.
         /// </summary>
         public bool AttachOnEveryLoadedEvent { get { return (bool)GetValue(AttachOnEveryLoadedEventProperty); } set { SetValue(AttachOnEveryLoadedEventProperty, value.Box()); } }
 
@@ -31,7 +33,7 @@ namespace Stride.Core.Presentation.Behaviors
         {
             base.OnAttached();
 
-            var element = AssociatedObject as FrameworkElement;
+            var element = AssociatedObject as Control;
 
             if (element != null)
             {
@@ -56,7 +58,7 @@ namespace Stride.Core.Presentation.Behaviors
                 OnDetachingAndUnloaded();
             }
 
-            var element = AssociatedObject as FrameworkElement;
+            var element = AssociatedObject as Control;
             if (element != null)
             {
                 element.Loaded -= AssociatedObjectLoaded;

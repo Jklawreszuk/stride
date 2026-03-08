@@ -1,15 +1,14 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
-using System.Windows;
-using System.Windows.Input;
 using Avalonia;
-using Microsoft.Xaml.Behaviors;
+using Avalonia.Controls;
+using Avalonia.Xaml.Interactivity;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Internal;
 
 namespace Stride.Core.Presentation.Behaviors
 {
-    public class OverrideCursorBehavior : Behavior<FrameworkElement>
+    public class OverrideCursorBehavior : Behavior<Control>
     {
         public static readonly AvaloniaProperty CursorProperty = AvaloniaProperty.Register("Cursor", typeof(Cursor), typeof(OverrideCursorBehavior), new PropertyMetadata(PropertyChanged));
 

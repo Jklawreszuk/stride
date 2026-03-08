@@ -7,10 +7,11 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Shapes;
 using Avalonia;
+using Avalonia.Controls;
 
 namespace Stride.Core.Presentation.Behaviors
 {
-    public sealed class SelectionRectangleBehavior : MouseMoveCaptureBehaviorBase<UIElement>
+    public sealed class SelectionRectangleBehavior : MouseMoveCaptureBehaviorBase<Control>
     {
         public static readonly AvaloniaProperty CanvasProperty =
             AvaloniaProperty.Register(nameof(Canvas), typeof(Canvas), typeof(SelectionRectangleBehavior), new PropertyMetadata(OnCanvasChanged));
@@ -117,7 +118,7 @@ namespace Stride.Core.Presentation.Behaviors
                     Path = new PropertyPath(nameof(RectangleStyle)),
                     Source = this,
                 };
-                selectionRectangle.SetBinding(FrameworkElement.StyleProperty, binding);
+                selectionRectangle.SetBinding(Control.StyleProperty, binding);
             }
             else
             {

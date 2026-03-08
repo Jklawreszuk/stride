@@ -2,23 +2,22 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
 using System.Linq;
-using Microsoft.Xaml.Behaviors;
-
 using Stride.Core.Presentation.Core;
 using Stride.Core.Presentation.Extensions;
-using System.Windows;
 using System.Windows.Input;
-using System.Windows.Data;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Xaml.Interactivity;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Internal;
 
 namespace Stride.Core.Presentation.Behaviors
 {
     /// <summary>
-    /// A <see cref="Behavior"/> that allow to execute a command when the value of a dependency property of its associated 
+    /// A <see cref="Behavior{T}"/> that allow to execute a command when the value of a dependency property of its associated 
     /// object changes, or when the source of the dependency property binding is updated.
     /// </summary>
-    public class OnPropertyChangedCommandBehavior : Behavior<FrameworkElement>
+    public class OnPropertyChangedCommandBehavior : Behavior<Control>
     {
         private readonly DependencyPropertyWatcher propertyWatcher = new DependencyPropertyWatcher();
         private AvaloniaProperty dependencyProperty;

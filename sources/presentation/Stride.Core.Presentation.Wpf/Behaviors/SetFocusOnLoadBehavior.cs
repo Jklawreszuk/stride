@@ -3,14 +3,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Windows;
+using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Microsoft.Xaml.Behaviors;
+using Avalonia.Xaml.Interactivity;
 
 namespace Stride.Core.Presentation.Behaviors
 {
-    public class SetFocusOnLoadBehavior : Behavior<FrameworkElement>
+    public class SetFocusOnLoadBehavior : Behavior<Control>
     {
         protected override void OnAttached()
         {

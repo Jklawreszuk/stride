@@ -8,7 +8,7 @@
 // Please see http://go.microsoft.com/fwlink/?LinkID=131993 for details.
 // All other rights reserved.
 -->
-<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -28,8 +28,8 @@
                     x:Class="Stride.Core.Presentation.Themes.ThemeSelector"
                     mc:Ignorable="d">
   <ResourceDictionary.MergedDictionaries>
-    <ResourceDictionary Source="generic.xaml"/>
-    <ResourceDictionary Source="pack://application:,,,/Stride.Core.Presentation.Wpf;component/Resources/VectorResources.xaml" />
+    <MergeResourceInclude Source="generic.xaml"/>
+    <MergeResourceInclude Source="pack://application:,,,/Stride.Core.Presentation.Wpf;component/Resources/VectorResources.xaml" />
     <!--
     // ExpressionDark is the default/fallback theme.
     // When adding a new theme, ensure all themes:ThemeResourceDictionary in every *.xaml files
@@ -589,7 +589,7 @@
               </Grid.RowDefinitions>
               <GroupBox Header="RGBA" VerticalAlignment="Top" Grid.Column="0" HorizontalContentAlignment="Stretch" BorderThickness="0" Margin="2" Focusable="False">
                 <ctrl:KeyValueGrid x:Name="RGBGrid" HorizontalAlignment="Stretch" Focusable="False">
-                  <TextBlock Margin="4,0" Text="{sd:Localize R:, Context=RGBA}" ToolTipService.ToolTip="{sd:Localize Red, Context=ToolTip}" VerticalAlignment="Center" HorizontalAlignment="Left" Focusable="False"/>
+                  <TextBlock Margin="4,0" Text="{sd:Localize R:, Context=RGBA}" ToolTip.Tip="{sd:Localize Red, Context=ToolTip}" VerticalAlignment="Center" HorizontalAlignment="Left" Focusable="False"/>
                   <StackPanel Margin="0,2">
                     <ctrl:NumericTextBox x:Name="RedTextBox" Value="{Binding Red, RelativeSource={RelativeSource Mode=TemplatedParent}}" SelectionBrush="{StaticResource RedBrush}" Minimum="0" Maximum="255" Margin="0" MouseValidationTrigger="OnMouseMove"/>
                     <Rectangle Height="3" Fill="{StaticResource RedBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom">
@@ -598,7 +598,7 @@
                       </Rectangle.RenderTransform>
                     </Rectangle>
                   </StackPanel>
-                  <TextBlock Margin="4,0" Text="{sd:Localize G:, Context=RGBA}" ToolTipService.ToolTip="{sd:Localize Green, Context=ToolTip}" VerticalAlignment="Center" HorizontalAlignment="Left" Focusable="False"/>
+                  <TextBlock Margin="4,0" Text="{sd:Localize G:, Context=RGBA}" ToolTip.Tip="{sd:Localize Green, Context=ToolTip}" VerticalAlignment="Center" HorizontalAlignment="Left" Focusable="False"/>
                   <StackPanel Margin="0,2">
                     <ctrl:NumericTextBox x:Name="GreenTextBox" Value="{Binding Green, RelativeSource={RelativeSource Mode=TemplatedParent}}" SelectionBrush="{StaticResource GreenBrush}" Minimum="0" Maximum="255" Margin="0" MouseValidationTrigger="OnMouseMove"/>
                     <Rectangle Height="3" Fill="{StaticResource GreenBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom">
@@ -607,7 +607,7 @@
                       </Rectangle.RenderTransform>
                     </Rectangle>
                   </StackPanel>
-                  <TextBlock Margin="4,0" Text="{sd:Localize B:, Context=RGBA}" ToolTipService.ToolTip="{sd:Localize Blue, Context=ToolTip}" VerticalAlignment="Center" HorizontalAlignment="Left" Focusable="False"/>
+                  <TextBlock Margin="4,0" Text="{sd:Localize B:, Context=RGBA}" ToolTip.Tip="{sd:Localize Blue, Context=ToolTip}" VerticalAlignment="Center" HorizontalAlignment="Left" Focusable="False"/>
                   <StackPanel Margin="0,2">
                     <ctrl:NumericTextBox x:Name="BlueTextBox" Value="{Binding Blue, RelativeSource={RelativeSource Mode=TemplatedParent}}" SelectionBrush="{StaticResource BlueBrush}" Minimum="0" Maximum="255" Margin="0" MouseValidationTrigger="OnMouseMove"/>
                     <Rectangle Height="3" Fill="{StaticResource BlueBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom">
@@ -616,7 +616,7 @@
                       </Rectangle.RenderTransform>
                     </Rectangle>
                   </StackPanel>
-                  <TextBlock x:Name="AlphaTextBlock" Margin="4,0" Text="{sd:Localize A:, Context=RGBA}" ToolTipService.ToolTip="{sd:Localize Alpha, Context=ToolTip}" VerticalAlignment="Center" HorizontalAlignment="Left" Focusable="False"/>
+                  <TextBlock x:Name="AlphaTextBlock" Margin="4,0" Text="{sd:Localize A:, Context=RGBA}" ToolTip.Tip="{sd:Localize Alpha, Context=ToolTip}" VerticalAlignment="Center" HorizontalAlignment="Left" Focusable="False"/>
                   <StackPanel Margin="0,2" x:Name="AlphaValue">
                     <ctrl:NumericTextBox x:Name="AlphaTextBox" Value="{Binding Alpha, RelativeSource={RelativeSource Mode=TemplatedParent}}" SelectionBrush="{StaticResource AlphaBrush}" Minimum="0" Maximum="255" Margin="0"/>
                     <Rectangle Height="3" Fill="{StaticResource AlphaBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom">
@@ -629,7 +629,7 @@
               </GroupBox>
               <GroupBox Header="HSB" VerticalAlignment="Top" d:LayoutOverrides="Width" BorderThickness="0" Grid.Row="1" Margin="2" Focusable="False">
                 <ctrl:KeyValueGrid Focusable="False">
-                  <TextBlock Margin="4,0" Text="{sd:Localize H:, Context=HSB}" ToolTipService.ToolTip="{sd:Localize Hue, Context=ToolTip}" VerticalAlignment="Center" HorizontalAlignment="Left" Focusable="False"/>
+                  <TextBlock Margin="4,0" Text="{sd:Localize H:, Context=HSB}" ToolTip.Tip="{sd:Localize Hue, Context=ToolTip}" VerticalAlignment="Center" HorizontalAlignment="Left" Focusable="False"/>
                   <StackPanel Margin="0,2">
                     <ctrl:NumericTextBox x:Name="HueTextBox" Value="{Binding Hue, RelativeSource={RelativeSource Mode=TemplatedParent}}" DecimalPlaces="0" SelectionBrush="{StaticResource AlphaBrush}" Minimum="0" Maximum="360" Margin="0" MouseValidationTrigger="OnMouseMove"/>
                     <Rectangle Height="3" Fill="{StaticResource AlphaBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom">
@@ -638,7 +638,7 @@
                       </Rectangle.RenderTransform>
                     </Rectangle>
                   </StackPanel>
-                  <TextBlock Margin="4,0" Text="{sd:Localize S:, Context=HSB}" ToolTipService.ToolTip="{sd:Localize Saturation, Context=ToolTip}" VerticalAlignment="Center" HorizontalAlignment="Left" Focusable="False"/>
+                  <TextBlock Margin="4,0" Text="{sd:Localize S:, Context=HSB}" ToolTip.Tip="{sd:Localize Saturation, Context=ToolTip}" VerticalAlignment="Center" HorizontalAlignment="Left" Focusable="False"/>
                   <StackPanel Margin="0,2">
                     <ctrl:NumericTextBox x:Name="SaturationTextBox" Value="{Binding Saturation, RelativeSource={RelativeSource Mode=TemplatedParent}}" DecimalPlaces="0" SelectionBrush="{StaticResource AlphaBrush}" Minimum="0" Maximum="100" Margin="0" MouseValidationTrigger="OnMouseMove"/>
                     <Rectangle Height="3" Fill="{StaticResource AlphaBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom">
@@ -647,7 +647,7 @@
                       </Rectangle.RenderTransform>
                     </Rectangle>
                   </StackPanel>
-                  <TextBlock Margin="4,0" Text="{sd:Localize B:, Context=HSB}" ToolTipService.ToolTip="{sd:Localize Value, Context=ToolTip}" VerticalAlignment="Center" HorizontalAlignment="Left" Focusable="False"/>
+                  <TextBlock Margin="4,0" Text="{sd:Localize B:, Context=HSB}" ToolTip.Tip="{sd:Localize Value, Context=ToolTip}" VerticalAlignment="Center" HorizontalAlignment="Left" Focusable="False"/>
                   <StackPanel Margin="0,2">
                     <ctrl:NumericTextBox x:Name="BrightnessTextBox" Value="{Binding Brightness, RelativeSource={RelativeSource Mode=TemplatedParent}}" DecimalPlaces="0" SelectionBrush="{StaticResource AlphaBrush}" Minimum="0" Maximum="100" Margin="0" MouseValidationTrigger="OnMouseMove"/>
                     <Rectangle Height="3" Fill="{StaticResource AlphaBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom">
@@ -946,42 +946,42 @@
   <ControlTemplate x:Key="RadioButtonTemplate" TargetType="{x:Type RadioButton}">
     <ControlTemplate.Resources>
       <Storyboard x:Key="HoverOn">
-        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="BackgroundOverlay" Storyboard.TargetProperty="(UIElement.Opacity)">
+        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="BackgroundOverlay" Storyboard.TargetProperty="(Control.Opacity)">
           <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1" />
         </DoubleAnimationUsingKeyFrames>
       </Storyboard>
       <Storyboard x:Key="HoverOff">
-        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="BackgroundOverlay" Storyboard.TargetProperty="(UIElement.Opacity)">
+        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="BackgroundOverlay" Storyboard.TargetProperty="(Control.Opacity)">
           <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
         </DoubleAnimationUsingKeyFrames>
       </Storyboard>
       <Storyboard x:Key="PressedOn">
-        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="PressedEllipse" Storyboard.TargetProperty="(UIElement.Opacity)">
+        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="PressedEllipse" Storyboard.TargetProperty="(Control.Opacity)">
           <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1" />
         </DoubleAnimationUsingKeyFrames>
       </Storyboard>
       <Storyboard x:Key="PressedOff">
-        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="PressedEllipse" Storyboard.TargetProperty="(UIElement.Opacity)">
+        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="PressedEllipse" Storyboard.TargetProperty="(Control.Opacity)">
           <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
         </DoubleAnimationUsingKeyFrames>
       </Storyboard>
       <Storyboard x:Key="CheckedOn">
-        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CheckIcon" Storyboard.TargetProperty="(UIElement.Opacity)">
+        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CheckIcon" Storyboard.TargetProperty="(Control.Opacity)">
           <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1" />
         </DoubleAnimationUsingKeyFrames>
       </Storyboard>
       <Storyboard x:Key="CheckedOff">
-        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CheckIcon" Storyboard.TargetProperty="(UIElement.Opacity)">
+        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CheckIcon" Storyboard.TargetProperty="(Control.Opacity)">
           <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
         </DoubleAnimationUsingKeyFrames>
       </Storyboard>
       <Storyboard x:Key="FocussedOn">
-        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="ContentFocusVisualElement" Storyboard.TargetProperty="(UIElement.Opacity)">
+        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="ContentFocusVisualElement" Storyboard.TargetProperty="(Control.Opacity)">
           <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1" />
         </DoubleAnimationUsingKeyFrames>
       </Storyboard>
       <Storyboard x:Key="FocussedOff">
-        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="ContentFocusVisualElement" Storyboard.TargetProperty="(UIElement.Opacity)">
+        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="ContentFocusVisualElement" Storyboard.TargetProperty="(Control.Opacity)">
           <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
         </DoubleAnimationUsingKeyFrames>
       </Storyboard>
@@ -1236,11 +1236,11 @@
         <ControlTemplate TargetType="ListBox">
           <Border Name="Bd" BorderThickness="{TemplateBinding Border.BorderThickness}" Padding="0" BorderBrush="{TemplateBinding Border.BorderBrush}" Background="{TemplateBinding Panel.Background}" SnapsToDevicePixels="True">
             <ScrollViewer Padding="{TemplateBinding Control.Padding}" Focusable="False">
-              <ItemsPresenter SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" Margin="0,0,1,0"/>
+              <ItemsPresenter SnapsToDevicePixels="{TemplateBinding Control.SnapsToDevicePixels}" Margin="0,0,1,0"/>
             </ScrollViewer>
           </Border>
           <ControlTemplate.Triggers>
-            <Trigger Property="UIElement.IsEnabled" Value="False">
+            <Trigger Property="Control.IsEnabled" Value="False">
               <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource DisabledBorderBrush}"/>
             </Trigger>
             <Trigger Property="ItemsControl.IsGrouping" Value="True">
@@ -1335,28 +1335,28 @@
         <ControlTemplate TargetType="{x:Type ToggleButton}">
           <ControlTemplate.Resources>
             <Storyboard x:Key="HoverOn">
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverRectangle" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverRectangle" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1"/>
               </DoubleAnimationUsingKeyFrames>
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverShineRectangle" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverShineRectangle" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1"/>
               </DoubleAnimationUsingKeyFrames>
             </Storyboard>
             <Storyboard x:Key="HoverOff">
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverShineRectangle" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverShineRectangle" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0"/>
               </DoubleAnimationUsingKeyFrames>
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverRectangle" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverRectangle" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0"/>
               </DoubleAnimationUsingKeyFrames>
             </Storyboard>
             <Storyboard x:Key="PressedOn">
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="PressedRectangle" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="PressedRectangle" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1"/>
               </DoubleAnimationUsingKeyFrames>
             </Storyboard>
             <Storyboard x:Key="PressedOff">
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="PressedRectangle" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="PressedRectangle" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0"/>
               </DoubleAnimationUsingKeyFrames>
             </Storyboard>
@@ -1432,28 +1432,28 @@
         <ControlTemplate TargetType="{x:Type ToggleButton}">
           <ControlTemplate.Resources>
             <Storyboard x:Key="HoverOn">
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverRectangle" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverRectangle" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1"/>
               </DoubleAnimationUsingKeyFrames>
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverShineRectangle" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverShineRectangle" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1"/>
               </DoubleAnimationUsingKeyFrames>
             </Storyboard>
             <Storyboard x:Key="HoverOff">
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverShineRectangle" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverShineRectangle" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0"/>
               </DoubleAnimationUsingKeyFrames>
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverRectangle" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverRectangle" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0"/>
               </DoubleAnimationUsingKeyFrames>
             </Storyboard>
             <Storyboard x:Key="PressedOn">
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="PressedRectangle" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="PressedRectangle" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1"/>
               </DoubleAnimationUsingKeyFrames>
             </Storyboard>
             <Storyboard x:Key="PressedOff">
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="PressedRectangle" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="PressedRectangle" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0"/>
               </DoubleAnimationUsingKeyFrames>
             </Storyboard>
@@ -1519,28 +1519,28 @@
         <ControlTemplate TargetType="{x:Type ToggleButton}">
           <ControlTemplate.Resources>
             <Storyboard x:Key="HoverOn">
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverRectangle" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverRectangle" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1"/>
               </DoubleAnimationUsingKeyFrames>
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverShineRectangle" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverShineRectangle" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1"/>
               </DoubleAnimationUsingKeyFrames>
             </Storyboard>
             <Storyboard x:Key="HoverOff">
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverShineRectangle" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverShineRectangle" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0"/>
               </DoubleAnimationUsingKeyFrames>
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverRectangle" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverRectangle" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0"/>
               </DoubleAnimationUsingKeyFrames>
             </Storyboard>
             <Storyboard x:Key="PressedOn">
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="PressedRectangle" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="PressedRectangle" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1"/>
               </DoubleAnimationUsingKeyFrames>
             </Storyboard>
             <Storyboard x:Key="PressedOff">
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="PressedRectangle" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="PressedRectangle" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0"/>
               </DoubleAnimationUsingKeyFrames>
             </Storyboard>
@@ -1928,12 +1928,12 @@
   <ControlTemplate x:Key="TextBoxTemplate" TargetType="{x:Type TextBox}">
     <ControlTemplate.Resources>
       <Storyboard x:Key="HoverOn">
-        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverBorder" Storyboard.TargetProperty="(Control.Opacity)">
           <SplineDoubleKeyFrame KeyTime="0" Value="0.5" />
         </DoubleAnimationUsingKeyFrames>
       </Storyboard>
       <Storyboard x:Key="HoverOff">
-        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+        <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverBorder" Storyboard.TargetProperty="(Control.Opacity)">
           <SplineDoubleKeyFrame KeyTime="0" Value="0" />
         </DoubleAnimationUsingKeyFrames>
       </Storyboard>
@@ -2001,12 +2001,12 @@
         <ControlTemplate TargetType="{x:Type PasswordBox}">
           <ControlTemplate.Resources>
             <Storyboard x:Key="HoverOn">
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverBorder" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="0.5" />
               </DoubleAnimationUsingKeyFrames>
             </Storyboard>
             <Storyboard x:Key="HoverOff">
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverBorder" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00.4000000" Value="0" />
               </DoubleAnimationUsingKeyFrames>
             </Storyboard>
@@ -2079,12 +2079,12 @@
         <ControlTemplate TargetType="{x:Type RichTextBox}">
           <ControlTemplate.Resources>
             <Storyboard x:Key="HoverOn">
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverBorder" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="0.5" />
               </DoubleAnimationUsingKeyFrames>
             </Storyboard>
             <Storyboard x:Key="HoverOff">
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverBorder" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00.4000000" Value="0" />
               </DoubleAnimationUsingKeyFrames>
             </Storyboard>
@@ -2562,22 +2562,22 @@
         <ControlTemplate TargetType="{x:Type TabItem}">
           <ControlTemplate.Resources>
             <Storyboard x:Key="HoverOn">
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverBorder" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1"/>
               </DoubleAnimationUsingKeyFrames>
             </Storyboard>
             <Storyboard x:Key="HoverOff">
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverBorder" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0"/>
               </DoubleAnimationUsingKeyFrames>
             </Storyboard>
             <Storyboard x:Key="SelectedOn">
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="SelectedBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="SelectedBorder" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1"/>
               </DoubleAnimationUsingKeyFrames>
             </Storyboard>
             <Storyboard x:Key="SelectedOff">
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="SelectedBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="SelectedBorder" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0"/>
               </DoubleAnimationUsingKeyFrames>
             </Storyboard>
@@ -2718,34 +2718,34 @@
           <ControlTemplate.Resources>
             <Storyboard x:Key="HoverOn">
 
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverBorder" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1" />
               </DoubleAnimationUsingKeyFrames>
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverShineBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverShineBorder" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1" />
               </DoubleAnimationUsingKeyFrames>
 
             </Storyboard>
             <Storyboard x:Key="HoverOff">
 
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverBorder" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00.4000000" Value="0" />
               </DoubleAnimationUsingKeyFrames>
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverShineBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverShineBorder" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00.4000000" Value="0" />
               </DoubleAnimationUsingKeyFrames>
 
             </Storyboard>
             <Storyboard x:Key="PressedOn">
 
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="PressedBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="PressedBorder" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1" />
               </DoubleAnimationUsingKeyFrames>
 
             </Storyboard>
             <Storyboard x:Key="PressedOff">
 
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="PressedBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="PressedBorder" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00.4000000" Value="0" />
               </DoubleAnimationUsingKeyFrames>
 
@@ -2909,22 +2909,22 @@
         <ControlTemplate TargetType="{x:Type TreeViewItem}">
           <ControlTemplate.Resources>
             <Storyboard x:Key="HoverOn">
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverBorder" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="0" Value="1"/>
               </DoubleAnimationUsingKeyFrames>
             </Storyboard>
             <Storyboard x:Key="HoverOff">
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverBorder" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="0" Value="0"/>
               </DoubleAnimationUsingKeyFrames>
             </Storyboard>
             <Storyboard x:Key="SelectedOn">
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="SelectionBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="SelectionBorder" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="0" Value="1"/>
               </DoubleAnimationUsingKeyFrames>
             </Storyboard>
             <Storyboard x:Key="SelectedOff">
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="SelectionBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="SelectionBorder" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="0" Value="0"/>
               </DoubleAnimationUsingKeyFrames>
             </Storyboard>
@@ -3030,38 +3030,38 @@
         <ControlTemplate TargetType="{x:Type ToggleButton}">
           <ControlTemplate.Resources>
             <Storyboard x:Key="HoverOn">
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverBorder" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="0.5"/>
               </DoubleAnimationUsingKeyFrames>
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverShineBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverShineBorder" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1"/>
               </DoubleAnimationUsingKeyFrames>
             </Storyboard>
             <Storyboard x:Key="HoverOff">
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverBorder" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0"/>
               </DoubleAnimationUsingKeyFrames>
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverShineBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="HoverShineBorder" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0"/>
               </DoubleAnimationUsingKeyFrames>
             </Storyboard>
             <Storyboard x:Key="CheckedOn">
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="CheckedBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="CheckedBorder" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="0.5"/>
               </DoubleAnimationUsingKeyFrames>
             </Storyboard>
             <Storyboard x:Key="CheckedOff">
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="CheckedBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="CheckedBorder" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0"/>
               </DoubleAnimationUsingKeyFrames>
             </Storyboard>
             <Storyboard x:Key="PressedOn">
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Pressed" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Pressed" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="1"/>
               </DoubleAnimationUsingKeyFrames>
             </Storyboard>
             <Storyboard x:Key="PressedOff">
-              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Pressed" Storyboard.TargetProperty="(UIElement.Opacity)">
+              <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="Pressed" Storyboard.TargetProperty="(Control.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0"/>
               </DoubleAnimationUsingKeyFrames>
             </Storyboard>
@@ -4674,13 +4674,13 @@
                                 VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
                                 Background="{TemplateBinding Panel.Background}"
                                 Padding="{TemplateBinding Control.Padding}"
-                                SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}"
+                                SnapsToDevicePixels="{TemplateBinding Control.SnapsToDevicePixels}"
                                 Focusable="False">
               <ItemsPresenter x:Name="content" DockPanel.Dock="Top" />
             </ScrollViewer>
           </Border>
           <ControlTemplate.Triggers>
-            <Trigger Property="UIElement.IsEnabled" Value="False">
+            <Trigger Property="Control.IsEnabled" Value="False">
               <Setter Property="Panel.Background" TargetName="Bd">
                 <Setter.Value>
                   <DynamicResource ResourceKey="{x:Static SystemColors.ControlBrushKey}" />
@@ -4729,7 +4729,7 @@
               <Rectangle x:Name="HoverRectangle" IsHitTestVisible="False" Opacity="0" Fill="{StaticResource NormalBrush}"/>
               <Rectangle x:Name="SelectedRectangle" IsHitTestVisible="False" Opacity="0" Fill="{StaticResource SelectedBackgroundBrush}"/>
               <DockPanel x:Name="ct" Margin="{TemplateBinding Padding}">
-                <FrameworkElement DockPanel.Dock="Left" Margin="{Binding Offset, RelativeSource={RelativeSource TemplatedParent}, Converter={cvt:NumericToThickness}, ConverterParameter={me:Thickness 1,0,0,0}}"/>
+                <Control DockPanel.Dock="Left" Margin="{Binding Offset, RelativeSource={RelativeSource TemplatedParent}, Converter={cvt:NumericToThickness}, ConverterParameter={me:Thickness 1,0,0,0}}"/>
                 <ToggleButton DockPanel.Dock="Left"
                                     IsChecked="{Binding RelativeSource={RelativeSource AncestorType={x:Type ctrl:TreeViewItem}},Path=IsExpanded,FallbackValue={me:False}}"
                                     Visibility="{Binding RelativeSource={RelativeSource AncestorType={x:Type ctrl:TreeViewItem}},Path=HasItems, Converter={cvt:VisibleOrHidden},FallbackValue={me:Hidden}}"
@@ -4756,7 +4756,7 @@
                                   ContentSource="Header"
                                   HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}"
                                   VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}"
-                                  SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" >
+                                  SnapsToDevicePixels="{TemplateBinding Control.SnapsToDevicePixels}" >
                   <ContentPresenter.Resources>
                     <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource {x:Type TextBlock}}">
                       <Style.Triggers>

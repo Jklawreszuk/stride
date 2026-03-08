@@ -5,6 +5,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Xaml.Interactivity;
 using Microsoft.Xaml.Behaviors;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Extensions;
@@ -44,9 +47,9 @@ namespace Stride.Core.Presentation.Behaviors
         protected override void OnAttached()
         {
             base.OnAttached();
-            AssociatedObject.AddHandler(UIElement.PreviewDragOverEvent, (DragEventHandler)DragOver);
-            AssociatedObject.AddHandler(UIElement.DragLeaveEvent, (DragEventHandler)DragLeave);
-            AssociatedObject.AddHandler(UIElement.DropEvent, (DragEventHandler)Drop);
+            AssociatedObject.AddHandler(Control.PreviewDragOverEvent, (DragEventHandler)DragOver);
+            AssociatedObject.AddHandler(Control.DragLeaveEvent, (DragEventHandler)DragLeave);
+            AssociatedObject.AddHandler(Control.DropEvent, (DragEventHandler)Drop);
         }
 
         private void Drop(object sender, DragEventArgs e)
@@ -56,9 +59,9 @@ namespace Stride.Core.Presentation.Behaviors
 
         protected override void OnDetaching()
         {
-            AssociatedObject.RemoveHandler(UIElement.PreviewDragOverEvent, (DragEventHandler)DragOver);
-            AssociatedObject.RemoveHandler(UIElement.DragLeaveEvent, (DragEventHandler)DragLeave);
-            AssociatedObject.RemoveHandler(UIElement.DropEvent, (DragEventHandler)Drop);
+            AssociatedObject.RemoveHandler(Control.PreviewDragOverEvent, (DragEventHandler)DragOver);
+            AssociatedObject.RemoveHandler(Control.DragLeaveEvent, (DragEventHandler)DragLeave);
+            AssociatedObject.RemoveHandler(Control.DropEvent, (DragEventHandler)Drop);
             base.OnDetaching();
         }
 

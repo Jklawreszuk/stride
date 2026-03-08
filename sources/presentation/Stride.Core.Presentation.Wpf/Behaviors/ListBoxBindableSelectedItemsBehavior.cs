@@ -2,8 +2,6 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
 using System.Reflection;
-using System.Windows.Controls;
-using System.Windows.Data;
 using Avalonia.Controls;
 using Stride.Core.Annotations;
 

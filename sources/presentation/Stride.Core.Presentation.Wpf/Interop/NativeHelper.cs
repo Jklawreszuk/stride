@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
+using Avalonia;
 
 namespace Stride.Core.Presentation.Interop
 {
@@ -19,9 +20,6 @@ namespace Stride.Core.Presentation.Interop
 
         [DllImport(ExternDll.User32)]
         public static extern uint GetWindowThreadProcessId(IntPtr hWnd, IntPtr processId);
-
-        [DllImport(ExternDll.User32, SetLastError = true, CharSet = CharSet.Auto)]
-        public static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
 
         [DllImport(ExternDll.User32)]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -56,12 +54,6 @@ namespace Stride.Core.Presentation.Interop
         [DllImport(ExternDll.User32)]
         public static extern IntPtr GetParent(IntPtr hWnd);
 
-        [DllImport(ExternDll.User32, SetLastError = true)]
-        public static extern bool GetWindowRect(IntPtr hwnd, out RECT lpRect);
-
-        [DllImport(ExternDll.User32, SetLastError = true)]
-        public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
-
         [DllImport(ExternDll.User32)]
         public static extern bool SetForegroundWindow(IntPtr hWnd);
 
@@ -72,13 +64,7 @@ namespace Stride.Core.Presentation.Interop
         public static extern IntPtr GetWindow(IntPtr hWnd, GetWindowCmd uCmd);
 
         [DllImport(ExternDll.User32)]
-        public static extern IntPtr MonitorFromPoint(POINT lpPoint, int dwFlags);
-
-        [DllImport(ExternDll.User32)]
         public static extern IntPtr MonitorFromWindow(IntPtr hwnd, int dwFlags);
-
-        [DllImport(ExternDll.User32)]
-        public static extern bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip, MonitorEnumDelegate lpfnEnum, IntPtr dwData);
 
         [DllImport(ExternDll.User32)]
         public static extern bool GetMonitorInfo(IntPtr hmonitor, [In, Out] MONITORINFO monitorInfo);
@@ -118,12 +104,6 @@ namespace Stride.Core.Presentation.Interop
 
         [DllImport(ExternDll.User32, SetLastError = true)]
         public static extern IntPtr SetActiveWindow(IntPtr hWnd);
-
-        [DllImport(ExternDll.User32)]
-        public static extern IntPtr GetActiveWindow();
-
-        [DllImport(ExternDll.User32)]
-        public static extern IntPtr GetProcessHandleFromHwnd(IntPtr hWnd);
 
         [DllImport(ExternDll.User32)]
         public static extern IntPtr GetFocus();
@@ -269,8 +249,6 @@ namespace Stride.Core.Presentation.Interop
         #endregion // Structures
 
         #region Delegates
-
-        public delegate bool MonitorEnumDelegate(IntPtr hmonitor, IntPtr hdcMonitor, RECT lpRect, IntPtr dwData);
 
         public delegate void WinEventDelegate(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime);
 

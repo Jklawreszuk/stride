@@ -1,23 +1,23 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
-using System.ComponentModel;
 using System.Linq;
-using System.Windows;
-using System.Windows.Input;
-using Microsoft.Xaml.Behaviors;
 using System.Windows.Markup;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Metadata;
+using Avalonia.Xaml.Interactivity;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Internal;
 
 namespace Stride.Core.Presentation.Behaviors
 {
     /// <summary>
-    /// Provides a way to define several cursor override on a <see cref="FrameworkElement"/>.
+    /// Provides a way to define several cursor override on a <see cref="Control"/>.
     /// </summary>
     /// <seealso cref="CursorOverrideRule"/>
     [ContentProperty("Rules")]
-    public class MultiOverrideCursorBehavior : Behavior<FrameworkElement>, IAddChild
+    public class MultiOverrideCursorBehavior : Behavior<Control>, IAddChild
     {
         public MultiOverrideCursorBehavior()
         {

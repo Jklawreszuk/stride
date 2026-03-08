@@ -3,6 +3,9 @@
 using System.Windows;
 using System.Windows.Input;
 using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Xaml.Interactivity;
 using Microsoft.Xaml.Behaviors;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Internal;
@@ -28,7 +31,7 @@ namespace Stride.Core.Presentation.Behaviors
         PreviewMouseRightButtonUp,
     }
 
-    public class OnMouseEventBehavior : Behavior<FrameworkElement>
+    public class OnMouseEventBehavior : Behavior<Control>
     {
         public static readonly AvaloniaProperty EventTypeProperty = AvaloniaProperty.Register(nameof(EventType), typeof(MouseEventType), typeof(OnMouseEventBehavior), new FrameworkPropertyMetadata(MouseEventType.None, EventTypeChanged));
 
@@ -46,7 +49,7 @@ namespace Stride.Core.Presentation.Behaviors
         /// Identifies the <see cref="Modifiers"/> dependency property.
         /// </summary>
         public static readonly AvaloniaProperty ModifiersProperty =
-               AvaloniaProperty.Register(nameof(Modifiers), typeof(ModifierKeys?), typeof(OnMouseEventBehavior), new PropertyMetadata(null));
+               AvaloniaProperty.Register(nameof(Modifiers), typeof(KeyModifiers?), typeof(OnMouseEventBehavior), new PropertyMetadata(null));
 
         public MouseEventType EventType { get { return (MouseEventType)GetValue(EventTypeProperty); } set { SetValue(EventTypeProperty, value); } }
 
@@ -60,13 +63,13 @@ namespace Stride.Core.Presentation.Behaviors
         /// </summary>
         public bool HandleEvent { get { return (bool)GetValue(HandleEventProperty); } set { SetValue(HandleEventProperty, value.Box()); } }
 
-        public ModifierKeys? Modifiers { get { return (ModifierKeys?)GetValue(ModifiersProperty); } set { SetValue(ModifiersProperty, value); } }
+        public KeyModifiers? Modifiers { get { return (KeyModifiers?)GetValue(ModifiersProperty); } set { SetValue(ModifiersProperty, value); } }
 
         protected bool AreModifiersValid()
         {
             if (Modifiers == null)
                 return true;
-            return Modifiers == ModifierKeys.None ? Keyboard.Modifiers == ModifierKeys.None : Keyboard.Modifiers.HasFlag(Modifiers);
+            return Modifiers == KeyModifiers.None ? Keyboard.Modifiers == KeyModifiers.None : Keyboard.Modifiers.HasFlag(Modifiers);
         }
 
         protected override void OnAttached()

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Stride.Core.Annotations;
@@ -41,7 +42,7 @@ namespace Stride.Core.Presentation.Controls
         }
     }
 
-    public class ScaleBar : FrameworkElement
+    public class ScaleBar : Control
     {
         public static readonly AvaloniaProperty CustomDrawingContextProperty = AvaloniaProperty.Register(
             "CustomDrawingContext",
@@ -162,28 +163,28 @@ namespace Stride.Core.Presentation.Controls
             typeof(double),
             typeof(ScaleBar),
             new PropertyMetadata());
-        public static readonly AvaloniaProperty AdjustedUnitsPerTickProperty = AdjustedUnitsPerTickPropertyKey.AvaloniaProperty;
+        public static readonly AvaloniaProperty AdjustedUnitsPerTickProperty = AvaloniaProperty;
 
         private static readonly DependencyPropertyKey AdjustedPixelsPerTickPropertyKey = AvaloniaProperty.RegisterReadOnly(
             "AdjustedPixelsPerTick",
             typeof(double),
             typeof(ScaleBar),
             new PropertyMetadata());
-        public static readonly AvaloniaProperty AdjustedPixelsPerTickProperty = AdjustedPixelsPerTickPropertyKey.AvaloniaProperty;
+        public static readonly AvaloniaProperty AdjustedPixelsPerTickProperty = AvaloniaProperty;
 
         private static readonly DependencyPropertyKey PixelsPerUnitPropertyKey = AvaloniaProperty.RegisterReadOnly(
             "PixelsPerUnit",
             typeof(double),
             typeof(ScaleBar),
             new PropertyMetadata());
-        public static readonly AvaloniaProperty PixelsPerUnitProperty = PixelsPerUnitPropertyKey.AvaloniaProperty;
+        public static readonly AvaloniaProperty PixelsPerUnitProperty = AvaloniaProperty;
 
         private static readonly DependencyPropertyKey AdjustedPixelsPerUnitPropertyKey = AvaloniaProperty.RegisterReadOnly(
             "AdjustedPixelsPerUnit",
             typeof(double),
             typeof(ScaleBar),
             new PropertyMetadata());
-        public static readonly AvaloniaProperty AdjustedPixelsPerUnitProperty = AdjustedPixelsPerUnitPropertyKey.AvaloniaProperty;
+        public static readonly AvaloniaProperty AdjustedPixelsPerUnitProperty = AvaloniaProperty;
 
         public static readonly AvaloniaProperty IsAliasedProperty = AvaloniaProperty.Register(
             "IsAliased",

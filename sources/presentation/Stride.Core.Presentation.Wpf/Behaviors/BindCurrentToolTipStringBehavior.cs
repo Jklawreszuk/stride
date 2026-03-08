@@ -1,8 +1,9 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
+using Avalonia;
 using Avalonia.Controls;
-using Microsoft.Xaml.Behaviors;
+using Avalonia.Xaml.Interactivity;
 
 namespace Stride.Core.Presentation.Behaviors
 {
@@ -16,12 +17,12 @@ namespace Stride.Core.Presentation.Behaviors
         /// <summary>
         /// Identifies the <see cref="ToolTipTarget"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty ToolTipTargetProperty = AvaloniaProperty.Register(nameof(ToolTipTarget), typeof(string), typeof(BindCurrentToolTipStringBehavior), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+        public static readonly AvaloniaProperty ToolTipTargetProperty = AvaloniaProperty.Register(nameof(ToolTipTarget), typeof(string), typeof(BindCurrentToolTipStringBehavior), new ControlMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
         /// <summary>
         /// Identifies the <see cref="DefaultValue"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty DefaultValueProperty = AvaloniaProperty.Register(nameof(DefaultValue), typeof(string), typeof(BindCurrentToolTipStringBehavior), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+        public static readonly AvaloniaProperty DefaultValueProperty = AvaloniaProperty.Register(nameof(DefaultValue), typeof(string), typeof(BindCurrentToolTipStringBehavior), new ControlMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
         /// <summary>
         /// Gets or sets the tool tip text of the control when the mouse is over the control, or <see cref="DefaultValue"/> otherwise. This property should usually be bound.

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Avalonia;
+using Avalonia.Controls;
 using Stride.Core.Annotations;
 
 namespace Stride.Core.Presentation.Extensions
@@ -178,7 +179,7 @@ namespace Stride.Core.Presentation.Extensions
         }
 
         /// <summary>
-        /// Checks that the given dependency object, retrieved as a template part of the calling object using <see cref="FrameworkElement.GetTemplateChild(string)"/>,
+        /// Checks that the given dependency object, retrieved as a template part of the calling object using <see cref="Control.GetTemplateChild(string)"/>,
         /// exists and matches the given type.
         /// </summary>
         /// <typeparam name="T">The type expected for the template part.</typeparam>

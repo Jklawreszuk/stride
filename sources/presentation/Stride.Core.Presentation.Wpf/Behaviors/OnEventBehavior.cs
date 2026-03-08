@@ -2,9 +2,10 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
 using System.Linq;
-using System.Windows;
 using Avalonia;
-using Microsoft.Xaml.Behaviors;
+using Avalonia.Controls;
+using Avalonia.Interactivity;
+using Avalonia.Xaml.Interactivity;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Core;
 using Stride.Core.Presentation.Internal;
@@ -20,17 +21,17 @@ namespace Stride.Core.Presentation.Behaviors
         /// <summary>
         /// Identifies the <see cref="EventName"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty EventNameProperty = AvaloniaProperty.Register("EventName", typeof(string), typeof(OnEventBehavior));
+        public static readonly StyledProperty<string> EventNameProperty = AvaloniaProperty.Register<OnEventBehavior, string>("EventName");
 
         /// <summary>
         /// Identifies the <see cref="EventOwnerType"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty EventOwnerTypeProperty = AvaloniaProperty.Register("EventOwnerType", typeof(Type), typeof(OnEventBehavior));
+        public static readonly AvaloniaProperty EventOwnerTypeProperty = AvaloniaProperty.Register<OnEventBehavior, Type>("EventOwnerType");
 
         /// <summary>
         /// Identifies the <see cref="HandleEvent"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty HandleEventProperty = AvaloniaProperty.Register("HandleEvent", typeof(bool), typeof(OnEventBehavior));
+        public static readonly AvaloniaProperty HandleEventProperty = AvaloniaProperty.Register<OnEventBehavior, bool>("HandleEvent");
 
         private readonly RoutedEventHandler routedEventHandler;
         private AnonymousEventHandler eventHandler;
@@ -44,7 +45,7 @@ namespace Stride.Core.Presentation.Behaviors
         /// <summary>
         /// Gets or sets the name of the event to handle.
         /// </summary>
-        public string EventName { get { return (string)GetValue(EventNameProperty); } set { SetValue(EventNameProperty, value); } }
+        public string EventName { get { return GetValue(EventNameProperty); } set { SetValue(EventNameProperty, value); } }
 
         /// <summary>
         /// Gets or sets the type that owns the event when <see cref="EventName"/> describes a <see cref="RoutedEvent"/>.
@@ -69,7 +70,7 @@ namespace Stride.Core.Presentation.Behaviors
 
             var eventOwnerType = EventOwnerType ?? AssociatedObject.GetType();
 
-            var uiElement = AssociatedObject as UIElement;
+            var uiElement = AssociatedObject as Control;
 
             var routedEvents = EventManager.GetRoutedEvents().Where(x => x.Name == EventName && x.OwnerType.IsAssignableFrom(eventOwnerType)).ToArray();
 
@@ -97,7 +98,7 @@ namespace Stride.Core.Presentation.Behaviors
         {
             if (routedEvent != null)
             {
-                var uiElement = (UIElement)AssociatedObject;
+                var uiElement = (Control)AssociatedObject;
                 uiElement.RemoveHandler(routedEvent, routedEventHandler);
                 routedEvent = null;
             }

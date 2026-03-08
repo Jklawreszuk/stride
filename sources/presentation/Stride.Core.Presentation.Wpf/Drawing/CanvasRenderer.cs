@@ -404,7 +404,7 @@ namespace Stride.Core.Presentation.Drawing
         /// <returns></returns>
         [NotNull]
         private TElement Create<TElement>(bool isHitTestVisible, double clipOffsetX = 0, double clipOffsetY = 0)
-            where TElement : UIElement, new()
+            where TElement : Control, new()
         {
             var element = new TElement();
             if (clip.HasValue && !clip.Value.IsEmpty)

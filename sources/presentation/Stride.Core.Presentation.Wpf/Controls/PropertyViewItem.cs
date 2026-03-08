@@ -88,22 +88,22 @@ namespace Stride.Core.Presentation.Controls
         /// </summary>
         /// <seealso cref="Highlightable"/>
         /// <seealso cref="IsHovered"/>
-        public bool IsHighlighted => (bool)GetValue(IsHighlightedPropertyKey.AvaloniaProperty);
+        public bool IsHighlighted => (bool)GetValue(AvaloniaProperty);
 
         /// <summary>
         /// Gets whether the mouse cursor is currently over this control.
         /// </summary>
-        public bool IsHovered => (bool)GetValue(IsHoveredPropertyKey.AvaloniaProperty);
+        public bool IsHovered => (bool)GetValue(AvaloniaProperty);
 
         /// <summary>
         /// Gets whether this control is the closest control to the control that has the keyboard focus.
         /// </summary>
-        public bool IsKeyboardActive => (bool)GetValue(IsKeyboardActivePropertyKey.AvaloniaProperty);
+        public bool IsKeyboardActive => (bool)GetValue(AvaloniaProperty);
 
         /// <summary>
         /// Gets the absolute offset of this <see cref="PropertyViewItem"/>.
         /// </summary>
-        public double Offset { get { return (double)GetValue(OffsetPropertyKey.AvaloniaProperty); } private set { SetValue(OffsetPropertyKey, value); } }
+        public double Offset { get { return (double)GetValue(AvaloniaProperty); } private set { SetValue(OffsetPropertyKey, value); } }
 
         /// <summary>
         /// Gets or set the increment value used to calculate the <see cref="Offset "/>of the <see cref="PropertyViewItem"/> contained in the <see cref="Properties"/> of this control..

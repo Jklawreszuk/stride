@@ -4,8 +4,10 @@ using System;
 using System.Reflection;
 using System.Windows.Input;
 using Avalonia;
+using Avalonia.Interactivity;
 using Stride.Core.Presentation.Core;
 using Stride.Core.Presentation.Internal;
+using CancelRoutedEventArgs = Stride.Core.Presentation.Core.CancelRoutedEventArgs;
 
 namespace Stride.Core.Presentation.Controls
 {
@@ -120,7 +122,7 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Gets whether this TextBox contains a non-empty text.
         /// </summary>
-        public bool HasText { get { return (bool)GetValue(HasTextPropertyKey.AvaloniaProperty); } private set { SetValue(HasTextPropertyKey, value.Box()); } }
+        public bool HasText { get { return (bool)GetValue(AvaloniaProperty); } private set { SetValue(HasTextPropertyKey, value.Box()); } }
 
         /// <summary>
         /// Gets or sets whether the associated text box should get keyboard focus when this behavior is attached.

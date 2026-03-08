@@ -1,23 +1,22 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
-using System.Windows;
 using Avalonia;
-using Microsoft.Xaml.Behaviors;
+using Avalonia.Controls;
+using Avalonia.Xaml.Interactivity;
 using Stride.Core.Annotations;
 using Stride.Core.Mathematics;
 
 namespace Stride.Core.Presentation.Behaviors
 {
-    public sealed class ResizeBehavior : Behavior<FrameworkElement>
+    public sealed class ResizeBehavior : Behavior<Control>
     {
         /// <summary>
         /// Identifies the <see cref="SizeRatio"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty SizeRatioProperty =
-            AvaloniaProperty.Register(nameof(SizeRatio), typeof(Size), typeof(ResizeBehavior));
+        public static readonly StyledProperty<Size> SizeRatioProperty = AvaloniaProperty.Register<ResizeBehavior, Size>(nameof(SizeRatio));
 
-        public Size SizeRatio { get { return (Size)GetValue(SizeRatioProperty); } set { SetValue(SizeRatioProperty, value); } }
+        public Size SizeRatio { get { return GetValue(SizeRatioProperty); } set { SetValue(SizeRatioProperty, value); } }
 
         protected override void OnAttached()
         {
@@ -55,7 +54,7 @@ namespace Stride.Core.Presentation.Behaviors
 
         private bool IsSizeRatioValid()
         {
-            return !SizeRatio.IsEmpty && !double.IsNaN(SizeRatio.Width) && !double.IsInfinity(SizeRatio.Width) && SizeRatio.Width >= 1
+            return SizeRatio is not { Height: 0, Width: 0 } && !double.IsNaN(SizeRatio.Width) && !double.IsInfinity(SizeRatio.Width) && SizeRatio.Width >= 1
                                       && !double.IsNaN(SizeRatio.Height) && !double.IsInfinity(SizeRatio.Height) && SizeRatio.Height >= 1;
         }
     }

@@ -5,8 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Interop;
-using System.Windows.Threading;
 using Avalonia.Threading;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Services;
@@ -78,9 +76,9 @@ namespace Stride.Core.Presentation.Windows
             {
                 var frame = new DispatcherFrame();
                 var frameTask = task().ContinueWith(x => { frame.Continue = false; return x.Result; });
-                ComponentDispatcher.PushModal();
-                Dispatcher.PushFrame(frame);
-                ComponentDispatcher.PopModal();
+                //Dispatcher.UIThread.PushModal();
+                Dispatcher.UIThread.PushFrame(frame);
+                //ComponentDispatcher.PopModal();
                 return frameTask.Result;
             });
         }

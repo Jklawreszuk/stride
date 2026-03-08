@@ -100,7 +100,7 @@ namespace Stride.Core.Presentation.Controls
 
         private Line horizontalLine;
         private Line verticalLine;
-        private FrameworkElement parent;
+        private Control parent;
 
         static TrackerControl()
         {
@@ -140,7 +140,7 @@ namespace Stride.Core.Presentation.Controls
 
             if (parent != null && TrackMouse)
                 parent.MouseMove -= OnMouseMove;
-            parent = this.FindVisualParentOfType<FrameworkElement>();
+            parent = this.FindVisualParentOfType<Control>();
             if (TrackMouse)
                 parent.MouseMove += OnMouseMove;
         }

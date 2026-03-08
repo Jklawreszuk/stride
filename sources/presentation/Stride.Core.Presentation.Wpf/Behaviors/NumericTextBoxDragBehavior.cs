@@ -3,12 +3,8 @@
 
 using System;
 using System.Reflection;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Layout;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Controls;
@@ -48,7 +44,7 @@ namespace Stride.Core.Presentation.Behaviors
             Mouse.OverrideCursor = null;
             dragState = DragState.None;
 
-            var root = AssociatedObject.FindVisualRoot() as UIElement;
+            var root = AssociatedObject.FindVisualRoot() as Control;
             if (root != null)
                 root.IsKeyboardFocusWithinChanged -= RootParentIsKeyboardFocusWithinChanged;
         }
@@ -105,7 +101,7 @@ namespace Stride.Core.Presentation.Behaviors
 
                 if (dx > SystemParameters.MinimumHorizontalDragDistance || dy > SystemParameters.MinimumVerticalDragDistance)
                 {
-                    var root = AssociatedObject.FindVisualRoot() as UIElement;
+                    var root = AssociatedObject.FindVisualRoot() as Control;
                     if (root != null)
                         root.IsKeyboardFocusWithinChanged += RootParentIsKeyboardFocusWithinChanged;
 
@@ -185,7 +181,7 @@ namespace Stride.Core.Presentation.Behaviors
         
         private bool IsContentHostPart(object obj)
         {
-            var frameworkElement = obj as FrameworkElement;
+            var frameworkElement = obj as Control;
             return Equals(obj, AssociatedObject.contentHost) || (frameworkElement != null && Equals(frameworkElement.Parent, AssociatedObject.contentHost));
         }
         
@@ -233,7 +229,7 @@ namespace Stride.Core.Presentation.Behaviors
             private Orientation dragOrientation;
             private bool ready;
 
-            internal DragDirectionAdorner([NotNull] UIElement adornedElement, double contentWidth)
+            internal DragDirectionAdorner([NotNull] Control adornedElement, double contentWidth)
                 : base(adornedElement)
             {
                 this.contentWidth = contentWidth;

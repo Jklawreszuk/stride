@@ -5,6 +5,7 @@ using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using Avalonia;
+using Avalonia.Controls;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Extensions;
 using Stride.Core.Presentation.Internal;
@@ -79,8 +80,7 @@ namespace Stride.Core.Presentation.Behaviors
             else
             {
                 // The framework element is not loaded yet and thus the ScrollViewer is not reachable.
-                var frameworkElement = d as FrameworkElement;
-                if (frameworkElement != null && !frameworkElement.IsLoaded)
+                if (d is Control frameworkElement && !frameworkElement.IsLoaded)
                 {
                     // Let's delay the behavior till the scroll viewer is loaded.
                     frameworkElement.Loaded += (sender, args) =>

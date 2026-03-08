@@ -188,7 +188,7 @@ namespace Stride.Core.Presentation.Controls
                     bool newlyRealized;
 
                     // Get or create the child
-                    var child = generator.GenerateNext(out newlyRealized) as UIElement;
+                    var child = generator.GenerateNext(out newlyRealized) as Control;
                     if (child == null)
                         continue;
 

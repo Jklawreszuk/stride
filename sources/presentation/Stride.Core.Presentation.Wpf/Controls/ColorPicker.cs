@@ -22,7 +22,7 @@ namespace Stride.Core.Presentation.Controls
     [TemplatePart(Name = "PART_ColorPickerSelector", Type = typeof(Canvas))]
     [TemplatePart(Name = "PART_ColorPickerRenderSurface", Type = typeof(Rectangle))]
     [TemplatePart(Name = "PART_ColorPreviewRenderSurface", Type = typeof(Rectangle))]
-    [TemplatePart(Name = "PART_HuePickerSelector", Type = typeof(FrameworkElement))]
+    [TemplatePart(Name = "PART_HuePickerSelector", Type = typeof(Control))]
     [TemplatePart(Name = "PART_HuePickerRenderSurface", Type = typeof(Rectangle))]
     public sealed class ColorPicker : Control
     {
@@ -34,7 +34,7 @@ namespace Stride.Core.Presentation.Controls
         private Canvas colorPickerSelector;
         private Rectangle colorPickerRenderSurface;
         private Rectangle colorPreviewRenderSurface;
-        private FrameworkElement huePickerRenderSurface;
+        private Control huePickerRenderSurface;
         private Rectangle huePickerSelector;
         private bool interlock;
         private bool suspendBindingUpdates;
@@ -192,7 +192,7 @@ namespace Stride.Core.Presentation.Controls
             colorPreviewRenderSurface = DependencyObjectExtensions.CheckTemplatePart<Rectangle>(GetTemplateChild("PART_ColorPreviewRenderSurface"));
             colorPickerSelector = DependencyObjectExtensions.CheckTemplatePart<Canvas>(GetTemplateChild("PART_ColorPickerSelector"));
             huePickerSelector = DependencyObjectExtensions.CheckTemplatePart<Rectangle>(GetTemplateChild("PART_HuePickerSelector"));
-            huePickerRenderSurface = DependencyObjectExtensions.CheckTemplatePart<FrameworkElement>(GetTemplateChild("PART_HuePickerRenderSurface"));
+            huePickerRenderSurface = DependencyObjectExtensions.CheckTemplatePart<Control>(GetTemplateChild("PART_HuePickerRenderSurface"));
 
             if (colorPickerRenderSurface != null)
             {

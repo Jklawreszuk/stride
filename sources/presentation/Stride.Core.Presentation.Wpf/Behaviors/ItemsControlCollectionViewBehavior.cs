@@ -1,11 +1,12 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
+using System.Threading.Tasks;
 using Avalonia;
-using Microsoft.Xaml.Behaviors;
+using Avalonia.Controls;
+using Avalonia.Data.Converters;
+using Avalonia.Reactive;
+using Avalonia.Xaml.Interactivity;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Core;
 
@@ -15,15 +16,21 @@ namespace Stride.Core.Presentation.Behaviors
     {
         private readonly DependencyPropertyWatcher propertyWatcher = new DependencyPropertyWatcher();
 
-        public static readonly AvaloniaProperty GroupingPropertyNameProperty = AvaloniaProperty.Register("GroupingPropertyName", typeof(string), typeof(ItemsControlCollectionViewBehavior), new PropertyMetadata(null, GroupingPropertyNameChanged));
+        public static readonly StyledProperty<string> GroupingPropertyNameProperty = AvaloniaProperty.Register<ItemsControlCollectionViewBehavior, string>("GroupingPropertyName");
 
-        public static readonly AvaloniaProperty FilterPredicateProperty = AvaloniaProperty.Register("FilterPredicate", typeof(Predicate<object>), typeof(ItemsControlCollectionViewBehavior), new PropertyMetadata(null, FilterPredicateChanged));
+        public static readonly StyledProperty<Predicate<object>> FilterPredicateProperty = AvaloniaProperty.Register<ItemsControlCollectionViewBehavior, Predicate<object>>("FilterPredicate");
 
-        public string GroupingPropertyName { get { return (string)GetValue(GroupingPropertyNameProperty); } set { SetValue(GroupingPropertyNameProperty, value); } }
+        public string GroupingPropertyName { get { return GetValue(GroupingPropertyNameProperty); } set { SetValue(GroupingPropertyNameProperty, value); } }
   
-        public Predicate<object> FilterPredicate { get { return (Predicate<object>)GetValue(FilterPredicateProperty); } set { SetValue(FilterPredicateProperty, value); } }
+        public Predicate<object> FilterPredicate { get { return GetValue(FilterPredicateProperty); } set { SetValue(FilterPredicateProperty, value); } }
 
         public IValueConverter GroupingPropertyConverter { get; set; }
+
+        static ItemsControlCollectionViewBehavior()
+        {
+            GroupingPropertyNameProperty.Changed.Subscribe(new AnonymousObserver<AvaloniaPropertyChangedEventArgs<string>>(GroupingPropertyNameChanged));
+            FilterPredicateProperty.Changed.Subscribe(new AnonymousObserver<AvaloniaPropertyChangedEventArgs<Predicate<object>>>(FilterPredicateChanged));
+        }
 
         protected override void OnAttached()
         {
@@ -72,15 +79,15 @@ namespace Stride.Core.Presentation.Behaviors
             UpdateCollectionView();
         }
 
-        private static void GroupingPropertyNameChanged([NotNull] AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
+        private static void GroupingPropertyNameChanged(AvaloniaPropertyChangedEventArgs<string> obj)
         {
-            var behavior = (ItemsControlCollectionViewBehavior)d;
+            var behavior = (ItemsControlCollectionViewBehavior)obj.Sender;
             behavior.UpdateCollectionView();
         }
 
-        private static void FilterPredicateChanged([NotNull] AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
+        private static void FilterPredicateChanged(AvaloniaPropertyChangedEventArgs<Predicate<object>> obj)
         {
-            var behavior = (ItemsControlCollectionViewBehavior)d;
+            var behavior = (ItemsControlCollectionViewBehavior)obj.Sender;
             behavior.UpdateCollectionView();
         }
     }

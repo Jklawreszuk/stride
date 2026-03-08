@@ -3,6 +3,8 @@
 using System;
 using System.Collections.Generic;
 using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Stride.Core.Annotations;
 using Stride.Core.Extensions;
 
@@ -10,9 +12,9 @@ namespace Stride.Core.Presentation.Core
 {
     public class DependencyPropertyWatcher : IAttachedObject
     {
-        private readonly List<Tuple<AvaloniaProperty, EventHandler>> handlers = new List<Tuple<AvaloniaProperty, EventHandler>>();
+        private readonly List<Tuple<AvaloniaProperty, EventHandler>> handlers = [];
         private readonly Dictionary<AvaloniaProperty, DependencyPropertyDescriptor> descriptors = new Dictionary<AvaloniaProperty, DependencyPropertyDescriptor>();
-        private FrameworkElement frameworkElement;
+        private Control frameworkElement;
 
         private bool handlerRegistered;
 
@@ -20,7 +22,7 @@ namespace Stride.Core.Presentation.Core
         {
         }
 
-        public DependencyPropertyWatcher([NotNull] FrameworkElement attachTo)
+        public DependencyPropertyWatcher([NotNull] Control attachTo)
         {
             Attach(attachTo);
         }
@@ -35,10 +37,10 @@ namespace Stride.Core.Presentation.Core
 
             if (frameworkElement != null)
                 throw new InvalidOperationException("A dependency object is already attached to this instance of DependencyPropertyWatcher.");
-            frameworkElement = dependencyObject as FrameworkElement;
+            frameworkElement = dependencyObject as Control;
 
             if (frameworkElement == null)
-                throw new ArgumentException("The dependency object to attach to the DependencyPropertyWatcher must be a FrameworkElement.");
+                throw new ArgumentException("The dependency object to attach to the DependencyPropertyWatcher must be a Control.");
 
             frameworkElement.Loaded += ElementLoaded;
             frameworkElement.Unloaded += ElementUnloaded;
@@ -102,8 +104,7 @@ namespace Stride.Core.Presentation.Core
             if (handler == null) throw new ArgumentNullException(nameof(handler));
             if (frameworkElement == null) throw new InvalidOperationException("A dependency object must be attached in order to register a handler.");
 
-            DependencyPropertyDescriptor descriptor;
-            if (!descriptors.TryGetValue(property, out descriptor))
+            if (!descriptors.TryGetValue(property, out var descriptor))
             {
                 descriptor = DependencyPropertyDescriptor.FromProperty(property, AssociatedObject.GetType());
                 descriptors.Add(property, descriptor);
@@ -117,8 +118,7 @@ namespace Stride.Core.Presentation.Core
             if (handler == null) throw new ArgumentNullException(nameof(handler));
             if (frameworkElement == null) throw new InvalidOperationException("A dependency object must be attached in order to unregister a handler.");
 
-            DependencyPropertyDescriptor descriptor;
-            if (!descriptors.TryGetValue(property, out descriptor))
+            if (!descriptors.TryGetValue(property, out var descriptor))
             {
                 throw new InvalidOperationException("No handler was previously registered for this dependency property.");
             }

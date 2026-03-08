@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Xaml.Interactivity;
 using Microsoft.Xaml.Behaviors;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Services;
@@ -54,7 +55,7 @@ namespace Stride.Core.Presentation.Behaviors
             base.OnAttached();
             if (Command != null)
             {
-                AssociatedObject.SetCurrentValue(UIElement.IsEnabledProperty, Command.CanExecute(CommandParameter));
+                AssociatedObject.SetCurrentValue(Control.IsEnabledProperty, Command.CanExecute(CommandParameter));
             }
         }
 
@@ -79,13 +80,13 @@ namespace Stride.Core.Presentation.Behaviors
             var behavior = (ButtonCloseWindowBehavior)d;
             if (behavior.Command != null)
             {
-                behavior.AssociatedObject.SetCurrentValue(UIElement.IsEnabledProperty, behavior.Command.CanExecute(behavior.CommandParameter));
+                behavior.AssociatedObject.SetCurrentValue(Control.IsEnabledProperty, behavior.Command.CanExecute(behavior.CommandParameter));
             }
         }
 
         private void CommandCanExecuteChanged(object sender, EventArgs e)
         {
-            AssociatedObject.SetCurrentValue(UIElement.IsEnabledProperty, Command.CanExecute(CommandParameter));
+            AssociatedObject.SetCurrentValue(Control.IsEnabledProperty, Command.CanExecute(CommandParameter));
         }
 
         /// <summary>

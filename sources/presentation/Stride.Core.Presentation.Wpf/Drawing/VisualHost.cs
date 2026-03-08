@@ -3,13 +3,14 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
+using Avalonia.Controls;
 
 namespace Stride.Core.Presentation.Drawing
 {
     /// <summary>
-    /// Provides a hosting <see cref="FrameworkElement"/> for a collection of <see cref="Visual"/>.
+    /// Provides a hosting <see cref="Control"/> for a collection of <see cref="Visual"/>.
     /// </summary>
-    internal class VisualHost : FrameworkElement
+    internal class VisualHost : Control
     {
         private readonly VisualCollection children;
 

@@ -7,6 +7,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Styling;
@@ -140,7 +141,7 @@ namespace Stride.Core.Presentation.Behaviors
 
                     if (selector.ItemContainerGenerator != null && selector.SelectedItem != null)
                     {
-                        var lbi = selector.ItemContainerGenerator.ContainerFromItem(selector.SelectedItem) as UIElement;
+                        var lbi = selector.ItemContainerGenerator.ContainerFromItem(selector.SelectedItem) as Control;
                         lbi?.Focus();
                     }
                 }

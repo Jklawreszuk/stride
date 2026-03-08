@@ -352,17 +352,17 @@ namespace Stride.Core.Presentation.Controls
 
         private static void InvalidateMeasure([NotNull] TreeViewItem child)
         {
-            var itemsPresenter = child.Template.FindName("itemsPresenter", child) as FrameworkElement;
+            var itemsPresenter = child.Template.FindName("itemsPresenter", child) as Control;
             if (itemsPresenter != null)
             {
-                var virtualizingTreePanel = VisualTreeHelper.GetChild(itemsPresenter, 0) as UIElement;
+                var virtualizingTreePanel = VisualTreeHelper.GetChild(itemsPresenter, 0) as Control;
                 virtualizingTreePanel.InvalidateMeasure();
             }
         }
 
         private static double GetHeightOfHeader([NotNull] ItemsControl itemsControl)
         {
-            var border = (FrameworkElement)itemsControl.Template.FindName("border", itemsControl);
+            var border = (Control)itemsControl.Template.FindName("border", itemsControl);
             return border.DesiredSize.Height;
         }
 
@@ -422,7 +422,7 @@ namespace Stride.Core.Presentation.Controls
             {
                 for (var i = 0; i < itemsControl.Items.Count; i++)
                 {
-                    if (itemsControl.ItemContainerGenerator.ContainerFromIndex(i) is UIElement child)
+                    if (itemsControl.ItemContainerGenerator.ContainerFromIndex(i) is Control child)
                     {
                         child.Arrange(new Rect(-HorizontalOffset, currentY - VerticalOffset, finalSize.Width, child.DesiredSize.Height));
                         currentY += child.DesiredSize.Height;
@@ -669,14 +669,14 @@ namespace Stride.Core.Presentation.Controls
             }
 
             var treeViewItem = visual as TreeViewItem;
-            FrameworkElement element;
+            Control element;
             if (treeViewItem != null)
             {
-                element = treeViewItem.Template.FindName("border", treeViewItem) as FrameworkElement;
+                element = treeViewItem.Template.FindName("border", treeViewItem) as Control;
             }
             else
             {
-                element = visual as FrameworkElement;
+                element = visual as Control;
             }
 
             var transform = visual.TransformToAncestor(this);

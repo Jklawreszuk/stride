@@ -3,6 +3,7 @@
 using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Stride.Core.Annotations;
@@ -37,7 +38,7 @@ namespace Stride.Core.Presentation.Controls
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
-            var titleBar = GetTemplateChild("TitleBar") as UIElement;
+            var titleBar = GetTemplateChild("TitleBar") as Control;
             if (titleBar != null)
                 titleBar.Visibility = Visibility.Collapsed;
         }

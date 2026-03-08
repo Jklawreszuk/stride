@@ -2,6 +2,7 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System.Windows;
 using System.Windows.Controls;
+using Avalonia.Controls;
 
 namespace Stride.Core.Presentation.Behaviors
 {

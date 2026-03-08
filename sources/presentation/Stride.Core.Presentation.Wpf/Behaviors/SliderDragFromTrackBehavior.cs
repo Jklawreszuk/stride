@@ -5,6 +5,7 @@ using System;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
+using Avalonia.Xaml.Interactivity;
 using Microsoft.Xaml.Behaviors;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Extensions;
@@ -19,16 +20,16 @@ namespace Stride.Core.Presentation.Behaviors
         protected override void OnAttached()
         {
             base.OnAttached();
-            AssociatedObject.AddHandler(UIElement.PreviewMouseLeftButtonDownEvent, (MouseButtonEventHandler)TrackMouseEvent, true);
-            AssociatedObject.AddHandler(UIElement.PreviewMouseLeftButtonUpEvent, (MouseButtonEventHandler)TrackMouseEvent, true);
+            AssociatedObject.AddHandler(Control.PreviewMouseLeftButtonDownEvent, (MouseButtonEventHandler)TrackMouseEvent, true);
+            AssociatedObject.AddHandler(Control.PreviewMouseLeftButtonUpEvent, (MouseButtonEventHandler)TrackMouseEvent, true);
             AssociatedObject.Initialized += SliderInitialized;
         }
 
         protected override void OnDetaching()
         {
             AssociatedObject.Initialized -= SliderInitialized;
-            AssociatedObject.RemoveHandler(UIElement.PreviewMouseLeftButtonDownEvent, (MouseButtonEventHandler)TrackMouseEvent);
-            AssociatedObject.RemoveHandler(UIElement.PreviewMouseLeftButtonUpEvent, (MouseButtonEventHandler)TrackMouseEvent);
+            AssociatedObject.RemoveHandler(Control.PreviewMouseLeftButtonDownEvent, (MouseButtonEventHandler)TrackMouseEvent);
+            AssociatedObject.RemoveHandler(Control.PreviewMouseLeftButtonUpEvent, (MouseButtonEventHandler)TrackMouseEvent);
             if (track != null && track.Thumb != null)
             {
                 track.Thumb.MouseEnter -= MouseEnter;
@@ -57,7 +58,7 @@ namespace Stride.Core.Presentation.Behaviors
         {
             if (trackMouseDown)
             {
-                var args = new MouseButtonEventArgs(e.MouseDevice, e.Timestamp, MouseButton.Left) { RoutedEvent = UIElement.MouseLeftButtonDownEvent };
+                var args = new MouseButtonEventArgs(e.MouseDevice, e.Timestamp, MouseButton.Left) { RoutedEvent = Control.MouseLeftButtonDownEvent };
                 track.Thumb.RaiseEvent(args);
                 trackMouseDown = false;
             }

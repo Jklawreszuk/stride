@@ -3,6 +3,7 @@
 using System;
 using System.Linq;
 using System.Windows.Input;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
 using Avalonia.Data;
@@ -38,7 +39,7 @@ namespace Stride.Core.Presentation.Controls
         /// Identifies the <see cref="AlternativeModifiers"/> dependency property.
         /// </summary>
         public static readonly AvaloniaProperty AlternativeModifiersProperty =
-            AvaloniaProperty.Register("AlternativeModifiers", typeof(ModifierKeys), typeof(SearchComboBox), new PropertyMetadata(ModifierKeys.Shift));
+            AvaloniaProperty.Register("AlternativeModifiers", typeof(KeyModifiers), typeof(SearchComboBox), new PropertyMetadata(KeyModifiers.Shift));
         /// <summary>
         /// Identifies the <see cref="ClearTextAfterSelection"/> dependency property.
         /// </summary>
@@ -114,7 +115,7 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// 
         /// </summary>
-        public ModifierKeys AlternativeModifiers { get { return (ModifierKeys)GetValue(AlternativeModifiersProperty); } set { SetValue(AlternativeModifiersProperty, value); } }
+        public KeyModifiers AlternativeModifiers { get { return (KeyModifiers)GetValue(AlternativeModifiersProperty); } set { SetValue(AlternativeModifiersProperty, value); } }
         /// <summary>
         /// Gets or sets whether to clear the text after the selection.
         /// </summary>
@@ -195,12 +196,12 @@ namespace Stride.Core.Presentation.Controls
         {
             base.OnLostKeyboardFocus(e);
 
-            var el = e.NewFocus as UIElement;
+            var el = e.NewFocus as Control;
             if (el != null)
             {
                 // The user probably clicked (MouseDown) somewhere on our dropdown listbox, so we won't clear to be able to
                 // get the MouseUp event (<see cref="ListBoxMouseUp">).
-                if (listBox.FindVisualChildrenOfType<UIElement>().Contains(el))
+                if (listBox.FindVisualChildrenOfType<Control>().Contains(el))
                     return;
             }
 
@@ -346,15 +347,15 @@ namespace Stride.Core.Presentation.Controls
         {
             switch (AlternativeModifiers)
             {
-                case ModifierKeys.None:
+                case KeyModifiers.None:
                     return false;
-                case ModifierKeys.Alt:
+                case KeyModifiers.Alt:
                     return key == Key.LeftAlt || key == Key.RightAlt;
-                case ModifierKeys.Control:
+                case Control:
                     return key == Key.LeftCtrl || key == Key.RightCtrl;
-                case ModifierKeys.Shift:
+                case KeyModifiers.Shift:
                     return key == Key.LeftShift || key == Key.RightShift;
-                case ModifierKeys.Windows:
+                case KeyModifiers.Windows:
                     return key == Key.LWin || key == Key.RWin;
                 default:
                     throw new ArgumentOutOfRangeException();

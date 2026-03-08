@@ -1,6 +1,5 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
-using System.Windows;
 using Avalonia;
 
 namespace Stride.Core.Presentation.Behaviors
@@ -14,17 +13,17 @@ namespace Stride.Core.Presentation.Behaviors
         /// <summary>
         /// Identifies the <see cref="Property"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty PropertyProperty = AvaloniaProperty.Register("Property", typeof(AvaloniaProperty), typeof(OnEventSetPropertyBehavior));
+        public static readonly StyledProperty<AvaloniaProperty> PropertyProperty = AvaloniaProperty.Register<OnEventSetPropertyBehavior,AvaloniaProperty>("Property");
 
         /// <summary>
         /// Identifies the <see cref="Value"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty ValueProperty = AvaloniaProperty.Register("Value", typeof(object), typeof(OnEventSetPropertyBehavior));
+        public static readonly AvaloniaProperty<object> ValueProperty = AvaloniaProperty.Register<OnEventSetPropertyBehavior,object>("Value");
 
         /// <summary>
         /// Identifies the <see cref="Target"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty TargetProperty = AvaloniaProperty.Register("Target", typeof(AvaloniaObject), typeof(OnEventSetPropertyBehavior));
+        public static readonly AvaloniaProperty<AvaloniaObject> TargetProperty = AvaloniaProperty.Register<OnEventSetPropertyBehavior,AvaloniaObject>("Target");
 
         /// <summary>
         /// Gets or sets the <see cref="AvaloniaProperty"/> to set when the event is raised.

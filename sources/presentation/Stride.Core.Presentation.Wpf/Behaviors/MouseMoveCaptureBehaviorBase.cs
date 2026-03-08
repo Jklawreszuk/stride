@@ -2,11 +2,10 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-using System.Windows;
-using System.Windows.Input;
 using Avalonia;
-using Microsoft.Xaml.Behaviors;
-using Stride.Core.Annotations;
+using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Xaml.Interactivity;
 using Stride.Core.Presentation.Internal;
 using NotNullAttribute = Stride.Core.Annotations.NotNullAttribute;
 
@@ -17,7 +16,7 @@ namespace Stride.Core.Presentation.Behaviors
     /// </summary>
     /// <typeparam name="TElement"></typeparam>
     public abstract class MouseMoveCaptureBehaviorBase<TElement> : Behavior<TElement>
-        where TElement : UIElement
+        where TElement : Control
     {
         /// <summary>
         /// Identifies the <see cref="IsEnabled"/> dependency property.
@@ -35,13 +34,13 @@ namespace Stride.Core.Presentation.Behaviors
         /// Identifies the <see cref="IsInProgress"/> dependency property.
         /// </summary>
         [SuppressMessage("ReSharper", "StaticMemberInGenericType")]
-        public static readonly AvaloniaProperty IsInProgressProperty = IsInProgressPropertyKey.AvaloniaProperty;
+        public static readonly AvaloniaProperty IsInProgressProperty = AvaloniaProperty;
 
         /// <summary>
         /// Identifies the <see cref="Modifiers"/> dependency property.
         /// </summary>
         public static readonly AvaloniaProperty ModifiersProperty =
-            AvaloniaProperty.Register(nameof(Modifiers), typeof(ModifierKeys?), typeof(MouseMoveCaptureBehaviorBase<TElement>), new PropertyMetadata(null));
+            AvaloniaProperty.Register(nameof(Modifiers), typeof(KeyModifiers?), typeof(MouseMoveCaptureBehaviorBase<TElement>), new PropertyMetadata(null));
 
         /// <summary>
         /// Identifies the <see cref="UsePreviewEvents"/> dependency property.
@@ -59,7 +58,7 @@ namespace Stride.Core.Presentation.Behaviors
         /// </summary>
         public bool IsInProgress { get { return (bool)GetValue(IsInProgressProperty); } private set { SetValue(IsInProgressPropertyKey, value.Box()); } }
 
-        public ModifierKeys? Modifiers { get { return (ModifierKeys?)GetValue(ModifiersProperty); } set { SetValue(ModifiersProperty, value); } }
+        public KeyModifiers? Modifiers { get { return (KeyModifiers?)GetValue(ModifiersProperty); } set { SetValue(ModifiersProperty, value); } }
 
         public bool UsePreviewEvents
         {
@@ -86,7 +85,7 @@ namespace Stride.Core.Presentation.Behaviors
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected bool AreModifiersValid()
         {
-            return Modifiers == null || (Modifiers == ModifierKeys.None ? Keyboard.Modifiers == ModifierKeys.None : Keyboard.Modifiers.HasFlag(Modifiers));
+            return Modifiers == null || (Modifiers == KeyModifiers.None ? Keyboard.Modifiers == KeyModifiers.None : Keyboard.Modifiers.HasFlag(Modifiers));
         }
 
         protected void Cancel()

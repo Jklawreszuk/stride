@@ -67,12 +67,12 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Indicates whether the Control key is currently down.
         /// </summary>
-        internal static bool IsControlKeyDown => (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control;
+        internal static bool IsControlKeyDown => (Keyboard.Modifiers & Control) == Control;
 
         /// <summary>
         /// Indicates whether the Shift key is currently down.
         /// </summary>
-        internal static bool IsShiftKeyDown => (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift;
+        internal static bool IsShiftKeyDown => (Keyboard.Modifiers & KeyModifiers.Shift) == KeyModifiers.Shift;
 
         // the space where items will be realized if virtualization is enabled. This is set by virtualizingtreepanel.
         internal VirtualizingTreePanel.VerticalArea RealizationSpace = new VirtualizingTreePanel.VerticalArea();
@@ -118,7 +118,7 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Gets the list of selected items.
         /// </summary>
-        public IList SelectedItems { get { return (IList)GetValue(SelectedItemsProperty.AvaloniaProperty); } private set { SetValue(SelectedItemsProperty, value); } }
+        public IList SelectedItems { get { return (IList)GetValue(AvaloniaProperty); } private set { SetValue(SelectedItemsProperty, value); } }
 
         /// <summary>
         /// Gets the selection mode for this control.
@@ -732,7 +732,7 @@ namespace Stride.Core.Presentation.Controls
             if (hitTestResult?.VisualHit == null)
                 return null;
 
-            var child = hitTestResult.VisualHit as FrameworkElement;
+            var child = hitTestResult.VisualHit as Control;
 
             do
             {
@@ -748,7 +748,7 @@ namespace Stride.Core.Presentation.Controls
                 if (child is TreeView)
                     return null;
 
-                child = VisualTreeHelper.GetParent(child) as FrameworkElement;
+                child = VisualTreeHelper.GetParent(child) as Control;
             } while (child != null);
 
             return null;

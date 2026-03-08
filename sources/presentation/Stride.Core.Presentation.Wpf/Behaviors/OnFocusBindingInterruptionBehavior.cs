@@ -6,6 +6,8 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Xaml.Interactivity;
 using Microsoft.Xaml.Behaviors;
 using Stride.Core;
 using Stride.Core.Presentation.Extensions;
@@ -13,10 +15,10 @@ using Stride.Core.Presentation.Extensions;
 namespace Stride.Core.Presentation.Behaviors
 {
     /// <summary>
-    /// Represents a behavior capable of interrupting a <c>Binding</c> on a <c>UIElement</c> when it receives focus,
+    /// Represents a behavior capable of interrupting a <c>Binding</c> on a <c>Control</c> when it receives focus,
     /// and resuming that <c>Binding</c> when it loses focus.
     /// </summary>
-    /// <remarks>The host element must be of type <c>UIElement</c> and the <c>DependencyProprty</c> defined by PropertyName property must be set to a <c>BindingBase</c> object.</remarks>
+    /// <remarks>The host element must be of type <c>Control</c> and the <c>DependencyProprty</c> defined by PropertyName property must be set to a <c>BindingBase</c> object.</remarks>
     public class OnFocusBindingInterruptionBehavior : Behavior<AvaloniaObject>
     {
         private IDisposable subscriber;
@@ -49,11 +51,11 @@ namespace Stride.Core.Presentation.Behaviors
             if ((Binding is Binding) == false)
                 throw new InvalidOperationException("Not supported binding type.");
 
-            var element = AssociatedObject as FrameworkElement;
+            var element = AssociatedObject as Control;
             if (element == null)
             {
                 throw new InvalidOperationException(
-                    $"Behavior of type '{GetType()}' must be bound to objects of type '{typeof(FrameworkElement)}'. (currently bound to object typed '{AssociatedObject.GetType()}')");
+                    $"Behavior of type '{GetType()}' must be bound to objects of type '{typeof(Control)}'. (currently bound to object typed '{AssociatedObject.GetType()}')");
             }
 
             BindingOperations.SetBinding(AssociatedObject, property, Binding);
@@ -102,7 +104,7 @@ namespace Stride.Core.Presentation.Behaviors
             var binding = (Binding)Binding;
 
             // resolve the source instance here (seems BindingOperations.SetBinding does not resolve DataContext)
-            var source = binding.Source ?? ((FrameworkElement)AssociatedObject).DataContext;
+            var source = binding.Source ?? ((Control)AssociatedObject).DataContext;
 
             var intermediateBinding = new Binding
             {
