@@ -2,10 +2,7 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 #if DEBUG
 using System;
-using System.Windows;
-using System.Windows.Media.Animation;
 using System.Diagnostics;
-using System.Windows.Markup;
 using Avalonia;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Internal;
