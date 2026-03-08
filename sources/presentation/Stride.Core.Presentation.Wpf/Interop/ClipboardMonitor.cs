@@ -61,8 +61,7 @@ namespace Stride.Core.Presentation.Interop
         {
             if (window == null) throw new ArgumentNullException(nameof(window));
 
-            HwndSource hwndSource;
-            if (!Listeners.TryGetValue(window, out hwndSource))
+            if (!Listeners.TryGetValue(window, out var hwndSource))
                 throw new InvalidOperationException($"The given {window} is not registered as a clipboard listener.");
 
             window.Dispatcher.Invoke(() =>

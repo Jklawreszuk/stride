@@ -100,10 +100,10 @@ namespace Stride.Core.Presentation.Diagnostics
             if (triggerBase == null)
                 return;
 
-            if (!(e.NewValue is bool))
+            if (e.NewValue is not bool value)
                 return;
 
-            if ((bool)e.NewValue)
+            if (value)
             {
                 // insert dummy story-boards which can later be traced using WPF animation tracing
                 

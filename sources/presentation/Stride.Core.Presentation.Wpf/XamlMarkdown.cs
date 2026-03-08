@@ -57,17 +57,17 @@ namespace Stride.Core.Presentation
         /// Identifies the <see cref="BaseUrl"/> dependency property.
         /// </summary>
         public static readonly AvaloniaProperty BaseUrlProperty =
-            AvaloniaProperty.Register(nameof(BaseUrl), typeof(string), typeof(XamlMarkdown), new PropertyMetadata(null));
+            AvaloniaProperty.Register<XamlMarkdown, string>(nameof(BaseUrl));
         /// <summary>
         /// Identifies the <see cref="HyperlinkCommand"/> dependency property.
         /// </summary>
         public static readonly AvaloniaProperty HyperlinkCommandProperty =
-            AvaloniaProperty.Register(nameof(HyperlinkCommand), typeof(ICommand), typeof(XamlMarkdown), new PropertyMetadata(null));
+            AvaloniaProperty.Register<XamlMarkdown, ICommand>(nameof(HyperlinkCommand));
         /// <summary>
         /// Identifies the <see cref="StrictBoldItalic"/> dependency property.
         /// </summary>
         public static readonly AvaloniaProperty StrictBoldItalicProperty =
-            AvaloniaProperty.Register(nameof(StrictBoldItalic), typeof(bool), typeof(XamlMarkdown), new PropertyMetadata(BooleanBoxes.FalseBox));
+            AvaloniaProperty.Register<XamlMarkdown, bool>(nameof(StrictBoldItalic));
 
         /// <summary>
         /// maximum nested depth of [] and () supported by the transform; implementation detail
@@ -105,9 +105,7 @@ namespace Stride.Core.Presentation
         public XamlMarkdown([NotNull] Control resourcesProvider)
             : this()
         {
-            if (resourcesProvider == null) throw new ArgumentNullException(nameof(resourcesProvider));
-
-            this.resourcesProvider = resourcesProvider;
+            this.resourcesProvider = resourcesProvider ?? throw new ArgumentNullException(nameof(resourcesProvider));
         }
 
         /// <summary>

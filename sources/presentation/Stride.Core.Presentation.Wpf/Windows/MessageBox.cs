@@ -21,7 +21,7 @@ namespace Stride.Core.Presentation.Windows
         /// <summary>
         /// Identifies the <see cref="Image"/> dependency property.
         /// </summary>
-        public static readonly StyledProperty<IImage> ImageProperty =
+        public static readonly AvaloniaProperty ImageProperty =
             AvaloniaProperty.Register<MessageBox, IImage>(nameof(Image));
 
         protected MessageBox()
@@ -85,12 +85,13 @@ namespace Stride.Core.Presentation.Windows
                 if (!Enum.TryParse(button.Key, out Key key))
                     continue;
 
-                var binding = new KeyBinding(messageBox.ButtonCommand, key, KeyModifiers.Alt)
+                var binding = new KeyBinding()
                 {
                     CommandParameter = button.Result,
-                    Key = KeyModifiers.None, // because KeyBinding doesn't allow it in the constructor!
+                    Command = messageBox.ButtonCommand,
+                    Gesture = new KeyGesture(key, KeyModifiers.Alt)
                 };
-                messageBox.InputBindings.Add(binding);
+                messageBox.KeyBindings.Add(binding);
             }
         }
     }
