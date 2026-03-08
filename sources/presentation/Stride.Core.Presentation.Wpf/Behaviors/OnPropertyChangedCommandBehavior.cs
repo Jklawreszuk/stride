@@ -7,6 +7,7 @@ using Stride.Core.Presentation.Extensions;
 using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Data;
 using Avalonia.Xaml.Interactivity;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Internal;
@@ -25,22 +26,22 @@ namespace Stride.Core.Presentation.Behaviors
         /// <summary>
         /// Identifies the <see cref="Command"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty CommandProperty = AvaloniaProperty.Register(nameof(Command), typeof(ICommand), typeof(OnPropertyChangedCommandBehavior));
+        public static readonly AvaloniaProperty CommandProperty = AvaloniaProperty.Register<OnPropertyChangedCommandBehavior,ICommand>(nameof(Command));
 
         /// <summary>
         /// Identifies the <see cref="CommandParameter"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty CommandParameterProperty = AvaloniaProperty.Register(nameof(CommandParameter), typeof(object), typeof(OnPropertyChangedCommandBehavior));
+        public static readonly AvaloniaProperty CommandParameterProperty = AvaloniaProperty.Register<OnPropertyChangedCommandBehavior,object>(nameof(CommandParameter));
             
         /// <summary>
         /// Identifies the <see cref="ExecuteOnlyOnSourceUpdate"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty ExecuteOnlyOnSourceUpdateProperty = AvaloniaProperty.Register(nameof(ExecuteOnlyOnSourceUpdate), typeof(bool), typeof(OnPropertyChangedCommandBehavior));
+        public static readonly AvaloniaProperty ExecuteOnlyOnSourceUpdateProperty = AvaloniaProperty.Register<OnPropertyChangedCommandBehavior,bool>(nameof(ExecuteOnlyOnSourceUpdate));
 
         /// <summary>
         /// Identifies the <see cref="PassValueAsParameter"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty PassValueAsParameterProperty = AvaloniaProperty.Register(nameof(PassValueAsParameter), typeof(bool), typeof(OnPropertyChangedCommandBehavior));
+        public static readonly AvaloniaProperty PassValueAsParameterProperty = AvaloniaProperty.Register<OnPropertyChangedCommandBehavior,bool>(nameof(PassValueAsParameter));
         
         /// <summary>
         /// Gets or sets the name of the dependency property that will trigger the associated command.

@@ -3,8 +3,8 @@
 using System.Windows;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Avalonia.Xaml.Interactivity;
-using Microsoft.Xaml.Behaviors;
 using Stride.Core.Presentation.Internal;
 
 namespace Stride.Core.Presentation.Behaviors
@@ -20,7 +20,7 @@ namespace Stride.Core.Presentation.Behaviors
         /// Represents the <see cref="AttachOnEveryLoadedEvent"/> property.
         /// </summary>
         public static readonly AvaloniaProperty AttachOnEveryLoadedEventProperty =
-            AvaloniaProperty.Register(nameof(AttachOnEveryLoadedEvent), typeof(bool), typeof(DeferredBehaviorBase<T>), new PropertyMetadata(BooleanBoxes.FalseBox));
+            AvaloniaProperty.Register<DeferredBehaviorBase<T>, bool>(nameof(AttachOnEveryLoadedEvent));
 
         private bool currentlyLoaded;
 

@@ -3,12 +3,9 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Xaml.Interactivity;
-using Microsoft.Xaml.Behaviors;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Extensions;
 using Stride.Core.Presentation.Internal;

@@ -4,6 +4,8 @@ using System;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
+using Avalonia.Media;
 using Avalonia.Xaml.Interactivity;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Adorners;
@@ -21,17 +23,17 @@ namespace Stride.Core.Presentation.Behaviors
         /// Identifies the <see cref="BorderBrush"/> dependency property.
         /// </summary>
         public static readonly AvaloniaProperty BorderBrushProperty = 
-            AvaloniaProperty.Register(nameof(BorderBrush), typeof(Brush), typeof(ContainTextAdornerBehavior), new PropertyMetadata(Brushes.SteelBlue, PropertyChanged));
+            AvaloniaProperty.Register<ContainTextAdornerBehavior,Brush>(nameof(BorderBrush), Brushes.SteelBlue);
         /// <summary>
         /// Identifies the <see cref="BorderCornerRadius"/> dependency property.
         /// </summary>
         public static readonly AvaloniaProperty BorderCornerRadiusProperty =
-            AvaloniaProperty.Register(nameof(BorderCornerRadius), typeof(double), typeof(ContainTextAdornerBehavior), new PropertyMetadata(3.0, PropertyChanged));
+            AvaloniaProperty.Register<ContainTextAdornerBehavior,double>(nameof(BorderCornerRadius), 3.0);
         /// <summary>
         /// Identifies the <see cref="BorderThickness"/> dependency property.
         /// </summary>
         public static readonly AvaloniaProperty BorderThicknessProperty =
-            AvaloniaProperty.Register(nameof(BorderThickness), typeof(double), typeof(ContainTextAdornerBehavior), new PropertyMetadata(2.0, PropertyChanged));
+            AvaloniaProperty.Register<ContainTextAdornerBehavior,double>(nameof(BorderThickness), 2.0);
         
         /// <summary>
         /// Gets or sets the border brush when the adorner visible.

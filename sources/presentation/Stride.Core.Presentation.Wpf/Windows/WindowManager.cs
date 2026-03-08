@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
@@ -127,7 +126,7 @@ namespace Stride.Core.Presentation.Windows
 
         /// <summary>
         /// Shows the given window as blocking window. A blocking window will always block the main window of the application, even if shown before it, but does not
-        /// affect modal windows. However it can still be blocked by them..
+        /// affect modal windows. However, it can still be blocked by them..
         /// </summary>
         /// <param name="window">The blocking window to show.</param>
         public static void ShowBlockingWindow([NotNull] Window window)
@@ -200,7 +199,7 @@ namespace Stride.Core.Presentation.Windows
 
         private static void CheckDispatcher()
         {
-            if (dispatcher.Thread != Thread.CurrentThread)
+            if (!dispatcher.CheckAccess())
             {
                 const string message = "This method must be invoked from the dispatcher thread";
                 Logger.Error(message);

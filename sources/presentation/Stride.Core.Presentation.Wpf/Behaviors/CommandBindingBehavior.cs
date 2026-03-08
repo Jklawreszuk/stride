@@ -29,12 +29,12 @@ namespace Stride.Core.Presentation.Behaviors
         /// Identifies the <see cref="ContinueRouting"/> dependency property.
         /// </summary>
         public static readonly AvaloniaProperty ContinueRoutingProperty =
-            AvaloniaProperty.Register(nameof(ContinueRouting), typeof(bool), typeof(CommandBindingBehavior), new PropertyMetadata(BooleanBoxes.TrueBox));
+            AvaloniaProperty.Register<CommandBindingBehavior, bool>(nameof(ContinueRouting), true);
         /// <summary>
         /// Identifies the <see cref="IsEnabled"/> dependency property.
         /// </summary>
         public static readonly AvaloniaProperty IsEnabledProperty =
-            AvaloniaProperty.Register(nameof(IsEnabled), typeof(bool), typeof(CommandBindingBehavior), new PropertyMetadata(BooleanBoxes.TrueBox));
+            AvaloniaProperty.Register<CommandBindingBehavior, bool>(nameof(IsEnabled), true);
         /// <summary>
         /// Identifies the <see cref="RoutedCommand"/> dependency property.
         /// </summary>

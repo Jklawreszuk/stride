@@ -16,8 +16,12 @@ namespace Stride.Core.Presentation.Behaviors
         /// <summary>
         /// Identifies the <see cref="Collection"/> dependency property.
         /// </summary>
-        public static AvaloniaProperty CollectionProperty = AvaloniaProperty.Register(nameof(Collection), typeof(INotifyCollectionChanged),
-            typeof(ActivateOnCollectionChangedBehavior<T>), new FrameworkPropertyMetadata(OnCollectionChanged));
+        public static AvaloniaProperty CollectionProperty = AvaloniaProperty.Register<ActivateOnCollectionChangedBehavior<T>,INotifyCollectionChanged>(nameof(Collection));
+
+        static ActivateOnCollectionChangedBehavior()
+        {
+            
+        }
 
         /// <summary>
         /// Gets or sets the collection to observe in order to trigger activation of the associated control.
