@@ -5,17 +5,17 @@ using System.Collections.Generic;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Avalonia.Reactive;
 using Stride.Core.Annotations;
 using Stride.Core.Extensions;
 
 namespace Stride.Core.Presentation.Core
 {
-    public class DependencyPropertyWatcher : IAttachedObject
+    public class DependencyPropertyWatcher
     {
-        private readonly List<Tuple<AvaloniaProperty, EventHandler>> handlers = [];
-        private readonly Dictionary<AvaloniaProperty, DependencyPropertyDescriptor> descriptors = new Dictionary<AvaloniaProperty, DependencyPropertyDescriptor>();
+        private readonly List<(AvaloniaProperty, EventHandler)> handlers = [];
+        private readonly Dictionary<AvaloniaProperty, List<IDisposable>> subscriptions = new();
         private Control frameworkElement;
-
         private bool handlerRegistered;
 
         public DependencyPropertyWatcher()
@@ -53,12 +53,13 @@ namespace Stride.Core.Presentation.Core
             frameworkElement.Unloaded -= ElementUnloaded;
             DetachHandlers();
             handlers.Clear();
+            subscriptions.Clear();
             frameworkElement = null;
         }
 
         public void RegisterValueChangedHandler(AvaloniaProperty property, EventHandler handler)
         {
-            handlers.Add(Tuple.Create(property, handler));
+            handlers.Add((property, handler));
             if (handlerRegistered)
             {
                 AttachHandler(property, handler);
@@ -104,12 +105,20 @@ namespace Stride.Core.Presentation.Core
             if (handler == null) throw new ArgumentNullException(nameof(handler));
             if (frameworkElement == null) throw new InvalidOperationException("A dependency object must be attached in order to register a handler.");
 
-            if (!descriptors.TryGetValue(property, out var descriptor))
+            var observable = frameworkElement.GetObservable(property);
+
+            var subscription = observable.Subscribe(new AnonymousObserver<object>(_ =>
             {
-                descriptor = DependencyPropertyDescriptor.FromProperty(property, AssociatedObject.GetType());
-                descriptors.Add(property, descriptor);
+                handler(frameworkElement, EventArgs.Empty);
+            }));
+
+            if (!subscriptions.TryGetValue(property, out var list))
+            {
+                list = [];
+                subscriptions[property] = list;
             }
-            descriptor.AddValueChanged(AssociatedObject, handler);
+
+            list.Add(subscription);
         }
 
         private void DetachHandler([NotNull] AvaloniaProperty property, [NotNull] EventHandler handler)
@@ -118,11 +127,13 @@ namespace Stride.Core.Presentation.Core
             if (handler == null) throw new ArgumentNullException(nameof(handler));
             if (frameworkElement == null) throw new InvalidOperationException("A dependency object must be attached in order to unregister a handler.");
 
-            if (!descriptors.TryGetValue(property, out var descriptor))
-            {
-                throw new InvalidOperationException("No handler was previously registered for this dependency property.");
-            }
-            descriptor.RemoveValueChanged(AssociatedObject, handler);
+            if (!subscriptions.TryGetValue(property, out var list))
+                return;
+
+            foreach (var sub in list)
+                sub.Dispose();
+
+            subscriptions.Remove(property);
         }
 
         private void ElementLoaded(object sender, RoutedEventArgs e)
