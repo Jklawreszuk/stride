@@ -26,10 +26,9 @@ namespace Stride.Core.Presentation.Themes
                 if (isDark == IsDark(theme.BackgroundLuminosity))
                     return drawing;
             }
-            var newDrawing = drawing.CloneCurrentValue();
-            TransformParts(newDrawing, theme);
-            ThemeController.SetIsDark(newDrawing, !isDark);
-            return newDrawing;
+            TransformParts(drawing, theme);
+            ThemeController.SetIsDark(drawing, !isDark);
+            return drawing;
         }
 
         /// <summary>
@@ -50,7 +49,7 @@ namespace Stride.Core.Presentation.Themes
             {
                 foreach (Media.Drawing dr in dg.Children)
                 {
-                    if (dr is Media.DrawingGroup || dr is Media.GeometryDrawing)
+                    if (dr is Media.DrawingGroup or Media.GeometryDrawing)
                     {
                         TransformParts(dr, theme);
                     }
