@@ -172,26 +172,26 @@ namespace Stride.Core.Presentation.Controls
 
             // Since the NumericTextBox is not focusable itself, we have to bind the commands to the inner text box of the control.
             // The handlers will then find the parent that is a NumericTextBox and process the command on this control if it is found.
-            LargeIncreaseCommand = new RelayCommand("LargeIncreaseCommand", typeof(System.Windows.Controls.TextBox));
-            CommandManager.RegisterClassCommandBinding(typeof(System.Windows.Controls.TextBox), new CommandBinding(LargeIncreaseCommand, OnLargeIncreaseCommand));
-            CommandManager.RegisterClassInputBinding(typeof(System.Windows.Controls.TextBox), new InputBinding(LargeIncreaseCommand, new KeyGesture(Key.PageUp)));
-            CommandManager.RegisterClassInputBinding(typeof(System.Windows.Controls.TextBox), new InputBinding(LargeIncreaseCommand, new KeyGesture(Key.Up, KeyModifiers.Shift)));
+            LargeIncreaseCommand = new RelayCommand("LargeIncreaseCommand", typeof(Avalonia.Controls.TextBox));
+            CommandManager.RegisterClassCommandBinding(typeof(Avalonia.Controls.TextBox), new CommandBinding(LargeIncreaseCommand, OnLargeIncreaseCommand));
+            CommandManager.RegisterClassInputBinding(typeof(Avalonia.Controls.TextBox), new InputBinding(LargeIncreaseCommand, new KeyGesture(Key.PageUp)));
+            CommandManager.RegisterClassInputBinding(typeof(Avalonia.Controls.TextBox), new InputBinding(LargeIncreaseCommand, new KeyGesture(Key.Up, KeyModifiers.Shift)));
 
-            LargeDecreaseCommand = new RelayCommand("LargeDecreaseCommand", typeof(System.Windows.Controls.TextBox));
-            CommandManager.RegisterClassCommandBinding(typeof(System.Windows.Controls.TextBox), new CommandBinding(LargeDecreaseCommand, OnLargeDecreaseCommand));
-            CommandManager.RegisterClassInputBinding(typeof(System.Windows.Controls.TextBox), new InputBinding(LargeDecreaseCommand, new KeyGesture(Key.PageDown)));
-            CommandManager.RegisterClassInputBinding(typeof(System.Windows.Controls.TextBox), new InputBinding(LargeDecreaseCommand, new KeyGesture(Key.Down, KeyModifiers.Shift)));
+            LargeDecreaseCommand = new RelayCommand("LargeDecreaseCommand", typeof(Avalonia.Controls.TextBox));
+            CommandManager.RegisterClassCommandBinding(typeof(Avalonia.Controls.TextBox), new CommandBinding(LargeDecreaseCommand, OnLargeDecreaseCommand));
+            CommandManager.RegisterClassInputBinding(typeof(Avalonia.Controls.TextBox), new InputBinding(LargeDecreaseCommand, new KeyGesture(Key.PageDown)));
+            CommandManager.RegisterClassInputBinding(typeof(Avalonia.Controls.TextBox), new InputBinding(LargeDecreaseCommand, new KeyGesture(Key.Down, KeyModifiers.Shift)));
 
-            SmallIncreaseCommand = new RelayCommand("SmallIncreaseCommand", typeof(System.Windows.Controls.TextBox));
-            CommandManager.RegisterClassCommandBinding(typeof(System.Windows.Controls.TextBox), new CommandBinding(SmallIncreaseCommand, OnSmallIncreaseCommand));
-            CommandManager.RegisterClassInputBinding(typeof(System.Windows.Controls.TextBox), new InputBinding(SmallIncreaseCommand, new KeyGesture(Key.Up)));
+            SmallIncreaseCommand = new RelayCommand("SmallIncreaseCommand", typeof(Avalonia.Controls.TextBox));
+            CommandManager.RegisterClassCommandBinding(typeof(Avalonia.Controls.TextBox), new CommandBinding(SmallIncreaseCommand, OnSmallIncreaseCommand));
+            CommandManager.RegisterClassInputBinding(typeof(Avalonia.Controls.TextBox), new InputBinding(SmallIncreaseCommand, new KeyGesture(Key.Up)));
 
-            SmallDecreaseCommand = new RelayCommand("SmallDecreaseCommand", typeof(System.Windows.Controls.TextBox));
-            CommandManager.RegisterClassCommandBinding(typeof(System.Windows.Controls.TextBox), new CommandBinding(SmallDecreaseCommand, OnSmallDecreaseCommand));
-            CommandManager.RegisterClassInputBinding(typeof(System.Windows.Controls.TextBox), new InputBinding(SmallDecreaseCommand, new KeyGesture(Key.Down)));
+            SmallDecreaseCommand = new RelayCommand("SmallDecreaseCommand", typeof(Avalonia.Controls.TextBox));
+            CommandManager.RegisterClassCommandBinding(typeof(Avalonia.Controls.TextBox), new CommandBinding(SmallDecreaseCommand, OnSmallDecreaseCommand));
+            CommandManager.RegisterClassInputBinding(typeof(Avalonia.Controls.TextBox), new InputBinding(SmallDecreaseCommand, new KeyGesture(Key.Down)));
 
-            ResetValueCommand = new RelayCommand("ResetValueCommand", typeof(System.Windows.Controls.TextBox));
-            CommandManager.RegisterClassCommandBinding(typeof(System.Windows.Controls.TextBox), new CommandBinding(ResetValueCommand, OnResetValueCommand));
+            ResetValueCommand = new RelayCommand("ResetValueCommand", typeof(Avalonia.Controls.TextBox));
+            CommandManager.RegisterClassCommandBinding(typeof(Avalonia.Controls.TextBox), new CommandBinding(ResetValueCommand, OnResetValueCommand));
         }
 
         /// <summary>
@@ -278,9 +278,9 @@ namespace Stride.Core.Presentation.Controls
                 throw new InvalidOperationException("A part named 'PART_ContentHost' must be present in the ControlTemplate, and must be of type 'ScrollViewer'.");
 
             var increasePressedWatcher = new DependencyPropertyWatcher(increaseButton);
-            increasePressedWatcher.RegisterValueChangedHandler(ButtonBase.IsPressedProperty, RepeatButtonIsPressedChanged);
+            increasePressedWatcher.RegisterValueChangedHandler(Button.IsPressedProperty, RepeatButtonIsPressedChanged);
             var decreasePressedWatcher = new DependencyPropertyWatcher(decreaseButton);
-            decreasePressedWatcher.RegisterValueChangedHandler(ButtonBase.IsPressedProperty, RepeatButtonIsPressedChanged);
+            decreasePressedWatcher.RegisterValueChangedHandler(Button.IsPressedProperty, RepeatButtonIsPressedChanged);
             var textValue = FormatValue(Value);
 
             SetCurrentValue(TextProperty, textValue);

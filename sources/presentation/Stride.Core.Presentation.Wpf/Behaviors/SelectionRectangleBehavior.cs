@@ -2,7 +2,7 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
 using System.Windows;
-using System.Windows.Controls;
+using Avalonia.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Shapes;

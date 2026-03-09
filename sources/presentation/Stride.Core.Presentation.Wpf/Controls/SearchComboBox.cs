@@ -34,7 +34,7 @@ namespace Stride.Core.Presentation.Controls
         /// Identifies the <see cref="AlternativeCommand"/> dependency property.
         /// </summary>
         public static readonly AvaloniaProperty AlternativeCommandProperty =
-            AvaloniaProperty.Register("AlternativeCommand", typeof(ICommand), typeof(SearchComboBox));
+            AvaloniaProperty.Register<SearchComboBox, ICommand>("AlternativeCommand");
         /// <summary>
         /// Identifies the <see cref="AlternativeModifiers"/> dependency property.
         /// </summary>

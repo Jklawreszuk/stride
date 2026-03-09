@@ -24,9 +24,9 @@ namespace Stride.Core.Presentation.Controls
     /// This control displays a collection of <see cref="ILogMessage"/>.
     /// </summary>
     [TemplatePart(Name = "PART_LogTextBox", Type = typeof(RichTextBox))]
-    [TemplatePart(Name = "PART_ClearLog", Type = typeof(ButtonBase))]
-    [TemplatePart(Name = "PART_PreviousResult", Type = typeof(ButtonBase))]
-    [TemplatePart(Name = "PART_NextResult", Type = typeof(ButtonBase))]
+    [TemplatePart(Name = "PART_ClearLog", Type = typeof(Button))]
+    [TemplatePart(Name = "PART_PreviousResult", Type = typeof(Button))]
+    [TemplatePart(Name = "PART_NextResult", Type = typeof(Button))]
     public class TextLogViewer : Control
     {
         private readonly List<TextRange> searchMatches = new List<TextRange>();
@@ -297,18 +297,18 @@ namespace Stride.Core.Presentation.Controls
             if (logTextBox == null)
                 throw new InvalidOperationException("A part named 'PART_LogTextBox' must be present in the ControlTemplate, and must be of type 'RichTextBox'.");
 
-            var clearLogButton = GetTemplateChild("PART_ClearLog") as ButtonBase;
+            var clearLogButton = GetTemplateChild("PART_ClearLog") as Button;
             if (clearLogButton != null)
             {
                 clearLogButton.Click += ClearLog;
             }
 
-            var previousResultButton = GetTemplateChild("PART_PreviousResult") as ButtonBase;
+            var previousResultButton = GetTemplateChild("PART_PreviousResult") as Button;
             if (previousResultButton != null)
             {
                 previousResultButton.Click += PreviousResultClicked;
             }
-            var nextResultButton = GetTemplateChild("PART_NextResult") as ButtonBase;
+            var nextResultButton = GetTemplateChild("PART_NextResult") as Button;
             if (nextResultButton != null)
             {
                 nextResultButton.Click += NextResultClicked;
@@ -522,24 +522,17 @@ namespace Stride.Core.Presentation.Controls
         private static void LogMessagesPropertyChanged(AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var logViewer = (TextLogViewer)d;
-            var oldValue = e.OldValue as ICollection<ILogMessage>;
             var newValue = e.NewValue as ICollection<ILogMessage>;
-            if (oldValue != null)
+            if (e.OldValue is ICollection<ILogMessage> oldValue)
             {
-                // ReSharper disable SuspiciousTypeConversion.Global - go home resharper, you're drunk
-                var notifyCollectionChanged = oldValue as INotifyCollectionChanged;
-                // ReSharper restore SuspiciousTypeConversion.Global
-                if (notifyCollectionChanged != null)
+                if (oldValue is INotifyCollectionChanged notifyCollectionChanged)
                 {
                     notifyCollectionChanged.CollectionChanged -= logViewer.LogMessagesCollectionChanged;
                 }
             }
             if (e.NewValue != null)
             {
-                // ReSharper disable SuspiciousTypeConversion.Global - go home resharper, you're drunk
-                var notifyCollectionChanged = newValue as INotifyCollectionChanged;
-                // ReSharper restore SuspiciousTypeConversion.Global
-                if (notifyCollectionChanged != null)
+                if (newValue is INotifyCollectionChanged notifyCollectionChanged)
                 {
                     notifyCollectionChanged.CollectionChanged += logViewer.LogMessagesCollectionChanged;
                 }

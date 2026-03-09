@@ -12,7 +12,7 @@ using CancelRoutedEventArgs = Stride.Core.Presentation.Core.CancelRoutedEventArg
 namespace Stride.Core.Presentation.Controls
 {
     /// <summary>
-    /// An implementation of the <see cref="System.Windows.Controls.TextBox"/> control
+    /// An implementation of the <see cref="Avalonia.Controls.TextBox"/> control
     /// that provides additional features such as a proper validation/cancellation workflow.
     /// </summary>
     public class TextBoxBase : Avalonia.Controls.TextBox
