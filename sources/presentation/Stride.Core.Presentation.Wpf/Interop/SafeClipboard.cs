@@ -18,11 +18,6 @@ namespace Stride.Core.Presentation.Interop
     /// </summary>
     public static class SafeClipboard
     {
-        // ReSharper disable InconsistentNaming
-        public const int CLIPBRD_E_CANT_OPEN = unchecked((int)0x800401D0);
-        public const int CLIPBRD_E_CANT_SET = unchecked((int)0x800401D2);
-        // ReSharper restore InconsistentNaming
-
         /// <summary>
         /// Similar to <see cref="Clipboard.ContainsText()"/> but don't throw if the clipboard cannot be open.
         /// </summary>
