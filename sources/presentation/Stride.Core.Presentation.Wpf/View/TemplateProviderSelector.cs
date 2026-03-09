@@ -19,26 +19,20 @@ namespace Stride.Core.Presentation.View
     /// </summary>
     public class TemplateProviderSelector : IDataTemplate
     {
-       
         /// <summary>
         /// The list of all template providers registered for the <see cref="TemplateProviderSelector"/>, indexed by their name.
         /// </summary>
-        private readonly List<ITemplateProvider> templateProviders = new List<ITemplateProvider>();
+        private readonly List<ITemplateProvider> templateProviders = [];
 
         /// <summary>
         /// A hashset of template provider names, used only to ensure unicity.
         /// </summary>
-        private readonly HashSet<string> templateProviderNames = new HashSet<string>();
+        private readonly HashSet<string> templateProviderNames = [];
 
         /// <summary>
         /// A map of all providers that have already been used for each object, indexed by <see cref="Guid"/>.
         /// </summary>
-        private readonly ConditionalWeakTable<object, List<string>> usedProviders = new ConditionalWeakTable<object, List<string>>();
-
-        /// <summary>
-        /// A map containing the last container for a given object.
-        /// </summary>
-        private readonly ConditionalWeakTable<object, WeakReference> lastContainers = new ConditionalWeakTable<object, WeakReference>();
+        private readonly ConditionalWeakTable<object, List<string>> usedProviders = new();
 
         /// <summary>
         /// Registers the given template into the static <see cref="TemplateProviderSelector"/>.
@@ -51,7 +45,7 @@ namespace Stride.Core.Presentation.View
             if (templateProviderNames.Contains(templateProvider.Name))
                 throw new InvalidOperationException("A template provider with the same name has already been registered in this template selector.");
 
-            InsertTemplateProvider(templateProviders, templateProvider, new List<ITemplateProvider>());
+            InsertTemplateProvider(templateProviders, templateProvider, []);
             templateProviderNames.Add(templateProvider.Name);
         }
 
@@ -67,23 +61,19 @@ namespace Stride.Core.Presentation.View
             }
         }
 
-        public override DataTemplate SelectTemplate(object item, AvaloniaObject container)
+        public Control Build(object item)
         {
             if (item == null)
                 return null;
 
-            if (container is not Control)
-                throw new ArgumentException(@"Container must be of type Control", nameof(container));
-
-            var provider = FindTemplateProvider(item, container);
+            var provider = FindTemplateProvider(item);
             var template = provider?.Template;
-            // We set the template we found into the content presenter itself to avoid re-entering the template selector if the property is refreshed.
-            //var contentPresenter = container as ContentPresenter;
-            //if (contentPresenter != null)
-            //{
-            //    contentPresenter.ContentTemplate = template;
-            //}
-            return template;
+            return template.Build(item);
+        }
+
+        public bool Match(object data)
+        {
+            return data != null;
         }
         
         private static void InsertTemplateProvider([NotNull] List<ITemplateProvider> list, ITemplateProvider templateProvider, [NotNull] List<ITemplateProvider> movedItems)
@@ -108,35 +98,9 @@ namespace Stride.Core.Presentation.View
         }
 
         [CanBeNull]
-        private ITemplateProvider FindTemplateProvider([NotNull] object item, AvaloniaObject container)
+        private ITemplateProvider FindTemplateProvider([NotNull] object item)
         {
             var usedProvidersForItem = usedProviders.GetOrCreateValue(item);
-
-            var shouldClear = true;
-            // We check if this item has been templated recently.
-            if (lastContainers.TryGetValue(item, out var lastContainer) && lastContainer.IsAlive)
-            {
-                // If so, check if the last container used is a parent of the container to use now.
-                var parent = (container as Visual).GetVisualParent();
-                while (parent != null)
-                {
-                    // If so, we are applying template recursively. We want don't want to use the same template
-                    // provider that the previous time, so we don't clear the list of providers already used.
-                    if (Equals(lastContainer.Target, parent))
-                    {
-                        shouldClear = false;
-                        break;
-                    }
-                    parent = parent.GetVisualParent();
-                }
-            }
-            // In any other case, we clear the list of used providers.
-            if (shouldClear)
-            {
-                usedProvidersForItem.Clear();
-            }
-
-            lastContainers.Remove(item);
 
             var availableSelectors = templateProviders.Where(x => x.Match(item));
 
@@ -145,7 +109,6 @@ namespace Stride.Core.Presentation.View
             if (result != null)
             {
                 usedProvidersForItem.Add(result.Name);
-                lastContainers.Add(item, new WeakReference(container));
             }
             return result;
         }

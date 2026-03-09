@@ -6,6 +6,8 @@ using System.Linq;
 using System.Reflection;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.LogicalTree;
+using Avalonia.VisualTree;
 using Stride.Core.Annotations;
 
 namespace Stride.Core.Presentation.Extensions
@@ -31,7 +33,7 @@ namespace Stride.Core.Presentation.Extensions
             if (includingParentProperties)
                 flags |= BindingFlags.FlattenHierarchy;
 
-            return source.AvaloniaObjectType.SystemType.GetFields(flags)
+            return source.GetType().GetFields(flags)
                 .Where(fi => fi.MemberType == MemberTypes.Field && fi.FieldType == dependencyPropertyType)
                 .Select(fi => (AvaloniaProperty)fi.GetValue(source))
                 .OrderBy(dp => dp.Name)
@@ -50,10 +52,15 @@ namespace Stride.Core.Presentation.Extensions
             if (property == null) throw new ArgumentNullException(nameof(property));
 
             source.SetValue(property, value);
-            foreach (object child in LogicalTreeHelper.GetChildren(source as dynamic))
+            if (source is not ILogical logical)
             {
-                var depChild = child as AvaloniaObject;
-                depChild?.DeepSetValue(property, value);
+                return;
+            }
+
+            foreach (var child in logical.LogicalChildren)
+            {
+                if (child is AvaloniaObject ao)
+                    ao.DeepSetValue(property, value);
             }
         }
 
@@ -71,7 +78,7 @@ namespace Stride.Core.Presentation.Extensions
             while (source != null)
             {
                 root = source as Visual;
-                source = VisualTreeHelper.GetParent(source);
+                source = (source as Visual)?.GetVisualParent();
             }
             return root;
         }
@@ -87,7 +94,7 @@ namespace Stride.Core.Presentation.Extensions
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
 
-            return FindParentOfType<T>(source, VisualTreeHelper.GetParent);
+            return FindParentOfType<T>(source, x => (x as Visual)?.GetVisualParent());;
         }
 
         /// <summary>
@@ -101,7 +108,9 @@ namespace Stride.Core.Presentation.Extensions
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
 
-            return FindChildOfType<T>(source, VisualTreeHelper.GetChildrenCount, VisualTreeHelper.GetChild);
+            return FindChildOfType<T>(source,
+                d => (d as Visual)?.GetVisualChildren().Count() ?? 0,
+                (d, i) => (d as Visual)?.GetVisualChildren().ElementAt(i));
         }
 
         /// <summary>
@@ -115,7 +124,7 @@ namespace Stride.Core.Presentation.Extensions
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
 
-            return FindChildrenOfType<T>(source, VisualTreeHelper.GetChildrenCount, VisualTreeHelper.GetChild);
+            return FindChildrenOfType<T>(source, d => (d as Visual)?.GetVisualChildren().Count() ?? 0, (d, i) => (d as Visual)?.GetVisualChildren().ElementAt(i));
         }
 
         /// <summary>
@@ -126,8 +135,11 @@ namespace Stride.Core.Presentation.Extensions
         [CanBeNull]
         public static AvaloniaObject FindFirstVisualChild([NotNull] this AvaloniaObject source)
         {
-            var childrenCount = VisualTreeHelper.GetChildrenCount(source);
-            return childrenCount > 0 ? VisualTreeHelper.GetChild(source, 0) : null;
+            if (source is not Visual visual)
+                return null;
+            
+            var childrenCount = visual.GetVisualChildren().Count();
+            return childrenCount > 0 ? visual.GetVisualChildren().First() : null;
         }
 
         /// <summary>
@@ -141,7 +153,7 @@ namespace Stride.Core.Presentation.Extensions
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
 
-            return FindParentOfType<T>(source, LogicalTreeHelper.GetParent);
+            return FindParentOfType<T>(source, x => (x as ILogical)?.LogicalParent as AvaloniaObject);
         }
 
         /// <summary>
@@ -157,8 +169,8 @@ namespace Stride.Core.Presentation.Extensions
             if (source == null) throw new ArgumentNullException(nameof(source));
 
             return FindChildOfType<T>(source,
-                d => LogicalTreeHelper.GetChildren(d).Cast<AvaloniaObject>().Count(),
-                (d, i) => LogicalTreeHelper.GetChildren(d).Cast<AvaloniaObject>().ElementAt(i));
+                d => (d as ILogical)?.LogicalChildren.Count ?? 0,
+                (d, i) => ((ILogical)d).LogicalChildren.ElementAt(i) as AvaloniaObject);
         }
 
         /// <summary>
@@ -173,9 +185,10 @@ namespace Stride.Core.Presentation.Extensions
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
 
-            return FindChildrenOfType<T>(source,
-                d => LogicalTreeHelper.GetChildren(d).Cast<AvaloniaObject>().Count(),
-                (d, i) => LogicalTreeHelper.GetChildren(d).Cast<AvaloniaObject>().ElementAt(i));
+            return FindChildrenOfType<T>(
+                source,
+                d => (d as ILogical)?.LogicalChildren.Count ?? 0,
+                (d, i) => ((ILogical)d).LogicalChildren.ElementAt(i) as AvaloniaObject);
         }
 
         /// <summary>

@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using Avalonia.Controls;
+using Avalonia.VisualTree;
 using Stride.Core.Annotations;
 
 namespace Stride.Core.Presentation.Extensions
@@ -12,22 +13,19 @@ namespace Stride.Core.Presentation.Extensions
         [CanBeNull]
         public static ItemsControl GetParentContainer([NotNull] this ItemsControl itemsControl)
         {
-            var parent = VisualTreeHelper.GetParent(itemsControl);
+            var parent = itemsControl.GetVisualParent();
 
-            while (parent != null && (parent is ItemsControl) == false)
-                parent = VisualTreeHelper.GetParent(parent);
+            while (parent != null && parent is not ItemsControl)
+                parent = parent.GetVisualParent();
 
             return parent as ItemsControl;
         }
 
         public static IEnumerable<ItemsControl> GetChildContainers([NotNull] this ItemsControl itemsControl)
         {
-            var gen = itemsControl.ItemContainerGenerator;
-
-            foreach (var item in gen.Items)
+            foreach (var item in itemsControl.Items)
             {
-                var container = gen.ContainerFromItem(item) as ItemsControl;
-                if (container != null)
+                if (itemsControl.ContainerFromItem(item) is ItemsControl container)
                     yield return container;
             }
         }

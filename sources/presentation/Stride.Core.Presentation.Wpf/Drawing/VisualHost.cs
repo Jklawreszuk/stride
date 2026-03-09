@@ -11,33 +11,22 @@ namespace Stride.Core.Presentation.Drawing
     /// </summary>
     internal class VisualHost : Control
     {
-        private readonly VisualCollection children;
-
-        public VisualHost()
+        public void AddChild(Visual child)
         {
-            children = new VisualCollection(this);
-        }
-        
-        /// <inheritdoc/>
-        protected override int VisualChildrenCount => children.Count;
-
-        public int AddChild(Visual child)
-        {
-            return children.Add(child);
+            VisualChildren.Add(child);
+            LogicalChildren.Add(child);
         }
 
         public void AddChildren(IEnumerable<Visual> visuals)
         {
-            foreach (var child in children)
+            foreach (var child in visuals)
             {
-                children.Add(child);
-            }
-        }
+                if (child == null)
+                    continue;
 
-        /// <inheritdoc/>
-        protected override Visual GetVisualChild(int index)
-        {
-            return children[index];
+                VisualChildren.Add(child);
+                LogicalChildren.Add(child);
+            }
         }
     }
 }
