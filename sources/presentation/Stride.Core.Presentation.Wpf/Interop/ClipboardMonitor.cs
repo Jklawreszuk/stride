@@ -14,7 +14,7 @@ namespace Stride.Core.Presentation.Interop
     public static class ClipboardMonitor
     {
         private static IntPtr hwndNextViewer;
-        private static readonly ConditionalWeakTable<Window, HwndSource> Listeners = new ConditionalWeakTable<Window, HwndSource>();
+        private static readonly ConditionalWeakTable<Window, HwndSource> Listeners = new();
 
         /// <summary>
         /// Raised when the clipboard has changed and contains text.
@@ -32,8 +32,7 @@ namespace Stride.Core.Presentation.Interop
         {
             if (window == null) throw new ArgumentNullException(nameof(window));
 
-            HwndSource hwndSource;
-            if (Listeners.TryGetValue(window, out hwndSource))
+            if (Listeners.TryGetValue(window, out var hwndSource))
                 throw new InvalidOperationException($"The given {window} is already registered as a clipboard listener.");
 
             hwndSource = GetHwndSource(window);
