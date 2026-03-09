@@ -53,7 +53,7 @@ namespace Stride.Core.Presentation.Controls
         /// Identifies the <see cref="Model"/> dependency property.
         /// </summary>
         public static readonly AvaloniaProperty ModelProperty =
-            AvaloniaProp.Register(nameof(Model), typeof(IDrawingModel), typeof(CanvasView), new PropertyMetadata(null, OnModelPropertyChanged));
+            AvaloniaProperty.Register(nameof(Model), typeof(IDrawingModel), typeof(CanvasView), new PropertyMetadata(null, OnModelPropertyChanged));
 
         /// <summary>
         /// The grid.
@@ -67,11 +67,6 @@ namespace Stride.Core.Presentation.Controls
         /// Invalidation flag (0: no update, 1: update visual elements).
         /// </summary>
         private int isDrawingInvalidated;
-
-        static CanvasView()
-        {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(CanvasView), new FrameworkPropertyMetadata(typeof(CanvasView)));
-        }
 
         public CanvasView()
         {
