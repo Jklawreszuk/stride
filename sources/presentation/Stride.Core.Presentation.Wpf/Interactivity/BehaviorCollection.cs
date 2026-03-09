@@ -12,7 +12,7 @@ namespace Stride.Core.Presentation.Interactivity
     /// <summary>
     /// A collection of behavior that synchronize with the Microsoft.Xaml.Behaviors.Interaction.Behaviors attached property.
     /// </summary>
-    public class BehaviorCollection : ObservableCollection<Behavior>, IAttachedObject
+    public class BehaviorCollection : ObservableCollection<Behavior>
     {
         public BehaviorCollection()
         {
