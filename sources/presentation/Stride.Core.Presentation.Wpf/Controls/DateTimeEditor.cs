@@ -18,17 +18,17 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="IsDropDownOpen"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty IsDropDownOpenProperty = AvaloniaProperty.Register("IsDropDownOpen", typeof(bool), typeof(DateTimeEditor), new PropertyMetadata(BooleanBoxes.FalseBox));
+        public static readonly AvaloniaProperty IsDropDownOpenProperty = AvaloniaProperty.Register<DateTimeEditor, bool>("IsDropDownOpen");
 
         /// <summary>
         /// Identifies the <see cref="WatermarkContent"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty WatermarkContentProperty = AvaloniaProperty.Register("WatermarkContent", typeof(object), typeof(DateTimeEditor), new PropertyMetadata(null));
+        public static readonly AvaloniaProperty WatermarkContentProperty = AvaloniaProperty.Register<DateTimeEditor, object>("WatermarkContent");
 
         /// <summary>
         /// Identifies the <see cref="WatermarkContentTemplate"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty WatermarkContentTemplateProperty = AvaloniaProperty.Register("WatermarkContentTemplate", typeof(DataTemplate), typeof(DateTimeEditor), new PropertyMetadata(null));
+        public static readonly AvaloniaProperty WatermarkContentTemplateProperty = AvaloniaProperty.Register<DateTimeEditor, DataTemplate>("WatermarkContentTemplate");
 
         /// <summary>
         /// Identifies the <see cref="Value"/> dependency property.

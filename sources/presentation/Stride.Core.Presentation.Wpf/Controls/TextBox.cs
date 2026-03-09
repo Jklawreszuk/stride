@@ -1,10 +1,8 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
-using System.ComponentModel;
 using System.Net.Mime;
 using System.Threading;
-using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
@@ -31,7 +29,7 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="ValidationDelay"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty ValidationDelayProperty = AvaloniaProperty.Register("ValidationDelay", typeof(int), typeof(TextBox), new PropertyMetadata(500));
+        public static readonly AvaloniaProperty ValidationDelayProperty = AvaloniaProperty.Register<TextBox, int>("ValidationDelay", 500);
         
         /// <summary>
         /// Identifies the <see cref="TrimmedText"/> dependency property.
@@ -51,8 +49,8 @@ namespace Stride.Core.Presentation.Controls
         static TextBox()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(TextBox), new FrameworkPropertyMetadata(typeof(TextBox)));
-            ClearTextCommand = new RoutedCommand("ClearTextCommand", typeof(System.Windows.Controls.TextBox));
-            CommandManager.RegisterClassCommandBinding(typeof(System.Windows.Controls.TextBox), new CommandBinding(ClearTextCommand, OnClearTextCommand));
+            ClearTextCommand = new RoutedCommand("ClearTextCommand", typeof(Avalonia.Controls.TextBox));
+            CommandManager.RegisterClassCommandBinding(typeof(Avalonia.Controls.TextBox), new CommandBinding(ClearTextCommand, OnClearTextCommand));
         }
 
         public TextBox()

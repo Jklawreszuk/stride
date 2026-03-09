@@ -519,7 +519,7 @@ namespace Stride.Core.Presentation.Controls
 
         private static void UpdateValueCommand([NotNull] object sender, Func<NumericTextBox, double> getValue, bool validate = true)
         {
-            var control = sender as NumericTextBox ?? ((System.Windows.Controls.TextBox)sender).FindVisualParentOfType<NumericTextBox>();
+            var control = sender as NumericTextBox ?? ((Avalonia.Controls.TextBox)sender).FindVisualParentOfType<NumericTextBox>();
             if (control != null)
             {
                 var value = getValue(control);

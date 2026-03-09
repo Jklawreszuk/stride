@@ -55,8 +55,7 @@ namespace Stride.Core.Presentation.Controls.Commands
 
         private static void OnSetAllVectorComponents(object sender, ExecutedRoutedEventArgs e)
         {
-            var vectorEditor = sender as VectorEditorBase;
-            if (vectorEditor != null)
+            if (sender is VectorEditorBase vectorEditor)
             {
                 try
                 {

@@ -12,7 +12,7 @@ using Stride.Core.Annotations;
 
 namespace Stride.Core.Presentation.Controls
 {
-    public static class Trimming
+    public class Trimming
     {
         /// <summary>
         /// The string used as ellipsis for trimming.
@@ -22,17 +22,17 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="TextTrimming"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty TextTrimmingProperty = AvaloniaProperty.RegisterAttached("TextTrimming", typeof(TextTrimming), typeof(Trimming), new PropertyMetadata(TextTrimming.None));
+        public static readonly AvaloniaProperty TextTrimmingProperty = AvaloniaProperty.RegisterAttached<Trimming, Control, TextTrimming>("TextTrimming", TextTrimming.None);
 
         /// <summary>
         /// Identifies the <see cref="TrimmingSource"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty TrimmingSourceProperty = AvaloniaProperty.RegisterAttached("TrimmingSource", typeof(TrimmingSource), typeof(Trimming), new PropertyMetadata(TrimmingSource.End));
+        public static readonly AvaloniaProperty TrimmingSourceProperty = AvaloniaProperty.RegisterAttached<Trimming, Control, TrimmingSource>("TrimmingSource",TrimmingSource.End);
 
         /// <summary>
         /// Identifies the <see cref="WordSeparators"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty WordSeparatorsProperty = AvaloniaProperty.RegisterAttached("WordSeparators", typeof(string), typeof(Trimming), new PropertyMetadata(" \t"));
+        public static readonly AvaloniaProperty WordSeparatorsProperty = AvaloniaProperty.RegisterAttached<Trimming, Control, string>("WordSeparators", " \t");
 
         /// <summary>
         /// Gets the current value of the <see cref="TextTrimming"/> dependency property attached to the given <see cref="AvaloniaObject"/>.
@@ -141,16 +141,17 @@ namespace Stride.Core.Presentation.Controls
 
             List<string> words;
 
-            switch (trimming)
+            if (trimming == TextTrimming.CharacterEllipsis)
             {
-                case TextTrimming.CharacterEllipsis:
-                    words = text.ToCharArray().Select(c => c.ToString(CultureInfo.InvariantCulture)).ToList();
-                    break;
-                case TextTrimming.WordEllipsis:
-                    words = SplitWords(text, wordSeparators);
-                    break;
-                default:
-                    throw new ArgumentException("Invalid 'TextTrimming' argument.");
+                words = text.ToCharArray().Select(c => c.ToString(CultureInfo.InvariantCulture)).ToList();
+            }
+            if (trimming == TextTrimming.WordEllipsis)
+            {
+                words = SplitWords(text, wordSeparators);
+            }
+            else
+            {
+                throw new ArgumentException("Invalid 'TextTrimming' argument.");
             }
 
             var firstWord = true;
@@ -249,34 +250,36 @@ namespace Stride.Core.Presentation.Controls
             var period = new FormattedText(".", CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, typeface, fontSize, Brushes.Black);
             var periodWidth = period.Width;
 
-            switch (trimming)
+            if (trimming == TextTrimming.CharacterEllipsis)
             {
-                case TextTrimming.CharacterEllipsis:
-                    sizes = new double[text.Length];
-                    for (var i = 0; i < text.Length; i++)
-                    {
-                        var token = text[i].ToString(CultureInfo.CurrentUICulture) + ".";
-                        var formattedText = new FormattedText(token, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, typeface, fontSize, Brushes.Black);
-                        var width = formattedText.Width - periodWidth;
-                        sizes[i] = width;
-                        totalWidth += width;
-                    }
-                    return totalWidth;
-                case TextTrimming.WordEllipsis:
-                    var words = SplitWords(text, wordSeparators);
-                    sizes = new double[words.Count];
-                    for (var i = 0; i < words.Count; i++)
-                    {
-                        var token = words[i] + ".";
-                        var formattedText = new FormattedText(token, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, typeface, fontSize, Brushes.Black);
-                        var width = formattedText.Width - periodWidth;
-                        sizes[i] = width;
-                        totalWidth += width;
-                    }
-                    return totalWidth;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(trimming));
+                sizes = new double[text.Length];
+                for (var i = 0; i < text.Length; i++)
+                {
+                    var token = text[i].ToString(CultureInfo.CurrentUICulture) + ".";
+                    var formattedText = new FormattedText(token, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, typeface, fontSize, Brushes.Black);
+                    var width = formattedText.Width - periodWidth;
+                    sizes[i] = width;
+                    totalWidth += width;
+                }
+                return totalWidth;
             }
+
+            if (trimming == TextTrimming.WordEllipsis)
+            {
+                var words = SplitWords(text, wordSeparators);
+                sizes = new double[words.Count];
+                for (var i = 0; i < words.Count; i++)
+                {
+                    var token = words[i] + ".";
+                    var formattedText = new FormattedText(token, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, typeface, fontSize, Brushes.Black);
+                    var width = formattedText.Width - periodWidth;
+                    sizes[i] = width;
+                    totalWidth += width;
+                }
+                return totalWidth;
+            }
+
+            throw new ArgumentOutOfRangeException(nameof(trimming));
         }
 
         [NotNull]

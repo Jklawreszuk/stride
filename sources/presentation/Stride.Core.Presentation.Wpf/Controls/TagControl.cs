@@ -13,7 +13,7 @@ namespace Stride.Core.Presentation.Controls
         /// Identifies the <see cref="CloseTagCommand"/> dependency property.
         /// </summary>
         public static readonly AvaloniaProperty CloseTagCommandProperty =
-            AvaloniaProperty.Register("CloseTagCommand", typeof(ICommandBase), typeof(TagControl));
+            AvaloniaProperty.Register<TagControl, ICommandBase>("CloseTagCommand");
 
         public ICommandBase CloseTagCommand
         {
