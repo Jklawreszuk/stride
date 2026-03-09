@@ -20,10 +20,5 @@ namespace Stride.Core.Presentation.Controls
             get { return (ICommandBase)GetValue(CloseTagCommandProperty); }
             set { SetValue(CloseTagCommandProperty, value); }
         }
-
-        static TagControl()
-        {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(TagControl), new FrameworkPropertyMetadata(typeof(TagControl)));
-        }
     }
 }

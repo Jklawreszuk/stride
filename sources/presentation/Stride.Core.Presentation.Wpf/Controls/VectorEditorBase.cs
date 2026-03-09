@@ -14,22 +14,22 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="DecimalPlaces"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty DecimalPlacesProperty = AvaloniaProperty.Register("DecimalPlaces", typeof(int), typeof(VectorEditorBase), new FrameworkPropertyMetadata(-1));
+        public static readonly AvaloniaProperty DecimalPlacesProperty = AvaloniaProperty.Register<VectorEditorBase, int>("DecimalPlaces", -1);
 
         /// <summary>
         /// Identifies the <see cref="IsDropDownOpen"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty IsDropDownOpenProperty = AvaloniaProperty.Register("IsDropDownOpen", typeof(bool), typeof(VectorEditorBase), new PropertyMetadata(BooleanBoxes.FalseBox));
+        public static readonly AvaloniaProperty IsDropDownOpenProperty = AvaloniaProperty.Register<VectorEditorBase, bool>("IsDropDownOpen");
 
         /// <summary>
         /// Identifies the <see cref="WatermarkContent"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty WatermarkContentProperty = AvaloniaProperty.Register("WatermarkContent", typeof(object), typeof(VectorEditorBase), new PropertyMetadata(null));
+        public static readonly AvaloniaProperty WatermarkContentProperty = AvaloniaProperty.Register<VectorEditorBase, object>("WatermarkContent");
 
         /// <summary>
         /// Identifies the <see cref="WatermarkContentTemplate"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty WatermarkContentTemplateProperty = AvaloniaProperty.Register("WatermarkContentTemplate", typeof(DataTemplate), typeof(VectorEditorBase), new PropertyMetadata(null));
+        public static readonly AvaloniaProperty WatermarkContentTemplateProperty = AvaloniaProperty.Register<VectorEditorBase, DataTemplate>("WatermarkContentTemplate");
 
         /// <summary>
         /// Gets or sets the number of decimal places displayed in the <see cref="NumericTextBox"/>.

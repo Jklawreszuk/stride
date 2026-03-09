@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
 using Stride.Core.Presentation.Interop;
@@ -52,7 +53,8 @@ namespace Stride.Core.Presentation.Windows
                 MessageBoxImage.Information => "ImageInformationDialog",
                 _ => throw new ArgumentOutOfRangeException(nameof(image), image, null)
             };
-            messageBox.Image = imageKey != null ? (IImage)messageBox.TryFindResource(imageKey) : null;
+            if (imageKey != null && messageBox.TryFindResource(imageKey, out var result))
+                messageBox.Image = (IImage)result;
         }
 
         /// <summary>
