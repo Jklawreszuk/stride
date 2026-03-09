@@ -139,27 +139,27 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Increases the current value with the value of the <see cref="LargeChange"/> property.
         /// </summary>
-        public static RoutedCommand LargeIncreaseCommand { get; }
+        public static ICommand LargeIncreaseCommand { get; }
 
         /// <summary>
         /// Increases the current value with the value of the <see cref="SmallChange"/> property.
         /// </summary>
-        public static RoutedCommand SmallIncreaseCommand { get; }
+        public static ICommand SmallIncreaseCommand { get; }
 
         /// <summary>
         /// Decreases the current value with the value of the <see cref="LargeChange"/> property.
         /// </summary>
-        public static RoutedCommand LargeDecreaseCommand { get; }
+        public static ICommand LargeDecreaseCommand { get; }
 
         /// <summary>
         /// Decreases the current value with the value of the <see cref="SmallChange"/> property.
         /// </summary>
-        public static RoutedCommand SmallDecreaseCommand { get; }
+        public static ICommand SmallDecreaseCommand { get; }
 
         /// <summary>
         /// Resets the current value to zero.
         /// </summary>
-        public static RoutedCommand ResetValueCommand { get; }
+        public static ICommand ResetValueCommand { get; }
 
         static NumericTextBox()
         {
@@ -171,25 +171,25 @@ namespace Stride.Core.Presentation.Controls
 
             // Since the NumericTextBox is not focusable itself, we have to bind the commands to the inner text box of the control.
             // The handlers will then find the parent that is a NumericTextBox and process the command on this control if it is found.
-            LargeIncreaseCommand = new RoutedCommand("LargeIncreaseCommand", typeof(System.Windows.Controls.TextBox));
+            LargeIncreaseCommand = new RelayCommand("LargeIncreaseCommand", typeof(System.Windows.Controls.TextBox));
             CommandManager.RegisterClassCommandBinding(typeof(System.Windows.Controls.TextBox), new CommandBinding(LargeIncreaseCommand, OnLargeIncreaseCommand));
             CommandManager.RegisterClassInputBinding(typeof(System.Windows.Controls.TextBox), new InputBinding(LargeIncreaseCommand, new KeyGesture(Key.PageUp)));
             CommandManager.RegisterClassInputBinding(typeof(System.Windows.Controls.TextBox), new InputBinding(LargeIncreaseCommand, new KeyGesture(Key.Up, KeyModifiers.Shift)));
 
-            LargeDecreaseCommand = new RoutedCommand("LargeDecreaseCommand", typeof(System.Windows.Controls.TextBox));
+            LargeDecreaseCommand = new RelayCommand("LargeDecreaseCommand", typeof(System.Windows.Controls.TextBox));
             CommandManager.RegisterClassCommandBinding(typeof(System.Windows.Controls.TextBox), new CommandBinding(LargeDecreaseCommand, OnLargeDecreaseCommand));
             CommandManager.RegisterClassInputBinding(typeof(System.Windows.Controls.TextBox), new InputBinding(LargeDecreaseCommand, new KeyGesture(Key.PageDown)));
             CommandManager.RegisterClassInputBinding(typeof(System.Windows.Controls.TextBox), new InputBinding(LargeDecreaseCommand, new KeyGesture(Key.Down, KeyModifiers.Shift)));
 
-            SmallIncreaseCommand = new RoutedCommand("SmallIncreaseCommand", typeof(System.Windows.Controls.TextBox));
+            SmallIncreaseCommand = new RelayCommand("SmallIncreaseCommand", typeof(System.Windows.Controls.TextBox));
             CommandManager.RegisterClassCommandBinding(typeof(System.Windows.Controls.TextBox), new CommandBinding(SmallIncreaseCommand, OnSmallIncreaseCommand));
             CommandManager.RegisterClassInputBinding(typeof(System.Windows.Controls.TextBox), new InputBinding(SmallIncreaseCommand, new KeyGesture(Key.Up)));
 
-            SmallDecreaseCommand = new RoutedCommand("SmallDecreaseCommand", typeof(System.Windows.Controls.TextBox));
+            SmallDecreaseCommand = new RelayCommand("SmallDecreaseCommand", typeof(System.Windows.Controls.TextBox));
             CommandManager.RegisterClassCommandBinding(typeof(System.Windows.Controls.TextBox), new CommandBinding(SmallDecreaseCommand, OnSmallDecreaseCommand));
             CommandManager.RegisterClassInputBinding(typeof(System.Windows.Controls.TextBox), new InputBinding(SmallDecreaseCommand, new KeyGesture(Key.Down)));
 
-            ResetValueCommand = new RoutedCommand("ResetValueCommand", typeof(System.Windows.Controls.TextBox));
+            ResetValueCommand = new RelayCommand("ResetValueCommand", typeof(System.Windows.Controls.TextBox));
             CommandManager.RegisterClassCommandBinding(typeof(System.Windows.Controls.TextBox), new CommandBinding(ResetValueCommand, OnResetValueCommand));
         }
 

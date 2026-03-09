@@ -18,8 +18,8 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="EditingMode"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty EditingModeProperty =
-            AvaloniaProperty.Register(nameof(EditingMode), typeof(VectorEditingMode), typeof(VectorEditor<T>), new FrameworkPropertyMetadata(VectorEditingMode.Normal, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+        public static readonly StyledProperty<VectorEditingMode> EditingModeProperty =
+            AvaloniaProperty.Register<VectorEditor<T>, VectorEditingMode>(nameof(EditingMode), defaultValue: VectorEditingMode.Normal);
         
         public VectorEditingMode EditingMode { get { return (VectorEditingMode)GetValue(EditingModeProperty); } set { SetValue(EditingModeProperty, value); } }
 
@@ -45,6 +45,6 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Resource Key for the ToggleButtonStyle.
         /// </summary>
-        public static ComponentResourceKey ToggleButtonStyleKey { get; } = new ComponentResourceKey(typeof(VectorEditorResources), nameof(ToggleButtonStyleKey));
+        public static object ToggleButtonStyleKey { get; } = new();
     }
 }

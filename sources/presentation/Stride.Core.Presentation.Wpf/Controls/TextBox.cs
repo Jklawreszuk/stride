@@ -3,6 +3,7 @@
 using System;
 using System.Net.Mime;
 using System.Threading;
+using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
@@ -44,12 +45,12 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Clears the current <see cref="MediaTypeNames.Text"/> of a text box.
         /// </summary>
-        public static RoutedCommand ClearTextCommand { get; }
+        public static ICommand ClearTextCommand { get; }
         
         static TextBox()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(TextBox), new FrameworkPropertyMetadata(typeof(TextBox)));
-            ClearTextCommand = new RoutedCommand("ClearTextCommand", typeof(Avalonia.Controls.TextBox));
+            ClearTextCommand = new RelayCommand("ClearTextCommand", typeof(Avalonia.Controls.TextBox));
             CommandManager.RegisterClassCommandBinding(typeof(Avalonia.Controls.TextBox), new CommandBinding(ClearTextCommand, OnClearTextCommand));
         }
 

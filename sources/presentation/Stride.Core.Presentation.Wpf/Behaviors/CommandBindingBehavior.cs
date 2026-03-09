@@ -38,8 +38,8 @@ namespace Stride.Core.Presentation.Behaviors
         /// <summary>
         /// Identifies the <see cref="RoutedCommand"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty RoutedCommandProperty =
-            AvaloniaProperty.Register(nameof(RoutedCommand), typeof(RoutedCommand), typeof(CommandBindingBehavior));
+        public static readonly AvaloniaProperty ICommandProperty =
+            AvaloniaProperty.Register(nameof(ICommand), typeof(ICommand), typeof(CommandBindingBehavior));
 
         /// <summary>
         /// Gets or sets the <see cref="ICommandBase"/> to bind.
@@ -58,14 +58,14 @@ namespace Stride.Core.Presentation.Behaviors
         public bool IsEnabled { get { return (bool)GetValue(IsEnabledProperty); } set { SetValue(IsEnabledProperty, value.Box()); } }
 
         /// <summary>
-        /// Gets or sets the <see cref="RoutedCommand"/> to bind.
+        /// Gets or sets the <see cref="ICommand"/> to bind.
         /// </summary>
-        public RoutedCommand RoutedCommand { get { return (RoutedCommand)GetValue(RoutedCommandProperty); } set { SetValue(RoutedCommandProperty, value); } }
+        public ICommand ICommand { get { return (ICommand)GetValue(ICommandProperty); } set { SetValue(ICommandProperty, value); } }
 
         /// <inheritdoc/>
         protected override void OnAttached()
         {
-            commandBinding = new CommandBinding(RoutedCommand, (s, e) => OnExecuted(e), (s, e) => OnCanExecute(e));
+            commandBinding = new CommandBinding(ICommand, (s, e) => OnExecuted(e), (s, e) => OnCanExecute(e));
             AssociatedObject.CommandBindings.Add(commandBinding);
         }
 

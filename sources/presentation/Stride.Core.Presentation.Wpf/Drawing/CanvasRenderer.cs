@@ -266,7 +266,7 @@ namespace Stride.Core.Presentation.Drawing
             if (points.Count != texts.Count) throw new ArgumentException($"{nameof(points)} and {nameof(texts)} must have the same number of elements.");
 
             var brush = GetBrush(color);
-            var typeFace = new Typeface(fontFamily, FontStyles.Normal, fontWeight, FontStretches.Normal);
+            var typeFace = new Typeface(fontFamily, FontStyle.Normal, fontWeight);
 
             var visual = new DrawingVisual();
             var context = visual.RenderOpen();
@@ -310,8 +310,7 @@ namespace Stride.Core.Presentation.Drawing
             switch (measurementMethod)
             {
                 case TextMeasurementMethod.GlyphTypeface:
-                    GlyphTypeface glyphTypeface;
-                    if (TryGetGlyphTypeface(fontFamily, FontStyles.Normal, fontWeight, FontStretches.Normal, out glyphTypeface))
+                    if (TryGetGlyphTypeface(fontFamily, FontStyle.Normal, fontWeight, FontStretch.Normal, out var glyphTypeface))
                         return MeasureTextSize(glyphTypeface, fontSize, text);
                     // Fallback to TextBlock measurement method
                     goto case TextMeasurementMethod.TextBlock;
@@ -347,8 +346,7 @@ namespace Stride.Core.Presentation.Drawing
                 switch (measurementMethod)
                 {
                     case TextMeasurementMethod.GlyphTypeface:
-                        GlyphTypeface glyphTypeface;
-                        if (TryGetGlyphTypeface(fontFamily, FontStyles.Normal, fontWeight, FontStretches.Normal, out glyphTypeface))
+                        if (TryGetGlyphTypeface(fontFamily, FontStyle.Normal, fontWeight, FontStretch.Normal, out var glyphTypeface))
                         {
                             size = MeasureTextSize(glyphTypeface, fontSize, text);
                             break;
@@ -534,8 +532,6 @@ namespace Stride.Core.Presentation.Drawing
             if (!cachedBrushes.TryGetValue(color, out brush))
             {
                 brush = new SolidColorBrush(color.ToSystemColor());
-                if (brush.CanFreeze)
-                    brush.Freeze(); // Freezing should improve rendering performance
                 cachedBrushes.Add(color, brush);
             }
 
