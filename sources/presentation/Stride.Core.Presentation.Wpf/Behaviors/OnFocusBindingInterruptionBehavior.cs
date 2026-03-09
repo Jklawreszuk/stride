@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Data;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Avalonia.Xaml.Interactivity;
 using Microsoft.Xaml.Behaviors;
 using Stride.Core;

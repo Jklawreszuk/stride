@@ -4,8 +4,6 @@ using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
 using Avalonia;
 using Avalonia.Controls;
 using Stride.Core.Annotations;
@@ -46,7 +44,7 @@ namespace Stride.Core.Presentation.Behaviors
         /// <summary>
         /// Identifies the <see cref="GiveFocusOnSelectionChange"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty GiveFocusOnSelectionChangeProperty = AvaloniaProperty.Register(nameof(GiveFocusOnSelectionChange), typeof(bool), typeof(BindableSelectedItemsBehavior<T>), new PropertyMetadata(BooleanBoxes.TrueBox));
+        public static readonly AvaloniaProperty GiveFocusOnSelectionChangeProperty = AvaloniaProperty.Register<BindableSelectedItemsBehavior<T>, bool>(nameof(GiveFocusOnSelectionChange),  true);
 
         /// <summary>
         /// Gets or sets the view model collection that should be bound to the selected item collection of the control.

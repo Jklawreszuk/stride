@@ -40,7 +40,7 @@ namespace Stride.Core.Presentation.Behaviors
         /// Identifies the <see cref="Modifiers"/> dependency property.
         /// </summary>
         public static readonly AvaloniaProperty ModifiersProperty =
-            AvaloniaProperty.Register(nameof(Modifiers), typeof(KeyModifiers?), typeof(MouseMoveCaptureBehaviorBase<TElement>), new PropertyMetadata(null));
+            AvaloniaProperty.Register<MouseMoveCaptureBehaviorBase<TElement>, KeyModifiers?>(nameof(Modifiers));
 
         /// <summary>
         /// Identifies the <see cref="UsePreviewEvents"/> dependency property.
