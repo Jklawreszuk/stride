@@ -27,12 +27,11 @@ namespace Stride.Core.Presentation.Windows
 
         protected MessageBox()
         {
+            Initialized += OnInitialized;
         }
 
-        protected override void OnInitialized(EventArgs e)
+        protected void OnInitialized(object sender, EventArgs e)
         {
-            base.OnInitialized(e);
-
             CommandBindings.Add(new CommandBinding(ApplicationCommands.Copy, (_, __) => SafeClipboard.SetDataObject(Content ?? string.Empty, true)));
         }
 

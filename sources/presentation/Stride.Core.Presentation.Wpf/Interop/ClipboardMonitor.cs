@@ -84,7 +84,7 @@ namespace Stride.Core.Presentation.Interop
             var hwndSource = HwndSource.FromHwnd(hwnd);
             hwndSource?.Dispatcher.InvokeAsync(() =>
             {
-                if (SafeClipboard.ContainsText())
+                if (SafeClipboard.ContainsText().Result)
                 {
                     ClipboardTextChanged?.Invoke(hwndSource.RootVisual, EventArgs.Empty);
                 }
