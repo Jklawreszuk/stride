@@ -78,7 +78,7 @@ namespace Stride.Core.Presentation.Behaviors
         private void DragLeave(object sender, DragEventArgs e)
         {
             var position = AssociatedObject.GetCursorRelativePosition();
-            if (position.X <= 0 || position.Y <= 0 || position.X >= AssociatedObject.ActualWidth || position.Y >= AssociatedObject.ActualHeight)
+            if (position.X <= 0 || position.Y <= 0 || position.X >= AssociatedObject.Bounds.Width || position.Y >= AssociatedObject.Bounds.Height)
             {
                 edgeUnderMouse = null;
             }

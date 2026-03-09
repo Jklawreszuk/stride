@@ -8,6 +8,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
 using Avalonia.Media;
+using CommunityToolkit.Mvvm.Input;
 using Stride.Core.Presentation.Internal;
 
 namespace Stride.Core.Presentation.Controls
@@ -49,9 +50,7 @@ namespace Stride.Core.Presentation.Controls
         
         static TextBox()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(TextBox), new FrameworkPropertyMetadata(typeof(TextBox)));
-            ClearTextCommand = new RelayCommand("ClearTextCommand", typeof(Avalonia.Controls.TextBox));
-            CommandManager.RegisterClassCommandBinding(typeof(Avalonia.Controls.TextBox), new CommandBinding(ClearTextCommand, OnClearTextCommand));
+            ClearTextCommand = new RelayCommand<TextBox>(OnClearTextCommand);
         }
 
         public TextBox()
@@ -106,7 +105,7 @@ namespace Stride.Core.Presentation.Controls
                 }
             }
             
-            var availableWidth = ActualWidth;
+            var availableWidth = Bounds.Width;
             if (trimmedTextBlock != null)
                 availableWidth -= trimmedTextBlock.Margin.Left + trimmedTextBlock.Margin.Right;
 
@@ -133,9 +132,8 @@ namespace Stride.Core.Presentation.Controls
             }
         }
 
-        private static void OnClearTextCommand(object sender, ExecutedRoutedEventArgs e)
+        private static void OnClearTextCommand(TextBox textBox)
         {
-            var textBox = sender as TextBox;
             textBox?.Clear();
         }
     }

@@ -410,7 +410,7 @@ namespace Stride.Core.Presentation.Controls
                     if (child != null)
                     {
                         child.Arrange(new Rect(-HorizontalOffset, currentY - VerticalOffset, finalSize.Width, child.DesiredSize.Height));
-                        currentY += child.ActualHeight;
+                        currentY += child.Bounds.Height;
                     }
                     else
                     {
@@ -687,7 +687,7 @@ namespace Stride.Core.Presentation.Controls
             {
                 SetHorizontalOffset(HorizontalOffset + rect.X);
             }
-            else if (treeViewItem != null && treeViewItem.ParentTreeView.ActualWidth < rect.X)
+            else if (treeViewItem != null && treeViewItem.ParentTreeView.Bounds.Width < rect.X)
             {
                 SetHorizontalOffset(HorizontalOffset + rect.X);
             }
@@ -696,10 +696,10 @@ namespace Stride.Core.Presentation.Controls
             {
                 SetVerticalOffset(VerticalOffset + rect.Y);
             }
-            else if (treeViewItem != null && treeViewItem.ParentTreeView.ActualHeight < rect.Y + rect.Height)
+            else if (treeViewItem != null && treeViewItem.ParentTreeView.Bounds.Height < rect.Y + rect.Height)
             {
                 // set 5 more, so the next item is realized for sure.
-                var verticalOffset = rect.Y + rect.Height + VerticalOffset - treeViewItem.ParentTreeView.ActualHeight + 5;
+                var verticalOffset = rect.Y + rect.Height + VerticalOffset - treeViewItem.ParentTreeView.Bounds.Height + 5;
                 SetVerticalOffset(verticalOffset);
             }
 

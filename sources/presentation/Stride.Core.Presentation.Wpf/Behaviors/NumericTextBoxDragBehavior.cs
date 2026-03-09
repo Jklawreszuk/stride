@@ -83,7 +83,7 @@ namespace Stride.Core.Presentation.Behaviors
 
             if (adorner == null)
             {
-                adorner = new DragDirectionAdorner(AssociatedObject, AssociatedObject.contentHost.ActualWidth);
+                adorner = new DragDirectionAdorner(AssociatedObject, AssociatedObject.contentHost.Bounds.Width);
                 var adornerLayer = AdornerLayer.GetAdornerLayer(AssociatedObject);
                 adornerLayer?.Add(adorner);
             }

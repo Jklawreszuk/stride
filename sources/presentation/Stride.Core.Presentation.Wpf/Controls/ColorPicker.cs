@@ -26,10 +26,6 @@ namespace Stride.Core.Presentation.Controls
     [TemplatePart(Name = "PART_HuePickerRenderSurface", Type = typeof(Rectangle))]
     public sealed class ColorPicker : Control
     {
-        static ColorPicker()
-        {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(ColorPicker), new FrameworkPropertyMetadata(typeof(ColorPicker)));
-        }
 
         private Canvas colorPickerSelector;
         private Rectangle colorPickerRenderSurface;

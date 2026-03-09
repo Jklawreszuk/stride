@@ -105,7 +105,7 @@ namespace Stride.Core.Presentation.Controls
 
         protected override Size ArrangeOverride(Size arrangeBounds)
         {
-            if (ActualWidth > 0 && ActualHeight > 0)
+            if (Bounds.Width > 0 && Bounds.Height > 0)
             {
                 if (Interlocked.CompareExchange(ref this.isDrawingInvalidated, 0, 1) == 1)
                 {
@@ -129,7 +129,7 @@ namespace Stride.Core.Presentation.Controls
 
         private void DoInvalidateDrawing()
         {
-            if (ActualWidth <= 0 || ActualHeight <= 0)
+            if (Bounds.Width <= 0 || Bounds.Height <= 0)
                 return;
 
             if (renderer == null)
@@ -181,7 +181,7 @@ namespace Stride.Core.Presentation.Controls
             // Clear the canvas
             renderer.Clear();
             // Render the model
-            Model?.Render(renderer, ActualWidth, ActualHeight);
+            Model?.Render(renderer, Bounds.Width, Bounds.Height);
         }
     }
 }

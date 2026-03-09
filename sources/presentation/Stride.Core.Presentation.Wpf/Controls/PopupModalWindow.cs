@@ -95,7 +95,7 @@ namespace Stride.Core.Presentation.Controls
         protected bool IsMouseOverWindow([NotNull] MouseEventArgs e)
         {
             var position = e.GetPosition(this);
-            return position.X >= 0 && position.Y >= 0 && position.X < ActualWidth && position.Y < ActualHeight;
+            return position.X >= 0 && position.Y >= 0 && position.X < Bounds.Width && position.Y < Bounds.Height;
         }
     }
 }

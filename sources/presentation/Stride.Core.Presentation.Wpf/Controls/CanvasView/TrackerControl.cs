@@ -173,8 +173,8 @@ namespace Stride.Core.Presentation.Controls
             if (parent == null)
                 return;
 
-            var width = parent.ActualWidth;
-            var height = parent.ActualHeight;
+            var width = parent.Bounds.Width;
+            var height = parent.Bounds.Height;
             var lineExtents = LineExtents;
             var pos = Position;
 

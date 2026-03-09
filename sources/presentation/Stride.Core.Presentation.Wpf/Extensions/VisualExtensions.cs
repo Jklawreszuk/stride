@@ -27,8 +27,7 @@ namespace Stride.Core.Presentation.Extensions
         {
             if (visual == null) throw new ArgumentNullException(nameof(visual));
 
-            NativeHelper.POINT point;
-            NativeHelper.GetCursorPos(out point);
+            NativeHelper.GetCursorPos(out var point);
             return visual.PointFromScreen((Point)point);
         }
 

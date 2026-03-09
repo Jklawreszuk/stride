@@ -694,8 +694,8 @@ namespace Stride.Core.Presentation.Controls
         private Typeface font;
         private double fontSize;
 
-        private double actualWidth;
-        private double actualHeight;
+        private double Bounds.Width;
+        private double Bounds.Height;
 
         private double largeTickTopPosition;
         private double largeTickBottomPosition;
@@ -711,13 +711,13 @@ namespace Stride.Core.Presentation.Controls
             if (AdjustedPixelsPerTick.Equals(0.0))
                 SetValue(AdjustedPixelsPerTickPropertyKey, PixelsPerTick);
 
-            actualWidth = ActualWidth;
-            actualHeight = ActualHeight;
+            Bounds.Width = Bounds.Width;
+            Bounds.Height = Bounds.Height;
 
-            largeTickTopPosition = actualHeight * LargeTickTop;
-            largeTickBottomPosition = actualHeight * LargeTickBottom;
-            smallTickTopPosition = actualHeight * SmallTickTop;
-            smallTickBottomPosition = actualHeight * SmallTickBottom;
+            largeTickTopPosition = Bounds.Height * LargeTickTop;
+            largeTickBottomPosition = Bounds.Height * LargeTickBottom;
+            smallTickTopPosition = Bounds.Height * SmallTickTop;
+            smallTickBottomPosition = Bounds.Height * SmallTickBottom;
 
             largeTickPen = LargeTickPen;
             smallTickPen = SmallTickPen;
@@ -753,7 +753,7 @@ namespace Stride.Core.Presentation.Controls
 
             RaiseBeforeRenderEvent();
 
-            drawingContext.DrawRectangle(Background, null, new Rect(0.0, 0.0, actualWidth, actualHeight));
+            drawingContext.DrawRectangle(Background, null, new Rect(0.0, 0.0, Bounds.Width, Bounds.Height));
 
             RaiseBeforeTicksRenderEvent(drawingContext);
 
@@ -773,7 +773,7 @@ namespace Stride.Core.Presentation.Controls
                 currentPixel += adjustedPixelsPerTick * Math.Ceiling(Math.Abs(currentPixel) / adjustedPixelsPerTick);
             }
 
-            while (currentPixel < actualWidth)
+            while (currentPixel < Bounds.Width)
             {
                 DrawLargeTick(drawingContext, currentUnit, currentPixel + 1.0);
 
@@ -782,7 +782,7 @@ namespace Stride.Core.Presentation.Controls
                     for (var i = 0; i < adjustedSmallIntervalPerTick - 1; i++)
                     {
                         var smallLeft = currentPixel + ((i + 1) * adjustedPixelsPerTick) * smallIntevalLength;
-                        if (smallLeft > actualWidth)
+                        if (smallLeft > Bounds.Width)
                             break;
                         DrawSmallTick(drawingContext, smallLeft + 1.0);
                     }
@@ -956,7 +956,7 @@ namespace Stride.Core.Presentation.Controls
                 dividedUnit = Math.Round(dividedUnit, 6);
 
                 var ft = new FormattedText(dividedUnit + symbol, CultureInfo.InvariantCulture, FlowDirection.LeftToRight, font, fontSize, foreground);
-                drawingContext.DrawText(ft, new Point(position - ft.Width * textPositionOrigin.X, (textPosition * actualHeight) - (ft.Height * textPositionOrigin.Y)));
+                drawingContext.DrawText(ft, new Point(position - ft.Width * textPositionOrigin.X, (textPosition * Bounds.Height) - (ft.Height * textPositionOrigin.Y)));
             }
 
             drawingContext.DrawLine(largeTickPen, new Point(position, largeTickTopPosition), new Point(position, largeTickBottomPosition));

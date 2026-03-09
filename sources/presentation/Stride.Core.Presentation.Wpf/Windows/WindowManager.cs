@@ -181,10 +181,10 @@ namespace Stride.Core.Presentation.Windows
                 if (area != Rect.Empty)
                 {
                     var mousePosition = window.GetCursorScreenPosition();
-                    var expandRight = area.Right > mousePosition.X + window.ActualWidth;
-                    var expandBottom = area.Bottom > mousePosition.Y + window.ActualHeight;
-                    window.Left = expandRight ? mousePosition.X : mousePosition.X - window.ActualWidth;
-                    window.Top = expandBottom ? mousePosition.Y : mousePosition.Y - window.ActualHeight;
+                    var expandRight = area.Right > mousePosition.X + window.Bounds.Width;
+                    var expandBottom = area.Bottom > mousePosition.Y + window.Bounds.Height;
+                    window.Left = expandRight ? mousePosition.X : mousePosition.X - window.Bounds.Width;
+                    window.Top = expandBottom ? mousePosition.Y : mousePosition.Y - window.Bounds.Height;
                 }
             });
 

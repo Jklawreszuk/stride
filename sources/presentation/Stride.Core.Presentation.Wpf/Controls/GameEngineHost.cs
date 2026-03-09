@@ -190,7 +190,7 @@ namespace Stride.Core.Presentation.Controls
                 // Find proper position for the game
                 var positionTransform = TransformToAncestor(root);
                 var areaPosition = positionTransform.Transform(new Point(0, 0));
-                var boundingBox = new Int4((int)(areaPosition.X*dpiScale.DpiScaleX), (int)(areaPosition.Y*dpiScale.DpiScaleY), (int)(ActualWidth*dpiScale.DpiScaleX), (int)(ActualHeight*dpiScale.DpiScaleY));
+                var boundingBox = new Int4((int)(areaPosition.X*dpiScale.DpiScaleX), (int)(areaPosition.Y*dpiScale.DpiScaleY), (int)(Bounds.Width*dpiScale.DpiScaleX), (int)(Bounds.Height*dpiScale.DpiScaleY));
                 if (boundingBox != lastBoundingBox)
                 {
                     lastBoundingBox = boundingBox;

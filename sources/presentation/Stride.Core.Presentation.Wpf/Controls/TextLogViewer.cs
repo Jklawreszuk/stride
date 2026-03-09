@@ -462,7 +462,7 @@ namespace Stride.Core.Presentation.Controls
             logTextBox.Selection.Select(result.Start, result.End);
             var selectionRect = logTextBox.Selection.Start.GetCharacterRect(LogicalDirection.Forward);
             var offset = selectionRect.Top + logTextBox.VerticalOffset;
-            logTextBox.ScrollToVerticalOffset(offset - logTextBox.ActualHeight / 2);
+            logTextBox.ScrollToVerticalOffset(offset - logTextBox.Bounds.Height / 2);
             logTextBox.BringIntoView();
             currentResult = resultIndex;
         }

@@ -241,7 +241,7 @@
                               ContentTemplateSelector="{Binding MessageTemplateSelector, RelativeSource={RelativeSource AncestorType={x:Type wnd:MessageDialogBase}}}"
                               Cursor="{Binding Cursor, RelativeSource={RelativeSource AncestorType={x:Type wnd:MessageDialogBase}}}"
                               Margin="{Binding Padding, RelativeSource={RelativeSource AncestorType={x:Type wnd:MessageDialogBase}}}"
-                              MinWidth="{Binding ActualWidth, ElementName=ButtonItemsControl}"
+                              MinWidth="{Binding Bounds.Width, ElementName=ButtonItemsControl}"
                               HorizontalAlignment="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type wnd:MessageDialogBase}}}"
                               VerticalAlignment="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type wnd:MessageDialogBase}}}"/>
           </DockPanel>
@@ -429,7 +429,7 @@
       <ContentPresenter HorizontalAlignment="Left" Margin="3,2,23,2" x:Name="ContentSite" VerticalAlignment="Center" Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" IsHitTestVisible="False" />
       <TextBox Visibility="Hidden" Template="{DynamicResource ComboBoxTextBox}" HorizontalAlignment="Left" Margin="3,2,23,2" x:Name="PART_EditableTextBox" Style="{x:Null}" VerticalAlignment="Center" Focusable="True" Background="{TemplateBinding Background}" IsReadOnly="{TemplateBinding IsReadOnly}" BorderBrush="{DynamicResource NormalBorderBrush}" Foreground="{DynamicResource TextBrush}" />
       <Popup IsOpen="{TemplateBinding IsDropDownOpen}" Placement="Bottom" x:Name="Popup" Focusable="False" AllowsTransparency="True" PopupAnimation="Slide">
-        <Grid MaxHeight="{TemplateBinding MaxDropDownHeight}" MinWidth="{TemplateBinding ActualWidth}" x:Name="DropDown" SnapsToDevicePixels="True">
+        <Grid MaxHeight="{TemplateBinding MaxDropDownHeight}" MinWidth="{TemplateBinding Bounds.Width}" x:Name="DropDown" SnapsToDevicePixels="True">
           <Border x:Name="DropDownBorder" Background="{DynamicResource ControlBackgroundBrush}" CornerRadius="3"/>
           <ScrollViewer Margin="1" Style="{DynamicResource NuclearScrollViewer}" SnapsToDevicePixels="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" CanContentScroll="True" Foreground="{DynamicResource {x:Static SystemColors.ActiveCaptionTextBrushKey}}">
             <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
@@ -1868,7 +1868,7 @@
               <Image Width="16" Height="16" Margin="-1" Source="{StaticResource ImagePickDateTime}" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
             </ToggleButton>
             <Popup x:Name="Popup" IsOpen="{TemplateBinding IsDropDownOpen}" Placement="Bottom" AllowsTransparency="True"
-                   MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ctrl:DateTimeEditor}}" StaysOpen="False"
+                   MinWidth="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=ctrl:DateTimeEditor}}" StaysOpen="False"
                    PlacementTarget="{Binding RelativeSource={RelativeSource AncestorType=ctrl:DateTimeEditor}}" PopupAnimation="Slide" VerticalOffset="2">
               <Border SnapsToDevicePixels="True" Background="{StaticResource BackgroundBrush}" BorderBrush="Black" BorderThickness="1">
                 <Grid>
@@ -2805,7 +2805,7 @@
             <Border Grid.Row="1" Margin="0" x:Name="Border" Height="4" Background="{DynamicResource DropdownButtonBackgroundBrush}" BorderBrush="{DynamicResource NormalBorderBrush}" BorderThickness="1,1,1,1" />
             <Track Grid.Row="1" x:Name="PART_Track">
               <Track.Thumb>
-                <Thumb Style="{DynamicResource NuclearSliderThumb}" Background="{DynamicResource NormalBrush}" Foreground="{x:Null}" Width="10" Height="{TemplateBinding ActualHeight}"/>
+                <Thumb Style="{DynamicResource NuclearSliderThumb}" Background="{DynamicResource NormalBrush}" Foreground="{x:Null}" Width="10" Height="{TemplateBinding Bounds.Height}"/>
               </Track.Thumb>
               <Track.IncreaseRepeatButton>
                 <RepeatButton Style="{DynamicResource ScrollBarArrowRepeatButtonStyle}" Command="Slider.IncreaseLarge" />
@@ -3158,9 +3158,9 @@
             <Border Grid.ColumnSpan="4" Grid.Row="1" Grid.RowSpan="3" BorderThickness="1,1,1,1" CornerRadius="4" BorderBrush="{DynamicResource NormalBorderBrush}">
               <Border.OpacityMask>
                 <MultiBinding Converter="{StaticResource BorderGapMaskConverter}" ConverterParameter="7">
-                  <Binding Path="ActualWidth" ElementName="Header" />
-                  <Binding Path="ActualWidth" RelativeSource="{RelativeSource Self}" />
-                  <Binding Path="ActualHeight" RelativeSource="{RelativeSource Self}" />
+                  <Binding Path="Bounds.Width" ElementName="Header" />
+                  <Binding Path="Bounds.Width" RelativeSource="{RelativeSource Self}" />
+                  <Binding Path="Bounds.Height" RelativeSource="{RelativeSource Self}" />
                 </MultiBinding>
               </Border.OpacityMask>
               <Border BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="3">
@@ -3330,7 +3330,7 @@
   <Style x:Key="GridViewColumnHeaderGripper" TargetType="{x:Type Thumb}">
     <Setter Property="Canvas.Right" Value="-8.5" />
     <Setter Property="Width" Value="18" />
-    <Setter Property="Height" Value="{Binding ActualHeight, RelativeSource={RelativeSource TemplatedParent}}" />
+    <Setter Property="Height" Value="{Binding Bounds.Height, RelativeSource={RelativeSource TemplatedParent}}" />
     <Setter Property="Padding" Value="0,3,0,4" />
     <Setter Property="Background" Value="{DynamicResource DropdownButtonBackgroundBrush}" />
     <Setter Property="Template">
@@ -4149,7 +4149,7 @@
               <Image Width="16" Height="16" Margin="-1" Source="{StaticResource ImageAdvancedEditionVector}" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
             </ToggleButton>
             <Popup x:Name="Popup" IsOpen="{TemplateBinding IsDropDownOpen}" Placement="Bottom" AllowsTransparency="True"
-                                       MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ctrl:Int2Editor}}" StaysOpen="False"
+                                       MinWidth="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=ctrl:Int2Editor}}" StaysOpen="False"
                                        PlacementTarget="{Binding RelativeSource={RelativeSource AncestorType=ctrl:Int2Editor}}" PopupAnimation="Slide" VerticalOffset="2">
               <Border SnapsToDevicePixels="True" Background="{StaticResource BackgroundBrush}" BorderBrush="Black" BorderThickness="1">
                 <ctrl:KeyValueGrid>
@@ -4218,7 +4218,7 @@
               <Image Width="16" Height="16" Margin="-1" Source="{StaticResource ImageAdvancedEditionVector}" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
             </ToggleButton>
             <Popup x:Name="Popup" Placement="Bottom" AllowsTransparency="True" IsOpen="{TemplateBinding IsDropDownOpen}"
-                                       MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ctrl:Int3Editor}}" StaysOpen="False"
+                                       MinWidth="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=ctrl:Int3Editor}}" StaysOpen="False"
                                        PlacementTarget="{Binding RelativeSource={RelativeSource AncestorType=ctrl:Int3Editor}}" PopupAnimation="Slide" VerticalOffset="2">
               <Border SnapsToDevicePixels="True" Background="{StaticResource BackgroundBrush}" BorderBrush="Black" BorderThickness="1">
                 <ctrl:KeyValueGrid>
@@ -4298,7 +4298,7 @@
               <Image Width="16" Height="16" Margin="-1" Source="{StaticResource ImageAdvancedEditionVector}" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
             </ToggleButton>
             <Popup x:Name="Popup" IsOpen="{TemplateBinding IsDropDownOpen}" Placement="Bottom" AllowsTransparency="True"
-                                       MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ctrl:Int4Editor}}" StaysOpen="False"
+                                       MinWidth="{Binding Bounds.Width, RelativeSource={RelativeSource AncestorType=ctrl:Int4Editor}}" StaysOpen="False"
                                        PlacementTarget="{Binding RelativeSource={RelativeSource AncestorType=ctrl:Int4Editor}}" PopupAnimation="Slide" VerticalOffset="2">
               <Border SnapsToDevicePixels="True" Background="{StaticResource BackgroundBrush}" BorderBrush="Black" BorderThickness="1">
                 <ctrl:KeyValueGrid>

@@ -542,7 +542,7 @@
             <Popup IsOpen="{TemplateBinding IsDropDownOpen}" Placement="Bottom" x:Name="Popup" Focusable="False"
                    AllowsTransparency="True" PopupAnimation="Slide">
               <Grid>
-                <ListBox x:Name="PART_ListBox" MinWidth="{TemplateBinding ActualWidth}" MaxHeight="380"
+                <ListBox x:Name="PART_ListBox" MinWidth="{TemplateBinding Bounds.Width}" MaxHeight="380"
                          SnapsToDevicePixels="True"
                          FocusManager.IsFocusScope="True"
                          ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource AncestorType=ctrl:FilteringComboBox}}"
@@ -583,7 +583,7 @@
             <Popup IsOpen="{TemplateBinding IsDropDownOpen}" Placement="Bottom" x:Name="Popup" Focusable="False"
                    AllowsTransparency="True" PopupAnimation="Slide">
               <Grid>
-                <ListBox x:Name="PART_ListBox" MinWidth="{TemplateBinding ActualWidth}" MaxHeight="380"
+                <ListBox x:Name="PART_ListBox" MinWidth="{TemplateBinding Bounds.Width}" MaxHeight="380"
                          SnapsToDevicePixels="True"
                          FocusManager.IsFocusScope="True"
                          ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource AncestorType=ctrl:SearchComboBox}}"
