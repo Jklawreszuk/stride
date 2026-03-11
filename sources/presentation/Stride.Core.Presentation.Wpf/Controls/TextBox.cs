@@ -7,6 +7,7 @@ using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
+using Avalonia.Controls.Primitives;
 using Avalonia.Media;
 using CommunityToolkit.Mvvm.Input;
 using Stride.Core.Presentation.Internal;
@@ -77,9 +78,9 @@ namespace Stride.Core.Presentation.Controls
         public string TrimmedText { get { return (string)GetValue(AvaloniaProperty); } private set { SetValue(TrimmedTextPropertyKey, value); } }
 
         /// <inheritdoc/>
-        public override void OnApplyTemplate()
+        protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
-            base.OnApplyTemplate();
+            base.OnApplyTemplate(e);
 
             trimmedTextBlock = GetTemplateChild("PART_TrimmedText") as TextBlock;
             if (trimmedTextBlock == null)

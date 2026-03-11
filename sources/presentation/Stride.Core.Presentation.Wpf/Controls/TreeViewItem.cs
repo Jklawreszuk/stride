@@ -5,6 +5,7 @@ using System;
 using System.Collections.Specialized;
 using System.Linq;
 using Avalonia;
+using Avalonia.Controls.Primitives;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Extensions;
 using Stride.Core.Presentation.Internal;
@@ -190,9 +191,9 @@ namespace Stride.Core.Presentation.Controls
             return DataContext != null ? $"{DataContext} ({base.ToString()})" : base.ToString();
         }
 
-        public override void OnApplyTemplate()
+        protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
-            base.OnApplyTemplate();
+            base.OnApplyTemplate(e);
 
             if (ParentTreeView?.SelectedItems != null && ParentTreeView.SelectedItems.Contains(DataContext))
             {

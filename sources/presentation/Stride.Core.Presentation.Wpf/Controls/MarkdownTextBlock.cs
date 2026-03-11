@@ -5,12 +5,13 @@ using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
+using Avalonia.Controls.Primitives;
 using Stride.Core.Annotations;
 
 namespace Stride.Core.Presentation.Controls
 {
     [TemplatePart(Name = MessageContainerPartName, Type = typeof(FlowDocumentScrollViewer))]
-    public class MarkdownTextBlock : Control
+    public class MarkdownTextBlock : TemplatedControl
     {
         /// <summary>
         /// The name of the part for the <see cref="FlowDocumentScrollViewer"/> container.
@@ -83,9 +84,9 @@ namespace Stride.Core.Presentation.Controls
         }
 
         /// <inheritdoc/>
-        public override void OnApplyTemplate()
+        protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
-            base.OnApplyTemplate();
+            base.OnApplyTemplate(e);
 
             messageContainer = GetTemplateChild(MessageContainerPartName) as FlowDocumentScrollViewer;
             if (messageContainer == null)

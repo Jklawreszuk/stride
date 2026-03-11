@@ -6,6 +6,7 @@ using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
+using Avalonia.Controls.Primitives;
 using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -26,7 +27,7 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// A dependency property used to safely evaluate the value of an item given a path.
         /// </summary>
-        private static readonly AvaloniaProperty InternalValuePathProperty = AvaloniaProperty.Register("InternalValuePath", typeof(object), typeof(FilteringComboBox));
+        private static readonly AvaloniaProperty InternalValuePathProperty = AvaloniaProperty.Register<FilteringComboBox, object>("InternalValuePath");
         /// <summary>
         /// The input text box.
         /// </summary>
@@ -234,9 +235,9 @@ namespace Stride.Core.Presentation.Controls
             }
         }
 
-        public override void OnApplyTemplate()
+        protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
-            base.OnApplyTemplate();
+            base.OnApplyTemplate(e);
 
             editableTextBox = GetTemplateChild("PART_EditableTextBox") as TextBox;
             if (editableTextBox == null)

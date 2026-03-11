@@ -4,6 +4,7 @@ using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
+using Avalonia.Controls.Primitives;
 using Avalonia.Data;
 using Avalonia.Media;
 using Avalonia.Platform;
@@ -24,7 +25,7 @@ namespace Stride.Core.Presentation.Controls
     [TemplatePart(Name = "PART_ColorPreviewRenderSurface", Type = typeof(Rectangle))]
     [TemplatePart(Name = "PART_HuePickerSelector", Type = typeof(Control))]
     [TemplatePart(Name = "PART_HuePickerRenderSurface", Type = typeof(Rectangle))]
-    public sealed class ColorPicker : Control
+    public sealed class ColorPicker : TemplatedControl
     {
 
         private Canvas colorPickerSelector;
@@ -164,10 +165,10 @@ namespace Stride.Core.Presentation.Controls
         private ColorHSV InternalColor { get { return field; } set { field = value; var prev = interlock; interlock = true; Color = value.ToColor(); interlock = prev; } }
 
         /// <inheritdoc/>
-        public override void OnApplyTemplate()
+        protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
             templateApplied = false;
-            base.OnApplyTemplate();
+            base.OnApplyTemplate(e);
 
             if (colorPickerRenderSurface != null)
             {

@@ -10,6 +10,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Presenters;
+using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml.Templates;
@@ -139,9 +140,9 @@ namespace Stride.Core.Presentation.Controls
 
         /// <inheritdoc/>
         /// <inheritdoc />
-        public override void OnApplyTemplate()
+        protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
-            base.OnApplyTemplate();
+            base.OnApplyTemplate(e);
 
             scroller = DependencyObjectExtensions.CheckTemplatePart<ScrollViewer>(GetTemplateChild(ScrollViewerPartName));
             if (scroller != null)

@@ -3,13 +3,14 @@
 using System;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Data;
 using Avalonia.Markup.Xaml.Templates;
 using Stride.Core.Presentation.Internal;
 
 namespace Stride.Core.Presentation.Controls
 {
-    public abstract class VectorEditorBase : Control
+    public abstract class VectorEditorBase : TemplatedControl
     {
         /// <summary>
         /// Identifies the <see cref="DecimalPlaces"/> dependency property.
@@ -96,10 +97,10 @@ namespace Stride.Core.Presentation.Controls
         public T DefaultValue { get { return (T)GetValue(DefaultValueProperty); } set { SetValue(DefaultValueProperty, value); } }
         
         /// <inheritdoc/>
-        public override void OnApplyTemplate()
+        protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
             templateApplied = false;
-            base.OnApplyTemplate();
+            base.OnApplyTemplate(e);
             templateApplied = true;
         }
 

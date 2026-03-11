@@ -4,6 +4,7 @@ using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Stride.Core.Annotations;
@@ -35,11 +36,10 @@ namespace Stride.Core.Presentation.Controls
                 Mouse.Capture(this, CaptureMode.SubTree);
         }
 
-        public override void OnApplyTemplate()
+        protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
-            base.OnApplyTemplate();
-            var titleBar = GetTemplateChild("TitleBar") as Control;
-            if (titleBar != null)
+            base.OnApplyTemplate(e);
+            if (GetTemplateChild("TitleBar") is Control titleBar)
                 titleBar.Visibility = Visibility.Collapsed;
         }
 

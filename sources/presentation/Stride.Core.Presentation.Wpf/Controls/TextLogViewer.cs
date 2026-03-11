@@ -9,6 +9,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Documents;
 using Avalonia.Controls.Metadata;
+using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Media.TextFormatting;
@@ -27,7 +28,7 @@ namespace Stride.Core.Presentation.Controls
     [TemplatePart(Name = "PART_ClearLog", Type = typeof(Button))]
     [TemplatePart(Name = "PART_PreviousResult", Type = typeof(Button))]
     [TemplatePart(Name = "PART_NextResult", Type = typeof(Button))]
-    public class TextLogViewer : Control
+    public class TextLogViewer : TemplatedControl
     {
         private readonly List<TextRange> searchMatches = new List<TextRange>();
         private int currentResult;
@@ -289,9 +290,9 @@ namespace Stride.Core.Presentation.Controls
         public bool ShowStacktrace { get { return (bool)GetValue(ShowStacktraceProperty); } set { SetValue(ShowStacktraceProperty, value.Box()); } }
 
         /// <inheritdoc/>
-        public override void OnApplyTemplate()
+        protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
-            base.OnApplyTemplate();
+            base.OnApplyTemplate(e);
 
             logTextBox = GetTemplateChild("PART_LogTextBox") as RichTextBox;
             if (logTextBox == null)

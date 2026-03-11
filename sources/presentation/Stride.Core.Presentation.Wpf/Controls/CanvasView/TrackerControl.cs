@@ -32,6 +32,7 @@ SOFTWARE.
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
+using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Shapes;
 using Avalonia.Media;
 using Stride.Core.Annotations;
@@ -44,7 +45,7 @@ namespace Stride.Core.Presentation.Controls
 
     [TemplatePart(Name = HorizontalLinePartName, Type = typeof(Line))]
     [TemplatePart(Name = VerticalLinePartName, Type = typeof(Line))]
-    public class TrackerControl : Control
+    public class TrackerControl : TemplatedControl
     {
         /// <summary>
         /// The name of the part for the horizontal line.
@@ -131,9 +132,9 @@ namespace Stride.Core.Presentation.Controls
             ((TrackerControl)sender).OnTrackMouseChanged(e);
         }
 
-        public override void OnApplyTemplate()
+        protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
-            base.OnApplyTemplate();
+            base.OnApplyTemplate(e);
 
             horizontalLine = GetTemplateChild(HorizontalLinePartName) as Line;
             verticalLine = GetTemplateChild(VerticalLinePartName) as Line;

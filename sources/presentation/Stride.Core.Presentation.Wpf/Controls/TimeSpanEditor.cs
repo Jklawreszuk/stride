@@ -3,11 +3,12 @@
 using System;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Markup.Xaml.Templates;
 
 namespace Stride.Core.Presentation.Controls
 {
-    public sealed class TimeSpanEditor : Control
+    public sealed class TimeSpanEditor : TemplatedControl
     {
         private bool interlock;
         private bool templateApplied;
@@ -84,10 +85,10 @@ namespace Stride.Core.Presentation.Controls
         public double? Seconds { get { return (double?)GetValue(SecondsProperty); } set { SetValue(SecondsProperty, value); } }
 
         /// <inheritdoc/>
-        public override void OnApplyTemplate()
+        protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
             templateApplied = false;
-            base.OnApplyTemplate();
+            base.OnApplyTemplate(e);
             templateApplied = true;
         }
 

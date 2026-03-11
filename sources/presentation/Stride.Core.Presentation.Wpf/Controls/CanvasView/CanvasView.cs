@@ -34,6 +34,7 @@ using System.Threading;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
+using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
 using Stride.Core.Annotations;
@@ -42,7 +43,7 @@ using Stride.Core.Presentation.Drawing;
 namespace Stride.Core.Presentation.Controls
 {
     [TemplatePart(Name = GridPartName, Type = typeof(Grid))]
-    public sealed class CanvasView : Control, IDrawingView
+    public sealed class CanvasView : TemplatedControl, IDrawingView
     {
         /// <summary>
         /// The name of the part for the <see cref="Canvas"/>.
@@ -89,9 +90,9 @@ namespace Stride.Core.Presentation.Controls
             view.InvalidateDrawing();
         }
 
-        public override void OnApplyTemplate()
+        protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
-            base.OnApplyTemplate();
+            base.OnApplyTemplate(e);
 
             grid = GetTemplateChild(GridPartName) as Grid;
             if (grid == null)

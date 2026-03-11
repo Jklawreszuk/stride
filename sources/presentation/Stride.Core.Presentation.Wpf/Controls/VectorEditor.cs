@@ -23,9 +23,9 @@ namespace Stride.Core.Presentation.Controls
         
         public VectorEditingMode EditingMode { get { return (VectorEditingMode)GetValue(EditingModeProperty); } set { SetValue(EditingModeProperty, value); } }
 
-        public override void OnApplyTemplate()
+        protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
-            base.OnApplyTemplate();
+            base.OnApplyTemplate(e);
 
             // TODO: the toggle button has been disabled
             //var toggleButton = GetTemplateChild(ToggleButtonPartName) as ToggleButton;
