@@ -3,6 +3,7 @@
 
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Xaml.Interactivity;
 using Stride.Core.Annotations;
 
@@ -21,23 +22,26 @@ namespace Stride.Core.Presentation.Behaviors
         protected override void OnAttached()
         {
             base.OnAttached();
-            AssociatedObject.PreviewMouseLeftButtonDown += MouseDown;
-            AssociatedObject.PreviewMouseLeftButtonUp += MouseUp;
+            AssociatedObject.AddHandler(InputElement.PointerPressedEvent, MouseDown, RoutingStrategies.Tunnel);
+            AssociatedObject.AddHandler(InputElement.PointerReleasedEvent, MouseUp, RoutingStrategies.Tunnel);
         }
 
         private void MouseUp(object sender, [NotNull] PointerEventArgs e)
         {
-            if (!mouseDownOccurred)
+            if (e.GetCurrentPoint(AssociatedObject).Properties.IsLeftButtonPressed)
             {
-                // Stop capturing mouse so that a click somewhere else doesn't reopen the popup
-                AssociatedObject.ReleaseMouseCapture();
+                mouseDownOccurred = true;
             }
-            mouseDownOccurred = false;
         }
 
         private void MouseDown(object sender, PointerEventArgs e)
         {
-            mouseDownOccurred = true;
+            if (!mouseDownOccurred)
+            {
+                e.Pointer.Capture(null);
+            }
+
+            mouseDownOccurred = false;
         }
     }
 }

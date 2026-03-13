@@ -16,14 +16,14 @@ namespace Stride.Core.Presentation.Behaviors
 {
     public class ContainTextAdornerBehavior : Behavior<TextBox>
     {
-        private readonly DependencyPropertyWatcher propertyWatcher = new DependencyPropertyWatcher();
+        private readonly DependencyPropertyWatcher propertyWatcher = new();
         private HighlightBorderAdorner adorner;
 
         /// <summary>
         /// Identifies the <see cref="BorderBrush"/> dependency property.
         /// </summary>
         public static readonly AvaloniaProperty BorderBrushProperty = 
-            AvaloniaProperty.Register<ContainTextAdornerBehavior,Brush>(nameof(BorderBrush), Brushes.SteelBlue);
+            AvaloniaProperty.Register<ContainTextAdornerBehavior,IBrush?>(nameof(BorderBrush), Brushes.SteelBlue);
         /// <summary>
         /// Identifies the <see cref="BorderCornerRadius"/> dependency property.
         /// </summary>

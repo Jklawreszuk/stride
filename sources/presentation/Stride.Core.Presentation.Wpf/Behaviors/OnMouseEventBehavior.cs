@@ -32,7 +32,7 @@ namespace Stride.Core.Presentation.Behaviors
 
     public class OnMouseEventBehavior : Behavior<Control>
     {
-        public static readonly AvaloniaProperty EventTypeProperty = AvaloniaProperty.Register(nameof(EventType), typeof(MouseEventType), typeof(OnMouseEventBehavior), new FrameworkPropertyMetadata(MouseEventType.None, EventTypeChanged));
+        public static readonly AvaloniaProperty EventTypeProperty = AvaloniaProperty.Register<OnMouseEventBehavior, MouseEventType>(nameof(EventType));
 
         /// <summary>
         /// Identifies the <see cref="Command"/> dependency property.
@@ -64,6 +64,11 @@ namespace Stride.Core.Presentation.Behaviors
 
         public KeyModifiers? Modifiers { get { return (KeyModifiers?)GetValue(ModifiersProperty); } set { SetValue(ModifiersProperty, value); } }
 
+        static OnMouseEventBehavior()
+        {
+            EventTypeProperty.Changed.AddClassHandler<AvaloniaObject>(EventTypeChanged);
+        }
+        
         protected bool AreModifiersValid()
         {
             if (Modifiers == null)

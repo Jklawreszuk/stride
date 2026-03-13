@@ -34,7 +34,7 @@ namespace Stride.Core.Presentation.Behaviors
         /// Identifies the <see cref="IsInProgress"/> dependency property.
         /// </summary>
         [SuppressMessage("ReSharper", "StaticMemberInGenericType")]
-        public static readonly AvaloniaProperty IsInProgressProperty = AvaloniaProperty;
+        public static readonly AvaloniaProperty IsInProgressProperty = IsInProgressPropertyKey.AvaloniaProperty;
 
         /// <summary>
         /// Identifies the <see cref="Modifiers"/> dependency property.

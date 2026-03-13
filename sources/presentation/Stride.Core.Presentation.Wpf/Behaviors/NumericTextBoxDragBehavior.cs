@@ -80,7 +80,7 @@ namespace Stride.Core.Presentation.Behaviors
             CaptureMouse();
 
             dragState = DragState.Starting;
-            Mouse.OverrideCursor = Cursors.None;
+            Mouse.OverrideCursor = new Cursor(StandardCursorType.None);
             mouseDownPosition = e.GetPosition(AssociatedObject);
 
             if (adorner == null)

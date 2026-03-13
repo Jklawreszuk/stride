@@ -42,7 +42,7 @@ namespace Stride.Core.Presentation.Interop
 
             Listeners.Add(window, hwndSource);
 
-            Dispatcher.Invoke(() =>
+            Dispatcher.UIThread.Invoke(() =>
             {
                 // start processing window messages
                 hwndSource.AddHook(WinProc);
@@ -64,7 +64,7 @@ namespace Stride.Core.Presentation.Interop
             if (!Listeners.TryGetValue(window, out var hwndSource))
                 throw new InvalidOperationException($"The given {window} is not registered as a clipboard listener.");
 
-            Dispatcher.Invoke(() =>
+            Dispatcher.UIThread.Invoke(() =>
             {
                 // stop processing window messages
                 hwndSource.RemoveHook(WinProc);
@@ -83,7 +83,7 @@ namespace Stride.Core.Presentation.Interop
         private static void OnClipboardContentChanged(IntPtr hwnd)
         {
             var hwndSource = HwndSource.FromHwnd(hwnd);
-            Dispatcher.InvokeAsync(() =>
+            Dispatcher.UIThread.InvokeAsync(() =>
             {
                 if (SafeClipboard.ContainsText().Result)
                 {

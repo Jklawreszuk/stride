@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Markup;
@@ -8,6 +9,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Metadata;
+using Avalonia.Reactive;
 using Avalonia.Xaml.Interactivity;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Internal;
@@ -18,15 +20,16 @@ namespace Stride.Core.Presentation.Behaviors
     /// Provides a way to define several cursor override on a <see cref="Control"/>.
     /// </summary>
     /// <seealso cref="CursorOverrideRule"/>
-    [ContentProperty("Rules")]
+
     public class MultiOverrideCursorBehavior : Behavior<Control>, IAddChild
     {
         public MultiOverrideCursorBehavior()
         {
-            Rules = new CursorOverrideRuleCollection();
+            Rules = [];
         }
+        private readonly List<IDisposable> subscriptions = [];
 
-        public CursorOverrideRuleCollection Rules { get { ReadPreamble(); return field; } }
+        [Content] public CursorOverrideRuleCollection Rules { get; }
 
         void IAddChild.AddChild([NotNull] object value)
         {
@@ -39,34 +42,29 @@ namespace Stride.Core.Presentation.Behaviors
         protected override void OnAttached()
         {
             base.OnAttached();
-            UpdateCursorOverride();
-
-            var cursorDescriptor = DependencyPropertyDescriptor.FromProperty(CursorOverrideRule.CursorProperty, typeof(CursorOverrideRule));
-            var forceCursorDescriptor = DependencyPropertyDescriptor.FromProperty(CursorOverrideRule.ForceCursorProperty, typeof(CursorOverrideRule));
-            var whenDescriptor = DependencyPropertyDescriptor.FromProperty(CursorOverrideRule.WhenProperty, typeof(CursorOverrideRule));
-
+            
             foreach (var rule in Rules)
             {
-                cursorDescriptor.AddValueChanged(rule, (s, a) => UpdateCursorOverride());
-                forceCursorDescriptor.AddValueChanged(rule, (s, a) => UpdateCursorOverride());
-                whenDescriptor.AddValueChanged(rule, (s, a) => UpdateCursorOverride());
+                subscriptions.Add(rule.GetObservable(CursorOverrideRule.CursorProperty)
+                        .Subscribe(new AnonymousObserver<object>((_) => UpdateCursorOverride())));
+
+                subscriptions.Add(rule.GetObservable(CursorOverrideRule.ForceCursorProperty)
+                        .Subscribe(new AnonymousObserver<object>((_) => UpdateCursorOverride())));
+
+                subscriptions.Add(rule.GetObservable(CursorOverrideRule.WhenProperty)
+                        .Subscribe(new AnonymousObserver<object>((_) => UpdateCursorOverride())));
             }
+            UpdateCursorOverride();
         }
 
         protected override void OnDetaching()
         {
-            var cursorDescriptor = DependencyPropertyDescriptor.FromProperty(OverrideCursorBehavior.CursorProperty, typeof(OverrideCursorBehavior));
-            var forceCursorDescriptor = DependencyPropertyDescriptor.FromProperty(OverrideCursorBehavior.ForceCursorProperty, typeof(OverrideCursorBehavior));
-            var whenDescriptor = DependencyPropertyDescriptor.FromProperty(OverrideCursorBehavior.IsActiveProperty, typeof(OverrideCursorBehavior));
+            foreach (var s in subscriptions)
+                s.Dispose();
 
-            foreach (var rule in Rules)
-            {
-                cursorDescriptor.RemoveValueChanged(rule, (s, a) => UpdateCursorOverride());
-                forceCursorDescriptor.RemoveValueChanged(rule, (s, a) => UpdateCursorOverride());
-                whenDescriptor.RemoveValueChanged(rule, (s, a) => UpdateCursorOverride());
-            }
+            subscriptions.Clear();
 
-            AssociatedObject.Cursor = null;
+            AssociatedObject?.Cursor = null;
             base.OnDetaching();
         }
 
