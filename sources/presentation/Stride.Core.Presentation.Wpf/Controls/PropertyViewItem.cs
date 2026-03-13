@@ -3,8 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Windows;
-using System.Windows.Input;
 using Avalonia;
 using Avalonia.Input;
 using Stride.Core.Annotations;
@@ -29,31 +27,31 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="IsHighlighted"/> dependency property.
         /// </summary>
-        public static readonly DependencyPropertyKey IsHighlightedPropertyKey = AvaloniaProperty.RegisterReadOnly("IsHighlighted", typeof(bool), typeof(PropertyViewItem), new FrameworkPropertyMetadata(BooleanBoxes.FalseBox));
+        public static readonly AvaloniaProperty IsHighlightedPropertyKey = AvaloniaProperty.RegisterDirect<PropertyViewItem, bool>("IsHighlighted", o => o.IsHighlighted);
 
         /// <summary>
         /// Identifies the <see cref="IsHovered"/> dependency property.
         /// </summary>
-        public static readonly DependencyPropertyKey IsHoveredPropertyKey = AvaloniaProperty.RegisterReadOnly("IsHovered", typeof(bool), typeof(PropertyViewItem), new FrameworkPropertyMetadata(BooleanBoxes.FalseBox));
+        public static readonly AvaloniaProperty IsHoveredPropertyKey = AvaloniaProperty.RegisterDirect<PropertyViewItem, bool>("IsHovered", o => o.IsHovered);
 
         /// <summary>
         /// Identifies the <see cref="IsKeyboardActive"/> dependency property.
         /// </summary>
-        public static readonly DependencyPropertyKey IsKeyboardActivePropertyKey = AvaloniaProperty.RegisterReadOnly("IsKeyboardActive", typeof(bool), typeof(PropertyViewItem), new FrameworkPropertyMetadata(BooleanBoxes.FalseBox));
+        public static readonly AvaloniaProperty IsKeyboardActivePropertyKey = AvaloniaProperty.RegisterDirect<PropertyViewItem, bool>("IsKeyboardActive", o => o.IsKeyboardActive);
 
         /// <summary>
         /// Identifies the <see cref="Offset"/> dependency property.
         /// </summary>
-        public static readonly DependencyPropertyKey OffsetPropertyKey = AvaloniaProperty.RegisterReadOnly("Offset", typeof(double), typeof(PropertyViewItem), new FrameworkPropertyMetadata(0.0));
+        public static readonly AvaloniaProperty OffsetPropertyKey = AvaloniaProperty.RegisterDirect<PropertyViewItem, double>("Offset", o => o.Offset);
 
         /// <summary>
         /// Identifies the <see cref="Increment"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty IncrementProperty = AvaloniaProperty.Register("Increment", typeof(double), typeof(PropertyViewItem), new FrameworkPropertyMetadata(0.0, OnIncrementChanged));
+        public static readonly AvaloniaProperty IncrementProperty = AvaloniaProperty.Register<PropertyViewItem, double>("Increment");
 
         static PropertyViewItem()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(PropertyViewItem), new FrameworkPropertyMetadata(typeof(PropertyViewItem)));
+            
         }
 
         /// <summary>
@@ -89,22 +87,22 @@ namespace Stride.Core.Presentation.Controls
         /// </summary>
         /// <seealso cref="Highlightable"/>
         /// <seealso cref="IsHovered"/>
-        public bool IsHighlighted => (bool)GetValue(AvaloniaProperty);
+        public bool IsHighlighted => (bool)GetValue(IsHighlightedPropertyKey);
 
         /// <summary>
         /// Gets whether the mouse cursor is currently over this control.
         /// </summary>
-        public bool IsHovered => (bool)GetValue(AvaloniaProperty);
+        public bool IsHovered => (bool)GetValue(IsHoveredPropertyKey);
 
         /// <summary>
         /// Gets whether this control is the closest control to the control that has the keyboard focus.
         /// </summary>
-        public bool IsKeyboardActive => (bool)GetValue(AvaloniaProperty);
+        public bool IsKeyboardActive => (bool)GetValue(IsKeyboardActivePropertyKey);
 
         /// <summary>
         /// Gets the absolute offset of this <see cref="PropertyViewItem"/>.
         /// </summary>
-        public double Offset { get { return (double)GetValue(AvaloniaProperty); } private set { SetValue(OffsetPropertyKey, value); } }
+        public double Offset { get { return (double)GetValue(OffsetPropertyKey); } private set { SetValue(OffsetPropertyKey, value); } }
 
         /// <summary>
         /// Gets or set the increment value used to calculate the <see cref="Offset "/>of the <see cref="PropertyViewItem"/> contained in the <see cref="Properties"/> of this control..

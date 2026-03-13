@@ -3,6 +3,7 @@
 using System;
 using System.Reflection;
 using Avalonia.Controls;
+using Avalonia.Data;
 using Stride.Core.Annotations;
 
 namespace Stride.Core.Presentation.Behaviors
@@ -47,7 +48,7 @@ namespace Stride.Core.Presentation.Behaviors
         private void ListBoxSelectionChanged([NotNull] object sender, SelectionChangedEventArgs e)
         {
             // Don't process events happening inside the EditableContentListBoxItem (happening when we have a ComboBox inside)
-            if (!Equals(e.OriginalSource, AssociatedObject))
+            if (!Equals(e.Source, AssociatedObject))
                 return;
 
             var listBox = (ListBox)sender;

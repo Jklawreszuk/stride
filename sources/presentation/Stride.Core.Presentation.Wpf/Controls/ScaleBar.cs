@@ -113,29 +113,29 @@ namespace Stride.Core.Presentation.Controls
             typeof(ScaleBar),
             new FrameworkPropertyMetadata(100.0, FrameworkPropertyMetadataOptions.AffectsRender, OnPixelsPerTickPropertyChanged, CoercePixelsPerTickPropertyValue));
 
-        private static readonly DependencyPropertyKey AdjustedUnitsPerTickPropertyKey = 
-            AvaloniaProperty.RegisterReadOnly(
+        private static readonly AvaloniaProperty AdjustedUnitsPerTickPropertyKey = 
+            AvaloniaProperty.RegisterDirect(
             "AdjustedUnitsPerTick",
             typeof(double),
             typeof(ScaleBar),
             new PropertyMetadata());
         public static readonly AvaloniaProperty AdjustedUnitsPerTickProperty = AvaloniaProperty;
 
-        private static readonly DependencyPropertyKey AdjustedPixelsPerTickPropertyKey = AvaloniaProperty.RegisterReadOnly(
+        private static readonly AvaloniaProperty AdjustedPixelsPerTickPropertyKey = AvaloniaProperty.RegisterDirect(
             "AdjustedPixelsPerTick",
             typeof(double),
             typeof(ScaleBar),
             new PropertyMetadata());
         public static readonly AvaloniaProperty AdjustedPixelsPerTickProperty = AvaloniaProperty;
 
-        private static readonly DependencyPropertyKey PixelsPerUnitPropertyKey = AvaloniaProperty.RegisterReadOnly(
+        private static readonly AvaloniaProperty PixelsPerUnitPropertyKey = AvaloniaProperty.RegisterDirect(
             "PixelsPerUnit",
             typeof(double),
             typeof(ScaleBar),
             new PropertyMetadata());
         public static readonly AvaloniaProperty PixelsPerUnitProperty = AvaloniaProperty;
 
-        private static readonly DependencyPropertyKey AdjustedPixelsPerUnitPropertyKey = AvaloniaProperty.RegisterReadOnly(
+        private static readonly AvaloniaProperty AdjustedPixelsPerUnitPropertyKey = AvaloniaProperty.RegisterDirect(
             "AdjustedPixelsPerUnit",
             typeof(double),
             typeof(ScaleBar),
@@ -325,7 +325,7 @@ namespace Stride.Core.Presentation.Controls
             RaiseScaleChangedEvent(dependencyProperty, oldValue, value);
         }
 
-        private void SetScaleChangingProperty([NotNull] DependencyPropertyKey dependencyPropertyKey, [NotNull] AvaloniaProperty dependencyProperty, object value)
+        private void SetScaleChangingProperty([NotNull] AvaloniaProperty dependencyPropertyKey, [NotNull] AvaloniaProperty dependencyProperty, object value)
         {
             var oldValue = GetValue(dependencyProperty);
             RaiseScaleChangingEvent(dependencyProperty, oldValue, value);

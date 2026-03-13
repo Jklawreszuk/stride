@@ -6,7 +6,6 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Xaml.Interactivity;
-using Microsoft.Xaml.Behaviors;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Extensions;
 
@@ -20,16 +19,16 @@ namespace Stride.Core.Presentation.Behaviors
         protected override void OnAttached()
         {
             base.OnAttached();
-            AssociatedObject.AddHandler(Control.PreviewMouseLeftButtonDownEvent, (MouseButtonEventHandler)TrackMouseEvent, true);
-            AssociatedObject.AddHandler(Control.PreviewMouseLeftButtonUpEvent, (MouseButtonEventHandler)TrackMouseEvent, true);
+            AssociatedObject.PointerPressed += OnPointerPressed;
+            AssociatedObject.PointerReleased += OnPointerReleased;
             AssociatedObject.Initialized += SliderInitialized;
         }
 
         protected override void OnDetaching()
         {
             AssociatedObject.Initialized -= SliderInitialized;
-            AssociatedObject.RemoveHandler(Control.PreviewMouseLeftButtonDownEvent, (MouseButtonEventHandler)TrackMouseEvent);
-            AssociatedObject.RemoveHandler(Control.PreviewMouseLeftButtonUpEvent, (MouseButtonEventHandler)TrackMouseEvent);
+            AssociatedObject.PointerPressed -= OnPointerPressed;
+            AssociatedObject.PointerReleased -= OnPointerReleased;
             if (track != null && track.Thumb != null)
             {
                 track.Thumb.PointerEntered -= PointerEntered;
@@ -48,18 +47,33 @@ namespace Stride.Core.Presentation.Behaviors
             AssociatedObject.Initialized += SliderInitialized;
         }
 
-        private void TrackMouseEvent(object sender, [NotNull] PointerEventArgs e)
+        private void OnPointerReleased(object sender, [NotNull] PointerReleasedEventArgs e)
         {
-            if (e.ChangedButton == MouseButton.Left)
-                trackMouseDown = e.ButtonState == MouseButtonState.Pressed;
+            if (e.GetCurrentPoint(AssociatedObject).Properties.IsLeftButtonPressed)
+            {
+                trackMouseDown = false;
+
+                // Release pointer capture
+                if (e.Pointer.Captured == AssociatedObject)
+                    e.Pointer.Capture(null);
+            }
+        }
+        private void OnPointerPressed(object sender, [NotNull] PointerPressedEventArgs e)
+        {
+            if (e.GetCurrentPoint(AssociatedObject).Properties.IsLeftButtonPressed)
+            {
+                trackMouseDown = true;
+                e.Pointer.Capture(AssociatedObject);
+            }
         }
 
         private void PointerEntered(object sender, [NotNull] PointerEventArgs e)
         {
             if (trackMouseDown)
             {
-                var args = new PointerEventArgs(e.MouseDevice, e.Timestamp, MouseButton.Left) { RoutedEvent = Control.MouseLeftButtonDownEvent };
-                track.Thumb.RaiseEvent(args);
+                //todo
+                //var args = new PointerEventArgs(e.MouseDevice, e.Timestamp, MouseButton.Left) { RoutedEvent = Control.MouseLeftButtonDownEvent };
+                //track.Thumb.RaiseEvent(args);
                 trackMouseDown = false;
             }
         }

@@ -4,6 +4,7 @@
 using System;
 using System.Diagnostics;
 using Avalonia;
+using Avalonia.Controls;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Internal;
 

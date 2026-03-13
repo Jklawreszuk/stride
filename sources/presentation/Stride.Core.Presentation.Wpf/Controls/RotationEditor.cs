@@ -15,18 +15,18 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="X"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty XProperty = AvaloniaProperty.Register("X", typeof(float?), typeof(RotationEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
+        public static readonly AvaloniaProperty XProperty = AvaloniaProperty.Register<RotationEditor, float?>("X");
 
         /// <summary>
         /// Identifies the <see cref="Y"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty YProperty = AvaloniaProperty.Register("Y", typeof(float?), typeof(RotationEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
+        public static readonly AvaloniaProperty YProperty = AvaloniaProperty.Register<RotationEditor, float?>("Y");
 
         /// <summary>
         /// Identifies the <see cref="Z"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty ZProperty = AvaloniaProperty.Register("Z", typeof(float?), typeof(RotationEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
-
+        public static readonly AvaloniaProperty ZProperty = AvaloniaProperty.Register<RotationEditor, float?>("Z");
+        
         /// <summary>
         /// The X component (in Cartesian coordinate system) of the <see cref="Vector3"/> associated to this control.
         /// </summary>

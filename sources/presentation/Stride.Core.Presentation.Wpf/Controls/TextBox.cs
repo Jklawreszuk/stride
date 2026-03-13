@@ -38,7 +38,7 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="TrimmedText"/> dependency property.
         /// </summary>
-        public static readonly DependencyPropertyKey TrimmedTextPropertyKey = AvaloniaProperty.RegisterReadOnly("TrimmedText", typeof(string), typeof(TextBox), new PropertyMetadata(""));
+        public static readonly AvaloniaProperty TrimmedTextPropertyKey = AvaloniaProperty.RegisterDirect("TrimmedText", typeof(string), typeof(TextBox), new PropertyMetadata(""));
 
         /// <summary>
         /// Identifies the <see cref="TrimmedText"/> dependency property.

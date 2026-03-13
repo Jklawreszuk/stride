@@ -12,23 +12,22 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="RectX"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty RectXProperty = AvaloniaProperty.Register("RectX", typeof(float?), typeof(RectangleFEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
+        public static readonly AvaloniaProperty RectXProperty = AvaloniaProperty.Register<RectangleFEditor, float?>("RectX");
 
         /// <summary>
         /// Identifies the <see cref="RectY"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty RectYProperty = AvaloniaProperty.Register("RectY", typeof(float?), typeof(RectangleFEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
-
+        public static readonly AvaloniaProperty RectYProperty = AvaloniaProperty.Register<RectangleFEditor, float?>("RectY");
+        
         /// <summary>
         /// Identifies the <see cref="RectWidth"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty RectWidthProperty = AvaloniaProperty.Register("RectWidth", typeof(float?), typeof(RectangleFEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
+        public static readonly AvaloniaProperty RectWidthProperty = AvaloniaProperty.Register<RectangleFEditor, float?>("RectWidth");
 
         /// <summary>
         /// Identifies the <see cref="RectHeight"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty RectHeightProperty = AvaloniaProperty.Register("RectHeight", typeof(float?), typeof(RectangleFEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
-
+        public static readonly AvaloniaProperty RectHeightProperty = AvaloniaProperty.Register<RectangleFEditor, float?>("RectHeight");
         /// <summary>
         /// Gets or sets the X component of the <see cref="RectangleF"/> associated to this control.
         /// </summary>

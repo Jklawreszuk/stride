@@ -22,13 +22,13 @@ namespace Stride.Core.Presentation.Behaviors
         /// Identifies the <see cref="IsEnabled"/> dependency property.
         /// </summary>
         public static readonly AvaloniaProperty IsEnabledProperty =
-            AvaloniaProperty.Register(nameof(IsEnabled), typeof(bool), typeof(MouseMoveCaptureBehaviorBase<TElement>), new PropertyMetadata(BooleanBoxes.TrueBox, IsEnabledChanged));
+            AvaloniaProperty.Register<MouseMoveCaptureBehaviorBase<TElement>, bool>(nameof(IsEnabled), true);
 
         /// <summary>
         /// Identifies the <see cref="IsInProgress"/> dependency property key.
         /// </summary>
         protected static readonly AvaloniaProperty IsInProgressPropertyKey =
-            AvaloniaProperty.RegisterReadOnly(nameof(IsInProgress), typeof(bool), typeof(MouseMoveCaptureBehaviorBase<TElement>), new PropertyMetadata(BooleanBoxes.FalseBox));
+            AvaloniaProperty.RegisterDirect<MouseMoveCaptureBehaviorBase<TElement>, bool>(nameof(IsInProgress));
 
         /// <summary>
         /// Identifies the <see cref="IsInProgress"/> dependency property.
@@ -46,7 +46,7 @@ namespace Stride.Core.Presentation.Behaviors
         /// Identifies the <see cref="UsePreviewEvents"/> dependency property.
         /// </summary>
         public static readonly AvaloniaProperty UsePreviewEventsProperty =
-            AvaloniaProperty.Register(nameof(UsePreviewEvents), typeof(bool), typeof(MouseMoveCaptureBehaviorBase<TElement>), new PropertyMetadata(BooleanBoxes.FalseBox, UsePreviewEventsChanged));
+            AvaloniaProperty.Register<MouseMoveCaptureBehaviorBase<TElement>, bool>(nameof(UsePreviewEvents));
         
         /// <summary>
         /// <c>true</c> if this behavior is enabled; otherwise, <c>false</c>.
@@ -105,10 +105,10 @@ namespace Stride.Core.Presentation.Behaviors
         /// <summary>
         /// Captures the mouse to the <see cref="Behavior{TElement}.AssociatedObject"/>.
         /// </summary>
-        protected void CaptureMouse()
+        protected void CaptureMouse(PointerPressedEventArgs e)
         {
             AssociatedObject.Focus();
-            AssociatedObject.CaptureMouse();
+            e.Pointer.Capture(AssociatedObject);
             IsInProgress = true;
         }
 
@@ -116,19 +116,19 @@ namespace Stride.Core.Presentation.Behaviors
         protected override void OnAttached()
         {
             SubscribeToMouseEvents(UsePreviewEvents);
-            AssociatedObject.PreviewMouseUp += MouseUp;
-            AssociatedObject.LostMouseCapture += OnLostMouseCapture;
+            AssociatedObject.AddHandler(InputElement.PointerReleasedEvent, MouseUp, handledEventsToo: true);
+            AssociatedObject.PointerCaptureLost += OnLostMouseCapture;
         }
 
         ///  <inheritdoc/>
         protected override void OnDetaching()
         {
             UnsubscribeFromMouseEvents(UsePreviewEvents);
-            AssociatedObject.PreviewMouseUp -= MouseUp;
-            AssociatedObject.LostMouseCapture -= OnLostMouseCapture;
+            AssociatedObject.RemoveHandler(InputElement.PointerReleasedEvent, MouseUp);
+            AssociatedObject.PointerCaptureLost -= OnLostMouseCapture;
         }
 
-        protected abstract void OnMouseDown([NotNull] PointerEventArgs e);
+        protected abstract void OnMouseDown([NotNull] PointerPressedEventArgs e);
 
         protected abstract void OnMouseMove([NotNull] PointerEventArgs e);
 
@@ -146,7 +146,7 @@ namespace Stride.Core.Presentation.Behaviors
             }
         }
 
-        private void MouseDown(object sender, [NotNull] PointerEventArgs e)
+        private void MouseDown(object sender, [NotNull] PointerPressedEventArgs e)
         {
             if (!IsEnabled || IsInProgress)
                 return;
@@ -170,7 +170,7 @@ namespace Stride.Core.Presentation.Behaviors
             OnMouseUp(e);
         }
 
-        private void OnLostMouseCapture(object sender, [NotNull] PointerEventArgs e)
+        private void OnLostMouseCapture(object sender, [NotNull] PointerCaptureLostEventArgs e)
         {
             if (!ReferenceEquals(Mouse.Captured, sender))
             {

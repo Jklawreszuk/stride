@@ -8,6 +8,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Layout;
+using Avalonia.Media;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Controls;
 using Stride.Core.Presentation.Extensions;
@@ -68,7 +69,7 @@ namespace Stride.Core.Presentation.Behaviors
         }
 
         /// <inheritdoc />
-        protected override void OnMouseDown(PointerEventArgs e)
+        protected override void OnMouseDown(PointerPressedEventArgs e)
         {
             if (!IsContentHostPart(e.OriginalSource))
                 return;
@@ -77,7 +78,7 @@ namespace Stride.Core.Presentation.Behaviors
                 return;
 
             e.Handled = true;
-            CaptureMouse();
+            CaptureMouse(e);
 
             dragState = DragState.Starting;
             Mouse.OverrideCursor = new Cursor(StandardCursorType.None);
@@ -218,8 +219,8 @@ namespace Stride.Core.Presentation.Behaviors
         private class DragDirectionAdorner : Adorner
         {
             private readonly double contentWidth;
-            private static readonly ImageSource CursorHorizontalImageSource;
-            private static readonly ImageSource CursorVerticalImageSource;
+            private static readonly IImage CursorHorizontalImageSource;
+            private static readonly IImage CursorVerticalImageSource;
 
             static DragDirectionAdorner()
             {

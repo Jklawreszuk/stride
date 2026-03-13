@@ -19,22 +19,22 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="HighlightedItem"/> dependency property.
         /// </summary>
-        public static readonly DependencyPropertyKey HighlightedItemPropertyKey = AvaloniaProperty.RegisterReadOnly(nameof(HighlightedItem), typeof(PropertyViewItem), typeof(PropertyView), new PropertyMetadata(null));
+        public static readonly AvaloniaProperty HighlightedItemPropertyKey = AvaloniaProperty.RegisterDirect<PropertyView, PropertyViewItem>(nameof(HighlightedItem), o => o.HighlightedItem);
 
         /// <summary>
         /// Identifies the <see cref="HoveredItem"/> dependency property.
         /// </summary>
-        public static readonly DependencyPropertyKey HoveredItemPropertyKey = AvaloniaProperty.RegisterReadOnly(nameof(HoveredItem), typeof(PropertyViewItem), typeof(PropertyView), new PropertyMetadata(null));
+        public static readonly AvaloniaProperty HoveredItemPropertyKey = AvaloniaProperty.RegisterDirect<PropertyView, PropertyViewItem>(nameof(HoveredItem), o => o.HoveredItem);
 
         /// <summary>
         /// Identifies the <see cref="KeyboardActiveItem"/> dependency property.
         /// </summary>
-        public static readonly DependencyPropertyKey KeyboardActiveItemPropertyKey = AvaloniaProperty.RegisterReadOnly(nameof(KeyboardActiveItem), typeof(PropertyViewItem), typeof(PropertyView), new PropertyMetadata(null));
+        public static readonly AvaloniaProperty KeyboardActiveItemPropertyKey = AvaloniaProperty.RegisterDirect<PropertyView, PropertyViewItem>(nameof(KeyboardActiveItem), o => o.KeyboardActiveItem);
 
         /// <summary>
         /// Identifies the <see cref="NameColumnSize"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty NameColumnSizeProperty = AvaloniaProperty.Register(nameof(NameColumnSize), typeof(GridLength), typeof(PropertyView), new FrameworkPropertyMetadata(new GridLength(150), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+        public static readonly AvaloniaProperty NameColumnSizeProperty = AvaloniaProperty.Register<PropertyView, GridLength>(nameof(NameColumnSize), new GridLength(150));
 
         /// <summary>
         /// Identifies the PreparePropertyItem event.
@@ -51,7 +51,6 @@ namespace Stride.Core.Presentation.Controls
 
         static PropertyView()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(PropertyView), new FrameworkPropertyMetadata(typeof(PropertyView)));
         }
 
         public PropertyView()

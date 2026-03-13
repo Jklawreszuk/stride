@@ -51,13 +51,13 @@ namespace Stride.Core.Presentation.Behaviors
         }
 
         ///  <inheritdoc/>
-        protected override void OnMouseDown(PointerEventArgs e)
+        protected override void OnMouseDown(PointerPressedEventArgs e)
         {
-            if (e.ChangedButton != MouseButton.Left)
+            if (e.GetCurrentPoint(AssociatedObject).Properties.PointerUpdateKind != PointerUpdateKind.LeftButtonPressed)
                 return;
 
             e.Handled = true;
-            CaptureMouse();
+            CaptureMouse(e);
             
             originPoint = e.GetPosition(AssociatedObject);
         }
@@ -65,7 +65,7 @@ namespace Stride.Core.Presentation.Behaviors
         ///  <inheritdoc/>
         protected override void OnMouseMove(PointerEventArgs e)
         {
-            if (e.MouseDevice.LeftButton != MouseButtonState.Pressed)
+            if (!e.GetCurrentPoint(AssociatedObject).Properties.IsLeftButtonPressed)
             {
                 Cancel();
                 return;
@@ -94,7 +94,7 @@ namespace Stride.Core.Presentation.Behaviors
         ///  <inheritdoc/>
         protected override void OnMouseUp(PointerEventArgs e)
         {
-            if (e.ChangedButton != MouseButton.Left)
+            if (e.GetCurrentPoint(AssociatedObject).Properties.PointerUpdateKind != PointerUpdateKind.LeftButtonPressed)
                 return;
 
             e.Handled = true;

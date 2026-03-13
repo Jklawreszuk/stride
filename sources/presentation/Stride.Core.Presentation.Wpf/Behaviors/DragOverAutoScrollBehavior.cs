@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Threading;
 using Avalonia.Xaml.Interactivity;
 using Stride.Core.Annotations;
@@ -45,9 +46,9 @@ namespace Stride.Core.Presentation.Behaviors
         protected override void OnAttached()
         {
             base.OnAttached();
-            AssociatedObject.AddHandler(Control.PreviewDragOverEvent, (DragEventHandler)DragOver);
-            AssociatedObject.AddHandler(Control.DragLeaveEvent, (DragEventHandler)DragLeave);
-            AssociatedObject.AddHandler(Control.DropEvent, (DragEventHandler)Drop);
+            AssociatedObject.AddHandler(DragDrop.DragOverEvent, DragOver);
+            AssociatedObject.AddHandler(DragDrop.DragLeaveEvent, DragLeave);
+            AssociatedObject.AddHandler(DragDrop.DropEvent, Drop);
         }
 
         private void Drop(object sender, DragEventArgs e)
@@ -57,9 +58,9 @@ namespace Stride.Core.Presentation.Behaviors
 
         protected override void OnDetaching()
         {
-            AssociatedObject.RemoveHandler(Control.PreviewDragOverEvent, (DragEventHandler)DragOver);
-            AssociatedObject.RemoveHandler(Control.DragLeaveEvent, (DragEventHandler)DragLeave);
-            AssociatedObject.RemoveHandler(Control.DropEvent, (DragEventHandler)Drop);
+            AssociatedObject.RemoveHandler(DragDrop.DragOverEvent, DragOver);
+            AssociatedObject.RemoveHandler(DragDrop.DragLeaveEvent, DragLeave);
+            AssociatedObject.RemoveHandler(DragDrop.DropEvent, Drop);
             base.OnDetaching();
         }
 
@@ -125,16 +126,16 @@ namespace Stride.Core.Presentation.Behaviors
                             switch (edgeUnderMouse.Value)
                             {
                                 case Dock.Left:
-                                    scrollViewer.ScrollToHorizontalOffset(scrollViewer.HorizontalOffset - offset);
+                                    scrollViewer.Offset = new Vector(scrollViewer.Offset.X - offset, scrollViewer.Offset.Y);
                                     break;
                                 case Dock.Top:
-                                    scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset - offset);
+                                    scrollViewer.Offset = new Vector(scrollViewer.Offset.X + offset, scrollViewer.Offset.Y);
                                     break;
                                 case Dock.Right:
-                                    scrollViewer.ScrollToHorizontalOffset(scrollViewer.HorizontalOffset + offset);
+                                    scrollViewer.Offset = new Vector(scrollViewer.Offset.X, scrollViewer.Offset.Y - offset);
                                     break;
                                 case Dock.Bottom:
-                                    scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset + offset);
+                                    scrollViewer.Offset = new Vector(scrollViewer.Offset.X, scrollViewer.Offset.Y + offset);
                                     break;
                                 default:
                                     throw new ArgumentOutOfRangeException();
@@ -152,11 +153,11 @@ namespace Stride.Core.Presentation.Behaviors
             var scrollViewer = AssociatedObject.FindVisualChildOfType<ScrollViewer>();
             if (point.X >= 0 && point.X <= ScrollBorderThickness.Left)
                 return Dock.Left;
-            if (point.X <= scrollViewer.RenderSize.Width && scrollViewer.RenderSize.Width - point.X <= ScrollBorderThickness.Right)
+            if (point.X <= scrollViewer.Width && scrollViewer.Width - point.X <= ScrollBorderThickness.Right)
                 return Dock.Right;
             if (point.Y >= 0 && point.Y <= ScrollBorderThickness.Top)
                 return Dock.Top;
-            if (point.Y <= scrollViewer.RenderSize.Height && scrollViewer.RenderSize.Height - point.Y <= ScrollBorderThickness.Bottom)
+            if (point.Y <= scrollViewer.Height && scrollViewer.Height - point.Y <= ScrollBorderThickness.Bottom)
                 return Dock.Bottom;
 
             return null;

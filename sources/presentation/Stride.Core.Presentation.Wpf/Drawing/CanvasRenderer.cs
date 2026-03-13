@@ -35,6 +35,7 @@ using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Avalonia;
+using Avalonia.Collections;
 using Avalonia.Controls;
 using Avalonia.Controls.Shapes;
 using Avalonia.Layout;
@@ -89,7 +90,7 @@ namespace Stride.Core.Presentation.Drawing
         public void DrawEllipse(Point point, Size size, Color fillColor, Color strokeColor,
             double thickness, PenLineJoin lineJoin, ICollection<double> dashArray, double dashOffset, bool isHitTestVisible)
         {
-            point.Offset(-size.Width / 2, -size.Height / 2);
+            point = new Point(point.X - size.Width / 2, point.Y - size.Height / 2);
             var rect = new Rect(point, size);
 
             var ellipse = Create<Ellipse>(isHitTestVisible, rect.Left, rect.Top);
@@ -302,7 +303,7 @@ namespace Stride.Core.Presentation.Drawing
         public Size MeasureText(string text, FontFamily fontFamily, double fontSize, FontWeight fontWeight, TextMeasurementMethod measurementMethod)
         {
             if (string.IsNullOrEmpty(text))
-                return Size.Empty;
+                return new Size();
 
             switch (measurementMethod)
             {
@@ -464,7 +465,7 @@ namespace Stride.Core.Presentation.Drawing
 
             var polyline = Create<Polyline>(isHitTestVisible);
             SetStroke(polyline, strokeColor, thickness, lineJoin, dashArray, 0, aliased);
-            var pointCollection = new PointCollection(numPointsPerPolyline);
+            var pointCollection = new List<Point>(numPointsPerPolyline);
 
             var pointCount = points.Count;
             double lineLength = 0;
@@ -499,7 +500,7 @@ namespace Stride.Core.Presentation.Drawing
                         var dashOffset = dashPatternLength > 0 ? lineLength / thickness : 0;
                         polyline = Create<Polyline>(isHitTestVisible);
                         SetStroke(polyline, strokeColor, thickness, lineJoin, dashArray, dashOffset, aliased);
-                        pointCollection = new PointCollection(numPointsPerPolyline) { pointCollection.Last() };
+                        pointCollection = new List<Point>(numPointsPerPolyline) { pointCollection.Last() };
                     }
                 }
             }
@@ -542,7 +543,7 @@ namespace Stride.Core.Presentation.Drawing
             shape.StrokeLineJoin = lineJoin;
             if (dashArray != null)
             {
-                shape.StrokeDashArray = new DoubleCollection(dashArray);
+                shape.StrokeDashArray = new AvaloniaList<double>(dashArray);
                 shape.StrokeDashOffset = dashOffset;
             }
 

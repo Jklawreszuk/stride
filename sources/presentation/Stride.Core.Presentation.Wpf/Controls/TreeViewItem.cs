@@ -33,7 +33,7 @@ namespace Stride.Core.Presentation.Controls
         /// Identifies the <see cref="IsEditing"/> dependency property.
         /// </summary>
         public static AvaloniaProperty IsEditingProperty =
-            AvaloniaProperty.Register(nameof(IsEditing), typeof(bool), typeof(TreeViewItem), new FrameworkPropertyMetadata(BooleanBoxes.FalseBox, OnIsEditingChanged));
+            AvaloniaProperty.Register<TreeViewItem, bool>(nameof(IsEditing));
         /// <summary>
         /// Identifies the <see cref="IsSelected"/> dependency property.
         /// </summary>

@@ -40,8 +40,8 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="SelectedItems"/> dependency property.
         /// </summary>
-        public static DependencyPropertyKey SelectedItemsProperty =
-            AvaloniaProperty.RegisterReadOnly(nameof(SelectedItems), typeof(IList), typeof(TreeView), new FrameworkPropertyMetadata(null, OnSelectedItemsPropertyChanged));
+        public static AvaloniaProperty SelectedItemsProperty =
+            AvaloniaProperty.RegisterDirect(nameof(SelectedItems), typeof(IList), typeof(TreeView), new FrameworkPropertyMetadata(null, OnSelectedItemsPropertyChanged));
         /// <summary>
         /// Identifes the <see cref="SelectionMode"/> dependency property.
         /// </summary>
