@@ -22,22 +22,22 @@ namespace Stride.Core.Presentation.Controls
         /// Identifies the <see cref="BaseUrl"/> dependency property.
         /// </summary>
         public static readonly AvaloniaProperty BaseUrlProperty =
-            AvaloniaProperty.Register(nameof(BaseUrl), typeof(string), typeof(MarkdownTextBlock), new PropertyMetadata(BaseUrlChanged));
+            AvaloniaProperty.Register<MarkdownTextBlock, string>(nameof(BaseUrl));
         /// <summary>
         /// Identifies the <see cref="HyperlinkCommand"/> dependency property.
         /// </summary>
         public static readonly AvaloniaProperty HyperlinkCommandProperty =
-            AvaloniaProperty.Register(nameof(HyperlinkCommand), typeof(ICommand), typeof(MarkdownTextBlock), new PropertyMetadata(HyperlinkCommandChanged));
+            AvaloniaProperty.Register<MarkdownTextBlock, ICommand>(nameof(HyperlinkCommand));
         /// <summary>
         /// Identifies the <see cref="Markdown"/> dependency property.
         /// </summary>
         public static readonly AvaloniaProperty MarkdownProperty =
-            AvaloniaProperty.Register(nameof(Markdown), typeof(XamlMarkdown), typeof(MarkdownTextBlock), new PropertyMetadata(MarkdownChanged));
+            AvaloniaProperty.Register<MarkdownTextBlock, XamlMarkdown>(nameof(Markdown));
         /// <summary>
         /// Identifies the <see cref="Text"/> dependency property.
         /// </summary>
         public static readonly AvaloniaProperty TextProperty =
-            AvaloniaProperty.Register(nameof(Text), typeof(string), typeof(MarkdownTextBlock), new PropertyMetadata(TextChanged));
+            AvaloniaProperty.Register<MarkdownTextBlock, string>(nameof(Text));
 
         public string BaseUrl
         {
@@ -75,7 +75,11 @@ namespace Stride.Core.Presentation.Controls
 
         static MarkdownTextBlock()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(MarkdownTextBlock), new FrameworkPropertyMetadata(typeof(MarkdownTextBlock)));
+            BaseUrlProperty.Changed.AddClassHandler<AvaloniaObject>(BaseUrlChanged);
+            HyperlinkCommandProperty.Changed.AddClassHandler<AvaloniaObject>(HyperlinkCommandChanged);
+            MarkdownProperty.Changed.AddClassHandler<AvaloniaObject>(MarkdownChanged);
+            TextProperty.Changed.AddClassHandler<AvaloniaObject>(TextChanged);
+            
         }
 
         public MarkdownTextBlock()
@@ -88,7 +92,7 @@ namespace Stride.Core.Presentation.Controls
         {
             base.OnApplyTemplate(e);
 
-            messageContainer = GetTemplateChild(MessageContainerPartName) as FlowDocumentScrollViewer;
+            messageContainer =  e.NameScope.Find<FlowDocumentScrollViewer>(MessageContainerPartName);
             if (messageContainer == null)
                 throw new InvalidOperationException($"A part named '{MessageContainerPartName}' must be present in the ControlTemplate, and must be of type '{typeof(FlowDocumentScrollViewer)}'.");
 
@@ -97,8 +101,7 @@ namespace Stride.Core.Presentation.Controls
 
         private static void BaseUrlChanged([NotNull] AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
-            var control = d as MarkdownTextBlock;
-            if (control == null) throw new ArgumentNullException(nameof(control));
+            if (d is not MarkdownTextBlock control) throw new ArgumentNullException(nameof(control));
 
             if (e.NewValue != null)
             {
@@ -109,8 +112,7 @@ namespace Stride.Core.Presentation.Controls
 
         private static void HyperlinkCommandChanged([NotNull] AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
-            var control = d as MarkdownTextBlock;
-            if (control == null) throw new ArgumentNullException(nameof(control));
+            if (d is not MarkdownTextBlock control) throw new ArgumentNullException(nameof(control));
 
             if (e.NewValue != null)
             {
@@ -121,8 +123,7 @@ namespace Stride.Core.Presentation.Controls
 
         private static void MarkdownChanged([NotNull] AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
-            var control = d as MarkdownTextBlock;
-            if (control == null) throw new ArgumentNullException(nameof(control));
+            if (d is not MarkdownTextBlock control) throw new ArgumentNullException(nameof(control));
 
             if (e.NewValue != null)
             {
@@ -134,8 +135,7 @@ namespace Stride.Core.Presentation.Controls
 
         private static void TextChanged([NotNull] AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
-            var control = d as MarkdownTextBlock;
-            if (control == null) throw new ArgumentNullException(nameof(control));
+            if (d is not MarkdownTextBlock control) throw new ArgumentNullException(nameof(control));
 
             control.ResetMessage();
         }

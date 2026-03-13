@@ -27,7 +27,7 @@ namespace Stride.Core.Presentation.Behaviors
         /// <summary>
         /// Identifies the <see cref="IsInProgress"/> dependency property key.
         /// </summary>
-        protected static readonly DependencyPropertyKey IsInProgressPropertyKey =
+        protected static readonly AvaloniaProperty IsInProgressPropertyKey =
             AvaloniaProperty.RegisterReadOnly(nameof(IsInProgress), typeof(bool), typeof(MouseMoveCaptureBehaviorBase<TElement>), new PropertyMetadata(BooleanBoxes.FalseBox));
 
         /// <summary>
@@ -128,11 +128,11 @@ namespace Stride.Core.Presentation.Behaviors
             AssociatedObject.LostMouseCapture -= OnLostMouseCapture;
         }
 
-        protected abstract void OnMouseDown([NotNull] MouseButtonEventArgs e);
+        protected abstract void OnMouseDown([NotNull] PointerEventArgs e);
 
-        protected abstract void OnMouseMove([NotNull] MouseEventArgs e);
+        protected abstract void OnMouseMove([NotNull] PointerEventArgs e);
 
-        protected abstract void OnMouseUp([NotNull] MouseButtonEventArgs e);
+        protected abstract void OnMouseUp([NotNull] PointerEventArgs e);
 
         /// <summary>
         /// Releases the mouse capture, if the <see cref="Behavior{TElement}.AssociatedObject"/> held the capture. 
@@ -146,7 +146,7 @@ namespace Stride.Core.Presentation.Behaviors
             }
         }
 
-        private void MouseDown(object sender, [NotNull] MouseButtonEventArgs e)
+        private void MouseDown(object sender, [NotNull] PointerEventArgs e)
         {
             if (!IsEnabled || IsInProgress)
                 return;
@@ -154,7 +154,7 @@ namespace Stride.Core.Presentation.Behaviors
             OnMouseDown(e);
         }
 
-        private void MouseMove(object sender, [NotNull] MouseEventArgs e)
+        private void PointerMove(object sender, [NotNull] PointerEventArgs e)
         {
             if (!IsEnabled || !IsInProgress)
                 return;
@@ -162,7 +162,7 @@ namespace Stride.Core.Presentation.Behaviors
             OnMouseMove(e);
         }
 
-        private void MouseUp(object sender, [NotNull] MouseButtonEventArgs e)
+        private void MouseUp(object sender, [NotNull] PointerEventArgs e)
         {
             if (!IsEnabled || !IsInProgress || !AssociatedObject.IsMouseCaptured)
                 return;
@@ -170,7 +170,7 @@ namespace Stride.Core.Presentation.Behaviors
             OnMouseUp(e);
         }
 
-        private void OnLostMouseCapture(object sender, [NotNull] MouseEventArgs e)
+        private void OnLostMouseCapture(object sender, [NotNull] PointerEventArgs e)
         {
             if (!ReferenceEquals(Mouse.Captured, sender))
             {
@@ -186,12 +186,12 @@ namespace Stride.Core.Presentation.Behaviors
             if (usePreviewEvents)
             {
                 AssociatedObject.PreviewMouseDown += MouseDown;
-                AssociatedObject.PreviewMouseMove += MouseMove;
+                AssociatedObject.PreviewMouseMove += PointerMove;
             }
             else
             {
                 AssociatedObject.MouseDown += MouseDown;
-                AssociatedObject.MouseMove += MouseMove;
+                AssociatedObject.PointerMoved += PointerMove;
             }
         }
 
@@ -203,12 +203,12 @@ namespace Stride.Core.Presentation.Behaviors
             if (usePreviewEvents)
             {
                 AssociatedObject.PreviewMouseDown -= MouseDown;
-                AssociatedObject.PreviewMouseMove -= MouseMove;
+                AssociatedObject.PreviewMouseMove -= PointerMove;
             }
             else
             {
                 AssociatedObject.MouseDown -= MouseDown;
-                AssociatedObject.MouseMove -= MouseMove;
+                AssociatedObject.PointerMoved -= PointerMoved;
             }
         }
     }

@@ -6,6 +6,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Reactive;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Collections;
 using Stride.Core.Presentation.Internal;
@@ -39,7 +40,7 @@ namespace Stride.Core.Presentation.Behaviors
         /// <summary>
         /// Identifies the <see cref="SelectedItems"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty SelectedItemsProperty = AvaloniaProperty.Register(nameof(SelectedItems), typeof(IObservableList<object>), typeof(BindableSelectedItemsBehavior<T>), new PropertyMetadata(null, SelectedItemsChanged));
+        public static readonly AvaloniaProperty SelectedItemsProperty = AvaloniaProperty.Register<BindableSelectedItemsBehavior<T>, IObservableList<object>>(nameof(SelectedItems));
 
         /// <summary>
         /// Identifies the <see cref="GiveFocusOnSelectionChange"/> dependency property.
@@ -62,6 +63,11 @@ namespace Stride.Core.Presentation.Behaviors
         /// method, before invoking the base OnAttached.
         /// </summary>
         protected IList SelectedItemsInAssociatedObject;
+        
+        static BindableSelectedItemsBehavior()
+        {
+            SelectedItemsProperty.Changed.Subscribe(new AnonymousObserver<AvaloniaPropertyChangedEventArgs>(SelectedItemsChanged));
+        }
 
         /// <inheritdoc/>
         protected override void OnAttached()
@@ -178,9 +184,9 @@ namespace Stride.Core.Presentation.Behaviors
         /// </summary>
         /// <param name="d">The sender of the event (this behavior).</param>
         /// <param name="e">The arguments of the event.</param>
-        private static void SelectedItemsChanged([NotNull] AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
+        private static void SelectedItemsChanged(AvaloniaPropertyChangedEventArgs e)
         {
-            var behavior = (BindableSelectedItemsBehavior<T>)d;
+            var behavior = (BindableSelectedItemsBehavior<T>)e.Sender;
 
             behavior.SanityCheck();
 

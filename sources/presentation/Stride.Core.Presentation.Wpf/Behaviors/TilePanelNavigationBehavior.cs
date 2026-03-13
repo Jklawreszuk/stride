@@ -1,13 +1,8 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
-using System.Windows;
 using Avalonia.Controls;
-using Avalonia.Controls.Primitives;
-using System.Windows.Input;
-using System.Windows.Media;
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Styling;
@@ -55,8 +50,7 @@ namespace Stride.Core.Presentation.Behaviors
             if (selector.SelectedIndex == -1 || selector.Items.Count == 0)
                 return;
 
-            var window = Window.GetWindow(selector);
-            if (window == null)
+            if (TopLevel.GetTopLevel(selector) is not Window window)
                 return;
 
             // Find the currently focused element (logical focus)

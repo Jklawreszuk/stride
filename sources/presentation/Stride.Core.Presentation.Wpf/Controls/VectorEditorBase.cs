@@ -6,6 +6,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Data;
 using Avalonia.Markup.Xaml.Templates;
+using Avalonia.Reactive;
 using Stride.Core.Presentation.Internal;
 
 namespace Stride.Core.Presentation.Controls
@@ -52,6 +53,11 @@ namespace Stride.Core.Presentation.Controls
         /// </summary>
         public DataTemplate WatermarkContentTemplate { get { return (DataTemplate)GetValue(WatermarkContentTemplateProperty); } set { SetValue(WatermarkContentTemplateProperty, value); } }
 
+        public VectorEditorBase()
+        {
+            this.GetObservable(IsKeyboardFocusWithinProperty)
+                .Subscribe(new AnonymousObserver<bool>(_ => OnIsKeyboardFocusWithinChanged()));
+        }
         /// <summary>
         /// Sets the vector value of this vector editor from a single float value.
         /// </summary>
@@ -60,9 +66,8 @@ namespace Stride.Core.Presentation.Controls
 
         public abstract void ResetValue();
 
-        protected override void OnIsKeyboardFocusWithinChanged(AvaloniaPropertyChangedEventArgs e)
+        private void OnIsKeyboardFocusWithinChanged()
         {
-            base.OnIsKeyboardFocusWithinChanged(e);
             if (IsDropDownOpen && !IsKeyboardFocusWithin)
             {
                 SetCurrentValue(IsDropDownOpenProperty, false);
@@ -79,12 +84,12 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="Value"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty ValueProperty = AvaloniaProperty.Register("Value", typeof(T), typeof(VectorEditorBase<T>), new FrameworkPropertyMetadata(default(T), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnValuePropertyChanged, null, false, UpdateSourceTrigger.Explicit));
+        public static readonly AvaloniaProperty ValueProperty = AvaloniaProperty.Register<VectorEditorBase<T>, T>("Value");
 
         /// <summary>
         /// Identifies the <see cref="DefaultValue"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty DefaultValueProperty = AvaloniaProperty.Register("DefaultValue", typeof(T), typeof(VectorEditorBase<T>), new PropertyMetadata(default(T)));
+        public static readonly AvaloniaProperty DefaultValueProperty = AvaloniaProperty.Register<VectorEditorBase<T>, T>("DefaultValue");
 
         /// <summary>
         /// Gets or sets the vector associated to this control.
@@ -182,7 +187,7 @@ namespace Stride.Core.Presentation.Controls
         {
             if (dependencyProperty != initializingProperty)
             {
-                var expression = GetBindingExpression(dependencyProperty);
+                var expression = BindingOperations.GetBindingExpressionBase(this, dependencyProperty);
                 expression?.UpdateSource();
             }
         }

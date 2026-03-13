@@ -48,7 +48,7 @@ namespace Stride.Core.Presentation.Drawing
 
     public class CanvasRenderer : IDrawingContext
     {
-        private readonly Dictionary<Color, Brush> cachedBrushes = new Dictionary<Color, Brush>();
+        private readonly Dictionary<Color, Brush> cachedBrushes = new();
         private const int MaxPolylinesPerLine = 64;
         private const int MinPointsPerPolyline = 16;
 
@@ -137,10 +137,8 @@ namespace Stride.Core.Presentation.Drawing
         {
             var line = Create<Line>(isHitTestVisible);
             SetStroke(line, strokeColor, thickness, lineJoin, dashArray, dashOffset, aliased);
-            line.X1 = p1.X;
-            line.Y1 = p1.Y;
-            line.X2 = p2.X;
-            line.Y2 = p2.Y;
+            line.StartPoint = p1;
+            line.EndPoint = p2;
         }
 
         /// <inheritdoc/>
@@ -167,7 +165,6 @@ namespace Stride.Core.Presentation.Drawing
                 };
                 var segment = new LineSegment
                 {
-                    IsSmoothJoin = false,
                     IsStroked = true,
                     Point = aliased ? ToPixelAlignedPoint(points[i + 1]) : points[i + 1],
                 };
@@ -619,9 +616,9 @@ namespace Stride.Core.Presentation.Drawing
         /// <param name="aliased">Convert to pixel aligned points if set to <c>true</c>.</param>
         /// <returns>The point collection.</returns>
         [NotNull]
-        private static PointCollection ToPointCollection(IEnumerable<Point> points, bool aliased)
+        private static List<Point> ToPointCollection(IEnumerable<Point> points, bool aliased)
         {
-            return new PointCollection(aliased ? points.Select(ToPixelAlignedPoint) : points);
+            return [..aliased ? points.Select(ToPixelAlignedPoint) : points];
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

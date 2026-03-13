@@ -2,6 +2,7 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using Avalonia.Controls.Primitives;
+using Avalonia.Input;
 using Avalonia.Xaml.Interactivity;
 using Stride.Core.Annotations;
 
@@ -24,7 +25,7 @@ namespace Stride.Core.Presentation.Behaviors
             AssociatedObject.PreviewMouseLeftButtonUp += MouseUp;
         }
 
-        private void MouseUp(object sender, [NotNull] MouseButtonEventArgs e)
+        private void MouseUp(object sender, [NotNull] PointerEventArgs e)
         {
             if (!mouseDownOccurred)
             {
@@ -34,7 +35,7 @@ namespace Stride.Core.Presentation.Behaviors
             mouseDownOccurred = false;
         }
 
-        private void MouseDown(object sender, MouseButtonEventArgs e)
+        private void MouseDown(object sender, PointerEventArgs e)
         {
             mouseDownOccurred = true;
         }

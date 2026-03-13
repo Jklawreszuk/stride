@@ -89,8 +89,6 @@ namespace Stride.Core.Presentation.Controls
 
         static TreeView()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(TreeView), new FrameworkPropertyMetadata(typeof(TreeView)));
-
             var vPanel = new FrameworkElementFactory(typeof(VirtualizingTreePanel));
             vPanel.SetValue(Panel.IsItemsHostProperty, true);
             var vPanelTemplate = new ItemsPanelTemplate { VisualTree = vPanel };
@@ -119,7 +117,7 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Gets the list of selected items.
         /// </summary>
-        public IList SelectedItems { get { return (IList)GetValue(AvaloniaProperty); } private set { SetValue(SelectedItemsProperty, value); } }
+        public IList SelectedItems { get { return (IList)GetValue(SelectedItemsProperty.AvaloniaProperty); } private set { SetValue(SelectedItemsProperty, value); } }
 
         /// <summary>
         /// Gets the selection mode for this control.
@@ -144,7 +142,7 @@ namespace Stride.Core.Presentation.Controls
         {
             base.OnApplyTemplate(e);
 
-            scroller = DependencyObjectExtensions.CheckTemplatePart<ScrollViewer>(GetTemplateChild(ScrollViewerPartName));
+            scroller = DependencyObjectExtensions.CheckTemplatePart<ScrollViewer>( e.NameScope.Find<ScrollViewer>(ScrollViewerPartName));
             if (scroller != null)
             {
                 scroller.ScrollChanged += ScrollChanged;
@@ -325,7 +323,7 @@ namespace Stride.Core.Presentation.Controls
         }
 
         /// <inheritdoc />
-        protected override void OnMouseDown(MouseButtonEventArgs e)
+        protected override void OnMouseDown(PointerEventArgs e)
         {
             base.OnMouseDown(e);
             StopEditing();
@@ -346,7 +344,7 @@ namespace Stride.Core.Presentation.Controls
         }
 
         /// <inheritdoc />
-        protected override void OnMouseUp(MouseButtonEventArgs e)
+        protected override void OnMouseUp(PointerEventArgs e)
         {
             base.OnMouseUp(e);
             if (mouseDown)

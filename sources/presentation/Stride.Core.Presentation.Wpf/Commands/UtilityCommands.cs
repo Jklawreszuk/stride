@@ -19,7 +19,7 @@ namespace Stride.Core.Presentation.Commands
         private static ICommandBase OpenHyperlinkCommandFactory()
         {
             // TODO: have a proper way to initialize the services (maybe at application startup)
-            var serviceProvider = new ViewModelServiceProvider(new[] { new DispatcherService(Dispatcher.UIThread) });
+            var serviceProvider = new ViewModelServiceProvider([new DispatcherService(Dispatcher.UIThread)]);
             return new AnonymousCommand<string>(serviceProvider, OpenHyperlink, CanOpenHyperlink);
         }
 

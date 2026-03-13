@@ -41,4 +41,10 @@ namespace Stride.Core.Presentation.ValueConverters
             return result.Box();
         }
     }
+    
+    //TODO: This is just for sake of compat
+    public enum Visibility
+    {
+        Visible, Hidden, Collapsed
+    }
 }

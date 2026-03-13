@@ -28,8 +28,6 @@ namespace Stride.Core.Presentation.ValueConverters
                 throw new ArgumentException("The number of provided bindings to this converter must be 2.");
 
             var text = values[0]?.ToString() ?? string.Empty;
-            if (values[1] is Control control)
-                return Trimming.ProcessTrimming(control, text, TextTrimming, TrimmingSource, WordSeparators, MaxWidth);
             if (values[1] is TextBlock textBlock)
                 return Trimming.ProcessTrimming(textBlock, text, TextTrimming, TrimmingSource, WordSeparators, MaxWidth);
             return text;

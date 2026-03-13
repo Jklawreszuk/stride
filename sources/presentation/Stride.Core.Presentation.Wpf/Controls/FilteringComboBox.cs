@@ -56,7 +56,7 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="RequireSelectedItemToValidate"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty RequireSelectedItemToValidateProperty = AvaloniaProperty.Register("RequireSelectedItemToValidate", typeof(bool), typeof(FilteringComboBox));
+        public static readonly AvaloniaProperty RequireSelectedItemToValidateProperty = AvaloniaProperty.Register<FilteringComboBox, bool>("RequireSelectedItemToValidate");
 
         /// <summary>
         /// Identifies the <see cref="Text"/> dependency property.
@@ -71,12 +71,12 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="OpenDropDownOnFocus"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty OpenDropDownOnFocusProperty = AvaloniaProperty.Register("OpenDropDownOnFocus", typeof(bool), typeof(FilteringComboBox));
+        public static readonly AvaloniaProperty OpenDropDownOnFocusProperty = AvaloniaProperty.Register<FilteringComboBox, bool>("OpenDropDownOnFocus");
 
         /// <summary>
         /// Identifies the <see cref="ClearTextAfterValidation"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty ClearTextAfterValidationProperty = AvaloniaProperty.Register("ClearTextAfterValidation", typeof(bool), typeof(FilteringComboBox));
+        public static readonly AvaloniaProperty ClearTextAfterValidationProperty = AvaloniaProperty.Register<FilteringComboBox, bool>("ClearTextAfterValidation");
 
         /// <summary>
         /// Identifies the <see cref="WatermarkContent"/> dependency property.
@@ -91,7 +91,7 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="ItemsToExclude"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty ItemsToExcludeProperty = AvaloniaProperty.Register("ItemsToExclude", typeof(IEnumerable), typeof(FilteringComboBox));
+        public static readonly AvaloniaProperty ItemsToExcludeProperty = AvaloniaProperty.Register<FilteringComboBox, IEnumerable>("ItemsToExclude");
 
         /// <summary>
         /// Identifies the <see cref="Sort"/> dependency property.
@@ -101,12 +101,12 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="SortMemberPath"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty SortMemberPathProperty = AvaloniaProperty.Register("SortMemberPath", typeof(string), typeof(FilteringComboBox));
+        public static readonly AvaloniaProperty SortMemberPathProperty = AvaloniaProperty.Register<FilteringComboBox, string>("SortMemberPath");
 
         /// <summary>
         /// Identifies the <see cref="ValidatedValue"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty ValidatedValueProperty = AvaloniaProperty.Register("ValidatedValue", typeof(object), typeof(FilteringComboBox));
+        public static readonly AvaloniaProperty ValidatedValueProperty = AvaloniaProperty.Register<FilteringComboBox, object>("ValidatedValue");
 
         /// <summary>
         /// Identifies the <see cref="ValidatedItem"/> dependency property.
@@ -239,11 +239,11 @@ namespace Stride.Core.Presentation.Controls
         {
             base.OnApplyTemplate(e);
 
-            editableTextBox = GetTemplateChild("PART_EditableTextBox") as TextBox;
+            editableTextBox =  e.NameScope.Find<TextBox>("PART_EditableTextBox");
             if (editableTextBox == null)
                 throw new InvalidOperationException("A part named 'PART_EditableTextBox' must be present in the ControlTemplate, and must be of type 'Stride.Core.Presentation.Controls.Input.TextBox'.");
 
-            listBox = GetTemplateChild("PART_ListBox") as ListBox;
+            listBox =  e.NameScope.Find<ListBox>("PART_ListBox");
             if (listBox == null)
                 throw new InvalidOperationException("A part named 'PART_ListBox' must be present in the ControlTemplate, and must be of type 'ListBox'.");
 
@@ -512,7 +512,7 @@ namespace Stride.Core.Presentation.Controls
             updatingSelection = false;
         }
 
-        private void ListBoxMouseUp(object sender, [NotNull] MouseButtonEventArgs e)
+        private void ListBoxMouseUp(object sender, [NotNull] PointerEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left && listBox.SelectedIndex > -1)
             {

@@ -2,11 +2,13 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
 using Avalonia.Controls;
+using Avalonia.Markup.Xaml.Styling;
 
 namespace Stride.Core.Presentation.Themes
 {
     public class ThemeResourceDictionary : ResourceDictionary
-    {
+    {    
+        private ResourceInclude? _currentInclude;
         // New themes are added here as new properties.
 
         public Uri ExpressionDarkSource
@@ -35,28 +37,23 @@ namespace Stride.Core.Presentation.Themes
 
         public void UpdateSource(ThemeType themeType)
         {
-            switch (themeType)
+            Uri? uri = themeType switch
             {
-                case ThemeType.ExpressionDark:
-                    if (ExpressionDarkSource != null)
-                        Source = ExpressionDarkSource;
-                    break;
+                ThemeType.ExpressionDark => ExpressionDarkSource,
+                ThemeType.DarkSteel => DarkSteelSource,
+                ThemeType.Divided => DividedSource,
+                ThemeType.LightSteelBlue => LightSteelBlueSource,
+                _ => null
+            };
 
-                case ThemeType.DarkSteel:
-                    if (DarkSteelSource != null)
-                        Source = DarkSteelSource;
-                    break;
+            if (uri == null)
+                return;
 
-                case ThemeType.Divided:
-                    if (DividedSource != null)
-                        Source = DividedSource;
-                    break;
+            if (_currentInclude != null)
+                MergedDictionaries.Remove(_currentInclude);
 
-                case ThemeType.LightSteelBlue:
-                    if (LightSteelBlueSource != null)
-                        Source = LightSteelBlueSource;
-                    break;
-            }
+            _currentInclude = new ResourceInclude(uri) { Source = uri };
+            MergedDictionaries.Add(_currentInclude);
         }
 
         private void SetValue(ref Uri sourceBackingField, Uri value)

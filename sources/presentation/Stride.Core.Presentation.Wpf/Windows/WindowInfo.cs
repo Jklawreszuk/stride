@@ -12,8 +12,6 @@ namespace Stride.Core.Presentation.Windows
     /// </summary>
     public class WindowInfo : IEquatable<WindowInfo>
     {
-        private IntPtr hwnd;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="WindowInfo"/> class.
         /// </summary>
@@ -22,34 +20,16 @@ namespace Stride.Core.Presentation.Windows
         {
             Window = window ?? throw new ArgumentNullException(nameof(window));
         }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="WindowInfo"/> class.
-        /// </summary>
-        /// <param name="hwnd">The hwnd of the window represented by this object.</param>
-        internal WindowInfo(IntPtr hwnd)
-        {
-            if (hwnd == IntPtr.Zero) throw new ArgumentException(@"The hwnd cannot be null", nameof(hwnd));
-            var window = FromHwnd(hwnd);
-            Window = window;
-            if (window == null)
-                this.hwnd = hwnd;
-        }
-
+        
         /// <summary>
         /// Gets the <see cref="Window"/> represented by this object, if available.
         /// </summary>
         public Window Window { get; }
 
         /// <summary>
-        /// Gets the hwnd of the window represented by this object, if available.
-        /// </summary>
-        public IntPtr Hwnd => hwnd == IntPtr.Zero && Window != null ? ToHwnd(Window) : hwnd;
-
-        /// <summary>
         /// Gets whether the corresponding window is currently disabled.
         /// </summary>
-        public bool IsDisabled { get => HwndHelper.IsDisabled(Hwnd); internal set => HwndHelper.SetDisabled(Hwnd, value); }
+        public bool IsDisabled { get => !Window.IsEnabled; internal set => Window.IsEnabled = value; }
 
         /// <summary>
         /// Gets whether the corresponding window is currently shown.
@@ -60,7 +40,6 @@ namespace Stride.Core.Presentation.Windows
             internal set
             {
                 field = value;
-                ForceUpdateHwnd();
             }
         }
 
@@ -157,12 +136,6 @@ namespace Stride.Core.Presentation.Windows
             return Window?.GetHashCode() ?? 0;
         }
 
-        internal void ForceUpdateHwnd()
-        {
-            if (Window != null)
-                hwnd = ToHwnd(Window);
-        }
-
         /// <inheritdoc/>
         public static bool operator ==(WindowInfo left, WindowInfo right)
         {
@@ -180,18 +153,7 @@ namespace Stride.Core.Presentation.Windows
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Equals(Window, other.Window) &&
-                   Equals(Hwnd, other.Hwnd);
-        }
-
-        internal static IntPtr ToHwnd(Window window)
-        {
-            return window != null ? new WindowInteropHelper(window).Handle : IntPtr.Zero;
-        }
-
-        internal static Window FromHwnd(IntPtr hwnd)
-        {
-            return hwnd != IntPtr.Zero ? HwndSource.FromHwnd(hwnd)?.RootVisual as Window : null;
+            return Equals(Window, other.Window);
         }
     }
 }

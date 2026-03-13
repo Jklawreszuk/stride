@@ -32,13 +32,13 @@ namespace Stride.Core.Presentation.Collections
         public ObservableSet(IEqualityComparer<T> comparer)
         {
             hashSet = new HashSet<T>(comparer);
-            list = new List<T>();
+            list = [];
         }
 
         [CollectionAccess(CollectionAccessType.UpdatedContent)]
         public ObservableSet(IEqualityComparer<T> comparer, [NotNull] IEnumerable<T> collection)
         {
-            list = new List<T>();
+            list = [];
             hashSet = new HashSet<T>(comparer);
             foreach (var item in collection)
             {
@@ -50,7 +50,7 @@ namespace Stride.Core.Presentation.Collections
         [CollectionAccess(CollectionAccessType.None)]
         public ObservableSet(int capacity)
         {
-            hashSet = new HashSet<T>();
+            hashSet = [];
             list = new List<T>(capacity);
         }
 

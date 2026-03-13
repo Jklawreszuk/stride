@@ -54,7 +54,7 @@ namespace Stride.Core.Presentation.Controls
         /// Identifies the <see cref="Model"/> dependency property.
         /// </summary>
         public static readonly AvaloniaProperty ModelProperty =
-            AvaloniaProperty.Register(nameof(Model), typeof(IDrawingModel), typeof(CanvasView), new PropertyMetadata(null, OnModelPropertyChanged));
+            AvaloniaProperty.Register<CanvasView, IDrawingModel>(nameof(Model));
 
         /// <summary>
         /// The grid.
@@ -73,6 +73,7 @@ namespace Stride.Core.Presentation.Controls
         {
             Loaded += OnLoaded;
             SizeChanged += OnSizeChanged;
+            ModelProperty.Changed.AddClassHandler<AvaloniaObject>(OnModelPropertyChanged);
         }
 
         public IDrawingModel Model { get { return (IDrawingModel)GetValue(ModelProperty); } set { SetValue(ModelProperty, value); } }
@@ -94,7 +95,7 @@ namespace Stride.Core.Presentation.Controls
         {
             base.OnApplyTemplate(e);
 
-            grid = GetTemplateChild(GridPartName) as Grid;
+            grid = e.NameScope.Find<Grid>(GridPartName);
             if (grid == null)
                 throw new InvalidOperationException($"A part named '{GridPartName}' must be present in the ControlTemplate, and must be of type '{typeof(Grid).FullName}'.");
 
@@ -138,7 +139,7 @@ namespace Stride.Core.Presentation.Controls
 
             if (Interlocked.CompareExchange(ref isDrawingInvalidated, 1, 0) == 0)
             {
-                Dispatcher.InvokeAsync(() =>
+                Dispatcher.UIThread.InvokeAsync(() =>
                 {
                     // Updates the model before rendering
                     UpdateModel(true);

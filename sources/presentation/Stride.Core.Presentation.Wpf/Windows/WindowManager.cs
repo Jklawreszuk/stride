@@ -23,18 +23,18 @@ namespace Stride.Core.Presentation.Windows
     {
         // TODO: this list should be completely external
         private static readonly string[] DebugWindowTypeNames =
-        {
+        [
             // WPF adorners introduced in Visual Studio 2015 Update 2
             "Microsoft.XamlDiagnostics.WpfTap",
             // WPF Inspector
             "ChristianMoser.WpfInspector",
             // Snoop
-            "Snoop.SnoopUI",
-        };
+            "Snoop.SnoopUI"
+        ];
 
-        private static readonly List<WindowInfo> ModalWindowsList = new List<WindowInfo>();
-        private static readonly List<WindowInfo> BlockingWindowsList = new List<WindowInfo>();
-        private static readonly HashSet<WindowInfo> AllWindowsList = new HashSet<WindowInfo>();
+        private static readonly List<WindowInfo> ModalWindowsList = [];
+        private static readonly List<WindowInfo> BlockingWindowsList = [];
+        private static readonly HashSet<WindowInfo> AllWindowsList = [];
 
         // This must remains a field to prevent garbage collection!
         private static NativeHelper.WinEventDelegate winEventProc;
@@ -175,7 +175,7 @@ namespace Stride.Core.Presentation.Windows
         {
             var window = (Window)sender;
             // dispatch with one frame delay to make sure WPF layout passes are completed (if not, actual width and height might be incorrect)
-            window.Dispatcher.InvokeAsync(() =>
+            Dispatcher.UIThread.InvokeAsync(() =>
             {
                 var area = window.GetWorkArea();
                 if (area != Rect.Empty)
@@ -251,7 +251,7 @@ namespace Stride.Core.Presentation.Windows
                 windowInfo = new WindowInfo(hwnd);
 
                 // Ignore window created on separate UI threads
-                if (windowInfo.Window?.Dispatcher != dispatcher)
+                if (Dispatcher != dispatcher)
                     return;
 
                 if (Debugger.IsAttached)
@@ -390,7 +390,7 @@ namespace Stride.Core.Presentation.Windows
             var window = WindowInfo.FromHwnd(hwnd);
 
             // Ignore window created on separate UI threads
-            if (window == null || window.Dispatcher != dispatcher)
+            if (window == null || Dispatcher != dispatcher)
                 return null;
 
             return AllWindowsList.FirstOrDefault(x => Equals(x.Window, window));

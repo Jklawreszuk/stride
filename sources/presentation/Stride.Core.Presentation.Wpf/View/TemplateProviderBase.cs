@@ -19,7 +19,7 @@ namespace Stride.Core.Presentation.View
         /// </summary>
         protected TemplateProviderBase()
         {
-            OverriddenProviderNames = new List<string>();
+            OverriddenProviderNames = [];
             OverrideRule = OverrideRule.Some;
         }
 

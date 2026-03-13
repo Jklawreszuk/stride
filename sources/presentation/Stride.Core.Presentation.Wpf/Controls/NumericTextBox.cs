@@ -100,27 +100,27 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="LargeChange"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty LargeChangeProperty = AvaloniaProperty.Register(nameof(LargeChange), typeof(double), typeof(NumericTextBox), new PropertyMetadata(10.0));
+        public static readonly AvaloniaProperty LargeChangeProperty = AvaloniaProperty.Register<NumericTextBox, double>(nameof(LargeChange),10.0);
 
         /// <summary>
         /// Identifies the <see cref="SmallChange"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty SmallChangeProperty = AvaloniaProperty.Register(nameof(SmallChange), typeof(double), typeof(NumericTextBox), new PropertyMetadata(1.0));
+        public static readonly AvaloniaProperty SmallChangeProperty = AvaloniaProperty.Register<NumericTextBox, double>(nameof(SmallChange), 1.0);
 
         /// <summary>
         /// Identifies the <see cref="DisplayUpDownButtons"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty DisplayUpDownButtonsProperty = AvaloniaProperty.Register(nameof(DisplayUpDownButtons), typeof(bool), typeof(NumericTextBox), new PropertyMetadata(BooleanBoxes.TrueBox));
+        public static readonly AvaloniaProperty DisplayUpDownButtonsProperty = AvaloniaProperty.Register<NumericTextBox, bool>(nameof(DisplayUpDownButtons), true);
 
         /// <summary>
         /// Identifies the <see cref="AllowMouseDrag"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty AllowMouseDragProperty = AvaloniaProperty.Register(nameof(AllowMouseDrag), typeof(bool), typeof(NumericTextBox), new PropertyMetadata(BooleanBoxes.TrueBox));
+        public static readonly AvaloniaProperty AllowMouseDragProperty = AvaloniaProperty.Register<NumericTextBox, bool>(nameof(AllowMouseDrag), true);
 
         /// <summary>
         /// Identifies the <see cref="MouseValidationTrigger"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty MouseValidationTriggerProperty = AvaloniaProperty.Register(nameof(MouseValidationTrigger), typeof(MouseValidationTrigger), typeof(NumericTextBox), new PropertyMetadata(MouseValidationTrigger.OnMouseUp));
+        public static readonly AvaloniaProperty MouseValidationTriggerProperty = AvaloniaProperty.Register<NumericTextBox, MouseValidationTrigger>(nameof(MouseValidationTrigger), MouseValidationTrigger.OnMouseUp);
 
         /// <summary>
         /// Raised when the <see cref="Value"/> property has changed.
@@ -265,15 +265,15 @@ namespace Stride.Core.Presentation.Controls
         {
             base.OnApplyTemplate(e);
 
-            increaseButton = GetTemplateChild("PART_IncreaseButton") as RepeatButton;
+            increaseButton =  e.NameScope.Find<RepeatButton>("PART_IncreaseButton");
             if (increaseButton == null)
                 throw new InvalidOperationException("A part named 'PART_IncreaseButton' must be present in the ControlTemplate, and must be of type 'RepeatButton'.");
 
-            decreaseButton = GetTemplateChild("PART_DecreaseButton") as RepeatButton;
+            decreaseButton =  e.NameScope.Find<RepeatButton>("PART_DecreaseButton");
             if (decreaseButton == null)
                 throw new InvalidOperationException("A part named 'PART_DecreaseButton' must be present in the ControlTemplate, and must be of type 'RepeatButton'.");
 
-            contentHost = GetTemplateChild("PART_ContentHost") as ScrollViewer;
+            contentHost =  e.NameScope.Find<ScrollViewer>("PART_ContentHost");
             if (contentHost == null)
                 throw new InvalidOperationException("A part named 'PART_ContentHost' must be present in the ControlTemplate, and must be of type 'ScrollViewer'.");
 
@@ -431,7 +431,7 @@ namespace Stride.Core.Presentation.Controls
             var span = value.TrimStart('0');
             if (span.StartsWith("x", StringComparison.OrdinalIgnoreCase) || span.StartsWith("#", StringComparison.OrdinalIgnoreCase))
             {
-                var span2 = span.TrimStart(stackalloc[] {'x', '#'});
+                var span2 = span.TrimStart(['x', '#']);
                 if (double.TryParse(span2, NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo, out result))
                     return true;
             }
@@ -559,9 +559,9 @@ namespace Stride.Core.Presentation.Controls
         private static void OnForbiddenPropertyChanged([NotNull] AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var metadata = e.Property.GetMetadata(d);
-            if (!Equals(e.NewValue, metadata.DefaultValue))
+            if (!Equals(e.NewValue, metadata.DefaultBindingMode))
             {
-                var message = $"The value of the property '{e.Property.Name}' cannot be different from the value '{metadata.DefaultValue}'";
+                var message = $"The value of the property '{e.Property.Name}' cannot be different from the value '{metadata.DefaultBindingMode}'";
                 throw new InvalidOperationException(message);
             }
         }

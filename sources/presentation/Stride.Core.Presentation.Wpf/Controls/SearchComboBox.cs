@@ -150,11 +150,11 @@ namespace Stride.Core.Presentation.Controls
         {
             base.OnApplyTemplate(e);
 
-            editableTextBox = GetTemplateChild(EditableTextBoxPartName) as TextBox;
+            editableTextBox =  e.NameScope.Find<TextBox>(EditableTextBoxPartName);
             if (editableTextBox == null)
                 throw new InvalidOperationException($"A part named '{EditableTextBoxPartName}' must be present in the ControlTemplate, and must be of type '{typeof(TextBox).FullName}'.");
 
-            listBox = GetTemplateChild(ListBoxPartName) as ListBox;
+            listBox =  e.NameScope.Find<ListBox>(ListBoxPartName);
             if (listBox == null)
                 throw new InvalidOperationException($"A part named '{ListBoxPartName}' must be present in the ControlTemplate, and must be of type '{nameof(ListBox)}'.");
             
@@ -197,8 +197,7 @@ namespace Stride.Core.Presentation.Controls
         {
             base.OnLostKeyboardFocus(e);
 
-            var el = e.NewFocus as Control;
-            if (el != null)
+            if (e.NewFocus is Control el)
             {
                 // The user probably clicked (MouseDown) somewhere on our dropdown listbox, so we won't clear to be able to
                 // get the MouseUp event (<see cref="ListBoxMouseUp">).
@@ -314,7 +313,7 @@ namespace Stride.Core.Presentation.Controls
             }
         }
 
-        private void ListBoxMouseUp(object sender, MouseButtonEventArgs e)
+        private void ListBoxMouseUp(object sender, PointerEventArgs e)
         {
             ValidateSelection();
             if (ClearTextAfterSelection)

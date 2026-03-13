@@ -7,8 +7,13 @@ using Avalonia.Controls.Documents;
 
 namespace Stride.Core.Presentation.Controls
 {
-    public static class TextBlockFormatting
+    public class TextBlockFormatting
     {
+        static TextBlockFormatting()
+        {
+            FormattedTextProperty.Changed.AddClassHandler<AvaloniaObject>(OnFormattedTextChanged);
+        }
+        
         public static Inline GetFormattedText(AvaloniaObject obj)
         {
             return (Inline)obj.GetValue(FormattedTextProperty);
@@ -23,11 +28,7 @@ namespace Stride.Core.Presentation.Controls
         /// Identifies the dependency property which permits to directly bind a inline to a <see cref="TextBox"/>.
         /// </summary>
         public static readonly AvaloniaProperty FormattedTextProperty =
-            AvaloniaProperty.RegisterAttached(
-                "FormattedText",
-                typeof(Inline),
-                typeof(TextBlockFormatting),
-                new PropertyMetadata(null, OnFormattedTextChanged));
+            AvaloniaProperty.RegisterAttached<TextBlockFormatting, Control, Inline>("FormattedText");
 
         private static void OnFormattedTextChanged(AvaloniaObject o, AvaloniaPropertyChangedEventArgs e)
         {

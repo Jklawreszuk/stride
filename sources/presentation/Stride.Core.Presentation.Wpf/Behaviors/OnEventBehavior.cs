@@ -2,6 +2,7 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
 using System.Linq;
+using System.Reflection;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
@@ -33,7 +34,7 @@ namespace Stride.Core.Presentation.Behaviors
         /// </summary>
         public static readonly AvaloniaProperty HandleEventProperty = AvaloniaProperty.Register<OnEventBehavior, bool>("HandleEvent");
 
-        private readonly RoutedEventHandler routedEventHandler;
+        private readonly EventHandler<RoutedEventArgs> routedEventHandler;
         private AnonymousEventHandler eventHandler;
         private RoutedEvent routedEvent;
 
@@ -68,29 +69,29 @@ namespace Stride.Core.Presentation.Behaviors
             if (EventName == null)
                 throw new ArgumentException($"The EventName property must be set on behavior '{GetType().FullName}'.");
 
-            var eventOwnerType = EventOwnerType ?? AssociatedObject.GetType();
+            var ownerType = EventOwnerType ?? AssociatedObject?.GetType();
 
-            var uiElement = AssociatedObject as Control;
+            var control = AssociatedObject as Control;
 
-            var routedEvents = EventManager.GetRoutedEvents().Where(x => x.Name == EventName && x.OwnerType.IsAssignableFrom(eventOwnerType)).ToArray();
+            var routedEventResult = ownerType?
+                .GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
+                .FirstOrDefault(f =>
+                    typeof(RoutedEvent).IsAssignableFrom(f.FieldType) &&
+                    f.Name == EventName + "Event")?.
+                GetValue(null) as RoutedEvent;
 
-            if (uiElement != null && routedEvents.Length > 0)
+            if (control != null && routedEventResult != null)
             {
-                if (routedEvents.Length > 1)
-                    throw new NotImplementedException("TODO: several events found, find a way to decide the most relevant one.");
-
-                routedEvent = routedEvents.First();
-                uiElement.AddHandler(routedEvent, routedEventHandler);
+                control.AddHandler(routedEventResult, routedEventHandler);
+                return;
             }
-            else
-            {
-                var eventInfo = AssociatedObject.GetType().GetEvent(EventName);
 
-                if (eventInfo == null)
-                    throw new InvalidOperationException($"Impossible to find a valid event named '{EventName}'.");
+            var eventInfo = AssociatedObject?.GetType().GetEvent(EventName);
 
-                eventHandler = AnonymousEventHandler.RegisterEventHandler(eventInfo, AssociatedObject, OnEvent);
-            }
+            if (eventInfo == null)
+                throw new InvalidOperationException($"Impossible to find a valid event named '{EventName}'.");
+
+            eventHandler = AnonymousEventHandler.RegisterEventHandler(eventInfo, AssociatedObject, OnEvent);
         }
 
         /// <inheritdoc/>
@@ -98,8 +99,8 @@ namespace Stride.Core.Presentation.Behaviors
         {
             if (routedEvent != null)
             {
-                var uiElement = (Control)AssociatedObject;
-                uiElement.RemoveHandler(routedEvent, routedEventHandler);
+                var control = (Control)AssociatedObject;
+                control?.RemoveHandler(routedEvent, routedEventHandler);
                 routedEvent = null;
             }
             else if (eventHandler != null)

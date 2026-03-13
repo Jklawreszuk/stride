@@ -3,14 +3,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
-using System.Windows.Data;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Data;
 using Avalonia.Interactivity;
 using Avalonia.Xaml.Interactivity;
-using Microsoft.Xaml.Behaviors;
-using Stride.Core;
 using Stride.Core.Presentation.Extensions;
 
 namespace Stride.Core.Presentation.Behaviors
@@ -49,17 +46,16 @@ namespace Stride.Core.Presentation.Behaviors
             if (property == null /* need to check DesignMode as well ? */)
                 throw new InvalidOperationException($"Impossible to find property named '{PropertyName}' on object typed '{AssociatedObject.GetType()}'.");
 
-            if ((Binding is Binding) == false)
+            if (Binding is not Avalonia.Data.Binding)
                 throw new InvalidOperationException("Not supported binding type.");
 
-            var element = AssociatedObject as Control;
-            if (element == null)
+            if (AssociatedObject is not Control element)
             {
                 throw new InvalidOperationException(
                     $"Behavior of type '{GetType()}' must be bound to objects of type '{typeof(Control)}'. (currently bound to object typed '{AssociatedObject.GetType()}')");
             }
 
-            BindingOperations.SetBinding(AssociatedObject, property, Binding);
+            AssociatedObject.Bind(property, Binding);
 
             // subscribe to *Focus events
             element.GotFocus += OnHostGotFocus;
@@ -85,7 +81,7 @@ namespace Stride.Core.Presentation.Behaviors
             var value = AssociatedObject.GetValue(property);
 
             // clear binding (the side-effect is that value is also clear from within the control)
-            BindingOperations.ClearBinding(AssociatedObject, property);
+            AssociatedObject.SetValue(property, null);
 
             // set back value stored before clearing binding
             AssociatedObject.SetValue(property, value);
@@ -123,13 +119,13 @@ namespace Stride.Core.Presentation.Behaviors
             };
 
             // apply custom binding
-            BindingOperations.SetBinding(AssociatedObject, property, intermediateBinding);
+            AssociatedObject.Bind(property, intermediateBinding);
 
             // set target property, side-effect is the source property value is set too
             AssociatedObject.SetValue(property, currentValue);
 
             // restore cleared binding
-            BindingOperations.SetBinding(AssociatedObject, property, Binding);
+            AssociatedObject.Bind(property, Binding);
         }
     }
 }

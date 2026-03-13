@@ -3,30 +3,34 @@
 
 using System;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Reactive;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Extensions;
-using Stride.Core.Presentation.Internal;
-using Stride.Core.Presentation.Interop;
 
 namespace Stride.Core.Presentation.Behaviors
 {
     /// <summary>
     /// This static class contains attached dependency properties that can be used as behavior to add or change features of controls.
     /// </summary>
-    public static class BehaviorProperties
+    public class BehaviorProperties
     {
         /// <summary>
         /// When attached to a <see cref="ScrollViewer"/> or a control that contains a <see cref="ScrollViewer"/>, this property allows to control whether the scroll viewer should handle scrolling with the mouse wheel.
         /// </summary>
-        public static AvaloniaProperty HandlesMouseWheelScrollingProperty = AvaloniaProperty.RegisterAttached("HandlesMouseWheelScrolling", typeof(bool), typeof(BehaviorProperties), new PropertyMetadata(BooleanBoxes.TrueBox, HandlesMouseWheelScrollingChanged));
+        public static AvaloniaProperty HandlesMouseWheelScrollingProperty = AvaloniaProperty.RegisterAttached<BehaviorProperties, Control, bool>("HandlesMouseWheelScrolling");
 
         /// <summary>
         /// When attached to a <see cref="Window"/> that have the <see cref="Window.WindowStyle"/> value set to <see cref="WindowStyle.None"/>, prevent the window to expand over the taskbar when maximized.
         /// </summary>
-        public static AvaloniaProperty KeepTaskbarWhenMaximizedProperty = AvaloniaProperty.RegisterAttached("KeepTaskbarWhenMaximized", typeof(bool), typeof(BehaviorProperties), new PropertyMetadata(BooleanBoxes.FalseBox, KeepTaskbarWhenMaximizedChanged));
+        public static AvaloniaProperty KeepTaskbarWhenMaximizedProperty = AvaloniaProperty.RegisterAttached<BehaviorProperties, Control, bool>("KeepTaskbarWhenMaximized");
+
+        static BehaviorProperties()
+        {
+            HandlesMouseWheelScrollingProperty.Changed.AddClassHandler<AvaloniaObject>(HandlesMouseWheelScrollingChanged);
+            KeepTaskbarWhenMaximizedProperty.Changed.AddClassHandler<AvaloniaObject>(KeepTaskbarWhenMaximizedChanged);
+        }
 
         /// <summary>
         /// Gets the current value of the <see cref="HandlesMouseWheelScrollingProperty"/> dependency property attached to the given <see cref="AvaloniaObject"/>.
@@ -96,61 +100,29 @@ namespace Stride.Core.Presentation.Behaviors
 
         private static void KeepTaskbarWhenMaximizedChanged([NotNull] AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
-            var window = d as Window;
-            if (window == null)
+            if (d is not Window window)
                 return;
 
-            if (window.IsLoaded)
+            void ApplyWorkArea()
             {
-                var hwnd = new WindowInteropHelper(window).Handle;
-                var source = HwndSource.FromHwnd(hwnd);
-                source?.AddHook(
-                    (IntPtr h, int msg, IntPtr wparam, IntPtr lparam, ref bool handled) => WindowProc(window, h, msg, wparam, lparam, ref handled));
+                var screen = window.Screens.ScreenFromWindow(window);
+                if (screen == null)
+                    return;
+
+                var workArea = screen.WorkingArea;
+
+                window.MaxWidth = workArea.Width;
+                window.MaxHeight = workArea.Height;
             }
-            else
-            {
-                window.SourceInitialized += (sender, arg) =>
+
+            window.Opened += (_, _) => ApplyWorkArea();
+
+            window.GetObservable(Window.WindowStateProperty)
+                .Subscribe(new AnonymousObserver<WindowState>(state =>
                 {
-                    var hwnd = new WindowInteropHelper(window).Handle;
-                    var source = HwndSource.FromHwnd(hwnd);
-                    source?.AddHook(
-                        (IntPtr h, int msg, IntPtr wparam, IntPtr lparam, ref bool handled) => WindowProc(window, h, msg, wparam, lparam, ref handled));
-                };
-            }
-        }
-
-        private static IntPtr WindowProc([NotNull] Window window, IntPtr hwnd, int msg, IntPtr wparam, IntPtr lparam, ref bool handled)
-        {
-            switch (msg)
-            {
-                case NativeHelper.WM_GETMINMAXINFO:
-                    var monitorInfo = WindowHelper.GetMonitorInfo(hwnd);
-                    if (monitorInfo == null)
-                        break;
-
-                    var mmi = (NativeHelper.MINMAXINFO)Marshal.PtrToStructure(lparam, typeof(NativeHelper.MINMAXINFO));
-                    var rcWorkArea = monitorInfo.rcWork;
-                    var rcMonitorArea = monitorInfo.rcMonitor;
-
-                    mmi.ptMaxPosition.X = Math.Abs(rcWorkArea.Left - rcMonitorArea.Left);
-                    mmi.ptMaxPosition.Y = Math.Abs(rcWorkArea.Top - rcMonitorArea.Top);
-                    // Get dpi scale
-                    var dpiScale = VisualTreeHelper.GetDpi(window);
-                    // Get maximum width and height from WPF
-                    var maxWidth = double.IsInfinity(window.MaxWidth) ? int.MaxValue : (int)(window.MaxWidth*dpiScale.DpiScaleX);
-                    var maxHeight = double.IsInfinity(window.MaxHeight) ? int.MaxValue : (int)(window.MaxHeight*dpiScale.DpiScaleY);
-                    // Constrain the size when the window is maximized to the work area so that the taskbar is not covered
-                    mmi.ptMaxSize.X = Math.Min(maxWidth, Math.Abs(rcWorkArea.Right - rcWorkArea.Left));
-                    mmi.ptMaxSize.Y = Math.Min(maxHeight, Math.Abs(rcWorkArea.Bottom - rcWorkArea.Top));
-                    // Uncomment the following lines to also constraint the maximum size that the user can manually resize the window when draggin the tracking side
-                    //mmi.ptMaxTrackSize.X = mmi.ptMaxSize.X;
-                    //mmi.ptMaxTrackSize.Y = mmi.ptMaxSize.Y;
-
-                    Marshal.StructureToPtr(mmi, lparam, true);
-                    handled = true;
-                    break;
-            }
-            return IntPtr.Zero;
+                    if (state == WindowState.Maximized)
+                        ApplyWorkArea();
+                }));
         }
     }
 }

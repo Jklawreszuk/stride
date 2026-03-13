@@ -12,12 +12,12 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="X"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty XProperty = AvaloniaProperty.Register("X", typeof(int?), typeof(Int2Editor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
+        public static readonly AvaloniaProperty XProperty = AvaloniaProperty.Register<Int2Editor, int?>("X");
 
         /// <summary>
         /// Identifies the <see cref="Y"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty YProperty = AvaloniaProperty.Register("Y", typeof(int?), typeof(Int2Editor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
+        public static readonly AvaloniaProperty YProperty = AvaloniaProperty.Register<Int2Editor, int?>("Y");
 
         /// <summary>
         /// Gets or sets the X component of the <see cref="Int2"/> associated to this control.
@@ -28,6 +28,12 @@ namespace Stride.Core.Presentation.Controls
         /// Gets or sets the Y component of the <see cref="Int2"/> associated to this control.
         /// </summary>
         public int? Y { get { return (int?)GetValue(YProperty); } set { SetValue(YProperty, value); } }
+
+        static Int2Editor()
+        {
+            XProperty.Changed.AddClassHandler<Int2Editor>((sender, e) => OnComponentPropertyChanged(sender, e));
+            YProperty.Changed.AddClassHandler<Int2Editor>((sender, e) => OnComponentPropertyChanged(sender, e));
+        }
 
         /// <inheritdoc/>
         protected override void UpdateComponentsFromValue(Int2? value)

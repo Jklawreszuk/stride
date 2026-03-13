@@ -1,26 +1,26 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
-using System.Windows;
 using Avalonia.Controls;
-using System.Windows.Data;
 using System.Windows.Input;
-using System.Windows.Shapes;
 using Avalonia;
-using Avalonia.Controls;
+using Avalonia.Data;
+using Avalonia.Input;
+using Avalonia.Reactive;
+using Avalonia.Styling;
 
 namespace Stride.Core.Presentation.Behaviors
 {
     public sealed class SelectionRectangleBehavior : MouseMoveCaptureBehaviorBase<Control>
     {
         public static readonly AvaloniaProperty CanvasProperty =
-            AvaloniaProperty.Register(nameof(Canvas), typeof(Canvas), typeof(SelectionRectangleBehavior), new PropertyMetadata(OnCanvasChanged));
+            AvaloniaProperty.Register<SelectionRectangleBehavior, Canvas>(nameof(Canvas));
 
         public static readonly AvaloniaProperty CommandProperty =
-            AvaloniaProperty.Register(nameof(Command), typeof(ICommand), typeof(SelectionRectangleBehavior));
+            AvaloniaProperty.Register<SelectionRectangleBehavior, ICommand>(nameof(Command));
 
         public static readonly AvaloniaProperty RectangleStyleProperty =
-            AvaloniaProperty.Register(nameof(RectangleStyle), typeof(Style), typeof(SelectionRectangleBehavior));
+            AvaloniaProperty.Register<SelectionRectangleBehavior, Style>(nameof(RectangleStyle));
 
         private Point originPoint;
         private Rectangle selectionRectangle;
@@ -38,21 +38,20 @@ namespace Stride.Core.Presentation.Behaviors
         
         public bool IsDragging { get; private set; }
 
-        private static void OnCanvasChanged(AvaloniaObject obj, AvaloniaPropertyChangedEventArgs e)
+        static SelectionRectangleBehavior()
         {
-            var behavior = (SelectionRectangleBehavior)obj;
-            behavior.OnCanvasChanged(e);
+            CanvasProperty.Changed.Subscribe(new AnonymousObserver<AvaloniaPropertyChangedEventArgs>((e) => OnCanvasChanged(e)));
         }
 
         ///  <inheritdoc/>
         protected override void CancelOverride()
         {
             IsDragging = false;
-            Canvas.Visibility = Visibility.Collapsed;
+            Canvas.IsVisible = false;
         }
 
         ///  <inheritdoc/>
-        protected override void OnMouseDown(MouseButtonEventArgs e)
+        protected override void OnMouseDown(PointerEventArgs e)
         {
             if (e.ChangedButton != MouseButton.Left)
                 return;
@@ -64,7 +63,7 @@ namespace Stride.Core.Presentation.Behaviors
         }
 
         ///  <inheritdoc/>
-        protected override void OnMouseMove(MouseEventArgs e)
+        protected override void OnMouseMove(PointerEventArgs e)
         {
             if (e.MouseDevice.LeftButton != MouseButtonState.Pressed)
             {
@@ -93,7 +92,7 @@ namespace Stride.Core.Presentation.Behaviors
         }
 
         ///  <inheritdoc/>
-        protected override void OnMouseUp(MouseButtonEventArgs e)
+        protected override void OnMouseUp(PointerEventArgs e)
         {
             if (e.ChangedButton != MouseButton.Left)
                 return;
@@ -115,7 +114,7 @@ namespace Stride.Core.Presentation.Behaviors
             {
                 var binding = new Binding
                 {
-                    Path = new PropertyPath(nameof(RectangleStyle)),
+                    Path = new(nameof(RectangleStyle)),
                     Source = this,
                 };
                 selectionRectangle.SetBinding(Control.StyleProperty, binding);
@@ -127,18 +126,16 @@ namespace Stride.Core.Presentation.Behaviors
             selectionRectangle.IsHitTestVisible = false;
         }
 
-        private void OnCanvasChanged(AvaloniaPropertyChangedEventArgs e)
+        public void OnCanvasChanged(AvaloniaPropertyChangedEventArgs e)
         {
-            var oldCanvas = e.OldValue as Canvas;
-            if (oldCanvas != null && selectionRectangle != null)
+            if (e.OldValue is Canvas oldCanvas && selectionRectangle != null)
             {
                 oldCanvas.Children.Remove(selectionRectangle);
             }
 
-            var newCanvas = e.NewValue as Canvas;
-            if (newCanvas == null)
+            if (e.NewValue is not Canvas newCanvas)
                 return;
-            newCanvas.Visibility = Visibility.Collapsed;
+            newCanvas.IsVisible = false;
 
             if (selectionRectangle == null)
                 CreateSelectionRectangle();
@@ -152,7 +149,7 @@ namespace Stride.Core.Presentation.Behaviors
         private void InitDragSelectionRect(Point pt1, Point pt2)
         {
             UpdateDragSelectionRect(pt1, pt2);
-            Canvas.Visibility = Visibility.Visible;
+            Canvas.IsVisible = true;
         }
 
         /// <summary>
@@ -202,7 +199,7 @@ namespace Stride.Core.Presentation.Behaviors
         /// </summary>
         private void ApplyDragSelectionRect()
         {
-            Canvas.Visibility = Visibility.Collapsed;
+            Canvas.IsVisible = false;
 
             if (Command == null)
                 return;

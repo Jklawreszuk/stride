@@ -28,7 +28,7 @@ namespace Stride.Core.Presentation.Extensions
         /// <returns>A clone of the given <see cref="BindingBase"/></returns>
         public static BindingBase CloneBinding([NotNull] this BindingBase bindingBase, BindingMode mode)
         {
-            return (BindingBase)CloneMethodInfo.Invoke(bindingBase, new object[] { mode });
+            return (BindingBase)CloneMethodInfo.Invoke(bindingBase, [mode]);
         }
     }
 }

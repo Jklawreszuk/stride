@@ -8,6 +8,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Threading;
 using Stride.Core.Annotations;
 using Stride.Core.Mathematics;
 using Stride.Core.Presentation.Internal;
@@ -22,7 +23,7 @@ namespace Stride.Core.Presentation.Controls
     /// </summary>
     public class GameEngineHost : Control, IDisposable, IWin32Window, IKeyboardInputSink
     {
-        private readonly List<HwndSource> contextMenuSources = new List<HwndSource>();
+        private readonly List<HwndSource> contextMenuSources = [];
         private bool updateRequested;
         private int mouseMoveCount;
         private Point contextMenuPosition;
@@ -33,7 +34,6 @@ namespace Stride.Core.Presentation.Controls
 
         static GameEngineHost()
         {
-            FocusableProperty.OverrideMetadata(typeof(GameEngineHost), new FrameworkPropertyMetadata(BooleanBoxes.TrueBox));
         }
 
         /// <summary>
@@ -228,7 +228,7 @@ namespace Stride.Core.Presentation.Controls
                     NativeHelper.SetWindowLong(Handle, NativeHelper.GWL_STYLE, style);
 
                     mouseMoveCount = 0;
-                    task = Dispatcher.InvokeAsync(() =>
+                    task = Dispatcher.UIThread.InvokeAsync(() =>
                     {
                         RaiseMouseButtonEvent(Mouse.PreviewMouseDownEvent, MouseButton.Right);
                         RaiseMouseButtonEvent(Mouse.MouseDownEvent, MouseButton.Right);
@@ -242,7 +242,7 @@ namespace Stride.Core.Presentation.Controls
                     style2 |= NativeHelper.WS_CHILD;
                     NativeHelper.SetWindowLong(Handle, NativeHelper.GWL_STYLE, style2);
 
-                    task = Dispatcher.InvokeAsync(() =>
+                    task = Dispatcher.UIThread.InvokeAsync(() =>
                     {
                         RaiseMouseButtonEvent(Mouse.PreviewMouseUpEvent, MouseButton.Right);
                         RaiseMouseButtonEvent(Mouse.MouseUpEvent, MouseButton.Right);
@@ -272,7 +272,7 @@ namespace Stride.Core.Presentation.Controls
                     // TODO: Tracking drag offset would be better, but might be difficult since we replace the mouse to its initial position each time it is moved.
                     if (mouseMoveCount < 3)
                     {
-                        Dispatcher.InvokeAsync(() =>
+                        Dispatcher.UIThread.InvokeAsync(() =>
                         {
                             AvaloniaObject dependencyObject = this;
                             while (dependencyObject != null)
@@ -310,7 +310,7 @@ namespace Stride.Core.Presentation.Controls
 
         private void RaiseMouseButtonEvent(RoutedEvent routedEvent, MouseButton button)
         {
-            RaiseEvent(new MouseButtonEventArgs(Mouse.PrimaryDevice, Environment.TickCount, button)
+            RaiseEvent(new PointerEventArgs(Mouse.PrimaryDevice, Environment.TickCount, button)
             {
                 RoutedEvent = routedEvent,
                 Source = this,

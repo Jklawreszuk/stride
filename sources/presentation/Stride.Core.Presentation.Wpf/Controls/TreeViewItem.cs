@@ -6,9 +6,13 @@ using System.Collections.Specialized;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls.Primitives;
+using Avalonia.Input;
+using Avalonia.Markup.Xaml.Templates;
+using Avalonia.Threading;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Extensions;
 using Stride.Core.Presentation.Internal;
+using Stride.Core.Presentation.ValueConverters;
 
 namespace Stride.Core.Presentation.Controls
 {
@@ -24,7 +28,7 @@ namespace Stride.Core.Presentation.Controls
         /// Identifies the <see cref="IsEditable"/> dependency property.
         /// </summary>
         public static AvaloniaProperty IsEditableProperty =
-            AvaloniaProperty.Register(nameof(IsEditable), typeof(bool), typeof(TreeViewItem), new FrameworkPropertyMetadata(BooleanBoxes.TrueBox, null));
+            AvaloniaProperty.Register<TreeViewItem, bool>(nameof(IsEditable), true);
         /// <summary>
         /// Identifies the <see cref="IsEditing"/> dependency property.
         /// </summary>
@@ -34,27 +38,25 @@ namespace Stride.Core.Presentation.Controls
         /// Identifies the <see cref="IsSelected"/> dependency property.
         /// </summary>
         public static AvaloniaProperty IsSelectedProperty =
-            AvaloniaProperty.Register(nameof(IsSelected), typeof(bool), typeof(TreeViewItem), new FrameworkPropertyMetadata(BooleanBoxes.FalseBox, null));
+            AvaloniaProperty.Register<TreeViewItem, bool>(nameof(IsSelected));
         /// <summary>
         /// Identifies the <see cref="TemplateEdit"/> dependency property.
         /// </summary>
         public static AvaloniaProperty TemplateEditProperty =
-            AvaloniaProperty.Register(nameof(TemplateEdit), typeof(DataTemplate), typeof(TreeViewItem), new FrameworkPropertyMetadata(null, null));
+            AvaloniaProperty.Register<TreeViewItem, DataTemplate>(nameof(TemplateEdit));
         /// <summary>
         /// Identifies the <see cref="TemplateSelectorEdit"/> dependency property.
         /// </summary>
         public static AvaloniaProperty TemplateSelectorEditProperty =
-            AvaloniaProperty.Register(nameof(TemplateSelectorEdit), typeof(DataTemplateSelector), typeof(TreeViewItem), new FrameworkPropertyMetadata(null, null));
+            AvaloniaProperty.Register<TreeViewItem, DataTemplateSelector>(nameof(TemplateSelectorEdit));
         /// <summary>
         /// Identifies the <see cref="Indentation"/> dependency property.
         /// </summary>
         public static readonly AvaloniaProperty IndentationProperty =
-            AvaloniaProperty.Register(nameof(Indentation), typeof(double), typeof(TreeViewItem), new PropertyMetadata(10.0));
+            AvaloniaProperty.Register<TreeViewItem, double>(nameof(Indentation), 10.0);
 
         static TreeViewItem()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(TreeViewItem), new FrameworkPropertyMetadata(typeof(TreeViewItem)));
-
             var vPanel = new FrameworkElementFactory(typeof(VirtualizingTreePanel));
             vPanel.SetValue(Panel.IsItemsHostProperty, true);
             var vPanelTemplate = new ItemsPanelTemplate { VisualTree = vPanel };
@@ -89,7 +91,7 @@ namespace Stride.Core.Presentation.Controls
         {
             get
             {
-                if (Visibility != Visibility.Visible)
+                if (!IsVisible)
                     return false;
                 var currentItem = ParentTreeViewItem;
                 while (currentItem != null)
@@ -386,7 +388,7 @@ namespace Stride.Core.Presentation.Controls
 
         private bool LogicalLeft(Key key)
         {
-            bool invert = (FlowDirection == FlowDirection.RightToLeft);
+            bool invert = (FlowDirection == Avalonia.Media.FlowDirection.RightToLeft);
             return (!invert && (key == Key.Left)) || (invert && (key == Key.Right));
         }
 

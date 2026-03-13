@@ -1,7 +1,6 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
-using System.Windows;
 using Avalonia;
 using Stride.Core.Annotations;
 using Stride.Core.Mathematics;
@@ -13,26 +12,29 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="X"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty XProperty = AvaloniaProperty.Register("X", typeof(float?), typeof(Vector3Editor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
+        public static readonly AvaloniaProperty XProperty = AvaloniaProperty.Register<Vector3Editor, float?>("X");
 
         /// <summary>
         /// Identifies the <see cref="Y"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty YProperty = AvaloniaProperty.Register("Y", typeof(float?), typeof(Vector3Editor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
+        public static readonly AvaloniaProperty YProperty = AvaloniaProperty.Register<Vector3Editor, float?>("Y");
 
         /// <summary>
         /// Identifies the <see cref="Z"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty ZProperty = AvaloniaProperty.Register("Z", typeof(float?), typeof(Vector3Editor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
+        public static readonly AvaloniaProperty ZProperty = AvaloniaProperty.Register<Vector3Editor, float?>("Z");
 
         /// <summary>
         /// Identifies the <see cref="Length"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty LengthProperty = AvaloniaProperty.Register("Length", typeof(float?), typeof(Vector3Editor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceLengthValue));
+        public static readonly AvaloniaProperty LengthProperty = AvaloniaProperty.Register<Vector3Editor, float?>("Length");
 
         static Vector3Editor()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(Vector3Editor), new FrameworkPropertyMetadata(typeof(Vector3Editor)));
+            XProperty.Changed.AddClassHandler<Vector3Editor>((o, e) => OnComponentPropertyChanged(o, e));
+            YProperty.Changed.AddClassHandler<Vector3Editor>((o, e) => OnComponentPropertyChanged(o, e));
+            ZProperty.Changed.AddClassHandler<Vector3Editor>((o, e) => OnComponentPropertyChanged(o, e));
+            LengthProperty.Changed.AddClassHandler<Vector3Editor>((o, e) => OnComponentPropertyChanged(o, e));
         }
 
         /// <summary>
@@ -74,25 +76,25 @@ namespace Stride.Core.Presentation.Controls
             {
                 case VectorEditingMode.Normal:
                     if (property == XProperty)
-                        return X.HasValue && Value.HasValue ? (Vector3?)new Vector3(X.Value, Value.Value.Y, Value.Value.Z) : null;
+                        return X.HasValue && Value.HasValue ? new Vector3(X.Value, Value.Value.Y, Value.Value.Z) : null;
                     if (property == YProperty)
-                        return Y.HasValue && Value.HasValue ? (Vector3?)new Vector3(Value.Value.X, Y.Value, Value.Value.Z) : null;
+                        return Y.HasValue && Value.HasValue ? new Vector3(Value.Value.X, Y.Value, Value.Value.Z) : null;
                     if (property == ZProperty)
-                        return Z.HasValue && Value.HasValue ? (Vector3?)new Vector3(Value.Value.X, Value.Value.Y, Z.Value) : null;
+                        return Z.HasValue && Value.HasValue ? new Vector3(Value.Value.X, Value.Value.Y, Z.Value) : null;
                     break;
 
                 case VectorEditingMode.AllComponents:
                     if (property == XProperty)
-                        return X.HasValue ? (Vector3?)new Vector3(X.Value) : null;
+                        return X.HasValue ? new Vector3(X.Value) : null;
                     if (property == YProperty)
-                        return Y.HasValue ? (Vector3?)new Vector3(Y.Value) : null;
+                        return Y.HasValue ? new Vector3(Y.Value) : null;
                     if (property == ZProperty)
-                        return Z.HasValue ? (Vector3?)new Vector3(Z.Value) : null;
+                        return Z.HasValue ? new Vector3(Z.Value) : null;
                     break;
 
                 case VectorEditingMode.Length:
                     if (property == LengthProperty)
-                        return Length.HasValue ? (Vector3?)FromLength(Value ?? Vector3.One, Length.Value) : null;
+                        return Length.HasValue ? FromLength(Value ?? Vector3.One, Length.Value) : null;
                     break;
 
                 default:

@@ -5,6 +5,8 @@ using System;
 using System.Reflection;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
+using Avalonia.Input;
 using Avalonia.Layout;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Controls;
@@ -66,7 +68,7 @@ namespace Stride.Core.Presentation.Behaviors
         }
 
         /// <inheritdoc />
-        protected override void OnMouseDown(MouseButtonEventArgs e)
+        protected override void OnMouseDown(PointerEventArgs e)
         {
             if (!IsContentHostPart(e.OriginalSource))
                 return;
@@ -90,7 +92,7 @@ namespace Stride.Core.Presentation.Behaviors
         }
 
         /// <inheritdoc />
-        protected override void OnMouseMove(MouseEventArgs e)
+        protected override void OnMouseMove(PointerEventArgs e)
         {
             var position = e.GetPosition(AssociatedObject);
             if (AssociatedObject.AllowMouseDrag && dragState == DragState.Starting && e.LeftButton == MouseButtonState.Pressed)
@@ -136,7 +138,7 @@ namespace Stride.Core.Presentation.Behaviors
         }
 
         /// <inheritdoc />
-        protected override void OnMouseUp(MouseButtonEventArgs e)
+        protected override void OnMouseUp(PointerEventArgs e)
         {
             // We have to release the mouse first, in case Validate triggers a Detach of this behavior.
             ReleaseMouseCapture();

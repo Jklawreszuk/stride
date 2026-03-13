@@ -9,6 +9,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
+using CommunityToolkit.Mvvm.Input;
 using Stride.Core.Presentation.Interop;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Services;
@@ -32,7 +33,12 @@ namespace Stride.Core.Presentation.Windows
 
         protected void OnInitialized(object sender, EventArgs e)
         {
-            CommandBindings.Add(new CommandBinding(ApplicationCommands.Copy, (_, __) => SafeClipboard.SetDataObject(Content ?? string.Empty, true)));
+            KeyBindings.Add(new KeyBinding
+            {
+                Gesture = new KeyGesture(Key.C, KeyModifiers.Control),
+                Command = new RelayCommand(() =>
+                    SafeClipboard.SetDataObject(Content ?? string.Empty, true))
+            });
         }
 
         public IImage Image
@@ -61,7 +67,7 @@ namespace Stride.Core.Presentation.Windows
         /// </summary>
         /// <param name="message">A <see cref="string"/> that specifies the text to display.</param>
         /// <param name="caption">A <see cref="string"/> that specifies the title bar caption to display.</param>
-        /// <param name="buttons">A n enumeration of <see cref="DialogButtonInfo"/> that specifies buttons to display</param>
+        /// <param name="buttons">An enumeration of <see cref="DialogButtonInfo"/> that specifies buttons to display</param>
         /// <param name="image">A <see cref="MessageBoxImage"/> value that specifies the icon to display.</param>
         /// <returns>A <see cref="MessageBoxResult"/> value that specifies which message box button is clicked by the user.</returns>
         public static async Task<int> Show(string message, string caption, [NotNull] IEnumerable<DialogButtonInfo> buttons, MessageBoxImage image)

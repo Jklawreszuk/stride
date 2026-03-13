@@ -4,6 +4,7 @@
 using System;
 using System.Runtime.CompilerServices;
 using Avalonia.Controls;
+using Avalonia.Threading;
 using Stride.Core.Annotations;
 
 namespace Stride.Core.Presentation.Interop
@@ -41,7 +42,7 @@ namespace Stride.Core.Presentation.Interop
 
             Listeners.Add(window, hwndSource);
 
-            window.Dispatcher.Invoke(() =>
+            Dispatcher.Invoke(() =>
             {
                 // start processing window messages
                 hwndSource.AddHook(WinProc);
@@ -63,7 +64,7 @@ namespace Stride.Core.Presentation.Interop
             if (!Listeners.TryGetValue(window, out var hwndSource))
                 throw new InvalidOperationException($"The given {window} is not registered as a clipboard listener.");
 
-            window.Dispatcher.Invoke(() =>
+            Dispatcher.Invoke(() =>
             {
                 // stop processing window messages
                 hwndSource.RemoveHook(WinProc);
@@ -82,7 +83,7 @@ namespace Stride.Core.Presentation.Interop
         private static void OnClipboardContentChanged(IntPtr hwnd)
         {
             var hwndSource = HwndSource.FromHwnd(hwnd);
-            hwndSource?.Dispatcher.InvokeAsync(() =>
+            Dispatcher.InvokeAsync(() =>
             {
                 if (SafeClipboard.ContainsText().Result)
                 {

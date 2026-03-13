@@ -4,6 +4,7 @@ using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Data;
 using Avalonia.Markup.Xaml.Templates;
 
 namespace Stride.Core.Presentation.Controls
@@ -17,37 +18,37 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="WatermarkContent"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty WatermarkContentProperty = AvaloniaProperty.Register("WatermarkContent", typeof(object), typeof(TimeSpanEditor), new PropertyMetadata(null));
+        public static readonly AvaloniaProperty WatermarkContentProperty = AvaloniaProperty.Register<TimeSpanEditor,  object>("WatermarkContent");
 
         /// <summary>
         /// Identifies the <see cref="WatermarkContentTemplate"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty WatermarkContentTemplateProperty = AvaloniaProperty.Register("WatermarkContentTemplate", typeof(DataTemplate), typeof(TimeSpanEditor), new PropertyMetadata(null));
+        public static readonly AvaloniaProperty WatermarkContentTemplateProperty = AvaloniaProperty.Register<TimeSpanEditor,  DataTemplate>("WatermarkContentTemplate");
 
         /// <summary>
         /// Identifies the <see cref="Value"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty ValueProperty = AvaloniaProperty.Register("Value", typeof(TimeSpan?), typeof(TimeSpanEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnValuePropertyChanged, null, false, UpdateSourceTrigger.Explicit));
+        public static readonly AvaloniaProperty ValueProperty = AvaloniaProperty.Register<TimeSpanEditor, TimeSpan?>("Value");
 
         /// <summary>
         /// Identifies the <see cref="Days"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty DaysProperty = AvaloniaProperty.Register("Days", typeof(int?), typeof(TimeSpanEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged));
+        public static readonly AvaloniaProperty DaysProperty = AvaloniaProperty.Register<TimeSpanEditor, int?>("Days");
 
         /// <summary>
         /// Identifies the <see cref="Hours"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty HoursProperty = AvaloniaProperty.Register("Hours", typeof(int?), typeof(TimeSpanEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged));
+        public static readonly AvaloniaProperty HoursProperty = AvaloniaProperty.Register<TimeSpanEditor,  int?>("Hours");
 
         /// <summary>
         /// Identifies the <see cref="Minutes"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty MinutesProperty = AvaloniaProperty.Register("Minutes", typeof(int?), typeof(TimeSpanEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged));
+        public static readonly AvaloniaProperty MinutesProperty = AvaloniaProperty.Register<TimeSpanEditor,  int?>("Minutes");
 
         /// <summary>
         /// Identifies the <see cref="Seconds"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty SecondsProperty = AvaloniaProperty.Register("Seconds", typeof(double?), typeof(TimeSpanEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged));
+        public static readonly AvaloniaProperty SecondsProperty = AvaloniaProperty.Register<TimeSpanEditor,  double?>("Seconds");
 
         /// <summary>
         /// Gets or sets the content to display when the TextBox is empty.
@@ -179,7 +180,7 @@ namespace Stride.Core.Presentation.Controls
         {
             if (dependencyProperty != initializingProperty)
             {
-                var expression = GetBindingExpression(dependencyProperty);
+                var expression = BindingOperations.GetBindingExpressionBase(this, dependencyProperty);
                 expression?.UpdateSource();
             }
         }

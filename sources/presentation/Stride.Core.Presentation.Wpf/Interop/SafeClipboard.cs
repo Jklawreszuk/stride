@@ -42,10 +42,10 @@ namespace Stride.Core.Presentation.Interop
         /// Similar to <see cref="Clipboard.SetDataObject(object, bool)"/> but don't throw if data cannot be set to the clipboard.
         /// </summary>
         /// <exception cref="ArgumentNullException">data is <c>null</c>.</exception>
-        public static void SetDataObject([NotNull] IAsyncDataTransfer data, bool copy)
+        public static void SetDataObject([NotNull] object data, bool copy)
         {
             if (data == null) throw new ArgumentNullException(nameof(data));
-            GetClipboard()?.SetDataAsync(data);
+            GetClipboard()?.SetDataAsync((IAsyncDataTransfer)data);
         }
 
         /// <summary>

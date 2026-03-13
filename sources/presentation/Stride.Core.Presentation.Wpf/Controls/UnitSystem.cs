@@ -31,8 +31,8 @@ namespace Stride.Core.Presentation.Controls
 
         public UnitSystem()
         {
-            GroupingValues = new UnitGroupingCollection();
-            Conversions = new UnitConversionCollection();
+            GroupingValues = [];
+            Conversions = [];
         }
 
         public void GetAllGroupingValues(ref List<double> values)
@@ -71,7 +71,7 @@ namespace Stride.Core.Presentation.Controls
 
         public UnitConversion()
         {
-            GroupingValues = new UnitGroupingCollection();
+            GroupingValues = [];
         }
     }
 

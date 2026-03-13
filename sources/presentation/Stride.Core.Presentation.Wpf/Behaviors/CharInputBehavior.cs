@@ -4,7 +4,6 @@
 using System.Globalization;
 using Avalonia.Controls;
 using Avalonia.Xaml.Interactivity;
-using Microsoft.Xaml.Behaviors;
 using Stride.Core.Annotations;
 using TextBox = Stride.Core.Presentation.Controls.TextBox;
 
@@ -32,21 +31,13 @@ namespace Stride.Core.Presentation.Behaviors
             if (updatingText)
                 return;
 
-            char newChar = default(char);
-            foreach (var change in e.Changes.Where(change => change.AddedLength > 0))
-            {
-                newChar = AssociatedObject.Text[change.Offset + change.AddedLength - 1];
-            }
-            if (newChar != default(char))
+            var text = AssociatedObject.Text;
+            if (!string.IsNullOrEmpty(text))
             {
                 updatingText = true;
-                AssociatedObject.Text = newChar.ToString(CultureInfo.InvariantCulture);
+                AssociatedObject.Text = text[^1].ToString(CultureInfo.InvariantCulture);
                 updatingText = false;
             }
-
-            // Update the binding source on each change
-            var expression = AssociatedObject.GetBindingExpression(TextBox.TextProperty);
-            expression?.UpdateSource();
         }
     }
 }

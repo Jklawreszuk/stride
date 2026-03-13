@@ -30,7 +30,7 @@ namespace Stride.Core.Presentation.Controls
     [TemplatePart(Name = "PART_NextResult", Type = typeof(Button))]
     public class TextLogViewer : TemplatedControl
     {
-        private readonly List<TextRange> searchMatches = new List<TextRange>();
+        private readonly List<TextRange> searchMatches = [];
         private int currentResult;
 
         /// <summary>
@@ -294,22 +294,22 @@ namespace Stride.Core.Presentation.Controls
         {
             base.OnApplyTemplate(e);
 
-            logTextBox = GetTemplateChild("PART_LogTextBox") as RichTextBox;
+            logTextBox =  e.NameScope.Find<RichTextBox>("PART_LogTextBox");
             if (logTextBox == null)
                 throw new InvalidOperationException("A part named 'PART_LogTextBox' must be present in the ControlTemplate, and must be of type 'RichTextBox'.");
 
-            var clearLogButton = GetTemplateChild("PART_ClearLog") as Button;
+            var clearLogButton =  e.NameScope.Find<Button>("PART_ClearLog");
             if (clearLogButton != null)
             {
                 clearLogButton.Click += ClearLog;
             }
 
-            var previousResultButton = GetTemplateChild("PART_PreviousResult") as Button;
+            var previousResultButton =  e.NameScope.Find<Button>("PART_PreviousResult");
             if (previousResultButton != null)
             {
                 previousResultButton.Click += PreviousResultClicked;
             }
-            var nextResultButton = GetTemplateChild("PART_NextResult") as Button;
+            var nextResultButton =  e.NameScope.Find<Button>("PART_NextResult");
             if (nextResultButton != null)
             {
                 nextResultButton.Click += NextResultClicked;

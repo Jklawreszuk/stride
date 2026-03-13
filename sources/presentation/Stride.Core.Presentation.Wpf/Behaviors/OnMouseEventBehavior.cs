@@ -6,7 +6,6 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Xaml.Interactivity;
-using Microsoft.Xaml.Behaviors;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Internal;
 
@@ -17,7 +16,7 @@ namespace Stride.Core.Presentation.Behaviors
         None,
         MouseDown,
         MouseUp,
-        MouseMove,
+        PointerMoved,
         MouseLeftButtonDown,
         MouseLeftButtonUp,
         MouseRightButtonDown,
@@ -38,18 +37,18 @@ namespace Stride.Core.Presentation.Behaviors
         /// <summary>
         /// Identifies the <see cref="Command"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty CommandProperty = AvaloniaProperty.Register(nameof(Command), typeof(ICommand), typeof(OnMouseEventBehavior));
+        public static readonly AvaloniaProperty CommandProperty = AvaloniaProperty.Register<OnMouseEventBehavior, ICommand>(nameof(Command));
 
         /// <summary>
         /// Identifies the <see cref="HandleEvent"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty HandleEventProperty = AvaloniaProperty.Register(nameof(HandleEvent), typeof(bool), typeof(OnMouseEventBehavior));
+        public static readonly AvaloniaProperty HandleEventProperty = AvaloniaProperty.Register<OnMouseEventBehavior, bool>(nameof(HandleEvent));
 
         /// <summary>
         /// Identifies the <see cref="Modifiers"/> dependency property.
         /// </summary>
         public static readonly AvaloniaProperty ModifiersProperty =
-               AvaloniaProperty.Register(nameof(Modifiers), typeof(KeyModifiers?), typeof(OnMouseEventBehavior), new PropertyMetadata(null));
+               AvaloniaProperty.Register<OnMouseEventBehavior, KeyModifiers?>(nameof(Modifiers));
 
         public MouseEventType EventType { get { return (MouseEventType)GetValue(EventTypeProperty); } set { SetValue(EventTypeProperty, value); } }
 
@@ -106,8 +105,8 @@ namespace Stride.Core.Presentation.Behaviors
                 case MouseEventType.MouseUp:
                     AssociatedObject.MouseUp += MouseButtonHandler;
                     break;
-                case MouseEventType.MouseMove:
-                    AssociatedObject.MouseMove += MouseMoveHandler;
+                case MouseEventType.PointerMoved:
+                    AssociatedObject.PointerMoved += MouseMoveHandler;
                     break;
                 case MouseEventType.MouseLeftButtonDown:
                     AssociatedObject.MouseLeftButtonDown += MouseMoveHandler;
@@ -155,8 +154,8 @@ namespace Stride.Core.Presentation.Behaviors
                 case MouseEventType.MouseUp:
                     AssociatedObject.MouseUp -= MouseButtonHandler;
                     break;
-                case MouseEventType.MouseMove:
-                    AssociatedObject.MouseMove -= MouseMoveHandler;
+                case MouseEventType.PointerMoved:
+                    AssociatedObject.PointerMoved -= MouseMoveHandler;
                     break;
                 case MouseEventType.MouseLeftButtonDown:
                     AssociatedObject.MouseLeftButtonDown -= MouseMoveHandler;
@@ -194,7 +193,7 @@ namespace Stride.Core.Presentation.Behaviors
             }
         }
 
-        private void MouseButtonHandler(object sender, [NotNull] MouseButtonEventArgs e)
+        private void MouseButtonHandler(object sender, [NotNull] PointerEventArgs e)
         {
             if (!AreModifiersValid())
                 return;
@@ -202,7 +201,7 @@ namespace Stride.Core.Presentation.Behaviors
             MouseMoveHandler(sender, e);
         }
 
-        private void MouseMoveHandler(object sender, [NotNull] MouseEventArgs e)
+        private void MouseMoveHandler(object sender, [NotNull] PointerEventArgs e)
         {
             if (!AreModifiersValid())
                 return;

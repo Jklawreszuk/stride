@@ -9,6 +9,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Services;
+using Stride.Core.Presentation.ValueConverters;
 using Stride.Core.Presentation.Windows;
 
 namespace Stride.Core.Presentation.Controls
@@ -39,8 +40,8 @@ namespace Stride.Core.Presentation.Controls
         protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
             base.OnApplyTemplate(e);
-            if (GetTemplateChild("TitleBar") is Control titleBar)
-                titleBar.Visibility = Visibility.Collapsed;
+            if ( e.NameScope.Find<Control>("TitleBar") is { } titleBar)
+                titleBar.IsVisible = false;
         }
 
         public override Task<DialogResult> ShowModal()
@@ -73,7 +74,7 @@ namespace Stride.Core.Presentation.Controls
             base.OnClosing(e);
         }
 
-        protected override void OnMouseDown(MouseButtonEventArgs e)
+        protected override void OnMouseDown(PointerEventArgs e)
         {
             base.OnMouseDown(e);
             if (!IsMouseOverWindow(e))
@@ -92,7 +93,7 @@ namespace Stride.Core.Presentation.Controls
             }
         }
 
-        protected bool IsMouseOverWindow([NotNull] MouseEventArgs e)
+        protected bool IsMouseOverWindow([NotNull] PointerEventArgs e)
         {
             var position = e.GetPosition(this);
             return position.X >= 0 && position.Y >= 0 && position.X < Bounds.Width && position.Y < Bounds.Height;

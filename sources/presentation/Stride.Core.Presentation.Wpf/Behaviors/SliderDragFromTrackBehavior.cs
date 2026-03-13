@@ -32,7 +32,7 @@ namespace Stride.Core.Presentation.Behaviors
             AssociatedObject.RemoveHandler(Control.PreviewMouseLeftButtonUpEvent, (MouseButtonEventHandler)TrackMouseEvent);
             if (track != null && track.Thumb != null)
             {
-                track.Thumb.MouseEnter -= MouseEnter;
+                track.Thumb.PointerEntered -= PointerEntered;
             }
             base.OnDetaching();
         }
@@ -44,21 +44,21 @@ namespace Stride.Core.Presentation.Behaviors
             track = AssociatedObject.FindVisualChildOfType<Track>();
             if (track == null || track.Name != "PART_Track")
                 throw new InvalidOperationException("The associated slider must have a Track child named 'PART_Track'");
-            track.Thumb.MouseEnter += MouseEnter;
+            track.Thumb.PointerEntered += PointerEntered;
             AssociatedObject.Initialized += SliderInitialized;
         }
 
-        private void TrackMouseEvent(object sender, [NotNull] MouseButtonEventArgs e)
+        private void TrackMouseEvent(object sender, [NotNull] PointerEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left)
                 trackMouseDown = e.ButtonState == MouseButtonState.Pressed;
         }
 
-        private void MouseEnter(object sender, [NotNull] MouseEventArgs e)
+        private void PointerEntered(object sender, [NotNull] PointerEventArgs e)
         {
             if (trackMouseDown)
             {
-                var args = new MouseButtonEventArgs(e.MouseDevice, e.Timestamp, MouseButton.Left) { RoutedEvent = Control.MouseLeftButtonDownEvent };
+                var args = new PointerEventArgs(e.MouseDevice, e.Timestamp, MouseButton.Left) { RoutedEvent = Control.MouseLeftButtonDownEvent };
                 track.Thumb.RaiseEvent(args);
                 trackMouseDown = false;
             }

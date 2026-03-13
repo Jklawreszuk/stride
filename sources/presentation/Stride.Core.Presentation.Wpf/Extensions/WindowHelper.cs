@@ -35,10 +35,12 @@ namespace Stride.Core.Presentation.Extensions
         public static void CenterToArea([NotNull] this Window window, Rect area)
         {
             if (window == null) throw new ArgumentNullException(nameof(window));
-            if (area == Rect.Empty) return;
+            if (area.Width <= 0 || area.Height <= 0) return;
 
-            window.Left = Math.Abs(area.Width - window.Width) / 2 + area.Left;
-            window.Top = Math.Abs(area.Height - window.Height) / 2 + area.Top;
+            var x = area.Left + Math.Abs(area.Width - window.Width) / 2;
+            var y = area.Top + Math.Abs(area.Height - window.Height) / 2;
+
+            window.Position = new PixelPoint((int)x, (int)y);
         }
 
         /// <summary>
@@ -67,11 +69,8 @@ namespace Stride.Core.Presentation.Extensions
         {
             if (window == null) throw new ArgumentNullException(nameof(window));
 
-            NativeHelper.POINT point;
-            NativeHelper.GetCursorPos(out point);
-            var position = window.PointFromScreen((Point)point);
-            position.Offset(window.Left, window.Top);
-            return position;
+            return window.PointToClient(/* there is no way to get cursor position :( */
+                new());
         }
 
         /// <summary>
@@ -95,7 +94,7 @@ namespace Stride.Core.Presentation.Extensions
         public static Rect GetScreenSize([NotNull] this Window window)
         {
             var monitor = GetMonitorInfo(new WindowInteropHelper(window).Handle);
-            if (monitor == null) return Rect.Empty;
+            if (monitor == null) return new Rect();
 
             var area = (Rect)monitor.rcMonitor;
             var rect = window.RectFromScreen(ref area);
@@ -126,7 +125,7 @@ namespace Stride.Core.Presentation.Extensions
             if (window == null) throw new ArgumentNullException(nameof(window));
 
             var monitor = GetMonitorInfo(new WindowInteropHelper(window).Handle);
-            if (monitor == null) return Rect.Empty;
+            if (monitor == null) return new Rect();
             
             var area = (Rect)monitor.rcWork;
             var rect = window.RectFromScreen(ref area);

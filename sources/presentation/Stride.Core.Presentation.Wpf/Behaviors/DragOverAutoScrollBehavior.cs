@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Threading;
 using Avalonia.Xaml.Interactivity;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Extensions;
@@ -21,15 +22,15 @@ namespace Stride.Core.Presentation.Behaviors
         private CancellationTokenSource cancellationTokenSource;
         private Dock? edgeUnderMouse;
 
-        public static readonly AvaloniaProperty ScrollBorderThicknessProperty = AvaloniaProperty.Register("ScrollBorderThickness", typeof(Thickness), typeof(DragOverAutoScrollBehavior), new PropertyMetadata(new Thickness(32)));
+        public static readonly AvaloniaProperty ScrollBorderThicknessProperty = AvaloniaProperty.Register<DragOverAutoScrollBehavior, Thickness>("ScrollBorderThickness", new Thickness(32));
 
-        public static readonly AvaloniaProperty DelaySecondsProperty = AvaloniaProperty.Register("DelaySeconds", typeof(double), typeof(DragOverAutoScrollBehavior), new PropertyMetadata(0.5));
+        public static readonly AvaloniaProperty DelaySecondsProperty = AvaloniaProperty.Register<DragOverAutoScrollBehavior, double>("DelaySeconds",0.5);
 
-        public static readonly AvaloniaProperty ScrollingSpeedWidthProperty = AvaloniaProperty.Register("ScrollingSpeed", typeof(double), typeof(DragOverAutoScrollBehavior), new PropertyMetadata(300.0));
+        public static readonly AvaloniaProperty ScrollingSpeedWidthProperty = AvaloniaProperty.Register<DragOverAutoScrollBehavior, double>("ScrollingSpeed", 300.0);
 
-        public static readonly AvaloniaProperty VerticalScrollProperty = AvaloniaProperty.Register("VerticalScroll", typeof(bool), typeof(DragOverAutoScrollBehavior), new PropertyMetadata(BooleanBoxes.TrueBox));
+        public static readonly AvaloniaProperty VerticalScrollProperty = AvaloniaProperty.Register<DragOverAutoScrollBehavior, bool>("VerticalScroll", true);
 
-        public static readonly AvaloniaProperty HorizontalScrollProperty = AvaloniaProperty.Register("HorizontalScroll", typeof(bool), typeof(DragOverAutoScrollBehavior), new PropertyMetadata(BooleanBoxes.TrueBox));
+        public static readonly AvaloniaProperty HorizontalScrollProperty = AvaloniaProperty.Register<DragOverAutoScrollBehavior, bool>("HorizontalScroll", true);
 
         public Thickness ScrollBorderThickness { get { return (Thickness)GetValue(ScrollBorderThicknessProperty); } set { SetValue(ScrollBorderThicknessProperty, value); } }
         
@@ -116,7 +117,7 @@ namespace Stride.Core.Presentation.Behaviors
 
             while (scrollStarted)
             {
-                    Dispatcher.Invoke(() =>
+                    Dispatcher.UIThread.Invoke(() =>
                     {
                         if (edgeUnderMouse.HasValue)
                         {

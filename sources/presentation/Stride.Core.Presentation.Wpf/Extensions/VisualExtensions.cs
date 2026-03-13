@@ -42,7 +42,7 @@ namespace Stride.Core.Presentation.Extensions
         {
             if (visual == null) throw new ArgumentNullException(nameof(visual));
 
-            return Window.GetWindow(visual).GetCursorScreenPosition();
+            return TopLevel.GetTopLevel(visual)!.GetCursorScreenPosition();
         }
 
         [CanBeNull]

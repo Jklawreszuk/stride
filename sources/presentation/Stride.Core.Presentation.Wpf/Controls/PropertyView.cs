@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Stride.Core.Presentation.Collections;
 using Stride.Core.Presentation.Extensions;
@@ -13,7 +14,7 @@ namespace Stride.Core.Presentation.Controls
 {
     public class PropertyView : ItemsControl
     {
-        private readonly ObservableList<PropertyViewItem> properties = new ObservableList<PropertyViewItem>();
+        private readonly ObservableList<PropertyViewItem> properties = [];
 
         /// <summary>
         /// Identifies the <see cref="HighlightedItem"/> dependency property.
@@ -92,7 +93,7 @@ namespace Stride.Core.Presentation.Controls
         /// </summary>
         public event EventHandler<PropertyViewItemEventArgs> ClearItem { add { AddHandler(ClearItemEvent, value); } remove { RemoveHandler(ClearItemEvent, value); } }
 
-        internal void ItemMouseMove(object sender, MouseEventArgs e)
+        internal void ItemMouseMove(object sender, PointerEventArgs e)
         {
             var item = sender as PropertyViewItem;
             if (item != null)
@@ -124,7 +125,7 @@ namespace Stride.Core.Presentation.Controls
             }
         }
 
-        protected override void OnMouseLeave(MouseEventArgs e)
+        protected override void OnMouseLeave(PointerEventArgs e)
         {
             base.OnMouseLeave(e);
             HoverItem(null);

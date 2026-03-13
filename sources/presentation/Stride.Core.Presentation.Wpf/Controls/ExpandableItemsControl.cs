@@ -1,8 +1,10 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
+using System;
 using Avalonia;
 using Avalonia.Controls.Primitives;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Internal;
@@ -36,12 +38,12 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Raised when this <see cref="ExpandableItemsControl"/> is expanded.
         /// </summary>
-        public event RoutedEventHandler Expanded { add { AddHandler(ExpandedEvent, value); } remove { RemoveHandler(ExpandedEvent, value); } }
+        public event EventHandler<RoutedEventArgs> Expanded { add { AddHandler(ExpandedEvent, value); } remove { RemoveHandler(ExpandedEvent, value); } }
 
         /// <summary>
         /// Raised when this <see cref="ExpandableItemsControl"/> is collapsed.
         /// </summary>
-        public event RoutedEventHandler Collapsed { add { AddHandler(CollapsedEvent, value); } remove { RemoveHandler(CollapsedEvent, value); } }
+        public event EventHandler<RoutedEventArgs> Collapsed { add { AddHandler(CollapsedEvent, value); } remove { RemoveHandler(CollapsedEvent, value); } }
 
         /// <summary>
         /// Invoked when this <see cref="ExpandableItemsControl"/> is expanded. Raises the <see cref="Expanded"/> event.
@@ -62,7 +64,7 @@ namespace Stride.Core.Presentation.Controls
         }
 
         /// <inheritdoc/>
-        protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
+        protected override void OnMouseLeftButtonDown(PointerPressedEventArgs e)
         {
             if (!e.Handled && IsEnabled && e.ClickCount % 2 == 0)
             {

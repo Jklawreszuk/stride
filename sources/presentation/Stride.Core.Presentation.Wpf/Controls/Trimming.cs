@@ -94,20 +94,6 @@ namespace Stride.Core.Presentation.Controls
             target.SetValue(WordSeparatorsProperty, value);
         }
 
-        public static string ProcessTrimming([NotNull] Control control, string text, double availableWidth)
-        {
-            var trimming = GetTextTrimming(control);
-            var source = GetTrimmingSource(control);
-            var wordSeparators = GetWordSeparators(control);
-            return ProcessTrimming(control, text, trimming, source, wordSeparators, availableWidth);
-        }
-
-        public static string ProcessTrimming([NotNull] Control control, string text, TextTrimming trimming, TrimmingSource source, string wordSeparators, double availableWidth)
-        {
-            var typeface = new Typeface(control.FontFamily, control.FontStyle, control.FontWeight, control.FontStretch);
-            return ProcessTrimming(text, typeface, control.FontSize, trimming, source, wordSeparators, availableWidth);
-        }
-
         public static string ProcessTrimming([NotNull] TextBlock textBlock, string text, double availableWidth)
         {
             var trimming = GetTextTrimming(textBlock);

@@ -5,7 +5,6 @@ using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Xaml.Interactivity;
-using Microsoft.Xaml.Behaviors;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Commands;
 using Stride.Core.Presentation.Internal;
@@ -24,7 +23,7 @@ namespace Stride.Core.Presentation.Behaviors
         /// Identifies the <see cref="Command"/> dependency property.
         /// </summary>
         public static readonly AvaloniaProperty CommandProperty =
-            AvaloniaProperty.Register(nameof(Command), typeof(ICommandBase), typeof(CommandBindingBehavior), new PropertyMetadata(null, CommandChanged));
+            AvaloniaProperty.Register<CommandBindingBehavior, ICommandBase>(nameof(Command));
         /// <summary>
         /// Identifies the <see cref="ContinueRouting"/> dependency property.
         /// </summary>
@@ -39,7 +38,7 @@ namespace Stride.Core.Presentation.Behaviors
         /// Identifies the <see cref="RoutedCommand"/> dependency property.
         /// </summary>
         public static readonly AvaloniaProperty ICommandProperty =
-            AvaloniaProperty.Register(nameof(ICommand), typeof(ICommand), typeof(CommandBindingBehavior));
+            AvaloniaProperty.Register<CommandBindingBehavior, ICommand>(nameof(ICommand));
 
         /// <summary>
         /// Gets or sets the <see cref="ICommandBase"/> to bind.
@@ -62,6 +61,11 @@ namespace Stride.Core.Presentation.Behaviors
         /// </summary>
         public ICommand ICommand { get { return (ICommand)GetValue(ICommandProperty); } set { SetValue(ICommandProperty, value); } }
 
+        static CommandBindingBehavior()
+        {
+            CommandProperty.Changed.AddClassHandler<AvaloniaObject>(CommandChanged);
+        }
+        
         /// <inheritdoc/>
         protected override void OnAttached()
         {

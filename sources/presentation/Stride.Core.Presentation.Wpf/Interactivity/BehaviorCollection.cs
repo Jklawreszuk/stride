@@ -28,7 +28,7 @@ namespace Stride.Core.Presentation.Interactivity
             var clone = new BehaviorCollection();
             foreach (var behavior in Items)
             {
-                clone.Add((Behavior)behavior.Clone());
+                clone.Add(behavior);
             }
             return clone;
         }
@@ -44,7 +44,7 @@ namespace Stride.Core.Presentation.Interactivity
                 throw new InvalidOperationException("This BehaviorCollection has already been attached to a dependency object.");
 
             AssociatedObject = dependencyObject;
-            var behaviors = Microsoft.Xaml.Behaviors.Interaction.GetBehaviors(dependencyObject);
+            var behaviors = Interaction.GetBehaviors(dependencyObject);
             foreach (var behavior in this)
             {
                 behaviors.Add(behavior);
@@ -55,7 +55,7 @@ namespace Stride.Core.Presentation.Interactivity
         {
             if (AssociatedObject != null)
             {
-                var behaviors = Microsoft.Xaml.Behaviors.Interaction.GetBehaviors(AssociatedObject);
+                var behaviors = Interaction.GetBehaviors(AssociatedObject);
                 foreach (var behavior in this)
                 {
                     behaviors.Remove(behavior);
@@ -69,7 +69,7 @@ namespace Stride.Core.Presentation.Interactivity
             if (AssociatedObject == null)
                 return;
 
-            var behaviors = Microsoft.Xaml.Behaviors.Interaction.GetBehaviors(AssociatedObject);
+            var behaviors = Interaction.GetBehaviors(AssociatedObject);
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add:

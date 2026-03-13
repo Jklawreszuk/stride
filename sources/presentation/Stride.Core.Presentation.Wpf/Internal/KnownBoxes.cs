@@ -2,6 +2,7 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
+using Stride.Core.Presentation.ValueConverters;
 
 namespace Stride.Core.Presentation.Internal
 {
@@ -49,17 +50,13 @@ namespace Stride.Core.Presentation.Internal
         /// <returns>A boxed <see cref="Visibility"/> equivalent to the provided <paramref name="value"/>.</returns>
         internal static object Box(this Visibility value)
         {
-            switch (value)
+            return value switch
             {
-                case Visibility.Visible:
-                    return VisibleBox;
-                case Visibility.Hidden:
-                    return HiddenBox;
-                case Visibility.Collapsed:
-                    return CollapsedBox;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(value), value, null);
-            }
+                Visibility.Visible => VisibleBox,
+                Visibility.Hidden => HiddenBox,
+                Visibility.Collapsed => CollapsedBox,
+                _ => throw new ArgumentOutOfRangeException(nameof(value), value, null)
+            };
         }
     }
 }

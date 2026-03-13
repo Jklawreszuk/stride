@@ -9,6 +9,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Primitives;
 using Avalonia.Media;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Input;
 using Stride.Core.Presentation.Internal;
 
@@ -57,7 +58,7 @@ namespace Stride.Core.Presentation.Controls
         public TextBox()
         {
             if (DesignerProperties.GetIsInDesignMode(this) == false)
-                validationTimer = new Timer(x => Dispatcher.InvokeAsync(Validate), null, Timeout.Infinite, Timeout.Infinite);
+                validationTimer = new Timer(x => Dispatcher.UIThread.InvokeAsync(Validate), null, Timeout.Infinite, Timeout.Infinite);
         }
 
         /// <summary>
@@ -82,7 +83,7 @@ namespace Stride.Core.Presentation.Controls
         {
             base.OnApplyTemplate(e);
 
-            trimmedTextBlock = GetTemplateChild("PART_TrimmedText") as TextBlock;
+            trimmedTextBlock =  e.NameScope.Find<TextBlock>("PART_TrimmedText");
             if (trimmedTextBlock == null)
                 throw new InvalidOperationException("A part named 'PART_TrimmedText' must be present in the ControlTemplate, and must be of type 'TextBlock'.");
         }

@@ -4,7 +4,9 @@ using System;
 using System.Reflection;
 using System.Windows.Input;
 using Avalonia;
+using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Markup.Xaml.Templates;
 using Stride.Core.Presentation.Core;
 using Stride.Core.Presentation.Internal;
 using CancelRoutedEventArgs = Stride.Core.Presentation.Core.CancelRoutedEventArgs;
@@ -202,12 +204,12 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Raised when the TextBox changes are cancelled.
         /// </summary>
-        public event RoutedEventHandler Cancelled { add { AddHandler(CancelledEvent, value); } remove { RemoveHandler(CancelledEvent, value); } }
+        public event EventHandler<RoutedEventArgs> Cancelled { add { AddHandler(CancelledEvent, value); } remove { RemoveHandler(CancelledEvent, value); } }
 
         /// <summary>
         /// Raised when TextBox Text to value binding fails during validation.
         /// </summary>
-        public event RoutedEventHandler TextToSourceValueConversionFailed { add { AddHandler(TextToSourceValueConversionFailedEvent, value); } remove { RemoveHandler(TextToSourceValueConversionFailedEvent, value); } }
+        public event EventHandler<RoutedEventArgs> TextToSourceValueConversionFailed { add { AddHandler(TextToSourceValueConversionFailedEvent, value); } remove { RemoveHandler(TextToSourceValueConversionFailedEvent, value); } }
 
         protected internal bool HasChangesToValidate { get; set; }
 
@@ -372,7 +374,7 @@ namespace Stride.Core.Presentation.Controls
             }
         }
 
-        protected override void OnMouseDown(MouseButtonEventArgs e)
+        protected override void OnMouseDown(PointerEventArgs e)
         {
             if (!IsKeyboardFocusWithin)
             {

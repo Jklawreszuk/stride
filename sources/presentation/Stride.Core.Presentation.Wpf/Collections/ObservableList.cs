@@ -19,7 +19,7 @@ namespace Stride.Core.Presentation.Collections
         [CollectionAccess(CollectionAccessType.None)]
         public ObservableList()
         {
-            list = new List<T>();
+            list = [];
         }
 
         [CollectionAccess(CollectionAccessType.UpdatedContent)]

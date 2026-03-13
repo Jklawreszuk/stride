@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
 using Avalonia;
+using Avalonia.Input;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Collections;
 using Stride.Core.Presentation.Extensions;
@@ -18,12 +19,12 @@ namespace Stride.Core.Presentation.Controls
     /// </summary>
     public class PropertyViewItem : ExpandableItemsControl
     {
-        private readonly ObservableList<PropertyViewItem> properties = new ObservableList<PropertyViewItem>();
+        private readonly ObservableList<PropertyViewItem> properties = [];
 
         /// <summary>
         /// Identifies the <see cref="Highlightable"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty HighlightableProperty = AvaloniaProperty.Register("Highlightable", typeof(bool), typeof(PropertyViewItem), new FrameworkPropertyMetadata(BooleanBoxes.TrueBox));
+        public static readonly AvaloniaProperty HighlightableProperty = AvaloniaProperty.Register<PropertyViewItem, bool>("Highlightable", true);
 
         /// <summary>
         /// Identifies the <see cref="IsHighlighted"/> dependency property.
@@ -141,7 +142,7 @@ namespace Stride.Core.Presentation.Controls
             base.ClearContainerForItemOverride(element, item);
         }
 
-        protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
+        protected override void OnMouseLeftButtonDown(PointerEventArgs e)
         {
             // base method can handle this event, but we still want to focus on it in this case.
             var handled = e.Handled;
