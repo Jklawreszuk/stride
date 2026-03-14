@@ -8,6 +8,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Primitives;
+using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using CommunityToolkit.Mvvm.Input;
@@ -304,7 +305,7 @@ namespace Stride.Core.Presentation.Controls
         /// <inheritdoc/>
         protected sealed override void OnCancelled()
         {
-            var expression = GetBindingExpression(ValueProperty);
+            var expression = BindingOperations.GetBindingExpressionBase(this, ValueProperty);
             expression?.UpdateTarget();
 
             var textValue = FormatValue(Value);
@@ -325,7 +326,7 @@ namespace Stride.Core.Presentation.Controls
             }
             SetCurrentValue(ValueProperty, value);
 
-            var expression = GetBindingExpression(ValueProperty);
+            var expression = BindingOperations.GetBindingExpressionBase(this, ValueProperty);
             expression?.UpdateSource();
         }
 

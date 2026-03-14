@@ -4,6 +4,7 @@ using System;
 using System.Reflection;
 using System.Windows.Input;
 using Avalonia;
+using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml.Templates;
@@ -241,7 +242,7 @@ namespace Stride.Core.Presentation.Controls
             var coercedText = CoerceTextForValidation(Text);
             SetCurrentValue(TextProperty, coercedText);
 
-            BindingExpression expression = GetBindingExpression(TextProperty);
+            BindingExpressionBase expression = BindingOperations.GetBindingExpressionBase(this, TextProperty);
             try
             {
                 expression?.UpdateSource();
@@ -281,7 +282,7 @@ namespace Stride.Core.Presentation.Controls
             if (IsReadOnly)
                 return;
 
-            BindingExpression expression = GetBindingExpression(TextProperty);
+            BindingExpressionBase expression = BindingOperations.GetBindingExpressionBase(this, TextProperty);
             expression?.UpdateTarget();
 
             ClearUndoStack();

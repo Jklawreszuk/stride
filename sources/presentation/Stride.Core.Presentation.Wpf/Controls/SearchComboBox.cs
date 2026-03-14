@@ -20,7 +20,7 @@ namespace Stride.Core.Presentation.Controls
 {
     [TemplatePart(Name = EditableTextBoxPartName, Type = typeof(TextBox))]
     [TemplatePart(Name = ListBoxPartName, Type = typeof(ListBox))]
-    public class SearchComboBox : Selector
+    public class SearchComboBox : SelectingItemsControl
     {
         /// <summary>
         /// The name of the part for the <see cref="TextBox"/>.
@@ -96,8 +96,6 @@ namespace Stride.Core.Presentation.Controls
 
         static SearchComboBox()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(SearchComboBox), new FrameworkPropertyMetadata(typeof(SearchComboBox)));
-
             SelectedIndexProperty.OverrideMetadata(typeof(SearchComboBox), new FrameworkPropertyMetadata { DefaultUpdateSourceTrigger = UpdateSourceTrigger.Explicit });
             SelectedItemProperty.OverrideMetadata(typeof(SearchComboBox), new FrameworkPropertyMetadata { DefaultUpdateSourceTrigger = UpdateSourceTrigger.Explicit });
             SelectedValueProperty.OverrideMetadata(typeof(SearchComboBox), new FrameworkPropertyMetadata { DefaultUpdateSourceTrigger = UpdateSourceTrigger.Explicit });
@@ -110,7 +108,7 @@ namespace Stride.Core.Presentation.Controls
 
         /// <summary>
         /// Gets or Sets the command that is invoked once a selection has been made and <see cref="AlternativeModifiers"/> are active.
-        /// The parameter of the command is the current <see cref="Selector.SelectedValue"/>.
+        /// The parameter of the command is the current <see cref="SelectingItemsControl.SelectedValue"/>.
         /// </summary>
         public ICommand AlternativeCommand { get { return (ICommand)GetValue(AlternativeCommandProperty); } set { SetValue(AlternativeCommandProperty, value); } }
         /// <summary>
@@ -122,7 +120,7 @@ namespace Stride.Core.Presentation.Controls
         /// </summary>
         public bool ClearTextAfterSelection { get { return (bool)GetValue(ClearTextAfterSelectionProperty); } set { SetValue(ClearTextAfterSelectionProperty, value.Box()); } }
         /// <summary>
-        /// Gets or Sets the command that is invoked once a selection has been made. The parameter of the command is the current <see cref="Selector.SelectedValue"/>.
+        /// Gets or Sets the command that is invoked once a selection has been made. The parameter of the command is the current <see cref="SelectingItemsControl.SelectedValue"/>.
         /// </summary>
         public ICommand Command { get { return (ICommand)GetValue(CommandProperty); } set { SetValue(CommandProperty, value); } }
         /// <summary>
@@ -351,11 +349,11 @@ namespace Stride.Core.Presentation.Controls
                     return false;
                 case KeyModifiers.Alt:
                     return key == Key.LeftAlt || key == Key.RightAlt;
-                case Control:
+                case KeyModifiers.Control:
                     return key == Key.LeftCtrl || key == Key.RightCtrl;
                 case KeyModifiers.Shift:
                     return key == Key.LeftShift || key == Key.RightShift;
-                case KeyModifiers.Windows:
+                case KeyModifiers.Meta:
                     return key == Key.LWin || key == Key.RWin;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -364,11 +362,11 @@ namespace Stride.Core.Presentation.Controls
 
         private void ValidateSelection()
         {
-            var expression = GetBindingExpression(SelectedIndexProperty);
+            var expression = BindingOperations.GetBindingExpressionBase(this, SelectedIndexProperty);
             expression?.UpdateSource();
-            expression = GetBindingExpression(SelectedItemProperty);
+            expression = BindingOperations.GetBindingExpressionBase(this, SelectedItemProperty);
             expression?.UpdateSource();
-            expression = GetBindingExpression(SelectedValueProperty);
+            expression = BindingOperations.GetBindingExpressionBase(this, SelectedValueProperty);
             expression?.UpdateSource();
             
             var commandParameter = listBox.SelectedValue;

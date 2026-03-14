@@ -22,7 +22,7 @@ namespace Stride.Core.Presentation.Controls
 {
     [TemplatePart(Name = "PART_EditableTextBox", Type = typeof(TextBox))]
     [TemplatePart(Name = "PART_ListBox", Type = typeof(ListBox))]
-    public class FilteringComboBox : Selector
+    public class FilteringComboBox : SelectingItemsControl
     {
         /// <summary>
         /// A dependency property used to safely evaluate the value of an item given a path.
@@ -132,7 +132,7 @@ namespace Stride.Core.Presentation.Controls
 
         static FilteringComboBox()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(FilteringComboBox), new FrameworkPropertyMetadata(typeof(FilteringComboBox)));
+            
         }
 
         public FilteringComboBox()
@@ -279,11 +279,11 @@ namespace Stride.Core.Presentation.Controls
                 return;
 
             // If we require a selected item but there is none, cancel the validation
-            BindingExpression expression;
+            BindingExpressionBase? expression;
             if (RequireSelectedItemToValidate && SelectedItem == null)
             {
                 e.Cancel = true;
-                expression = GetBindingExpression(TextProperty);
+                expression = BindingOperations.GetBindingExpressionBase(this, TextProperty);
                 expression?.UpdateTarget();
                 editableTextBox.Cancel();
                 return;
@@ -307,7 +307,7 @@ namespace Stride.Core.Presentation.Controls
             }
 
             // Update the source of the text property binding
-            expression = GetBindingExpression(TextProperty);
+            expression = BindingOperations.GetBindingExpressionBase(TextProperty);
             expression?.UpdateSource();
 
             // Close the dropdown
@@ -349,7 +349,7 @@ namespace Stride.Core.Presentation.Controls
             if (!ReferenceEquals(sender, editableTextBox))
                 return;
 
-            var expression = GetBindingExpression(TextProperty);
+            var expression = BindingOperations.GetBindingExpressionBase(this, TextProperty);
             expression?.UpdateTarget();
 
             clearing = true;
@@ -565,7 +565,7 @@ namespace Stride.Core.Presentation.Controls
             var value = obj;
             try
             {
-                SetBinding(InternalValuePathProperty, new Binding(SortMemberPath) { Source = obj });
+                Bind(InternalValuePathProperty, new Binding(SortMemberPath) { Source = obj });
                 value = GetValue(InternalValuePathProperty);
             }
             catch (Exception e)
@@ -574,7 +574,7 @@ namespace Stride.Core.Presentation.Controls
             }
             finally
             {
-                BindingOperations.ClearBinding(this, InternalValuePathProperty);
+                Bind(InternalValuePathProperty, null!);
             }
             return value;
         }

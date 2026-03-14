@@ -41,7 +41,13 @@ namespace Stride.Core.Presentation.Behaviors
 
         static SelectionRectangleBehavior()
         {
-            CanvasProperty.Changed.Subscribe(new AnonymousObserver<AvaloniaPropertyChangedEventArgs>((e) => OnCanvasChanged(e)));
+            CanvasProperty.Changed.AddClassHandler<AvaloniaObject>(OnCanvasChanged);
+        }
+        
+        private static void OnCanvasChanged(AvaloniaObject obj, AvaloniaPropertyChangedEventArgs e)
+        {
+            var behavior = (SelectionRectangleBehavior)obj;
+            behavior.OnCanvasChanged(e);
         }
 
         ///  <inheritdoc/>
@@ -80,10 +86,11 @@ namespace Stride.Core.Presentation.Behaviors
             }
             else
             {
+                const double DragThreshold = 4;
                 var curMouseDownPoint = e.GetPosition(AssociatedObject);
                 var dragDelta = curMouseDownPoint - originPoint;
-                if (Math.Abs(dragDelta.X) > SystemParameters.MinimumHorizontalDragDistance ||
-                    Math.Abs(dragDelta.Y) > SystemParameters.MinimumVerticalDragDistance)
+                if (Math.Abs(dragDelta.X) > DragThreshold ||
+                    Math.Abs(dragDelta.Y) > DragThreshold)
                 {
                     IsDragging = true;
                     InitDragSelectionRect(originPoint, curMouseDownPoint);
@@ -118,7 +125,7 @@ namespace Stride.Core.Presentation.Behaviors
                     Path = new(nameof(RectangleStyle)),
                     Source = this,
                 };
-                selectionRectangle.SetBinding(Control.StyleProperty, binding);
+                selectionRectangle.Bind(Rectangle.StyleProperty, binding);
             }
             else
             {

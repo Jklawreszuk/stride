@@ -82,7 +82,7 @@ namespace Stride.Core.Presentation.Controls
             AvaloniaProperty.Register<ScaleBar, double>("TextPosition");
 
         public static readonly AvaloniaProperty ForegroundProperty = 
-            AvaloniaProperty.Register<ScaleBar, Brush>("Foreground", Brushes.Black);
+            AvaloniaProperty.Register<ScaleBar, IBrush>("Foreground", Brushes.Black);
 
         public static readonly AvaloniaProperty FontProperty = 
             AvaloniaProperty.Register<ScaleBar, Typeface>("Font", new Typeface("Meiryo"));

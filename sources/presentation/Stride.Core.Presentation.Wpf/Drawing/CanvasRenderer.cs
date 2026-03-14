@@ -437,10 +437,9 @@ namespace Stride.Core.Presentation.Drawing
             var streamGeometryContext = streamGeometry.Open();
             for (var i = 0; i < points.Count - 1; i += 2)
             {
-                streamGeometryContext.BeginFigure(aliased ? ToPixelAlignedPoint(points[i]) : points[i], false, false);
-                streamGeometryContext.LineTo(aliased ? ToPixelAlignedPoint(points[i + 1]) : points[i + 1], true, false);
+                streamGeometryContext.BeginFigure(aliased ? ToPixelAlignedPoint(points[i]) : points[i], false);
+                streamGeometryContext.LineTo(aliased ? ToPixelAlignedPoint(points[i + 1]) : points[i + 1], true);
             }
-            streamGeometryContext.Close();
 
             var path = Create<Path>(isHitTestVisible);
             SetStroke(path, strokeColor, thickness, lineJoin, dashArray, dashOffset, aliased);

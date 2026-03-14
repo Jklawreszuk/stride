@@ -30,7 +30,7 @@ namespace Stride.Core.Presentation.Behaviors
 
             if (parent == null)
             {
-                throw new InvalidOperationException("Unable to find a parent Selector to the associated VirtualizingTilePanel.");
+                throw new InvalidOperationException("Unable to find a parent SelectingItemsControl to the associated VirtualizingTilePanel.");
             }
 
             selector = (SelectingItemsControl)parent;
