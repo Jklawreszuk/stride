@@ -28,7 +28,7 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="UseTimedValidation"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty UseTimedValidationProperty = AvaloniaProperty.Register("UseTimedValidation", typeof(bool), typeof(TextBox), new PropertyMetadata(BooleanBoxes.FalseBox, OnUseTimedValidationPropertyChanged));
+        public static readonly AvaloniaProperty UseTimedValidationProperty = AvaloniaProperty.Register<TextBox, bool>("UseTimedValidation");
 
         /// <summary>
         /// Identifies the <see cref="ValidationDelay"/> dependency property.
@@ -38,12 +38,12 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="TrimmedText"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty TrimmedTextPropertyKey = AvaloniaProperty.RegisterDirect("TrimmedText", typeof(string), typeof(TextBox), new PropertyMetadata(""));
+        public static readonly AvaloniaProperty TrimmedTextPropertyKey = AvaloniaProperty.RegisterDirect<TextBox, string>("TrimmedText", o => o.TrimmedText);
 
         /// <summary>
         /// Identifies the <see cref="TrimmedText"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty TrimmedTextProperty = AvaloniaProperty;
+        public static readonly AvaloniaProperty TrimmedTextProperty = TrimmedTextPropertyKey;
 
         /// <summary>
         /// Clears the current <see cref="MediaTypeNames.Text"/> of a text box.
@@ -52,12 +52,13 @@ namespace Stride.Core.Presentation.Controls
         
         static TextBox()
         {
+            UseTimedValidationProperty.Changed.AddClassHandler<AvaloniaObject>(OnUseTimedValidationPropertyChanged);
             ClearTextCommand = new RelayCommand<TextBox>(OnClearTextCommand);
         }
 
         public TextBox()
         {
-            if (DesignerProperties.GetIsInDesignMode(this) == false)
+            if (!Avalonia.Controls.Design.IsDesignMode)
                 validationTimer = new Timer(x => Dispatcher.UIThread.InvokeAsync(Validate), null, Timeout.Infinite, Timeout.Infinite);
         }
 
@@ -76,7 +77,7 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Gets the trimmed text to display when the control does not have the focus, depending of the value of the <see cref="TextTrimming"/> property.
         /// </summary>
-        public string TrimmedText { get { return (string)GetValue(AvaloniaProperty); } private set { SetValue(TrimmedTextPropertyKey, value); } }
+        public string TrimmedText { get { return (string)GetValue(TrimmedTextPropertyKey); } private set { SetValue(TrimmedTextPropertyKey, value); } }
 
         /// <inheritdoc/>
         protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
