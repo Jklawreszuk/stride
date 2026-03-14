@@ -63,17 +63,17 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Gets the <see cref="PropertyViewItem"/> that is currently highlighted by the mouse cursor.
         /// </summary>
-        public PropertyViewItem HighlightedItem { get { return (PropertyViewItem)GetValue(AvaloniaProperty); } private set { SetValue(HighlightedItemPropertyKey, value); } }
+        public PropertyViewItem HighlightedItem { get { return (PropertyViewItem)GetValue(HighlightedItemPropertyKey); } private set { SetValue(HighlightedItemPropertyKey, value); } }
 
         /// <summary>
         /// Gets the <see cref="PropertyViewItem"/> that is currently hovered by the mouse cursor.
         /// </summary>
-        public PropertyViewItem HoveredItem { get { return (PropertyViewItem)GetValue(AvaloniaProperty); } private set { SetValue(HoveredItemPropertyKey, value); } }
+        public PropertyViewItem HoveredItem { get { return (PropertyViewItem)GetValue(HoveredItemPropertyKey); } private set { SetValue(HoveredItemPropertyKey, value); } }
 
         /// <summary>
         /// Gets the <see cref="PropertyViewItem"/> that currently owns the control who have the keyboard focus.
         /// </summary>
-        public PropertyViewItem KeyboardActiveItem { get { return (PropertyViewItem)GetValue(AvaloniaProperty); } private set { SetValue(KeyboardActiveItemPropertyKey, value); } }
+        public PropertyViewItem KeyboardActiveItem { get { return (PropertyViewItem)GetValue(KeyboardActiveItemPropertyKey); } private set { SetValue(KeyboardActiveItemPropertyKey, value); } }
 
         /// <summary>
         /// Gets or sets the shared size of the 'Name' column.
