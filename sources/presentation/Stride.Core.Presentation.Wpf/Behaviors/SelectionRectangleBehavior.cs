@@ -4,6 +4,7 @@ using System;
 using Avalonia.Controls;
 using System.Windows.Input;
 using Avalonia;
+using Avalonia.Controls.Shapes;
 using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Reactive;

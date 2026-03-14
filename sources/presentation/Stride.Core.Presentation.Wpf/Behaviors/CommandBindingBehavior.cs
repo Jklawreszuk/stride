@@ -1,11 +1,11 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
-using System.Windows;
+
+using System;
 using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Xaml.Interactivity;
-using Stride.Core.Annotations;
 using Stride.Core.Presentation.Commands;
 using Stride.Core.Presentation.Internal;
 
@@ -15,9 +15,9 @@ namespace Stride.Core.Presentation.Behaviors
     /// This command will bind a <see cref="ICommandBase"/> to a <see cref="RoutedCommand"/>. It works just as a <see cref="CommandBinding"/> except that the bound
     /// command is executed when the routed command is executed. The <b>CanExecute</b> handler also invoke the <b>CanExecute</b> method of the <see cref="ICommandBase"/>.
     /// </summary>
+    [Obsolete("Remove that later")]
     public class CommandBindingBehavior : Behavior<Control>
     {
-        private CommandBinding commandBinding;
 
         /// <summary>
         /// Identifies the <see cref="Command"/> dependency property.
@@ -69,49 +69,19 @@ namespace Stride.Core.Presentation.Behaviors
         /// <inheritdoc/>
         protected override void OnAttached()
         {
-            commandBinding = new CommandBinding(ICommand, (s, e) => OnExecuted(e), (s, e) => OnCanExecute(e));
-            AssociatedObject.CommandBindings.Add(commandBinding);
+            
         }
 
         /// <inheritdoc/>
         protected override void OnDetaching()
         {
-            AssociatedObject.CommandBindings.Remove(commandBinding);
+            
         }
 
         private static void CommandChanged(AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
-            CommandManager.InvalidateRequerySuggested();
+            
         }
 
-        private void OnCanExecute([NotNull] CanExecuteRoutedEventArgs canExecuteRoutedEventArgs)
-        {
-            if (Command != null)
-            {
-                canExecuteRoutedEventArgs.CanExecute = IsEnabled && Command.CanExecute(canExecuteRoutedEventArgs.Parameter);
-            }
-            else
-            {
-                canExecuteRoutedEventArgs.CanExecute = false;
-            }
-
-            if (canExecuteRoutedEventArgs.CanExecute || !ContinueRouting)
-            {
-                canExecuteRoutedEventArgs.Handled = true;
-            }
-            else
-            {
-                canExecuteRoutedEventArgs.ContinueRouting = true;
-            }
-        }
-
-        private void OnExecuted([NotNull] ExecutedRoutedEventArgs executedRoutedEventArgs)
-        {
-            if (Command != null && IsEnabled)
-            {
-                Command.Execute(executedRoutedEventArgs.Parameter);
-                executedRoutedEventArgs.Handled = true;
-            }
-        }
     }
 }

@@ -60,15 +60,16 @@ namespace Stride.Core.Presentation.Behaviors
             var adornerLayer = AdornerLayer.GetAdornerLayer(AssociatedObject);
             if (adornerLayer != null)
             {
-                adorner = new HighlightBorderAdorner(AssociatedObject)
+                adorner = new HighlightBorderAdorner()
                 {
+                    Child = AssociatedObject,
                     BackgroundBrush = null,
                     BorderBrush = BorderBrush,
                     BorderCornerRadius = BorderCornerRadius,
                     BorderThickness = BorderThickness,
                     State = HighlightAdornerState.Hidden,
                 };
-                adornerLayer.Add(adorner);
+                AdornerLayer.SetAdorner(AssociatedObject, adorner);
             }
         }
 
@@ -78,7 +79,8 @@ namespace Stride.Core.Presentation.Behaviors
             
             if (adorner != null)
             {
-                AdornerLayer.GetAdornerLayer(AssociatedObject)?.Remove(adorner);
+                AdornerLayer.SetAdorner(AssociatedObject, null);
+                adorner = null;;
             }
         }
 
