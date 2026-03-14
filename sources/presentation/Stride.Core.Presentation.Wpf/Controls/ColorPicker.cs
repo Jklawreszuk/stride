@@ -42,47 +42,47 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="Color"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty ColorProperty = AvaloniaProperty.Register<ColorPicker, Color4>("Color", typeof(), typeof(ColorPicker), new FrameworkPropertyMetadata(default(Color4), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnColorPropertyChanged, CoreceColorValue, false, UpdateSourceTrigger.Explicit));
+        public static readonly AvaloniaProperty ColorProperty = AvaloniaProperty.Register<ColorPicker, Color4>("Color", defaultBindingMode: BindingMode.TwoWay);
 
         /// <summary>
         /// Identifies the <see cref="Hue"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty HueProperty = AvaloniaProperty.Register<ColorPicker, float>("Hue", typeof(), typeof(ColorPicker), new FrameworkPropertyMetadata(0.0f, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnHSVPropertyChanged, CoerceHueValue));
+        public static readonly AvaloniaProperty HueProperty = AvaloniaProperty.Register<ColorPicker, float>("Hue", defaultBindingMode: BindingMode.TwoWay);
 
         /// <summary>
         /// Identifies the <see cref="Saturation"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty SaturationProperty = AvaloniaProperty.Register<ColorPicker, float>("Saturation", typeof(), typeof(ColorPicker), new FrameworkPropertyMetadata(0.0f, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnHSVPropertyChanged, CoercePercentageValue));
+        public static readonly AvaloniaProperty SaturationProperty = AvaloniaProperty.Register<ColorPicker, float>("Saturation", defaultBindingMode: BindingMode.TwoWay);
 
         /// <summary>
         /// Identifies the <see cref="Brightness"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty BrightnessProperty = AvaloniaProperty.Register<ColorPicker, float>("Brightness", typeof(), typeof(ColorPicker), new FrameworkPropertyMetadata(0.0f, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnHSVPropertyChanged, CoercePercentageValue));
-
+        public static readonly AvaloniaProperty BrightnessProperty = AvaloniaProperty.Register<ColorPicker, float>("Brightness", defaultBindingMode: BindingMode.TwoWay);
+        
         /// <summary>
         /// Identifies the <see cref="Red"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty RedProperty = AvaloniaProperty.Register<ColorPicker, byte>("Red");
+        public static readonly AvaloniaProperty RedProperty = AvaloniaProperty.Register<ColorPicker, byte>("Red", defaultBindingMode: BindingMode.TwoWay);
 
         /// <summary>
         /// Identifies the <see cref="Green"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty GreenProperty = AvaloniaProperty.Register<ColorPicker, byte>("Green");
+        public static readonly AvaloniaProperty GreenProperty = AvaloniaProperty.Register<ColorPicker, byte>("Green", defaultBindingMode: BindingMode.TwoWay);
 
         /// <summary>
         /// Identifies the <see cref="Blue"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty BlueProperty = AvaloniaProperty.Register<ColorPicker, byte>("Blue");
+        public static readonly AvaloniaProperty BlueProperty = AvaloniaProperty.Register<ColorPicker, byte>("Blue", defaultBindingMode: BindingMode.TwoWay);
 
         /// <summary>
         /// Identifies the <see cref="Alpha"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty AlphaProperty = AvaloniaProperty.Register<ColorPicker, byte>("Alpha");
+        public static readonly AvaloniaProperty AlphaProperty = AvaloniaProperty.Register<ColorPicker, byte>("Alpha", defaultBindingMode: BindingMode.TwoWay);
 
         /// <summary>
         /// Identifies the <see cref="ShowAlpha"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty ShowAlphaProperty = AvaloniaProperty.Register<ColorPicker, bool>("ShowAlpha", true);
+        public static readonly AvaloniaProperty ShowAlphaProperty = AvaloniaProperty.Register<ColorPicker, bool>("ShowAlpha", true, defaultBindingMode: BindingMode.TwoWay);
 
         /// <summary>
         /// Identifies the <see cref="InputColumnWidth"/> dependency property.
@@ -165,6 +165,18 @@ namespace Stride.Core.Presentation.Controls
         /// </summary>
         private ColorHSV InternalColor { get { return field; } set { field = value; var prev = interlock; interlock = true; Color = value.ToColor(); interlock = prev; } }
 
+        static ColorPicker()
+        {
+            ColorProperty.Changed.AddClassHandler<AvaloniaObject>(OnColorPropertyChanged);
+            HueProperty.Changed.AddClassHandler<AvaloniaObject>(OnHSVPropertyChanged);
+            SaturationProperty.Changed.AddClassHandler<AvaloniaObject>(OnHSVPropertyChanged);
+            BrightnessProperty.Changed.AddClassHandler<AvaloniaObject>(OnHSVPropertyChanged);
+            RedProperty.Changed.AddClassHandler<AvaloniaObject>(OnRGBAPropertyChanged);
+            GreenProperty.Changed.AddClassHandler<AvaloniaObject>(OnRGBAPropertyChanged);
+            BlueProperty.Changed.AddClassHandler<AvaloniaObject>(OnRGBAPropertyChanged);
+            AlphaProperty.Changed.AddClassHandler<AvaloniaObject>(OnRGBAPropertyChanged);
+        }
+        
         /// <inheritdoc/>
         protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
