@@ -28,7 +28,7 @@ namespace Stride.Core.Presentation.Behaviors
         /// Identifies the <see cref="IsInProgress"/> dependency property key.
         /// </summary>
         protected static readonly AvaloniaProperty IsInProgressPropertyKey =
-            AvaloniaProperty.RegisterDirect<MouseMoveCaptureBehaviorBase<TElement>, bool>(nameof(IsInProgress));
+            AvaloniaProperty.RegisterDirect<MouseMoveCaptureBehaviorBase<TElement>, bool>(nameof(IsInProgress), o => o.IsInProgress);
 
         /// <summary>
         /// Identifies the <see cref="IsInProgress"/> dependency property.
@@ -172,7 +172,7 @@ namespace Stride.Core.Presentation.Behaviors
 
         private void OnLostMouseCapture(object sender, [NotNull] PointerCaptureLostEventArgs e)
         {
-            if (!ReferenceEquals(Mouse.Captured, sender))
+            if (e.Pointer.Captured != sender)
             {
                 Cancel();
             }

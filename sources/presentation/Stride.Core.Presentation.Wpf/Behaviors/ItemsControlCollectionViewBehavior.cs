@@ -67,6 +67,7 @@ namespace Stride.Core.Presentation.Behaviors
                         collectionView.Filter = FilterPredicate;
                     }
                 }
+                AssociatedObject.ItemsSource = collectionView;
             }
         }
 
