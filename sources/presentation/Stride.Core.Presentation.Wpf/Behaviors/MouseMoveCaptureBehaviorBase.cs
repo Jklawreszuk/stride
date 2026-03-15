@@ -18,6 +18,8 @@ namespace Stride.Core.Presentation.Behaviors
     public abstract class MouseMoveCaptureBehaviorBase<TElement> : Behavior<TElement>
         where TElement : Control
     {
+        private IPointer? pointer;
+        
         /// <summary>
         /// Identifies the <see cref="IsEnabled"/> dependency property.
         /// </summary>
@@ -59,7 +61,13 @@ namespace Stride.Core.Presentation.Behaviors
         public bool IsInProgress { get { return (bool)GetValue(IsInProgressProperty); } private set { SetValue(IsInProgressPropertyKey, value.Box()); } }
 
         public KeyModifiers? Modifiers { get { return (KeyModifiers?)GetValue(ModifiersProperty); } set { SetValue(ModifiersProperty, value); } }
-
+        
+        static MouseMoveCaptureBehaviorBase()
+        {
+            IsEnabledProperty.Changed.AddClassHandler<AvaloniaObject>(IsEnabledChanged);
+            UsePreviewEventsProperty.Changed.AddClassHandler<AvaloniaObject>(UsePreviewEventsChanged);
+        }
+        
         public bool UsePreviewEvents
         {
             get { return (bool)GetValue(UsePreviewEventsProperty); }
@@ -69,6 +77,7 @@ namespace Stride.Core.Presentation.Behaviors
         private static void IsEnabledChanged([NotNull] AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             var behavior = (MouseMoveCaptureBehaviorBase<TElement>)d;
+            
             if ((bool)e.NewValue != true)
             {
                 behavior.Cancel();
@@ -85,7 +94,7 @@ namespace Stride.Core.Presentation.Behaviors
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected bool AreModifiersValid()
         {
-            return Modifiers == null || (Modifiers == KeyModifiers.None ? Keyboard.Modifiers == KeyModifiers.None : Keyboard.Modifiers.HasFlag(Modifiers));
+            return false; //todo: return Modifiers == null || (Modifiers == KeyModifiers.None ? Keyboard.Modifiers == KeyModifiers.None : Keyboard.Modifiers.HasFlag(Modifiers));
         }
 
         protected void Cancel()
@@ -95,6 +104,7 @@ namespace Stride.Core.Presentation.Behaviors
 
             ReleaseMouseCapture();
             CancelOverride();
+            pointer = null;
         }
 
         protected virtual void CancelOverride()
@@ -116,7 +126,7 @@ namespace Stride.Core.Presentation.Behaviors
         protected override void OnAttached()
         {
             SubscribeToMouseEvents(UsePreviewEvents);
-            AssociatedObject.AddHandler(InputElement.PointerReleasedEvent, MouseUp, handledEventsToo: true);
+            AssociatedObject.AddHandler(InputElement.PointerReleasedEvent, PointerReleased, handledEventsToo: true);
             AssociatedObject.PointerCaptureLost += OnLostMouseCapture;
         }
 
@@ -124,15 +134,15 @@ namespace Stride.Core.Presentation.Behaviors
         protected override void OnDetaching()
         {
             UnsubscribeFromMouseEvents(UsePreviewEvents);
-            AssociatedObject.RemoveHandler(InputElement.PointerReleasedEvent, MouseUp);
+            AssociatedObject.RemoveHandler(InputElement.PointerReleasedEvent, PointerReleased);
             AssociatedObject.PointerCaptureLost -= OnLostMouseCapture;
         }
 
-        protected abstract void OnMouseDown([NotNull] PointerPressedEventArgs e);
+        protected abstract void OnPointerPressed([NotNull] PointerPressedEventArgs e);
 
         protected abstract void OnMouseMove([NotNull] PointerEventArgs e);
 
-        protected abstract void OnMouseUp([NotNull] PointerEventArgs e);
+        protected abstract void OnPointerReleased([NotNull] PointerEventArgs e);
 
         /// <summary>
         /// Releases the mouse capture, if the <see cref="Behavior{TElement}.AssociatedObject"/> held the capture. 
@@ -140,18 +150,18 @@ namespace Stride.Core.Presentation.Behaviors
         protected void ReleaseMouseCapture()
         {
             IsInProgress = false;
-            if (AssociatedObject.IsMouseCaptured)
+            if (pointer?.Captured == AssociatedObject)
             {
-                AssociatedObject.ReleaseMouseCapture();
+                pointer?.Capture(null);
             }
         }
 
-        private void MouseDown(object sender, [NotNull] PointerPressedEventArgs e)
+        private void PointerPressed(object sender, [NotNull] PointerPressedEventArgs e)
         {
             if (!IsEnabled || IsInProgress)
                 return;
 
-            OnMouseDown(e);
+            OnPointerPressed(e);
         }
 
         private void PointerMove(object sender, [NotNull] PointerEventArgs e)
@@ -162,12 +172,12 @@ namespace Stride.Core.Presentation.Behaviors
             OnMouseMove(e);
         }
 
-        private void MouseUp(object sender, [NotNull] PointerEventArgs e)
+        private void PointerReleased(object sender, [NotNull] PointerEventArgs e)
         {
-            if (!IsEnabled || !IsInProgress || !AssociatedObject.IsMouseCaptured)
+            if (!IsEnabled || !IsInProgress || e.Pointer.Captured != AssociatedObject)
                 return;
 
-            OnMouseUp(e);
+            OnPointerReleased(e);
         }
 
         private void OnLostMouseCapture(object sender, [NotNull] PointerCaptureLostEventArgs e)
@@ -185,12 +195,12 @@ namespace Stride.Core.Presentation.Behaviors
 
             if (usePreviewEvents)
             {
-                AssociatedObject.PreviewMouseDown += MouseDown;
-                AssociatedObject.PreviewMouseMove += PointerMove;
+                AssociatedObject.PointerPressed += PointerPressed;
+                AssociatedObject.PointerMoved += PointerMove;
             }
             else
             {
-                AssociatedObject.MouseDown += MouseDown;
+                AssociatedObject.PointerPressed += PointerPressed;
                 AssociatedObject.PointerMoved += PointerMove;
             }
         }
@@ -202,13 +212,13 @@ namespace Stride.Core.Presentation.Behaviors
 
             if (usePreviewEvents)
             {
-                AssociatedObject.PreviewMouseDown -= MouseDown;
-                AssociatedObject.PreviewMouseMove -= PointerMove;
+                AssociatedObject.PointerPressed -= PointerPressed;
+                AssociatedObject.PointerMoved -= PointerMove;
             }
             else
             {
-                AssociatedObject.MouseDown -= MouseDown;
-                AssociatedObject.PointerMoved -= PointerMoved;
+                AssociatedObject.PointerPressed -= PointerPressed;
+                AssociatedObject.PointerMoved -= PointerMove;
             }
         }
     }

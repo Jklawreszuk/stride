@@ -93,8 +93,8 @@ namespace Stride.Core.Presentation.Controls
         {
             target.SetValue(WordSeparatorsProperty, value);
         }
-
-        public static string ProcessTrimming([NotNull] Avalonia.Controls.TextBox textBlock, string text, double availableWidth)
+        
+        public static string ProcessTrimming([NotNull] TextBox textBlock, string text, double availableWidth)
         {
             var trimming = GetTextTrimming(textBlock);
             var source = GetTrimmingSource(textBlock);
@@ -102,7 +102,21 @@ namespace Stride.Core.Presentation.Controls
             return ProcessTrimming(textBlock, text, trimming, source, wordSeparators, availableWidth);
         }
 
-        public static string ProcessTrimming([NotNull] Avalonia.Controls.TextBox textBlock, string text, TextTrimming trimming, TrimmingSource source, string wordSeparators, double availableWidth)
+        public static string ProcessTrimming([NotNull] TextBox textBlock, string text, TextTrimming trimming, TrimmingSource source, string wordSeparators, double availableWidth)
+        {
+            var typeface = new Typeface(textBlock.FontFamily, textBlock.FontStyle, textBlock.FontWeight, textBlock.FontStretch);
+            return ProcessTrimming(text, typeface, textBlock.FontSize, trimming, source, wordSeparators, availableWidth);
+        }
+
+        public static string ProcessTrimming([NotNull] TextBlock textBlock, string text, double availableWidth)
+        {
+            var trimming = GetTextTrimming(textBlock);
+            var source = GetTrimmingSource(textBlock);
+            var wordSeparators = GetWordSeparators(textBlock);
+            return ProcessTrimming(textBlock, text, trimming, source, wordSeparators, availableWidth);
+        }
+
+        public static string ProcessTrimming([NotNull] TextBlock textBlock, string text, TextTrimming trimming, TrimmingSource source, string wordSeparators, double availableWidth)
         {
             var typeface = new Typeface(textBlock.FontFamily, textBlock.FontStyle, textBlock.FontWeight, textBlock.FontStretch);
             return ProcessTrimming(text, typeface, textBlock.FontSize, trimming, source, wordSeparators, availableWidth);

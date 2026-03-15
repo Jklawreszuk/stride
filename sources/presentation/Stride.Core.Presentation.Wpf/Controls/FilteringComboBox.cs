@@ -61,12 +61,12 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="Text"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty TextProperty = AvaloniaProperty.Register("Text", typeof(string), typeof(FilteringComboBox), new FrameworkPropertyMetadata { DefaultUpdateSourceTrigger = UpdateSourceTrigger.Explicit, BindsTwoWayByDefault = true });
+        public static readonly AvaloniaProperty TextProperty = AvaloniaProperty.Register<FilteringComboBox, string>("Text", defaultBindingMode: BindingMode.TwoWay);
 
         /// <summary>
         /// Identifies the <see cref="IsDropDownOpen"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty IsDropDownOpenProperty = AvaloniaProperty.Register("IsDropDownOpen", typeof(bool), typeof(FilteringComboBox), new FrameworkPropertyMetadata(BooleanBoxes.FalseBox, OnIsDropDownOpenChanged));
+        public static readonly AvaloniaProperty IsDropDownOpenProperty = AvaloniaProperty.Register<FilteringComboBox, bool>("IsDropDownOpen");
 
         /// <summary>
         /// Identifies the <see cref="OpenDropDownOnFocus"/> dependency property.
@@ -81,12 +81,12 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="WatermarkContent"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty WatermarkContentProperty = AvaloniaProperty.Register("WatermarkContent", typeof(object), typeof(FilteringComboBox), new PropertyMetadata(null));
+        public static readonly AvaloniaProperty WatermarkContentProperty = AvaloniaProperty.Register<FilteringComboBox, object>("WatermarkContent");
 
         /// <summary>
         /// Identifies the <see cref="IsFiltering"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty IsFilteringProperty = AvaloniaProperty.Register("IsFiltering", typeof(bool), typeof(FilteringComboBox), new FrameworkPropertyMetadata(true, OnIsFilteringChanged));
+        public static readonly AvaloniaProperty IsFilteringProperty = AvaloniaProperty.Register<FilteringComboBox, bool>("IsFiltering");
 
         /// <summary>
         /// Identifies the <see cref="ItemsToExclude"/> dependency property.
@@ -96,7 +96,7 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="Sort"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty SortProperty = AvaloniaProperty.Register("Sort", typeof(FilteringComboBoxSort), typeof(FilteringComboBox), new FrameworkPropertyMetadata(OnItemsSourceRefresh));
+        public static readonly AvaloniaProperty SortProperty = AvaloniaProperty.Register<FilteringComboBox, FilteringComboBoxSort>("Sort");
 
         /// <summary>
         /// Identifies the <see cref="SortMemberPath"/> dependency property.
@@ -111,13 +111,13 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="ValidatedItem"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty ValidatedItemProperty = AvaloniaProperty.Register("ValidatedItem", typeof(object), typeof(FilteringComboBox));
+        public static readonly AvaloniaProperty ValidatedItemProperty = AvaloniaProperty.Register<FilteringComboBox, object>("ValidatedItem");
 
         /// <summary>
         /// Identifies the <see cref="ValidateOnLostFocus"/> dependency property.
         /// </summary>
         public static readonly AvaloniaProperty ValidateOnLostFocusProperty =
-            AvaloniaProperty.Register(nameof(ValidateOnLostFocus), typeof(bool), typeof(FilteringComboBox), new PropertyMetadata(BooleanBoxes.TrueBox));
+            AvaloniaProperty.Register<FilteringComboBox, bool>(nameof(ValidateOnLostFocus), true);
 
 
         /// <summary>
@@ -307,7 +307,7 @@ namespace Stride.Core.Presentation.Controls
             }
 
             // Update the source of the text property binding
-            expression = BindingOperations.GetBindingExpressionBase(TextProperty);
+            expression = BindingOperations.GetBindingExpressionBase(this, TextProperty);
             expression?.UpdateSource();
 
             // Close the dropdown

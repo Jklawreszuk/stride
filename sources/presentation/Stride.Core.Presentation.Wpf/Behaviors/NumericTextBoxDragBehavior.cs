@@ -69,7 +69,7 @@ namespace Stride.Core.Presentation.Behaviors
         }
 
         /// <inheritdoc />
-        protected override void OnMouseDown(PointerPressedEventArgs e)
+        protected override void OnPointerPressed(PointerPressedEventArgs e)
         {
             if (!IsContentHostPart(e.OriginalSource))
                 return;
@@ -139,10 +139,10 @@ namespace Stride.Core.Presentation.Behaviors
         }
 
         /// <inheritdoc />
-        protected override void OnMouseUp(PointerEventArgs e)
+        protected override void OnPointerReleased(PointerEventArgs e)
         {
             // We have to release the mouse first, in case Validate triggers a Detach of this behavior.
-            ReleaseMouseCapture();
+            ReleaseMouseCapture(e);
             if (dragState == DragState.Starting)
             {
                 AssociatedObject.Select(0, AssociatedObject.Text.Length);

@@ -5,9 +5,7 @@ using Avalonia.Controls;
 using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls.Shapes;
-using Avalonia.Data;
 using Avalonia.Input;
-using Avalonia.Reactive;
 using Avalonia.Styling;
 
 namespace Stride.Core.Presentation.Behaviors
@@ -29,7 +27,7 @@ namespace Stride.Core.Presentation.Behaviors
         /// <summary>
         /// Resource Key for the default SelectionRectangleStyle.
         /// </summary>
-        public static ResourceKey DefaultRectangleStyleKey { get; } = new ComponentResourceKey(typeof(SelectionRectangleBehavior), nameof(DefaultRectangleStyleKey));
+        public static object DefaultRectangleStyleKey { get; } = typeof(SelectionRectangleBehavior);
 
         public Canvas Canvas { get { return (Canvas)GetValue(CanvasProperty); } set { SetValue(CanvasProperty, value); } }
 
@@ -58,7 +56,7 @@ namespace Stride.Core.Presentation.Behaviors
         }
 
         ///  <inheritdoc/>
-        protected override void OnMouseDown(PointerPressedEventArgs e)
+        protected override void OnPointerPressed(PointerPressedEventArgs e)
         {
             if (e.GetCurrentPoint(AssociatedObject).Properties.PointerUpdateKind != PointerUpdateKind.LeftButtonPressed)
                 return;
@@ -100,7 +98,7 @@ namespace Stride.Core.Presentation.Behaviors
         }
 
         ///  <inheritdoc/>
-        protected override void OnMouseUp(PointerEventArgs e)
+        protected override void OnPointerReleased(PointerEventArgs e)
         {
             if (e.GetCurrentPoint(AssociatedObject).Properties.PointerUpdateKind != PointerUpdateKind.LeftButtonPressed)
                 return;
@@ -120,16 +118,11 @@ namespace Stride.Core.Presentation.Behaviors
             selectionRectangle = new Rectangle();
             if (RectangleStyle != null)
             {
-                var binding = new Binding
-                {
-                    Path = new(nameof(RectangleStyle)),
-                    Source = this,
-                };
-                selectionRectangle.Bind(Rectangle.StyleProperty, binding);
+                selectionRectangle.Styles.Add(RectangleStyle);
             }
-            else
+            else if (selectionRectangle.TryFindResource(DefaultRectangleStyleKey, out var value) && value is Style style)
             {
-                selectionRectangle.Style = selectionRectangle?.TryFindResource(DefaultRectangleStyleKey) as Style;
+                selectionRectangle.Styles.Add(style);
             }
             selectionRectangle.IsHitTestVisible = false;
         }

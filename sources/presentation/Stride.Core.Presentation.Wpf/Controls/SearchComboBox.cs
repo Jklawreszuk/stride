@@ -15,6 +15,7 @@ using Stride.Core.Annotations;
 using Stride.Core.Presentation.Core;
 using Stride.Core.Presentation.Extensions;
 using Stride.Core.Presentation.Internal;
+using FocusManager = Avalonia.Input.FocusManager;
 
 namespace Stride.Core.Presentation.Controls
 {
@@ -40,42 +41,42 @@ namespace Stride.Core.Presentation.Controls
         /// Identifies the <see cref="AlternativeModifiers"/> dependency property.
         /// </summary>
         public static readonly AvaloniaProperty AlternativeModifiersProperty =
-            AvaloniaProperty.Register("AlternativeModifiers", typeof(KeyModifiers), typeof(SearchComboBox), new PropertyMetadata(KeyModifiers.Shift));
+            AvaloniaProperty.Register<SearchComboBox, KeyModifiers>("AlternativeModifiers", KeyModifiers.Shift);
         /// <summary>
         /// Identifies the <see cref="ClearTextAfterSelection"/> dependency property.
         /// </summary>
         public static readonly AvaloniaProperty ClearTextAfterSelectionProperty =
-            AvaloniaProperty.Register("ClearTextAfterSelection", typeof(bool), typeof(SearchComboBox));
+            AvaloniaProperty.Register<SearchComboBox, KeyModifiers>("ClearTextAfterSelection");
         /// <summary>
         /// Identifies the <see cref="Command"/> dependency property.
         /// </summary>
         public static readonly AvaloniaProperty CommandProperty =
-            AvaloniaProperty.Register("Command", typeof(ICommand), typeof(SearchComboBox));
+            AvaloniaProperty.Register<SearchComboBox, ICommand>("Command");
         /// <summary>
         /// Identifies the <see cref="IsAlternative"/> dependency property.
         /// </summary>
         public static readonly AvaloniaProperty IsAlternativeProperty =
-            AvaloniaProperty.Register("IsAlternative", typeof(bool), typeof(SearchComboBox), new PropertyMetadata(BooleanBoxes.FalseBox));
+            AvaloniaProperty.Register<SearchComboBox, bool>("IsAlternative");
         /// <summary>
         /// Identifies the <see cref="IsDropDownOpen"/> dependency property.
         /// </summary>
         public static readonly AvaloniaProperty IsDropDownOpenProperty =
-            AvaloniaProperty.Register("IsDropDownOpen", typeof(bool), typeof(SearchComboBox));
+            AvaloniaProperty.Register<SearchComboBox, bool>("IsDropDownOpen");
         /// <summary>
         /// Identifies the <see cref="OpenDropDownOnFocus"/> dependency property.
         /// </summary>
         public static readonly AvaloniaProperty OpenDropDownOnFocusProperty =
-            AvaloniaProperty.Register("OpenDropDownOnFocus", typeof(bool), typeof(SearchComboBox));
+            AvaloniaProperty.Register<SearchComboBox, bool>("OpenDropDownOnFocus");
         /// <summary>
         /// Identifies the <see cref="SearchText"/> dependency property.
         /// </summary>
         public static readonly AvaloniaProperty SearchTextProperty =
-            AvaloniaProperty.Register("SearchText", typeof(string), typeof(SearchComboBox), new FrameworkPropertyMetadata { BindsTwoWayByDefault = true });
+            AvaloniaProperty.Register<SearchComboBox, string>("SearchText", defaultBindingMode: BindingMode.TwoWay);
         /// <summary>
         /// Identifies the <see cref="WatermarkContent"/> dependency property.
         /// </summary>
         public static readonly AvaloniaProperty WatermarkContentProperty =
-            AvaloniaProperty.Register("WatermarkContent", typeof(object), typeof(SearchComboBox));
+            AvaloniaProperty.Register<SearchComboBox, object>("WatermarkContent");
 
         /// <summary>
         /// The input text box.
@@ -96,9 +97,7 @@ namespace Stride.Core.Presentation.Controls
 
         static SearchComboBox()
         {
-            SelectedIndexProperty.OverrideMetadata(typeof(SearchComboBox), new FrameworkPropertyMetadata { DefaultUpdateSourceTrigger = UpdateSourceTrigger.Explicit });
-            SelectedItemProperty.OverrideMetadata(typeof(SearchComboBox), new FrameworkPropertyMetadata { DefaultUpdateSourceTrigger = UpdateSourceTrigger.Explicit });
-            SelectedValueProperty.OverrideMetadata(typeof(SearchComboBox), new FrameworkPropertyMetadata { DefaultUpdateSourceTrigger = UpdateSourceTrigger.Explicit });
+            
         }
 
         public SearchComboBox()
@@ -157,15 +156,15 @@ namespace Stride.Core.Presentation.Controls
                 throw new InvalidOperationException($"A part named '{ListBoxPartName}' must be present in the ControlTemplate, and must be of type '{nameof(ListBox)}'.");
             
             editableTextBox.LostFocus += EditableTextBoxLostFocus;
-            editableTextBox.PreviewKeyDown += EditableTextBoxPreviewKeyDown;
-            editableTextBox.PreviewKeyUp += EditableTextBoxPreviewKeyUp;
+            editableTextBox.KeyDown += EditableTextBoxPreviewKeyDown;
+            editableTextBox.KeyUp += EditableTextBoxPreviewKeyUp;
             editableTextBox.Validated += EditableTextBoxValidated;
-            listBox.MouseUp += ListBoxMouseUp;
+            listBox.PointerReleased += ListBoxMouseUp;
         }
 
-        protected override void OnGotKeyboardFocus(KeyboardFocusChangedEventArgs e)
+        protected override void OnGotFocus(GotFocusEventArgs e)
         {
-            base.OnGotKeyboardFocus(e);
+            base.OnGotFocus(e);
             if (OpenDropDownOnFocus && !listBoxClicking)
             {
                 IsDropDownOpen = true;
@@ -191,11 +190,13 @@ namespace Stride.Core.Presentation.Controls
             }
         }
 
-        protected override void OnLostKeyboardFocus(KeyboardFocusChangedEventArgs e)
+        protected override void OnLostFocus(RoutedEventArgs e)
         {
-            base.OnLostKeyboardFocus(e);
+            base.OnLostFocus(e);
+            var topLevel = TopLevel.GetTopLevel(this);
+            var newFocus = topLevel?.FocusManager?.GetFocusedElement();
 
-            if (e.NewFocus is Control el)
+            if (newFocus is Control el)
             {
                 // The user probably clicked (MouseDown) somewhere on our dropdown listbox, so we won't clear to be able to
                 // get the MouseUp event (<see cref="ListBoxMouseUp">).
