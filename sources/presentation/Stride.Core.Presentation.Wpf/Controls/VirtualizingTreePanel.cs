@@ -665,7 +665,7 @@ namespace Stride.Core.Presentation.Controls
         {
             if (rectangle.IsEmpty || visual == null || ReferenceEquals(visual, this) || !IsAncestorOf(visual))
             {
-                return Rect.Empty;
+                return new Rect();
             }
 
             var treeViewItem = visual as TreeViewItem;

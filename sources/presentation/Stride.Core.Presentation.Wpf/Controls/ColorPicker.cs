@@ -192,9 +192,9 @@ namespace Stride.Core.Presentation.Controls
 
             if (huePickerRenderSurface != null)
             {
-                huePickerRenderSurface.MouseDown -= OnHuePickerRenderSurfaceMouseDown;
-                huePickerRenderSurface.MouseUp -= OnHuePickerRenderSurfaceMouseUp;
-                huePickerRenderSurface.PointerMove -= OnHuePickerRenderSurfaceMouseMove;
+                huePickerRenderSurface.PointerPressed -= OnHuePickerRenderSurfaceMouseDown;
+                huePickerRenderSurface.PointerReleased -= OnHuePickerRenderSurfaceMouseUp;
+                huePickerRenderSurface.PointerMoved -= OnHuePickerRenderSurfaceMouseMove;
 
             }
 

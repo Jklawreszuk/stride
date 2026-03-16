@@ -236,7 +236,7 @@
                              SnapsToDevicePixels="True">
             <DockPanel LastChildFill="True" Focusable="False">
               <UniformGrid x:Name="upDownButtons" Rows="2" DockPanel.Dock="Right" Focusable="False"
-                           Visibility="Collapsed" MaxWidth="20">
+                           IsVisible="False" MaxWidth="20">
                 <RepeatButton x:Name="PART_IncreaseButton"
                               Command="{x:Static ctrl:NumericTextBox.SmallIncreaseCommand}">
                   <Grid Margin="0" Background="Transparent">

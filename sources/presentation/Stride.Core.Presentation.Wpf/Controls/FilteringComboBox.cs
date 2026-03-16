@@ -253,7 +253,7 @@ namespace Stride.Core.Presentation.Controls
             editableTextBox.Validated += EditableTextBoxValidated;
             editableTextBox.Cancelled += EditableTextBoxCancelled;
             editableTextBox.LostFocus += EditableTextBoxLostFocus;
-            listBox.MouseUp += ListBoxMouseUp;
+            listBox.PointerReleased += ListBoxMouseUp;
         }
 
         protected override void OnGotKeyboardFocus(KeyboardFocusChangedEventArgs e)

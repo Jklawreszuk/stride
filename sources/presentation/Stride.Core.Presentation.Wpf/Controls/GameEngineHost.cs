@@ -48,7 +48,7 @@ namespace Stride.Core.Presentation.Controls
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
             LayoutUpdated += OnLayoutUpdated;
-            IsVisibleChanged += OnIsVisibleChanged;
+            IsVisibleProperty.Changed.AddClassHandler<AvaloniaObject>(OnIsVisibleChanged);
         }
 
         public IntPtr Handle { get; }
@@ -63,7 +63,7 @@ namespace Stride.Core.Presentation.Controls
             Loaded -= OnLoaded;
             Unloaded -= OnUnloaded;
             LayoutUpdated -= OnLayoutUpdated;
-            IsVisibleChanged -= OnIsVisibleChanged;
+            //IsVisibleChanged -= OnIsVisibleChanged;
             // TODO: This seems to be blocking when exiting the Game Studio, but doesn't seem to be necessary
             //NativeHelper.SetParent(Handle, IntPtr.Zero);
             NativeHelper.DestroyWindow(Handle);
@@ -165,7 +165,7 @@ namespace Stride.Core.Presentation.Controls
 
             updateRequested = true;
 
-            Dispatcher.InvokeAsync(() =>
+            Dispatcher.UIThread.InvokeAsync(() =>
             {
                 updateRequested = false;
                 Visual root = null;
