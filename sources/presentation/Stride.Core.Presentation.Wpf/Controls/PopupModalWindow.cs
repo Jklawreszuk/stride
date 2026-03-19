@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
-using Avalonia.Interactivity;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Services;
 using Stride.Core.Presentation.Windows;
@@ -26,14 +25,7 @@ namespace Stride.Core.Presentation.Controls
 
         protected PopupModalWindow()
         {
-            Loaded += OnLoaded;
             Deactivated += OnDeactivated;
-        }
-
-        private void OnLoaded(object sender, RoutedEventArgs e)
-        {
-            if (!IsPointerCaptured)
-                Mouse.Capture(this, CaptureMode.SubTree);
         }
 
         protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
