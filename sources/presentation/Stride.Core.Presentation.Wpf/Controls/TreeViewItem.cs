@@ -7,8 +7,10 @@ using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Controls.Templates;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml.Templates;
+using Avalonia.Metadata;
 using Avalonia.Threading;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Extensions;
@@ -49,7 +51,7 @@ namespace Stride.Core.Presentation.Controls
         /// Identifies the <see cref="TemplateSelectorEdit"/> dependency property.
         /// </summary>
         public static AvaloniaProperty TemplateSelectorEditProperty =
-            AvaloniaProperty.Register<TreeViewItem, DataTemplateSelector>(nameof(TemplateSelectorEdit));
+            AvaloniaProperty.Register<TreeViewItem, IDataTemplate>(nameof(TemplateSelectorEdit));
         /// <summary>
         /// Identifies the <see cref="Indentation"/> dependency property.
         /// </summary>
@@ -79,7 +81,7 @@ namespace Stride.Core.Presentation.Controls
 
         public DataTemplate TemplateEdit { get { return (DataTemplate)GetValue(TemplateEditProperty); } set { SetValue(TemplateEditProperty, value); } }
 
-        public DataTemplateSelector TemplateSelectorEdit { get { return (DataTemplateSelector)GetValue(TemplateSelectorEditProperty); } set { SetValue(TemplateSelectorEditProperty, value); } }
+        public IDataTemplate TemplateSelectorEdit { get { return (IDataTemplate)GetValue(TemplateSelectorEditProperty); } set { SetValue(TemplateSelectorEditProperty, value); } }
 
         [DependsOn("Indentation")]
         public double Offset => ParentTreeViewItem?.Offset + Indentation ?? 0;
@@ -168,25 +170,6 @@ namespace Stride.Core.Presentation.Controls
             {
                 item.ParentTreeView.StopEditing();
             }
-        }
-
-        /// <summary>
-        ///     Returns true if the item is or should be its own container.
-        /// </summary>
-        /// <param name="item">The item to test.</param>
-        /// <returns>true if its type matches the container type.</returns>
-        protected override bool IsItemItsOwnContainerOverride(object item)
-        {
-            return item is TreeViewItem;
-        }
-
-        /// <summary>
-        ///     Create or identify the element used to display the given item.
-        /// </summary>
-        /// <returns>The container.</returns>
-        protected override AvaloniaObject GetContainerForItemOverride()
-        {
-            return new TreeViewItem();
         }
 
         public override string ToString()

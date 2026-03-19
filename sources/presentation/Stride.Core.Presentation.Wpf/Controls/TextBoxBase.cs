@@ -21,6 +21,7 @@ namespace Stride.Core.Presentation.Controls
     public class TextBoxBase : Avalonia.Controls.TextBox
     {
         private bool validating;
+        private NavigationMethod lastNavMethod;
 
         /// <summary>
         /// Identifies the <see cref="HasText"/> dependency property.
@@ -126,7 +127,7 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Gets whether this TextBox contains a non-empty text.
         /// </summary>
-        public bool HasText { get { return (bool)GetValue(AvaloniaProperty); } private set { SetValue(HasTextPropertyKey, value.Box()); } }
+        public bool HasText { get { return (bool)GetValue(HasTextPropertyKey); } private set { SetValue(HasTextPropertyKey, value.Box()); } }
 
         /// <summary>
         /// Gets or sets whether the associated text box should get keyboard focus when this behavior is attached.
@@ -364,12 +365,15 @@ namespace Stride.Core.Presentation.Controls
             }
         }
 
-        protected override void OnGotKeyboardFocus(KeyboardFocusChangedEventArgs e)
+        protected override void OnGotFocus(GotFocusEventArgs e)
         {
-            if (SelectAllOnFocus)
+            lastNavMethod = e.NavigationMethod;
+            if (SelectAllOnFocus && e.NavigationMethod == NavigationMethod.Tab)
             {
                 SelectAll();
             }
+
+            base.OnGotFocus(e);
         }
 
         protected override void OnPointerPressed(PointerPressedEventArgs e)
@@ -387,8 +391,12 @@ namespace Stride.Core.Presentation.Controls
             base.OnPointerPressed(e);
         }
 
-        protected override void OnLostKeyboardFocus(KeyboardFocusChangedEventArgs e)
+        protected override void OnLostFocus(RoutedEventArgs e)
         {
+            if (lastNavMethod != NavigationMethod.Tab)
+            {
+                return;
+            }
             if (ValidateOnLostFocus && !validating)
             {
                 Validate();
@@ -397,8 +405,8 @@ namespace Stride.Core.Presentation.Controls
             {
                 Cancel();
             }
-
-            base.OnLostKeyboardFocus(e);
+            
+            base.OnLostFocus(e);
         }
 
         private void ClearUndoStack()

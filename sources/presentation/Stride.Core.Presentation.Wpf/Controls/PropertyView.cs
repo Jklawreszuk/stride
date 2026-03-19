@@ -111,9 +111,12 @@ namespace Stride.Core.Presentation.Controls
                 KeyboardActivateItem(null);
                 return;
             }
-
+            
+            var topLevel = TopLevel.GetTopLevel(this);
+            var focused = topLevel?.FocusManager.GetFocusedElement();
+            
             // We want to find the closest PropertyViewItem to the element who got the keyboard focus.
-            if (Keyboard.FocusedElement is AvaloniaObject focusedControl)
+            if (focused is AvaloniaObject focusedControl)
             {
                 var propertyItem = focusedControl as PropertyViewItem ?? focusedControl.FindVisualParentOfType<PropertyViewItem>();
                 if (propertyItem != null)

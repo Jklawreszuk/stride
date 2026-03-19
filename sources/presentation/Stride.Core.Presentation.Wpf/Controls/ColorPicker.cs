@@ -30,10 +30,10 @@ namespace Stride.Core.Presentation.Controls
     {
 
         private Canvas colorPickerSelector;
-        private Rectangle colorPickerRenderSurface;
-        private Rectangle colorPreviewRenderSurface;
+        private Border colorPickerRenderSurface;
+        private Border colorPreviewRenderSurface;
         private Control huePickerRenderSurface;
-        private Rectangle huePickerSelector;
+        private Border huePickerSelector;
         private bool interlock;
         private bool suspendBindingUpdates;
         private bool templateApplied;
@@ -167,14 +167,14 @@ namespace Stride.Core.Presentation.Controls
 
         static ColorPicker()
         {
-            ColorProperty.Changed.AddClassHandler<AvaloniaObject>(OnColorPropertyChanged);
-            HueProperty.Changed.AddClassHandler<AvaloniaObject>(OnHSVPropertyChanged);
-            SaturationProperty.Changed.AddClassHandler<AvaloniaObject>(OnHSVPropertyChanged);
-            BrightnessProperty.Changed.AddClassHandler<AvaloniaObject>(OnHSVPropertyChanged);
-            RedProperty.Changed.AddClassHandler<AvaloniaObject>(OnRGBAPropertyChanged);
-            GreenProperty.Changed.AddClassHandler<AvaloniaObject>(OnRGBAPropertyChanged);
-            BlueProperty.Changed.AddClassHandler<AvaloniaObject>(OnRGBAPropertyChanged);
-            AlphaProperty.Changed.AddClassHandler<AvaloniaObject>(OnRGBAPropertyChanged);
+            ColorProperty.Changed.AddClassHandler<ColorPicker>(OnColorPropertyChanged);
+            HueProperty.Changed.AddClassHandler<ColorPicker>(OnHSVPropertyChanged);
+            SaturationProperty.Changed.AddClassHandler<ColorPicker>(OnHSVPropertyChanged);
+            BrightnessProperty.Changed.AddClassHandler<ColorPicker>(OnHSVPropertyChanged);
+            RedProperty.Changed.AddClassHandler<ColorPicker>(OnRGBAPropertyChanged);
+            GreenProperty.Changed.AddClassHandler<ColorPicker>(OnRGBAPropertyChanged);
+            BlueProperty.Changed.AddClassHandler<ColorPicker>(OnRGBAPropertyChanged);
+            AlphaProperty.Changed.AddClassHandler<ColorPicker>(OnRGBAPropertyChanged);
         }
         
         /// <inheritdoc/>
@@ -198,11 +198,11 @@ namespace Stride.Core.Presentation.Controls
 
             }
 
-            colorPickerRenderSurface = DependencyObjectExtensions.CheckTemplatePart<Rectangle>( e.NameScope.Find<Rectangle>("PART_ColorPickerRenderSurface"));
-            colorPreviewRenderSurface = DependencyObjectExtensions.CheckTemplatePart<Rectangle>( e.NameScope.Find<Rectangle>("PART_ColorPreviewRenderSurface"));
-            colorPickerSelector = DependencyObjectExtensions.CheckTemplatePart<Canvas>( e.NameScope.Find<T>("PART_ColorPickerSelector"));
-            huePickerSelector = DependencyObjectExtensions.CheckTemplatePart<Rectangle>( e.NameScope.Find<T>("PART_HuePickerSelector"));
-            huePickerRenderSurface = DependencyObjectExtensions.CheckTemplatePart<Control>( e.NameScope.Find<T>("PART_HuePickerRenderSurface"));
+            colorPickerRenderSurface = DependencyObjectExtensions.CheckTemplatePart<Border>( e.NameScope.Find<Border>("PART_ColorPickerRenderSurface"));
+            colorPreviewRenderSurface = DependencyObjectExtensions.CheckTemplatePart<Border>( e.NameScope.Find<Border>("PART_ColorPreviewRenderSurface"));
+            colorPickerSelector = DependencyObjectExtensions.CheckTemplatePart<Canvas>( e.NameScope.Find<Canvas>("PART_ColorPickerSelector"));
+            huePickerSelector = DependencyObjectExtensions.CheckTemplatePart<Border>( e.NameScope.Find<Border>("PART_HuePickerSelector"));
+            huePickerRenderSurface = DependencyObjectExtensions.CheckTemplatePart<Control>( e.NameScope.Find<Control>("PART_HuePickerRenderSurface"));
 
             if (colorPickerRenderSurface != null)
             {
@@ -239,7 +239,7 @@ namespace Stride.Core.Presentation.Controls
         /// <param name="e">The event data.</param>
         private void OnColorPickerRenderSurfaceMouseDown(object sender, [NotNull] PointerEventArgs e)
         {
-            if (e.LeftButton == MouseButtonState.Pressed)
+            if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
             {
                 colorPickerRenderSurface.CaptureMouse();
                 suspendBindingUpdates = true;
@@ -301,7 +301,7 @@ namespace Stride.Core.Presentation.Controls
         /// <param name="e">The event data.</param>
         private void OnHuePickerRenderSurfaceMouseDown(object sender, [NotNull] PointerEventArgs e)
         {
-            if (e.LeftButton == MouseButtonState.Pressed)
+            if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
             {
                 huePickerRenderSurface.CaptureMouse();
                 suspendBindingUpdates = true;
@@ -358,7 +358,7 @@ namespace Stride.Core.Presentation.Controls
         {
             if (colorPreviewRenderSurface != null)
             {
-                colorPreviewRenderSurface.Fill = new SolidColorBrush(Color.ToSystemColor());
+                colorPreviewRenderSurface.Background = new SolidColorBrush(Color.ToSystemColor());
             }
             if (colorPickerRenderSurface != null)
             {
@@ -388,7 +388,7 @@ namespace Stride.Core.Presentation.Controls
                         }
                     }
 
-                    colorPickerRenderSurface.Fill = new DrawingBrush(new ImageDrawing(BitmapSource.Create(width, height, 96, 96, pf, null, rawImage, rawStride), new Rect(0.0f, 0.0f, width, height)));
+                    colorPickerRenderSurface.Background = new DrawingBrush(new ImageDrawing(BitmapSource.Create(width, height, 96, 96, pf, null, rawImage, rawStride), new Rect(0.0f, 0.0f, width, height)));
                 }
             }
         }
@@ -423,10 +423,11 @@ namespace Stride.Core.Presentation.Controls
             {
                 RenderColorPickerSurface();
             }
-            else if (colorPreviewRenderSurface != null)
+            else
             {
-                colorPreviewRenderSurface.Fill = new SolidColorBrush(Color.ToSystemColor());
+                colorPreviewRenderSurface?.Background = new SolidColorBrush(Color.ToSystemColor());
             }
+
             UpdateBinding(ColorProperty);
 
             if (isInitializing)
