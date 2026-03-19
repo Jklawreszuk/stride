@@ -18,15 +18,12 @@ namespace Stride.Core.Presentation.Controls
 			Loaded += (sender, e) =>
             {
                 // Disable minimize on modal windows
-                var handle = new WindowInteropHelper(this).Handle;
-                if (handle != IntPtr.Zero)
-                {
-                    NativeHelper.DisableMinimizeButton(handle);
-                }
+                CanMinimize = false;
             };
-            Owner = WindowManager.MainWindow?.Window ?? WindowManager.BlockingWindows.LastOrDefault()?.Window;
+            var owner = WindowManager.MainWindow?.Window ?? WindowManager.BlockingWindows.LastOrDefault()?.Window;
+            Owner = owner;
             WindowStartupLocation = Owner != null ? WindowStartupLocation.CenterOwner : WindowStartupLocation.CenterScreen;
-            Dispatcher.InvokeAsync(ShowDialog);
+            await ShowDialog(owner);
             return Result;
         }
 

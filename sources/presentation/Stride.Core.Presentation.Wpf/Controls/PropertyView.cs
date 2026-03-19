@@ -40,14 +40,14 @@ namespace Stride.Core.Presentation.Controls
         /// Identifies the PreparePropertyItem event.
         /// This attached routed event may be raised by the PropertyGrid itself or by a PropertyItemBase containing sub-items.
         /// </summary>
-        public static readonly RoutedEvent PrepareItemEvent = EventManager.RegisterRoutedEvent("PrepareItem", RoutingStrategy.Bubble, typeof(EventHandler<PropertyViewItemEventArgs>), typeof(PropertyView));
+        public static readonly RoutedEvent PrepareItemEvent = RoutedEvent.Register<PropertyView, RoutedEventArgs>("PrepareItem", RoutingStrategies.Bubble);
 
         /// <summary>
         /// Identifies the ClearPropertyItem event.
         /// This attached routed event may be raised by the PropertyGrid itself or by a
         /// PropertyItemBase containing sub items.
         /// </summary>
-        public static readonly RoutedEvent ClearItemEvent = EventManager.RegisterRoutedEvent("ClearItem", RoutingStrategy.Bubble, typeof(EventHandler<PropertyViewItemEventArgs>), typeof(PropertyView));
+        public static readonly RoutedEvent ClearItemEvent = RoutedEvent.Register<PropertyView, RoutedEventArgs>("ClearItem", RoutingStrategies.Bubble);
 
         static PropertyView()
         {
@@ -55,7 +55,8 @@ namespace Stride.Core.Presentation.Controls
 
         public PropertyView()
         {
-            IsKeyboardFocusWithinChanged += OnIsKeyboardFocusWithinChanged;
+            IsKeyboardFocusWithinProperty.Changed.AddClassHandler<AvaloniaObject>(OnIsKeyboardFocusWithinChanged);
+            PointerExited += OnMouseLeave;
         }
 
         public IReadOnlyCollection<PropertyViewItem> Properties => properties;
@@ -94,8 +95,7 @@ namespace Stride.Core.Presentation.Controls
 
         internal void ItemMouseMove(object sender, PointerEventArgs e)
         {
-            var item = sender as PropertyViewItem;
-            if (item != null)
+            if (sender is PropertyViewItem item)
             {
                 if (item.Highlightable)
                     HighlightItem(item);
@@ -113,8 +113,7 @@ namespace Stride.Core.Presentation.Controls
             }
 
             // We want to find the closest PropertyViewItem to the element who got the keyboard focus.
-            var focusedControl = Keyboard.FocusedElement as AvaloniaObject;
-            if (focusedControl != null)
+            if (Keyboard.FocusedElement is AvaloniaObject focusedControl)
             {
                 var propertyItem = focusedControl as PropertyViewItem ?? focusedControl.FindVisualParentOfType<PropertyViewItem>();
                 if (propertyItem != null)
@@ -124,37 +123,10 @@ namespace Stride.Core.Presentation.Controls
             }
         }
 
-        protected override void OnMouseLeave(PointerEventArgs e)
+        protected void OnMouseLeave(object sender, PointerEventArgs e)
         {
-            base.OnMouseLeave(e);
             HoverItem(null);
             HighlightItem(null);
-        }
-
-        protected override AvaloniaObject GetContainerForItemOverride()
-        {
-            return new PropertyViewItem(this);
-        }
-
-        protected override bool IsItemItsOwnContainerOverride(object item)
-        {
-            return item is PropertyViewItem;
-        }
-
-        protected override void PrepareContainerForItemOverride(AvaloniaObject element, object item)
-        {
-            base.PrepareContainerForItemOverride(element, item);
-            var container = (PropertyViewItem)element;
-            properties.Add(container);
-            RaiseEvent(new PropertyViewItemEventArgs(PrepareItemEvent, this, container, item));
-        }
-
-        protected override void ClearContainerForItemOverride(AvaloniaObject element, object item)
-        {
-            var container = (PropertyViewItem)element;
-            RaiseEvent(new PropertyViewItemEventArgs(ClearItemEvent, this, (PropertyViewItem)element, item));
-            properties.Remove(container);
-            base.ClearContainerForItemOverride(element, item);
         }
 
         private void KeyboardActivateItem(PropertyViewItem item)

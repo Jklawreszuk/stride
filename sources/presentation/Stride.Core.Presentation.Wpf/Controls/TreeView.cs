@@ -11,6 +11,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
+using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml.Templates;
@@ -36,7 +37,7 @@ namespace Stride.Core.Presentation.Controls
         /// Identifies the <see cref="SelectedItem"/> dependency property.
         /// </summary>
         public static AvaloniaProperty SelectedItemProperty =
-            AvaloniaProperty.Register(nameof(SelectedItem), typeof(object), typeof(TreeView), new FrameworkPropertyMetadata(null, OnSelectedItemPropertyChanged));
+            AvaloniaProperty.Register<TreeView, object>(nameof(SelectedItem));
         /// <summary>
         /// Identifies the <see cref="SelectedItems"/> dependency property.
         /// </summary>
@@ -46,24 +47,25 @@ namespace Stride.Core.Presentation.Controls
         /// Identifes the <see cref="SelectionMode"/> dependency property.
         /// </summary>
         public static AvaloniaProperty SelectionModeProperty =
-            AvaloniaProperty.Register(nameof(SelectionMode), typeof(SelectionMode), typeof(TreeView), new FrameworkPropertyMetadata(SelectionMode.Extended, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnSelectionModeChanged));
+            AvaloniaProperty.Register<TreeView, SelectionMode>(nameof(SelectionMode), SelectionMode.Multiple, defaultBindingMode:BindingMode.TwoWay);
         /// <summary>
         /// Identifies the <see cref="IsVirtualizing"/> dependency property.
         /// </summary>
         public static readonly AvaloniaProperty IsVirtualizingProperty =
-            AvaloniaProperty.Register(nameof(IsVirtualizing), typeof(bool), typeof(TreeView), new PropertyMetadata(BooleanBoxes.FalseBox));
+            AvaloniaProperty.Register<TreeView, bool>(nameof(IsVirtualizing));
+
         /// <summary>
         /// Identifies the <see cref="PrepareItem"/> routed event.
         /// This attached routed event may be raised by the PropertyGrid itself or by a PropertyItemBase containing sub-items.
         /// </summary>
         public static readonly RoutedEvent PrepareItemEvent =
-            EventManager.RegisterRoutedEvent("PrepareItem", RoutingStrategy.Bubble, typeof(EventHandler<TreeViewItemEventArgs>), typeof(TreeView));
+            RoutedEvent.Register<TreeView, RoutedEventArgs>("PrepareItem", RoutingStrategies.Bubble);
         /// <summary>
         /// Identifies the <see cref="ClearItem"/> routed event.
         /// This attached routed event may be raised by the PropertyGrid itself or by a PropertyItemBase containing sub items.
         /// </summary>
         public static readonly RoutedEvent ClearItemEvent =
-            EventManager.RegisterRoutedEvent("ClearItem", RoutingStrategy.Bubble, typeof(EventHandler<TreeViewItemEventArgs>), typeof(TreeView));
+            RoutedEvent.Register<TreeView, RoutedEventArgs>("ClearItem", RoutingStrategies.Bubble);
 
         /// <summary>
         /// Indicates whether the Control key is currently down.
@@ -76,12 +78,12 @@ namespace Stride.Core.Presentation.Controls
         internal static bool IsShiftKeyDown => (Keyboard.Modifiers & KeyModifiers.Shift) == KeyModifiers.Shift;
 
         // the space where items will be realized if virtualization is enabled. This is set by virtualizingtreepanel.
-        internal VirtualizingTreePanel.VerticalArea RealizationSpace = new VirtualizingTreePanel.VerticalArea();
-        internal VirtualizingTreePanel.SizesCache CachedSizes = new VirtualizingTreePanel.SizesCache();
+        internal VirtualizingTreePanel.VerticalArea RealizationSpace = new();
+        internal VirtualizingTreePanel.SizesCache CachedSizes = new();
         private bool updatingSelection;
         private bool stoppingEdition;
         private bool allowedSelectionChanges;
-        private bool mouseDown;
+        private bool pointerPressed;
         private bool scrollViewerReentrency;
         private object lastShiftRoot;
         private TreeViewItem editedItem;
@@ -89,6 +91,8 @@ namespace Stride.Core.Presentation.Controls
 
         static TreeView()
         {
+            SelectedItemProperty.Changed.AddClassHandler<AvaloniaObject>(OnSelectedItemPropertyChanged);
+            SelectionModeProperty.Changed.AddClassHandler<AvaloniaObject>(OnSelectionModeChanged);
             var vPanel = new FrameworkElementFactory(typeof(VirtualizingTreePanel));
             vPanel.SetValue(Panel.IsItemsHostProperty, true);
             var vPanelTemplate = new ItemsPanelTemplate { VisualTree = vPanel };
@@ -323,12 +327,12 @@ namespace Stride.Core.Presentation.Controls
         }
 
         /// <inheritdoc />
-        protected override void OnMouseDown(PointerEventArgs e)
+        protected override void OnPointerPressed(PointerPressedEventArgs e)
         {
-            base.OnMouseDown(e);
+            base.OnPointerPressed(e);
             StopEditing();
 
-            mouseDown = e.ChangedButton == MouseButton.Left;
+            pointerPressed = e.ChangedButton == MouseButton.Left;
 
             var item = GetTreeViewItemUnderMouse(e.GetPosition(this));
             if (item == null) return;
@@ -344,10 +348,10 @@ namespace Stride.Core.Presentation.Controls
         }
 
         /// <inheritdoc />
-        protected override void OnMouseUp(PointerEventArgs e)
+        protected override void OnPointerReleased(PointerReleasedEventArgs e)
         {
-            base.OnMouseUp(e);
-            if (mouseDown)
+            base.OnPointerReleased(e);
+            if (pointerPressed)
             {
                 var item = GetTreeViewItemUnderMouse(e.GetPosition(this));
                 if (item == null) return;
@@ -359,12 +363,12 @@ namespace Stride.Core.Presentation.Controls
                 item.ForceFocus();
             }
             scrollViewerReentrency = false;
-            mouseDown = false;
+            pointerPressed = false;
         }
 
         private void ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            if (mouseDown && !scrollViewerReentrency)
+            if (pointerPressed && !scrollViewerReentrency)
             {
                 scrollViewerReentrency = true;
                 scroller.ScrollToVerticalOffset(e.VerticalOffset - e.VerticalChange);
@@ -384,7 +388,7 @@ namespace Stride.Core.Presentation.Controls
                 return;
 
             stoppingEdition = true;
-            Keyboard.Focus(editedItem);
+            editedItem.Focus();
             editedItem.ForceFocus();
             editedItem = null;
             stoppingEdition = false;

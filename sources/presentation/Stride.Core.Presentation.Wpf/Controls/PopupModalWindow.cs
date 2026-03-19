@@ -29,11 +29,12 @@ namespace Stride.Core.Presentation.Controls
         protected PopupModalWindow()
         {
             Loaded += OnLoaded;
+            Deactivated += OnDeactivated;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (!IsMouseCaptured)
+            if (!IsPointerCaptured)
                 Mouse.Capture(this, CaptureMode.SubTree);
         }
 
@@ -60,13 +61,12 @@ namespace Stride.Core.Presentation.Controls
             }
         }
 
-        protected override void OnDeactivated(EventArgs e)
+        protected void OnDeactivated(object sender, EventArgs e)
         {
-            base.OnDeactivated(e);
             CloseWithCancel();
         }
 
-        protected override void OnClosing([NotNull] CancelEventArgs e)
+        protected override void OnClosing(WindowClosingEventArgs e)
         {
             if (!e.Cancel)
                 closing = true;
@@ -74,9 +74,9 @@ namespace Stride.Core.Presentation.Controls
             base.OnClosing(e);
         }
 
-        protected override void OnMouseDown(PointerEventArgs e)
+        protected override void OnPointerPressed(PointerPressedEventArgs e)
         {
-            base.OnMouseDown(e);
+            base.OnPointerPressed(e);
             if (!IsMouseOverWindow(e))
             {
                 CloseWithCancel();
@@ -88,7 +88,7 @@ namespace Stride.Core.Presentation.Controls
         {
             if (!closing)
             {
-                Result = Services.DialogResult.Cancel;
+                Result = DialogResult.Cancel;
                 Close();
             }
         }

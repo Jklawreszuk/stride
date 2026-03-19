@@ -95,31 +95,32 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Raised just before the TextBox changes are validated. This event is cancellable
         /// </summary>
-        public static readonly RoutedEvent ValidatingEvent = EventManager.RegisterRoutedEvent("Validating", RoutingStrategy.Bubble, typeof(CancelRoutedEventHandler), typeof(TextBox));
+        public static readonly RoutedEvent ValidatingEvent = RoutedEvent.Register<TextBoxBase, RoutedEventArgs>("Validating", RoutingStrategies.Bubble);
 
         /// <summary>
         /// Raised when TextBox changes have been validated.
         /// </summary>
-        public static readonly RoutedEvent ValidatedEvent = EventManager.RegisterRoutedEvent("Validated", RoutingStrategy.Bubble, typeof(ValidationRoutedEventHandler<string>), typeof(TextBox));
+        public static readonly RoutedEvent ValidatedEvent = RoutedEvent.Register<TextBoxBase, RoutedEventArgs>("Validated", RoutingStrategies.Bubble);
 
         /// <summary>
         /// Raised when the TextBox changes are cancelled.
         /// </summary>
-        public static readonly RoutedEvent CancelledEvent = EventManager.RegisterRoutedEvent("Cancelled", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(TextBox));
+        public static readonly RoutedEvent CancelledEvent = RoutedEvent.Register<TextBoxBase, RoutedEventArgs>("Cancelled", RoutingStrategies.Bubble);
 
         /// <summary>
         /// Raised when TextBox Text to value binding fails during validation.
         /// </summary>
-        public static readonly RoutedEvent TextToSourceValueConversionFailedEvent = EventManager.RegisterRoutedEvent("TextBindingFailed", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(TextBox));
+        public static readonly RoutedEvent TextToSourceValueConversionFailedEvent = RoutedEvent.Register<TextBoxBase, RoutedEventArgs>("TextBindingFailed", RoutingStrategies.Bubble);
 
         static TextBoxBase()
         {
-            TextProperty.OverrideMetadata(typeof(TextBoxBase), new FrameworkPropertyMetadata(string.Empty, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.Journal, OnTextChanged, null, true, UpdateSourceTrigger.Explicit));
+            TextProperty.Changed.AddClassHandler<AvaloniaObject>(OnTextChanged);
         }
 
         public TextBoxBase()
         {
             Loaded += OnLoaded;
+            AddHandler(PointerPressedEvent, OnPreviewKeyDown, RoutingStrategies.Tunnel);
         }
 
         /// <summary>
@@ -345,10 +346,8 @@ namespace Stride.Core.Presentation.Controls
         }
 
         /// <inheritdoc/>
-        protected override void OnPreviewKeyDown(KeyEventArgs e)
+        protected void OnPreviewKeyDown(KeyEventArgs e)
         {
-            base.OnPreviewKeyDown(e);
-
             if (IsReadOnly)
             {
                 e.Handled = true;
@@ -367,15 +366,13 @@ namespace Stride.Core.Presentation.Controls
 
         protected override void OnGotKeyboardFocus(KeyboardFocusChangedEventArgs e)
         {
-            base.OnGotKeyboardFocus(e);
-
             if (SelectAllOnFocus)
             {
                 SelectAll();
             }
         }
 
-        protected override void OnMouseDown(PointerEventArgs e)
+        protected override void OnPointerPressed(PointerPressedEventArgs e)
         {
             if (!IsKeyboardFocusWithin)
             {
@@ -387,7 +384,7 @@ namespace Stride.Core.Presentation.Controls
                 }
                 Focus();
             }
-            base.OnMouseDown(e);
+            base.OnPointerPressed(e);
         }
 
         protected override void OnLostKeyboardFocus(KeyboardFocusChangedEventArgs e)
@@ -415,7 +412,7 @@ namespace Stride.Core.Presentation.Controls
         {
             if (GetFocusOnLoad)
             {
-                Keyboard.Focus(this);
+                Focus();
             }
         }
 

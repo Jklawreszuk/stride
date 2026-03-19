@@ -202,41 +202,17 @@ namespace Stride.Core.Presentation.Controls
             typeof(ScaleBar),
             new FrameworkPropertyMetadata(1.0, FrameworkPropertyMetadataOptions.AffectsRender));
     
-        public static readonly RoutedEvent BeforeRenderEvent = EventManager.RegisterRoutedEvent(
-            "BeforeRender",
-            RoutingStrategy.Bubble,
-            typeof(RoutedEventHandler),
-            typeof(ScaleBar));
+        public static readonly RoutedEvent BeforeRenderEvent = RoutedEvent.Register<ScaleBar, RoutedEventArgs>("BeforeRender", RoutingStrategies.Bubble);
 
-        public static readonly RoutedEvent AfterRenderEvent = EventManager.RegisterRoutedEvent(
-            "AfterRender",
-            RoutingStrategy.Bubble,
-            typeof(RoutedEventHandler),
-            typeof(ScaleBar));
+        public static readonly RoutedEvent AfterRenderEvent = RoutedEvent.Register<ScaleBar, RoutedEventArgs>("AfterRender", RoutingStrategies.Bubble);
 
-        public static readonly RoutedEvent BeforeTicksRenderEvent = EventManager.RegisterRoutedEvent(
-            "BeforeTicksRender",
-            RoutingStrategy.Bubble,
-            typeof(CustomRenderRoutedEventHandler),
-            typeof(ScaleBar));
+        public static readonly RoutedEvent BeforeTicksRenderEvent = RoutedEvent.Register<ScaleBar, RoutedEventArgs>("BeforeTicksRender", RoutingStrategies.Bubble);
 
-        public static readonly RoutedEvent AfterTicksRenderEvent = EventManager.RegisterRoutedEvent(
-            "AfterTicksRender",
-            RoutingStrategy.Bubble,
-            typeof(CustomRenderRoutedEventHandler),
-            typeof(ScaleBar));
+        public static readonly RoutedEvent AfterTicksRenderEvent = RoutedEvent.Register<ScaleBar, RoutedEventArgs>("AfterTicksRender", RoutingStrategies.Bubble);
 
-        public static readonly RoutedEvent ScaleChangingEvent = EventManager.RegisterRoutedEvent(
-            "ScaleChanging",
-            RoutingStrategy.Bubble,
-            typeof(RoutedDependencyPropertyChangedEventHandler),
-            typeof(ScaleBar));
+        public static readonly RoutedEvent ScaleChangingEvent = RoutedEvent.Register<ScaleBar, RoutedEventArgs>("ScaleChanging", RoutingStrategies.Bubble);
 
-        public static readonly RoutedEvent ScaleChangedEvent = EventManager.RegisterRoutedEvent(
-            "ScaleChanged",
-            RoutingStrategy.Bubble,
-            typeof(RoutedDependencyPropertyChangedEventHandler),
-            typeof(ScaleBar));
+        public static readonly RoutedEvent ScaleChangedEvent = RoutedEvent.Register<ScaleBar, RoutedEventArgs>("ScaleChanged", RoutingStrategies.Bubble);
 
         public ScaleBar()
         {

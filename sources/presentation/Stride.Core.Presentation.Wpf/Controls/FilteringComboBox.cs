@@ -10,6 +10,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Reactive;
 using Avalonia.Styling;
 using Stride.Core.Annotations;
 using Stride.Core.Extensions;
@@ -123,20 +124,20 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Raised just before the TextBox changes are validated. This event is cancellable
         /// </summary>
-        public static readonly RoutedEvent ValidatingEvent = EventManager.RegisterRoutedEvent("Validating", RoutingStrategy.Bubble, typeof(CancelRoutedEventHandler), typeof(FilteringComboBox));
+        public static readonly RoutedEvent ValidatingEvent = RoutedEvent.Register<FilteringComboBox, RoutedEventArgs>("Validating", RoutingStrategies.Bubble);
 
         /// <summary>
         /// Raised when TextBox changes have been validated.
         /// </summary>
-        public static readonly RoutedEvent ValidatedEvent = EventManager.RegisterRoutedEvent("Validated", RoutingStrategy.Bubble, typeof(ValidationRoutedEventHandler<string>), typeof(FilteringComboBox));
+        public static readonly RoutedEvent ValidatedEvent = RoutedEvent.Register<FilteringComboBox, RoutedEventArgs>("Validated", RoutingStrategies.Bubble);
 
         static FilteringComboBox()
         {
-            
         }
 
         public FilteringComboBox()
         {
+            ItemsSourceProperty.Changed.Subscribe(new AnonymousObserver<AvaloniaPropertyChangedEventArgs<IEnumerable>>((e) => OnItemsSourceChanged(e)));
             IsTextSearchEnabled = false;
         }
 
@@ -207,11 +208,9 @@ namespace Stride.Core.Presentation.Controls
         /// </summary>
         public event ValidationRoutedEventHandler<string> Validated { add { AddHandler(ValidatedEvent, value); } remove { RemoveHandler(ValidatedEvent, value); } }
 
-        protected override void OnItemsSourceChanged(IEnumerable oldValue, IEnumerable newValue)
+        protected void OnItemsSourceChanged(AvaloniaPropertyChangedEventArgs<IEnumerable> changedEventArgs)
         {
-            base.OnItemsSourceChanged(oldValue, newValue);
-
-            if (newValue != null)
+            if (changedEventArgs.NewValue != null)
             {
                 UpdateCollectionView();
             }
@@ -253,7 +252,7 @@ namespace Stride.Core.Presentation.Controls
             editableTextBox.Validated += EditableTextBoxValidated;
             editableTextBox.Cancelled += EditableTextBoxCancelled;
             editableTextBox.LostFocus += EditableTextBoxLostFocus;
-            listBox.PointerReleased += ListBoxMouseUp;
+            listBox.PointerReleased += ListBoxPointerReleased;
         }
 
         protected override void OnGotKeyboardFocus(KeyboardFocusChangedEventArgs e)
@@ -512,7 +511,7 @@ namespace Stride.Core.Presentation.Controls
             updatingSelection = false;
         }
 
-        private void ListBoxMouseUp(object sender, [NotNull] PointerEventArgs e)
+        private void ListBoxPointerReleased(object sender, [NotNull] PointerEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left && listBox.SelectedIndex > -1)
             {

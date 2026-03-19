@@ -244,8 +244,8 @@ namespace Stride.Core.Presentation.Controls
 
                     task = Dispatcher.UIThread.InvokeAsync(() =>
                     {
-                        RaiseMouseButtonEvent(Mouse.PreviewMouseUpEvent, MouseButton.Right);
-                        RaiseMouseButtonEvent(Mouse.MouseUpEvent, MouseButton.Right);
+                        RaiseMouseButtonEvent(Mouse.PreviewPointerReleasedEvent, MouseButton.Right);
+                        RaiseMouseButtonEvent(Mouse.PointerReleasedEvent, MouseButton.Right);
                     });
                     task.Wait(TimeSpan.FromSeconds(1.0f));
                     break;
@@ -260,8 +260,8 @@ namespace Stride.Core.Presentation.Controls
                 case NativeHelper.WM_LBUTTONUP:
                     task = Dispatcher.InvokeAsync(() =>
                     {
-                        RaiseMouseButtonEvent(Mouse.PreviewMouseUpEvent, MouseButton.Left);
-                        RaiseMouseButtonEvent(Mouse.MouseUpEvent, MouseButton.Left);
+                        RaiseMouseButtonEvent(Mouse.PreviewPointerReleasedEvent, MouseButton.Left);
+                        RaiseMouseButtonEvent(Mouse.PointerReleasedEvent, MouseButton.Left);
                     });
                     task.Wait(TimeSpan.FromSeconds(1.0f));
                     break;

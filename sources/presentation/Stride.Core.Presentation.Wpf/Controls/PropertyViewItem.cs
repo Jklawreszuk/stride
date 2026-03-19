@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using Avalonia;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Collections;
 using Stride.Core.Presentation.Extensions;
@@ -62,8 +63,9 @@ namespace Stride.Core.Presentation.Controls
         {
             if (propertyView == null) throw new ArgumentNullException(nameof(propertyView));
             PropertyView = propertyView;
-            PreviewMouseMove += propertyView.ItemMouseMove;
-            IsKeyboardFocusWithinChanged += propertyView.OnIsKeyboardFocusWithinChanged;
+            AddHandler(PointerMovedEvent, propertyView.ItemMouseMove, RoutingStrategies.Tunnel);
+            PointerPressed += OnMouseLeftButtonDown;
+            IsKeyboardFocusWithinProperty.Changed.AddClassHandler<AvaloniaObject>(propertyView.OnIsKeyboardFocusWithinChanged);
         }
 
         /// <summary>
@@ -109,42 +111,11 @@ namespace Stride.Core.Presentation.Controls
         /// </summary>
         public double Increment { get { return (double)GetValue(IncrementProperty); } set { SetValue(IncrementProperty, value); } }
 
-        /// <inheritdoc/>
-        protected override AvaloniaObject GetContainerForItemOverride()
-        {
-            var item = new PropertyViewItem(PropertyView) { Offset = Offset + Increment };
-            return item;
-        }
 
-        /// <inheritdoc/>
-        protected override bool IsItemItsOwnContainerOverride(object item)
-        {
-            return item is PropertyViewItem;
-        }
-
-        /// <inheritdoc/>
-        protected override void PrepareContainerForItemOverride(AvaloniaObject element, object item)
-        {
-            base.PrepareContainerForItemOverride(element, item);
-            var container = (PropertyViewItem)element;
-            properties.Add(container);
-            RaiseEvent(new PropertyViewItemEventArgs(PropertyView.PrepareItemEvent, this, container, item));
-        }
-
-        /// <inheritdoc/>
-        protected override void ClearContainerForItemOverride(AvaloniaObject element, object item)
-        {
-            var container = (PropertyViewItem)element;
-            RaiseEvent(new PropertyViewItemEventArgs(PropertyView.ClearItemEvent, this, (PropertyViewItem)element, item));
-            properties.Remove(container);
-            base.ClearContainerForItemOverride(element, item);
-        }
-
-        protected override void OnMouseLeftButtonDown(PointerEventArgs e)
+        protected void OnMouseLeftButtonDown(object sender, PointerEventArgs e)
         {
             // base method can handle this event, but we still want to focus on it in this case.
             var handled = e.Handled;
-            base.OnMouseLeftButtonDown(e);
             if (!handled && IsEnabled)
             {
                 Focus();

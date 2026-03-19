@@ -32,7 +32,7 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// The validation occurs when the mouse button is released.
         /// </summary>
-        OnMouseUp,
+        OnPointerReleased,
     }
 
     public class RepeatButtonPressedRoutedEventArgs : RoutedEventArgs
@@ -76,27 +76,27 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="Value"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty ValueProperty = AvaloniaProperty.Register(nameof(Value), typeof(double?), typeof(NumericTextBox), new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnValuePropertyChanged, null, true, UpdateSourceTrigger.Explicit));
+        public static readonly AvaloniaProperty ValueProperty = AvaloniaProperty.Register<NumericTextBox, double?>(nameof(Value), defaultBindingMode: BindingMode.TwoWay);
 
         /// <summary>
         /// Identifies the <see cref="DecimalPlaces"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty DecimalPlacesProperty = AvaloniaProperty.Register(nameof(DecimalPlaces), typeof(int), typeof(NumericTextBox), new FrameworkPropertyMetadata(-1, OnDecimalPlacesPropertyChanged));
+        public static readonly AvaloniaProperty DecimalPlacesProperty = AvaloniaProperty.Register<NumericTextBox, int>(nameof(DecimalPlaces), -1);
 
         /// <summary>
         /// Identifies the <see cref="Minimum"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty MinimumProperty = AvaloniaProperty.Register(nameof(Minimum), typeof(double), typeof(NumericTextBox), new FrameworkPropertyMetadata(double.MinValue, OnMinimumPropertyChanged));
+        public static readonly AvaloniaProperty MinimumProperty = AvaloniaProperty.Register<NumericTextBox, double>(nameof(Minimum), double.MinValue);
 
         /// <summary>
         /// Identifies the <see cref="Maximum"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty MaximumProperty = AvaloniaProperty.Register(nameof(Maximum), typeof(double), typeof(NumericTextBox), new FrameworkPropertyMetadata(double.MaxValue, OnMaximumPropertyChanged));
+        public static readonly AvaloniaProperty MaximumProperty = AvaloniaProperty.Register<NumericTextBox, double>(nameof(Maximum), double.MaxValue);
 
         /// <summary>
         /// Identifies the <see cref="ValueRatio"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty ValueRatioProperty = AvaloniaProperty.Register(nameof(ValueRatio), typeof(double), typeof(NumericTextBox), new PropertyMetadata(default(double), ValueRatioChanged));
+        public static readonly AvaloniaProperty ValueRatioProperty = AvaloniaProperty.Register<NumericTextBox, double>(nameof(ValueRatio));
 
         /// <summary>
         /// Identifies the <see cref="LargeChange"/> dependency property.
@@ -121,22 +121,22 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="MouseValidationTrigger"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty MouseValidationTriggerProperty = AvaloniaProperty.Register<NumericTextBox, MouseValidationTrigger>(nameof(MouseValidationTrigger), MouseValidationTrigger.OnMouseUp);
+        public static readonly AvaloniaProperty MouseValidationTriggerProperty = AvaloniaProperty.Register<NumericTextBox, MouseValidationTrigger>(nameof(MouseValidationTrigger), MouseValidationTrigger.OnPointerReleased);
 
         /// <summary>
         /// Raised when the <see cref="Value"/> property has changed.
         /// </summary>
-        public static readonly RoutedEvent ValueChangedEvent = EventManager.RegisterRoutedEvent("ValueChanged", RoutingStrategy.Bubble, typeof(RoutedPropertyChangedEventHandler<double>), typeof(NumericTextBox));
+        public static readonly RoutedEvent ValueChangedEvent = RoutedEvent.Register<NumericTextBox, RoutedEventArgs>("ValueChanged", RoutingStrategies.Bubble);
 
         /// <summary>
         /// Raised when one of the repeat button is pressed.
         /// </summary>
-        public static readonly RoutedEvent RepeatButtonPressedEvent = EventManager.RegisterRoutedEvent("RepeatButtonPressed", RoutingStrategy.Bubble, typeof(EventHandler<RepeatButtonPressedRoutedEventArgs>), typeof(NumericTextBox));
+        public static readonly RoutedEvent RepeatButtonPressedEvent = RoutedEvent.Register<NumericTextBox, RoutedEventArgs>("RepeatButtonPressed", RoutingStrategies.Bubble);
 
         /// <summary>
         /// Raised when one of the repeat button is released.
         /// </summary>
-        public static readonly RoutedEvent RepeatButtonReleasedEvent = EventManager.RegisterRoutedEvent("RepeatButtonReleased", RoutingStrategy.Bubble, typeof(EventHandler<RepeatButtonPressedRoutedEventArgs>), typeof(NumericTextBox));
+        public static readonly RoutedEvent RepeatButtonReleasedEvent = RoutedEvent.Register<NumericTextBox, RoutedEventArgs>("RepeatButtonReleased", RoutingStrategies.Bubble);
 
         /// <summary>
         /// Increases the current value with the value of the <see cref="LargeChange"/> property.
@@ -165,11 +165,15 @@ namespace Stride.Core.Presentation.Controls
 
         static NumericTextBox()
         {
-            HorizontalScrollBarVisibilityProperty.OverrideMetadata(typeof(NumericTextBox), new FrameworkPropertyMetadata(ScrollBarVisibility.Hidden, OnForbiddenPropertyChanged));
-            VerticalScrollBarVisibilityProperty.OverrideMetadata(typeof(NumericTextBox), new FrameworkPropertyMetadata(ScrollBarVisibility.Hidden, OnForbiddenPropertyChanged));
-            AcceptsReturnProperty.OverrideMetadata(typeof(NumericTextBox), new FrameworkPropertyMetadata(BooleanBoxes.FalseBox, OnForbiddenPropertyChanged));
-            AcceptsTabProperty.OverrideMetadata(typeof(NumericTextBox), new FrameworkPropertyMetadata(BooleanBoxes.FalseBox, OnForbiddenPropertyChanged));
-
+            DecimalPlacesProperty.Changed.AddClassHandler<AvaloniaObject>(OnDecimalPlacesPropertyChanged);
+            MinimumProperty.Changed.AddClassHandler<AvaloniaObject>(OnMinimumPropertyChanged);
+            MaximumProperty.Changed.AddClassHandler<AvaloniaObject>(OnMaximumPropertyChanged);
+            ValueRatioProperty.Changed.AddClassHandler<AvaloniaObject>(ValueRatioChanged);
+            HorizontalAlignmentProperty.Changed.AddClassHandler<AvaloniaObject>(OnForbiddenPropertyChanged);
+            VerticalAlignmentProperty.Changed.AddClassHandler<AvaloniaObject>(OnForbiddenPropertyChanged);
+            AcceptsReturnProperty.Changed.AddClassHandler<AvaloniaObject>(OnForbiddenPropertyChanged);
+            AcceptsTabProperty.Changed.AddClassHandler<AvaloniaObject>(OnForbiddenPropertyChanged);
+            
             // Since the NumericTextBox is not focusable itself, we have to bind the commands to the inner text box of the control.
             // The handlers will then find the parent that is a NumericTextBox and process the command on this control if it is found.
             LargeIncreaseCommand = new RelayCommand("LargeIncreaseCommand", typeof(Avalonia.Controls.TextBox));
@@ -294,9 +298,9 @@ namespace Stride.Core.Presentation.Controls
         }
 
         /// <inheritdoc/>
-        protected override void OnInitialized(EventArgs e)
+        protected override void OnInitialized()
         {
-            base.OnInitialized(e);
+            base.OnInitialized();
             var textValue = FormatValue(Value);
             SetCurrentValue(TextProperty, textValue);
         }

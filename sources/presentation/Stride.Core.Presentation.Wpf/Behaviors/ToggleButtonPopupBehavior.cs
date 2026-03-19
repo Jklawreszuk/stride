@@ -22,11 +22,11 @@ namespace Stride.Core.Presentation.Behaviors
         protected override void OnAttached()
         {
             base.OnAttached();
-            AssociatedObject.AddHandler(InputElement.PointerPressedEvent, MouseDown, RoutingStrategies.Tunnel);
-            AssociatedObject.AddHandler(InputElement.PointerReleasedEvent, MouseUp, RoutingStrategies.Tunnel);
+            AssociatedObject.AddHandler(InputElement.PointerPressedEvent, PointerPressed, RoutingStrategies.Tunnel);
+            AssociatedObject.AddHandler(InputElement.PointerReleasedEvent, PointerReleased, RoutingStrategies.Tunnel);
         }
 
-        private void MouseUp(object sender, [NotNull] PointerEventArgs e)
+        private void PointerReleased(object sender, [NotNull] PointerEventArgs e)
         {
             if (e.GetCurrentPoint(AssociatedObject).Properties.IsLeftButtonPressed)
             {
@@ -34,7 +34,7 @@ namespace Stride.Core.Presentation.Behaviors
             }
         }
 
-        private void MouseDown(object sender, PointerEventArgs e)
+        private void PointerPressed(object sender, PointerEventArgs e)
         {
             if (!mouseDownOccurred)
             {

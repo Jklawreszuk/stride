@@ -2,12 +2,14 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
 using System.Linq;
+using System.Reflection;
 using Stride.Core.Presentation.Core;
 using Stride.Core.Presentation.Extensions;
 using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data;
+using Avalonia.Reactive;
 using Avalonia.Xaml.Interactivity;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Internal;
@@ -20,8 +22,8 @@ namespace Stride.Core.Presentation.Behaviors
     /// </summary>
     public class OnPropertyChangedCommandBehavior : Behavior<Control>
     {
-        private readonly DependencyPropertyWatcher propertyWatcher = new DependencyPropertyWatcher();
         private AvaloniaProperty dependencyProperty;
+        private IDisposable subscription;
 
         /// <summary>
         /// Identifies the <see cref="Command"/> dependency property.
@@ -73,43 +75,40 @@ namespace Stride.Core.Presentation.Behaviors
         protected override void OnAttached()
         {
             if (PropertyName == null)
-                throw new ArgumentException($"The PropertyName property must be set on behavior '{GetType().FullName}'.");
+                throw new ArgumentException($"PropertyName must be set.");
 
-            dependencyProperty = AssociatedObject.GetDependencyProperties(true).FirstOrDefault(dp => dp.Name == PropertyName);
+            dependencyProperty = AssociatedObject
+                .GetType()
+                .GetField(PropertyName + "Property",
+                    BindingFlags.Static | BindingFlags.Public)
+                ?.GetValue(null) as AvaloniaProperty;
+
             if (dependencyProperty == null)
-                throw new ArgumentException($"Unable to find property '{PropertyName}' on object of type '{AssociatedObject.GetType().FullName}'.");
+                throw new ArgumentException($"Property '{PropertyName}' not found.");
 
-            propertyWatcher.Attach(AssociatedObject);
-            // TODO: Register/Unregister handlers when the PropertyName changes
-            propertyWatcher.RegisterValueChangedHandler(dependencyProperty, OnPropertyChanged);
-            Binding.AddSourceUpdatedHandler(AssociatedObject, OnSourceUpdated);
+            subscription = AssociatedObject
+                .GetObservable(dependencyProperty)
+                .Subscribe(new AnonymousObserver<object>(value => OnPropertyChanged(value)));
         }
 
         protected override void OnDetaching()
         {
-            propertyWatcher.Detach();
+            subscription?.Dispose();
+            subscription = null;
             base.OnDetaching();
         }
 
-        private void OnSourceUpdated(object sender, [NotNull] DataTransferEventArgs e)
-        {
-            if (ExecuteOnlyOnSourceUpdate && e.Property == dependencyProperty)
-            {
-                ExecuteCommand();
-            }
-        }
-
-        private void OnPropertyChanged(object sender, EventArgs e)
+        private void OnPropertyChanged(object value)
         {
             if (!ExecuteOnlyOnSourceUpdate)
             {
-                ExecuteCommand();
+                ExecuteCommand(value);
             }
         }
 
-        private void ExecuteCommand()
+        private void ExecuteCommand(object value)
         {
-            var parameter = PassValueAsParameter ? AssociatedObject.GetValue(dependencyProperty) : CommandParameter;
+            var parameter = PassValueAsParameter ? value : CommandParameter;
             if (Command == null || !Command.CanExecute(parameter))
                 return;
 

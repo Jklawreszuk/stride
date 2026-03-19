@@ -23,7 +23,7 @@ namespace Stride.Core.Presentation.Controls.Commands
         static ControlCommands()
         {
             ClearSelectionCommand = new RelayCommand<Control>(OnClearSelectionCommand);
-            SetAllVectorComponentsCommand = new RelayCommand<VectorEditorBase>(OnSetAllVectorComponents);
+            SetAllVectorComponentsCommand = new RelayCommand<object>(OnSetAllVectorComponents);
             ResetValueCommand = new RelayCommand<VectorEditorBase>(OnResetValue);
         }
 
@@ -64,13 +64,15 @@ namespace Stride.Core.Presentation.Controls.Commands
             }
         }
 
-        private static void OnSetAllVectorComponents(VectorEditorBase vectorEditor)
+        private static void OnSetAllVectorComponents(object parameter)
         {
-            if (vectorEditor is not null)
+            if (parameter is Tuple<VectorEditorBase, object> tuple)
             {
+                var (vectorEditor, valueObj) = tuple;
+
                 try
                 {
-                    var value = Convert.ToSingle(e.Parameter);
+                    var value = Convert.ToSingle(valueObj);
                     vectorEditor.SetVectorFromValue(value);
                 }
                 catch (Exception ex)

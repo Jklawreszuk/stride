@@ -159,7 +159,7 @@ namespace Stride.Core.Presentation.Controls
             editableTextBox.KeyDown += EditableTextBoxPreviewKeyDown;
             editableTextBox.KeyUp += EditableTextBoxPreviewKeyUp;
             editableTextBox.Validated += EditableTextBoxValidated;
-            listBox.PointerReleased += ListBoxMouseUp;
+            listBox.PointerReleased += ListBoxPointerReleased;
         }
 
         protected override void OnGotFocus(GotFocusEventArgs e)
@@ -198,8 +198,8 @@ namespace Stride.Core.Presentation.Controls
 
             if (newFocus is Control el)
             {
-                // The user probably clicked (MouseDown) somewhere on our dropdown listbox, so we won't clear to be able to
-                // get the MouseUp event (<see cref="ListBoxMouseUp">).
+                // The user probably clicked (PointerPressed) somewhere on our dropdown listbox, so we won't clear to be able to
+                // get the PointerReleased event (<see cref="ListBoxPointerReleased">).
                 if (listBox.FindVisualChildrenOfType<Control>().Contains(el))
                     return;
             }
@@ -312,7 +312,7 @@ namespace Stride.Core.Presentation.Controls
             }
         }
 
-        private void ListBoxMouseUp(object sender, PointerEventArgs e)
+        private void ListBoxPointerReleased(object sender, PointerEventArgs e)
         {
             ValidateSelection();
             if (ClearTextAfterSelection)

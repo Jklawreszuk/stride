@@ -74,35 +74,6 @@ namespace Stride.Core.Presentation.Extensions
         }
 
         /// <summary>
-        /// Gets the size of the screen monitor for this <paramref cref="window"/>.
-        /// </summary>
-        /// <param name="window">The window.</param>>
-        /// <returns>The size of the screen monitor for this <paramref cref="window"/> in WPF screen coordinates (see remarks).</returns>
-        /// <remarks>
-        /// Because of monitor DPI, WPF screen coordinates and virtual screen coordinates can be different.
-        /// To convert a <see cref="Rect"/> in virtual screen coordinates to WPF screen coordinates:
-        /// <list type="number">
-        /// <item>Use <see cref="VisualExtensions.RectFromScreen(System.Windows.Media.Visual,Rect)"/></item>
-        /// <item>Offset the result <see cref="Rect"/> by the window top-left corner: <c>rect.Offset(window.Left, window.Top)</c></item>
-        /// </list>
-        /// To convert a <see cref="Rect"/> in WPF screen coordinates to virtual screen coordinates:
-        /// <list type="number">
-        /// <item>Un-offset the result <see cref="Rect"/> by the window top-left corner: <c>rect.Offset(-window.Left, -window.Top)</c></item>
-        /// <item>Use <see cref="VisualExtensions.RectToScreen(System.Windows.Media.Visual,Rect)"/></item>
-        /// </list>
-        /// </remarks>
-        public static Rect GetScreenSize([NotNull] this Window window)
-        {
-            var monitor = GetMonitorInfo(new WindowInteropHelper(window).Handle);
-            if (monitor == null) return new Rect();
-
-            var area = (Rect)monitor.rcMonitor;
-            var rect = window.RectFromScreen(ref area);
-            rect.Offset(window.Left, window.Top);
-            return rect;
-        }
-
-        /// <summary>
         /// Gets the available work area for this <paramref cref="window"/> on the current screen.
         /// </summary>
         /// <param name="window">The window.</param>
