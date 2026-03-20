@@ -653,7 +653,7 @@
                               Content="Match whole word" />
               </ToolBar>
             </ToolBarTray>
-            <RichTextBox x:Name="PART_LogTextBox" IsReadOnly="True" HorizontalScrollBarVisibility="Auto"
+            <TextBox x:Name="PART_LogTextBox" IsReadOnly="True" HorizontalScrollBarVisibility="Auto"
                          VerticalScrollBarVisibility="Auto" FontFamily="Consolas, Courrier New" FontSize="11" />
           </DockPanel>
         </ControlTemplate>

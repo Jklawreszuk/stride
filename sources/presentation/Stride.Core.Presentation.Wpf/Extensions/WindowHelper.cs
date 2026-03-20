@@ -95,12 +95,23 @@ namespace Stride.Core.Presentation.Extensions
         {
             if (window == null) throw new ArgumentNullException(nameof(window));
 
-            var monitor = GetMonitorInfo(new WindowInteropHelper(window).Handle);
-            if (monitor == null) return new Rect();
-            
-            var area = (Rect)monitor.rcWork;
-            var rect = window.RectFromScreen(ref area);
-            rect.Offset(window.Left, window.Top);
+            var screens = window.Screens;
+
+            var screen = screens.ScreenFromWindow(window) ?? screens.Primary;
+
+            if (screen == null)
+                return new Rect();
+
+            var workingArea = screen.WorkingArea;
+
+            var scaling = screen.Scaling;
+            var rect = new Rect(
+                workingArea.X / scaling,
+                workingArea.Y / scaling,
+                workingArea.Width / scaling,
+                workingArea.Height / scaling
+            );
+
             return rect;
         }
 
@@ -128,8 +139,7 @@ namespace Stride.Core.Presentation.Extensions
 
             window.Width = area.Width;
             window.Height = area.Height;
-            window.Left = area.Left;
-            window.Top = area.Top;
+            window.Position = new PixelPoint((int)area.X, (int)area.Y);
         }
 
         #region Internals

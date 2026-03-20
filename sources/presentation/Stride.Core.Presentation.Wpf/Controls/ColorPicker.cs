@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
+using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
@@ -8,13 +9,14 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Stride.Core.Mathematics;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Extensions;
 using Stride.Core.Presentation.Internal;
 using Color = Stride.Core.Mathematics.Color;
-using Point = Stride.Core.Mathematics.Point;
+using Point = Avalonia.Point;
 
 namespace Stride.Core.Presentation.Controls
 {
@@ -241,7 +243,7 @@ namespace Stride.Core.Presentation.Controls
         {
             if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
             {
-                colorPickerRenderSurface.CaptureMouse();
+                e.GetCurrentPoint(this).Pointer.Capture(colorPickerRenderSurface);
                 suspendBindingUpdates = true;
                 UpdateColorPickerFromMouse(e.GetPosition(colorPickerRenderSurface));
             }
@@ -252,11 +254,11 @@ namespace Stride.Core.Presentation.Controls
         /// </summary>
         /// <param name="sender">The object where the event handler is attached.</param>
         /// <param name="e">The event data.</param>
-        private void OnColorPickerRenderSurfacePointerReleased(object sender, [NotNull] PointerEventArgs e)
+        private void OnColorPickerRenderSurfacePointerReleased(object sender, [NotNull] PointerReleasedEventArgs e)
         {
-            if (e.LeftButton == MouseButtonState.Released)
+            if (e.InitialPressMouseButton == MouseButton.Left)
             {
-                colorPickerRenderSurface.ReleaseMouseCapture();
+                e.GetCurrentPoint(this).Pointer.Capture(null);
                 suspendBindingUpdates = false;
                 UpdateAllBindings();
             }
@@ -269,7 +271,8 @@ namespace Stride.Core.Presentation.Controls
         /// <param name="e">The event data.</param>
         private void OnColorPickerRenderSurfaceMouseMove(object sender, [NotNull] PointerEventArgs e)
         {
-            if (e.LeftButton == MouseButtonState.Pressed && colorPickerRenderSurface.IsMouseCaptured)
+            var point = e.GetCurrentPoint(colorPickerRenderSurface);
+            if (point.Properties.IsLeftButtonPressed && e.Pointer.Captured == colorPickerRenderSurface)
             {
                 UpdateColorPickerFromMouse(e.GetPosition(colorPickerRenderSurface));
             }
@@ -279,7 +282,7 @@ namespace Stride.Core.Presentation.Controls
         /// Updates the <see cref="Color"/> value from the given position in the color surface.
         /// </summary>
         /// <param name="position">The position of the cursor in the color surface.</param>
-        private void UpdateColorPickerFromMouse(Point position)
+        private void UpdateColorPickerFromMouse(Avalonia.Point position)
         {
             Canvas.SetLeft(colorPickerSelector, MathUtil.Clamp(position.X, 0.0f, colorPickerRenderSurface.Width));
             Canvas.SetTop(colorPickerSelector, MathUtil.Clamp(position.Y, 0.0f, colorPickerRenderSurface.Height));
@@ -303,7 +306,7 @@ namespace Stride.Core.Presentation.Controls
         {
             if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
             {
-                huePickerRenderSurface.CaptureMouse();
+                e.GetCurrentPoint(this).Pointer.Capture(huePickerRenderSurface);
                 suspendBindingUpdates = true;
                 UpdateHuePickerFromMouse(e.GetPosition(huePickerRenderSurface));
             }
@@ -314,11 +317,11 @@ namespace Stride.Core.Presentation.Controls
         /// </summary>
         /// <param name="sender">The object where the event handler is attached.</param>
         /// <param name="e">The event data.</param>
-        private void OnHuePickerRenderSurfacePointerReleased(object sender, [NotNull] PointerEventArgs e)
+        private void OnHuePickerRenderSurfacePointerReleased(object sender, [NotNull] PointerReleasedEventArgs e)
         {
-            if (e.LeftButton == MouseButtonState.Released)
+            if (e.InitialPressMouseButton == MouseButton.Left)
             {
-                huePickerRenderSurface.ReleaseMouseCapture();
+                e.GetCurrentPoint(this).Pointer.Capture(null);
                 suspendBindingUpdates = false;
                 UpdateAllBindings();
             }
@@ -331,7 +334,8 @@ namespace Stride.Core.Presentation.Controls
         /// <param name="e">The event data.</param>
         private void OnHuePickerRenderSurfaceMouseMove(object sender, [NotNull] PointerEventArgs e)
         {
-            if (e.LeftButton == MouseButtonState.Pressed && huePickerRenderSurface.IsMouseCaptured)
+            var point = e.GetCurrentPoint(huePickerRenderSurface);
+            if (point.Properties.IsLeftButtonPressed && e.Pointer.Captured == huePickerRenderSurface)
             {
                 UpdateHuePickerFromMouse(e.GetPosition(huePickerRenderSurface));
             }
@@ -356,10 +360,7 @@ namespace Stride.Core.Presentation.Controls
         /// </summary>
         private void RenderColorPickerSurface()
         {
-            if (colorPreviewRenderSurface != null)
-            {
-                colorPreviewRenderSurface.Background = new SolidColorBrush(Color.ToSystemColor());
-            }
+            colorPreviewRenderSurface?.Background = new SolidColorBrush(Color.ToSystemColor());
             if (colorPickerRenderSurface != null)
             {
                 // Ensure the color picker is loaded 
@@ -371,24 +372,11 @@ namespace Stride.Core.Presentation.Controls
                     PixelFormat pf = PixelFormats.Bgr32;
                     int rawStride = (width * pf.BitsPerPixel + 7) / 8;
                     var rawImage = new byte[rawStride * height];
+                    var writeableBitmap = new WriteableBitmap(new PixelSize(width, height), new Vector(96, 96), PixelFormat.Rgba8888);
+                    using var fb = writeableBitmap.Lock();
+                    Marshal.Copy(rawImage, 0, fb.Address, rawImage.Length);
 
-                    for (int j = 0; j < height; ++j)
-                    {
-                        float y = j / (float)(height - 1);
-
-                        for (int i = 0; i < width; ++i)
-                        {
-                            float x = i / (float)(width - 1);
-
-                            var color4 = new ColorHSV(Hue, x, y, 1.0f).ToColor();
-                            var color = new Color(color4);
-                            rawImage[(i + j * width) * 4 + 0] = color.B;
-                            rawImage[(i + j * width) * 4 + 1] = color.G;
-                            rawImage[(i + j * width) * 4 + 2] = color.R;
-                        }
-                    }
-
-                    colorPickerRenderSurface.Background = new DrawingBrush(new ImageDrawing(BitmapSource.Create(width, height, 96, 96, pf, null, rawImage, rawStride), new Rect(0.0f, 0.0f, width, height)));
+                    colorPickerRenderSurface.Background = new ImageBrush { Source = writeableBitmap, Stretch = Stretch.Fill };
                 }
             }
         }

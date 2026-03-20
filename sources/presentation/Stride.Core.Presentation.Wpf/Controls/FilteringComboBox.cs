@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Linq;
 using Avalonia;
+using Avalonia.Collections;
 using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Primitives;
@@ -247,7 +248,7 @@ namespace Stride.Core.Presentation.Controls
                 throw new InvalidOperationException("A part named 'PART_ListBox' must be present in the ControlTemplate, and must be of type 'ListBox'.");
 
             editableTextBox.TextChanged += EditableTextBoxTextChanged;
-            editableTextBox.PreviewKeyDown += EditableTextBoxPreviewKeyDown;
+            AddHandler(PointerPressedEvent, EditableTextBoxPreviewKeyDown, RoutingStrategies.Tunnel);
             editableTextBox.Validating += EditableTextBoxValidating;
             editableTextBox.Validated += EditableTextBoxValidated;
             editableTextBox.Cancelled += EditableTextBoxCancelled;
@@ -255,20 +256,17 @@ namespace Stride.Core.Presentation.Controls
             listBox.PointerReleased += ListBoxPointerReleased;
         }
 
-        protected override void OnGotKeyboardFocus(KeyboardFocusChangedEventArgs e)
+        protected override void OnGotFocus(GotFocusEventArgs e)
         {
-            base.OnGotKeyboardFocus(e);
+            if(e.NavigationMethod == NavigationMethod.Tab)
+                return;
+            
+            base.OnGotFocus(e);
             if (OpenDropDownOnFocus && !listBoxClicking)
             {
                 IsDropDownOpen = true;
             }
             listBoxClicking = false;
-        }
-
-        private static void OnItemsSourceRefresh(AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
-        {
-            var filteringComboBox = (FilteringComboBox)d;
-            filteringComboBox.OnItemsSourceChanged(filteringComboBox.ItemsSource, filteringComboBox.ItemsSource);
         }
 
         private void EditableTextBoxValidating(object sender, CancelRoutedEventArgs e)
@@ -397,13 +395,12 @@ namespace Stride.Core.Presentation.Controls
             // TODO: this will update the selected index because the collection view is shared. If UpdateSelectionOnValidation is true, this will still modify the SelectedIndex
             UpdateCollectionView();
 
-            var collectionView = CollectionViewSource.GetDefaultView(ItemsSource);
-            var listCollectionView = collectionView as ListCollectionView;
+            var collectionView = new DataGridCollectionView(ItemsSource);
 
             collectionView.Refresh();
             if (!validating)
             {
-                if (listCollectionView?.Count > 0 || collectionView.Cast<object>().Any())
+                if (collectionView?.Count > 0 || collectionView.Cast<object>().Any())
                 {
                     listBox.SelectedIndex = 0;
                 }
@@ -413,13 +410,14 @@ namespace Stride.Core.Presentation.Controls
 
         private void UpdateCollectionView()
         {
-            var collectionView = CollectionViewSource.GetDefaultView(ItemsSource);
-            collectionView.Filter = IsFiltering ? (Predicate<object>)InternalFilter : null;
-            var listCollectionView = collectionView as ListCollectionView;
-            if (listCollectionView != null)
-            {
-                listCollectionView.CustomSort = Sort;
-            }
+            // TODO:
+            // var collectionView = CollectionViewSource.GetDefaultView(ItemsSource);
+            // collectionView.Filter = IsFiltering ? (Predicate<object>)InternalFilter : null;
+            // var listCollectionView = collectionView as ListCollectionView;
+            // if (listCollectionView != null)
+            // {
+            //     listCollectionView.CustomSort = Sort;
+            // }
         }
 
         private void EditableTextBoxPreviewKeyDown(object sender, KeyEventArgs e)
@@ -513,7 +511,7 @@ namespace Stride.Core.Presentation.Controls
 
         private void ListBoxPointerReleased(object sender, [NotNull] PointerEventArgs e)
         {
-            if (e.ChangedButton == MouseButton.Left && listBox.SelectedIndex > -1)
+            if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed && listBox.SelectedIndex > -1)
             {
                 // We need to force the validation here
                 // The user might have clicked on the list after the drop down was automatically open (see OpenDropDownOnFocus).

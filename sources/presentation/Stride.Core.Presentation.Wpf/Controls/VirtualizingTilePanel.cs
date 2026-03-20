@@ -19,41 +19,26 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="Orientation"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty OrientationProperty = AvaloniaProperty.Register(
-            "Orientation",
-            typeof(Orientation),
-            typeof(VirtualizingTilePanel),
-            new FrameworkPropertyMetadata(Orientation.Vertical, FrameworkPropertyMetadataOptions.AffectsMeasure));
+        public static readonly AvaloniaProperty OrientationProperty = 
+            AvaloniaProperty.Register<VirtualizingTilePanel, Orientation>("Orientation", Orientation.Vertical);
 
         /// <summary>
         /// Identifies the <see cref="MinimumItemSpacing"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty MinimumItemSpacingProperty = AvaloniaProperty.Register(
-            "MinimumItemSpacing",
-            typeof(double),
-            typeof(VirtualizingTilePanel),
-            new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsMeasure),
-            ValidateMinMaxItemSpacing);
+        public static readonly AvaloniaProperty MinimumItemSpacingProperty = 
+            AvaloniaProperty.Register<VirtualizingTilePanel, double>("MinimumItemSpacing", validate: ValidateMinMaxItemSpacing);
 
         /// <summary>
         /// Identifies the <see cref="MaximumItemSpacing"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty MaximumItemSpacingProperty = AvaloniaProperty.Register(
-            "MaximumItemSpacing",
-            typeof(double),
-            typeof(VirtualizingTilePanel),
-            new FrameworkPropertyMetadata(double.MaxValue, FrameworkPropertyMetadataOptions.AffectsMeasure),
-            ValidateMinMaxItemSpacing);
+        public static readonly AvaloniaProperty MaximumItemSpacingProperty = 
+            AvaloniaProperty.Register<VirtualizingTilePanel, double>("MaximumItemSpacing", double.MaxValue, validate: ValidateMinMaxItemSpacing);
 
         /// <summary>
         /// Identifies the <see cref="ItemSlotSize"/> dependency property.
         /// </summary>
-        public static readonly AvaloniaProperty ItemSlotSizeProperty = AvaloniaProperty.Register(
-            "ItemSlotSize",
-            typeof(Size),
-            typeof(VirtualizingTilePanel),
-            new FrameworkPropertyMetadata(new Size(64.0, 64.0), FrameworkPropertyMetadataOptions.AffectsMeasure),
-            ValidateSize);
+        public static readonly AvaloniaProperty ItemSlotSizeProperty = 
+            AvaloniaProperty.Register<VirtualizingTilePanel, Size>("ItemSlotSize", new Size(64.0, 64.0), validate: ValidateSize);
 
         /// <summary>
         /// Gets or sets the orientation of the Tile Panel.
@@ -79,27 +64,16 @@ namespace Stride.Core.Presentation.Controls
 
         public int ItemCount { get; private set; } = -1;
 
-        private static bool ValidateMinMaxItemSpacing(object value)
+        private static bool ValidateMinMaxItemSpacing(double v)
         {
-            if ((value is double) == false)
-                return false;
-
-            var v = (double)value;
-
-            return v >= 0.0 && double.IsInfinity(v) == false;
+            return v >= 0.0 && !double.IsInfinity(v);
         }
 
-        private static bool ValidateSize(object value)
+        private static bool ValidateSize(Size size)
         {
-            if ((value is Size) == false)
-                return false;
-
-            var size = (Size)value;
-
-            return size.Width >= 1.0 &&
-                   size.Height >= 1.0 &&
-                   double.IsInfinity(size.Width) == false &&
-                   double.IsInfinity(size.Height) == false;
+            return size is { Width: >= 1.0, Height: >= 1.0 } &&
+                   !double.IsInfinity(size.Width) &&
+                   !double.IsInfinity(size.Height);
         }
 
         public void GetVisibilityRange(Size panelSize, out int firstVisibleItemIndex, out int lastVisibleItemIndex)
@@ -174,8 +148,7 @@ namespace Stride.Core.Presentation.Controls
 
             UpdateScrollInfo(availableSize);
 
-            int firstVisibleItemIndex, lastVisibleItemIndex;
-            GetVisibilityRange(availableSize, out firstVisibleItemIndex, out lastVisibleItemIndex);
+            GetVisibilityRange(availableSize, out var firstVisibleItemIndex, out var lastVisibleItemIndex);
 
             // Get the generator position of the first visible data item
             var startPos = generator.GeneratorPositionFromIndex(firstVisibleItemIndex);
@@ -334,7 +307,7 @@ namespace Stride.Core.Presentation.Controls
             if (localExtent != extent)
             {
                 extent = localExtent;
-                ScrollOwner?.InvalidateScrollInfo();
+                ScrollOwner?.InvalidateMeasure();
 
                 Dispatcher.UIThread.BeginInvoke((Action)InvalidateMeasure);
 
@@ -347,7 +320,7 @@ namespace Stride.Core.Presentation.Controls
             {
                 viewport = availableSize;
 
-                ScrollOwner?.InvalidateScrollInfo();
+                ScrollOwner?.InvalidateMeasure();
 
                 SetHorizontalOffset(offset.X);
                 SetVerticalOffset(offset.Y);
@@ -517,9 +490,9 @@ namespace Stride.Core.Presentation.Controls
                     horizontalOffset = extent.Width - viewport.Width;
             }
 
-            offset.X = horizontalOffset;
+            offset = offset.WithX(horizontalOffset);
 
-            ScrollOwner?.InvalidateScrollInfo();
+            ScrollOwner?.InvalidateMeasure();
 
             InvalidateMeasure();
         }
@@ -534,9 +507,9 @@ namespace Stride.Core.Presentation.Controls
                     verticalOffset = extent.Height - viewport.Height;
             }
 
-            offset.Y = verticalOffset;
+            offset = offset.WithY(verticalOffset);
 
-            ScrollOwner?.InvalidateScrollInfo();
+            ScrollOwner?.InvalidateMeasure();
 
             InvalidateMeasure();
         }

@@ -9,6 +9,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Templates;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml.Templates;
 using Avalonia.Metadata;
 using Avalonia.Threading;
@@ -26,6 +27,7 @@ namespace Stride.Core.Presentation.Controls
     {
         internal double ItemTopInTreeSystem; // for virtualization purposes
         internal int HierachyLevel;// for virtualization purposes
+        private NavigationMethod lastNavMethod;
 
         /// <summary>
         /// Identifies the <see cref="IsEditable"/> dependency property.
@@ -58,17 +60,11 @@ namespace Stride.Core.Presentation.Controls
         public static readonly AvaloniaProperty IndentationProperty =
             AvaloniaProperty.Register<TreeViewItem, double>(nameof(Indentation), 10.0);
 
-        static TreeViewItem()
+        public TreeViewItem()
         {
-            var vPanel = new FrameworkElementFactory(typeof(VirtualizingTreePanel));
-            vPanel.SetValue(Panel.IsItemsHostProperty, true);
-            var vPanelTemplate = new ItemsPanelTemplate { VisualTree = vPanel };
-            ItemsPanelProperty.OverrideMetadata(typeof(TreeViewItem), new FrameworkPropertyMetadata(vPanelTemplate));
-
-            KeyboardNavigation.DirectionalNavigationProperty.OverrideMetadata(typeof(TreeViewItem), new FrameworkPropertyMetadata(KeyboardNavigationMode.Continue));
-            KeyboardNavigation.TabNavigationProperty.OverrideMetadata(typeof(TreeViewItem), new FrameworkPropertyMetadata(KeyboardNavigationMode.None));
-            VirtualizingPanel.ScrollUnitProperty.OverrideMetadata(typeof(TreeViewItem), new FrameworkPropertyMetadata(ScrollUnit.Item));
-            IsTabStopProperty.OverrideMetadata(typeof(TreeViewItem), new FrameworkPropertyMetadata(BooleanBoxes.FalseBox));
+            ItemsPanel = new FuncTemplate<Panel>(() => new StackPanel());
+            KeyboardNavigation.SetTabNavigation(this, KeyboardNavigationMode.None);
+            IsTabStop = false;
         }
 
         public bool IsEditable { get { return (bool)GetValue(IsEditableProperty); } set { SetValue(IsEditableProperty, value.Box()); } }
@@ -191,7 +187,7 @@ namespace Stride.Core.Presentation.Controls
         {
             if (!Focus())
             {
-                Dispatcher.BeginInvoke(DispatcherPriority.Input, new Action(() => Focus()));
+                Dispatcher.UIThread.BeginInvoke(DispatcherPriority.Input, new Action(() => Focus()));
             }
         }
 
@@ -293,12 +289,14 @@ namespace Stride.Core.Presentation.Controls
             }
         }
 
-        protected override void OnLostKeyboardFocus(KeyboardFocusChangedEventArgs e)
+        protected override void OnLostFocus(RoutedEventArgs e)
         {
-            base.OnLostKeyboardFocus(e);
+            base.OnLostFocus(e);
+            var topLevel = TopLevel.GetTopLevel(this);
+            
             if (IsEditing)
             {
-                var newFocus = e.NewFocus as AvaloniaObject;
+                var newFocus = topLevel?.FocusManager?.GetFocusedElement() as AvaloniaObject;
                 if (ReferenceEquals(newFocus, this))
                     return;
 

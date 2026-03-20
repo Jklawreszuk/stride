@@ -11,7 +11,6 @@ using Avalonia.Interactivity;
 using Avalonia.Threading;
 using Stride.Core.Annotations;
 using Stride.Core.Mathematics;
-using Stride.Core.Presentation.Internal;
 using Stride.Core.Presentation.Interop;
 using Point = Stride.Core.Mathematics.Point;
 
@@ -250,7 +249,7 @@ namespace Stride.Core.Presentation.Controls
                     task.Wait(TimeSpan.FromSeconds(1.0f));
                     break;
                 case NativeHelper.WM_LBUTTONDOWN:
-                    task = Dispatcher.InvokeAsync(() =>
+                    task = Dispatcher.UIThread.InvokeAsync(() =>
                     {
                         RaiseMouseButtonEvent(Mouse.PreviewMouseDownEvent, MouseButton.Left);
                         RaiseMouseButtonEvent(Mouse.MouseDownEvent, MouseButton.Left);
@@ -258,7 +257,7 @@ namespace Stride.Core.Presentation.Controls
                     task.Wait(TimeSpan.FromSeconds(1.0f));
                     break;
                 case NativeHelper.WM_LBUTTONUP:
-                    task = Dispatcher.InvokeAsync(() =>
+                    task = Dispatcher.UIThread.InvokeAsync(() =>
                     {
                         RaiseMouseButtonEvent(Mouse.PreviewPointerReleasedEvent, MouseButton.Left);
                         RaiseMouseButtonEvent(Mouse.PointerReleasedEvent, MouseButton.Left);
@@ -346,31 +345,6 @@ namespace Stride.Core.Presentation.Controls
         private HwndSource GetHwndSource()
         {
             return (HwndSource)PresentationSource.FromVisual(this);
-        }
-
-        IKeyboardInputSite IKeyboardInputSink.RegisterKeyboardInputSink(IKeyboardInputSink sink)
-        {
-            throw new NotSupportedException();
-        }
-
-        bool IKeyboardInputSink.TranslateAccelerator(ref MSG msg, KeyModifiers modifiers)
-        {
-            return false;
-        }
-
-        bool IKeyboardInputSink.TabInto(TraversalRequest request)
-        {
-            return false;
-        }
-
-        bool IKeyboardInputSink.OnMnemonic(ref MSG msg, KeyModifiers modifiers)
-        {
-            return false;
-        }
-
-        bool IKeyboardInputSink.TranslateChar(ref MSG msg, KeyModifiers modifiers)
-        {
-            return false;
         }
 
         bool IKeyboardInputSink.HasFocusWithin()

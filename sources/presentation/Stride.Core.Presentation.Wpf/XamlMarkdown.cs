@@ -348,7 +348,7 @@ namespace Stride.Core.Presentation
                 url = (BaseUrl ?? string.Empty) + url;
             }
 
-            var result = Create<Hyperlink, Inline>(RunSpanGamut(linkText));
+            var result = Create<HyperlinkButton, Inline>(RunSpanGamut(linkText));
             // Note: cannot use Command and CommandParameter because of a WPF bug (when copying the text). See https://stackoverflow.com/questions/3206258/commandconverter-valid-exception-or-net-bug
             result.Click += (_, __) => HyperlinkCommand.Execute(url);
             return result;

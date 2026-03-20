@@ -112,24 +112,10 @@ namespace Stride.Core.Presentation.Drawing
             if (points.Count == 0)
                 return;
 
-            var fillBrush = GetBrush(fillColor);
-            var strokeBrush = GetBrush(strokeColor);
-            var pen = new Pen(strokeBrush, thickness)
-            {
-                LineJoin = lineJoin,
-                DashStyle = new DashStyle(dashArray, dashOffset),
-            };
-
-            var visual = new DrawingVisual();
-            var context = visual.RenderOpen();
             foreach (var point in points)
             {
-                context.DrawEllipse(fillBrush, pen, point, radiusX, radiusY);
+                DrawEllipse(point, new Size(radiusX * 2, radiusY * 2), fillColor, strokeColor, thickness, lineJoin, dashArray, dashOffset, isHitTestVisible);
             }
-            context.Close();
-
-            var host = Create<VisualHost>(isHitTestVisible);
-            host.AddChild(visual);
         }
 
         /// <inheritdoc/>
@@ -251,7 +237,6 @@ namespace Stride.Core.Presentation.Drawing
             }
 
             textBlock.RenderTransform = new TranslateTransform(point.X + dx, point.Y + dy);
-            textBlock.SetValue(RenderOptions.ClearTypeHintProperty, ClearTypeHint.Enabled);
         }
 
         /// <inheritdoc/>
@@ -266,8 +251,6 @@ namespace Stride.Core.Presentation.Drawing
             var brush = GetBrush(color);
             var typeFace = new Typeface(fontFamily, FontStyle.Normal, fontWeight);
 
-            var visual = new DrawingVisual();
-            var context = visual.RenderOpen();
             for (var i = 0; i < points.Count; ++i)
             {
                 var text = texts[i];
@@ -290,13 +273,9 @@ namespace Stride.Core.Presentation.Drawing
                     if (vAlign == VerticalAlignment.Bottom)
                         dy = -size.Height;
                 }
-                point.Offset(dx, dy);
-                context.DrawText(formatted, point);
+                point = new Point(point.X + dx, point.Y + dy);
+                DrawText(point, color, texts[i], fontFamily, fontSize, fontWeight, hAlign, vAlign, isHitTestVisible);
             }
-            context.Close();
-
-            var host = Create<VisualHost>(isHitTestVisible);
-            host.AddChild(visual);
         }
 
         /// <inheritdoc/>
@@ -403,7 +382,7 @@ namespace Stride.Core.Presentation.Drawing
             where TElement : Control, new()
         {
             var element = new TElement();
-            if (clip.HasValue && !clip.Value.IsEmpty)
+            if (clip.HasValue && !(clip.Value == default))
             {
                 element.Clip = new RectangleGeometry(
                     new Rect(
@@ -539,7 +518,7 @@ namespace Stride.Core.Presentation.Drawing
         {
             shape.Stroke = GetBrush(color);
             shape.StrokeThickness = thickness;
-            shape.StrokeLineJoin = lineJoin;
+            //shape.StrokeLineJoin = lineJoin;
             if (dashArray != null)
             {
                 shape.StrokeDashArray = new AvaloniaList<double>(dashArray);
@@ -548,8 +527,7 @@ namespace Stride.Core.Presentation.Drawing
 
             if (aliased)
             {
-                shape.SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
-                shape.SnapsToDevicePixels = true;
+                //TODO: shape.SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
             }
         }
 

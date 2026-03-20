@@ -178,7 +178,7 @@ namespace Stride.Core.Presentation.Windows
             Dispatcher.UIThread.InvokeAsync(() =>
             {
                 var area = window.GetWorkArea();
-                if (area != Rect.Empty)
+                if (area != new Rect())
                 {
                     var mousePosition = window.GetCursorScreenPosition();
                     var expandRight = area.Right > mousePosition.X + window.Bounds.Width;

@@ -524,7 +524,7 @@ namespace Stride.Core.Presentation.Controls
                 if (extent == value) return;
                 extent = value;
 
-                ScrollOwner?.InvalidateScrollInfo();
+                ScrollOwner?.InvalidateMeasure();
             }
         }
 
@@ -539,7 +539,7 @@ namespace Stride.Core.Presentation.Controls
                 if (viewport == value) return;
                 viewport = value;
 
-                ScrollOwner?.InvalidateScrollInfo();
+                ScrollOwner?.InvalidateMeasure();
             }
         }
 
@@ -641,13 +641,13 @@ namespace Stride.Core.Presentation.Controls
 
         public void MouseWheelUp()
         {
-            var lines = SystemParameters.WheelScrollLines;
+            const int lines = 3;
             SetVerticalOffset(VerticalOffset - lines * GetScrollLineHeightY());
         }
 
         public void MouseWheelDown()
         {
-            var lines = SystemParameters.WheelScrollLines;
+            const int lines = 3;
             SetVerticalOffset(VerticalOffset + lines * GetScrollLineHeightY());
         }
 
@@ -663,7 +663,7 @@ namespace Stride.Core.Presentation.Controls
 
         public Rect MakeVisible(Visual visual, Rect rectangle)
         {
-            if (rectangle.IsEmpty || visual == null || ReferenceEquals(visual, this) || !IsAncestorOf(visual))
+            if (rectangle == default || visual == null || ReferenceEquals(visual, this) || !IsAncestorOf(visual))
             {
                 return new Rect();
             }
@@ -708,13 +708,13 @@ namespace Stride.Core.Presentation.Controls
 
         public void MouseWheelLeft()
         {
-            var lines = SystemParameters.WheelScrollLines;
+            const int lines = 3;
             SetHorizontalOffset(HorizontalOffset - lines * GetScrollLineHeightX());
         }
 
         public void MouseWheelRight()
         {
-            var lines = SystemParameters.WheelScrollLines;
+            const int lines = 3;
             SetHorizontalOffset(HorizontalOffset + lines * GetScrollLineHeightX());
         }
 
@@ -744,7 +744,7 @@ namespace Stride.Core.Presentation.Controls
 
             HorizontalOffset = offset;
 
-            ScrollOwner?.InvalidateScrollInfo();
+            ScrollOwner?.InvalidateMeasure();
 
             // Force us to realize the correct children
             InvalidateMeasure();
@@ -766,7 +766,7 @@ namespace Stride.Core.Presentation.Controls
 
             VerticalOffset = offset;
 
-            ScrollOwner?.InvalidateScrollInfo();
+            ScrollOwner?.InvalidateMeasure();
 
             // Force us to realize the correct children
             InvalidateMeasure();

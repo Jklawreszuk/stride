@@ -70,7 +70,7 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Indicates whether the Control key is currently down.
         /// </summary>
-        internal static bool IsControlKeyDown => (Keyboard.Modifiers & Control) == Control;
+        internal static bool IsControlKeyDown => (Keyboard.Modifiers & KeyModifiers.Control) == KeyModifiers.Control;
 
         /// <summary>
         /// Indicates whether the Shift key is currently down.
@@ -332,11 +332,11 @@ namespace Stride.Core.Presentation.Controls
             base.OnPointerPressed(e);
             StopEditing();
 
-            pointerPressed = e.ChangedButton == MouseButton.Left;
+            pointerPressed = e.GetCurrentPoint(this).Properties.IsLeftButtonPressed;
 
             var item = GetTreeViewItemUnderMouse(e.GetPosition(this));
             if (item == null) return;
-            if (e.ChangedButton != MouseButton.Right || item.ContextMenu == null) return;
+            if (!e.GetCurrentPoint(this).Properties.IsRightButtonPressed || item.ContextMenu == null) return;
             if (item.IsEditing) return;
 
             if (!SelectedItems.Contains(item.DataContext))
@@ -355,7 +355,7 @@ namespace Stride.Core.Presentation.Controls
             {
                 var item = GetTreeViewItemUnderMouse(e.GetPosition(this));
                 if (item == null) return;
-                if (e.ChangedButton != MouseButton.Left) return;
+                if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) return;
                 if (item.IsEditing) return;
 
                 SelectSingleItem(item);
@@ -742,8 +742,7 @@ namespace Stride.Core.Presentation.Controls
                 if (child == null)
                     return null;
 
-                var treeViewItem = child as TreeViewItem;
-                if (treeViewItem != null)
+                if (child is TreeViewItem treeViewItem)
                 {
                     return treeViewItem.IsVisible ? treeViewItem : null;
                 }
