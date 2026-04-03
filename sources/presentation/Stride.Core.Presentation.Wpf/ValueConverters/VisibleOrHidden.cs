@@ -25,7 +25,7 @@ namespace Stride.Core.Presentation.ValueConverters
             {
                 result = !result;
             }
-            return result ? VisibilityBoxes.VisibleBox : VisibilityBoxes.HiddenBox;
+            return result;
         }
 
         /// <inheritdoc/>

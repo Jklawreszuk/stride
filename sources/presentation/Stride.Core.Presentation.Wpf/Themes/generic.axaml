@@ -39,7 +39,7 @@
       <Setter.Value>
         <ControlTemplate TargetType="{x:Type Expander}">
           <Grid>
-            <Border Visibility="Collapsed" x:Name="ExpandSite" Padding="0">
+            <Border IsVisible="False" x:Name="ExpandSite" Padding="0">
               <Border BorderThickness="0" Margin="0" Padding="0" VerticalAlignment="Stretch"
                       HorizontalAlignment="Stretch">
                 <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
@@ -187,13 +187,13 @@
             <Grid Focusable="False">
               <ScrollViewer x:Name="PART_ContentHost" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                             Padding="{TemplateBinding Padding}"
-                            Visibility="{TemplateBinding IsFocused, Converter={cvt:VisibleOrCollapsed}}" />
+                            IsVisible="{TemplateBinding IsFocused, Converter={cvt:VisibleOrCollapsed}}" />
               <ContentControl x:Name="Watermark" Content="{TemplateBinding WatermarkContent}"
                               ContentTemplate="{TemplateBinding WatermarkContentTemplate}" VerticalAlignment="Center"
                               Margin="6,2,2,2" Focusable="False" />
               <TextBlock x:Name="PART_TrimmedText" Text="{TemplateBinding TrimmedText}" Cursor="IBeam" Margin="3,1"
                          Focusable="False"
-                         Visibility="{TemplateBinding IsFocused, Converter={cvt:Chained {cvt:InvertBool}, {cvt:VisibleOrCollapsed}}}"
+                         IsVisible="{TemplateBinding IsFocused, Converter={cvt:Chained {cvt:InvertBool}, {cvt:VisibleOrCollapsed}}}"
                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
             </Grid>
           </mwt:ListBoxChrome>
@@ -615,13 +615,13 @@
         <ControlTemplate TargetType="ctrl:TextLogViewer">
           <DockPanel>
             <ToolBarTray DockPanel.Dock="Top"
-                         Visibility="{Binding IsToolBarVisible, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={cvt:VisibleOrCollapsed}}">
+                         IsVisible="{Binding IsToolBarVisible, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={cvt:VisibleOrCollapsed}}">
               <ToolBar
-                Visibility="{Binding CanClearLog, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={cvt:VisibleOrCollapsed}}">
+                IsVisible="{Binding CanClearLog, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={cvt:VisibleOrCollapsed}}">
                 <Button x:Name="PART_ClearLog" Content="Clear" />
               </ToolBar>
               <ToolBar Header="Filters"
-                       Visibility="{Binding CanFilterLog, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={cvt:VisibleOrCollapsed}}">
+                       IsVisible="{Binding CanFilterLog, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={cvt:VisibleOrCollapsed}}">
                 <ToggleButton Padding="4,0" Content="Debug"
                               IsChecked="{Binding ShowDebugMessages, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                 <ToggleButton Padding="4,0" Content="Verbose"
@@ -639,7 +639,7 @@
                 <Separator />
               </ToolBar>
               <ToolBar Header="Search"
-                       Visibility="{Binding CanSearchLog, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={cvt:VisibleOrCollapsed}}">
+                       IsVisible="{Binding CanSearchLog, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={cvt:VisibleOrCollapsed}}">
                 <ctrl:TextBox UseTimedValidation="True" x:Name="PART_SearchTextBox" Width="150"
                               Text="{Binding SearchToken, RelativeSource={RelativeSource Mode=TemplatedParent}}"
                               WatermarkContent="Search" />

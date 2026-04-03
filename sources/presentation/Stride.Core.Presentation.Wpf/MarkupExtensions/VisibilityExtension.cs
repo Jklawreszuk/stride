@@ -12,7 +12,7 @@ namespace Stride.Core.Presentation.MarkupExtensions
         /// <inheritdoc />
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
-            return VisibilityBoxes.CollapsedBox;
+            return false;
         }
     }
 
@@ -21,7 +21,7 @@ namespace Stride.Core.Presentation.MarkupExtensions
         /// <inheritdoc />
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
-            return VisibilityBoxes.HiddenBox;
+            return false;
         }
     }
 
@@ -30,7 +30,7 @@ namespace Stride.Core.Presentation.MarkupExtensions
         /// <inheritdoc />
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
-            return VisibilityBoxes.VisibleBox;
+            return true;
         }
     }
 }

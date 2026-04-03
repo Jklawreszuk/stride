@@ -37,7 +37,7 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// The <see cref="TextBox"/> in which the log messages are actually displayed.
         /// </summary>
-        private TextBox logTextBox;
+        private TextBlock logTextBox;
 
         /// <summary>
         /// Identifies the <see cref="LogMessages"/> dependency property.
@@ -317,7 +317,7 @@ namespace Stride.Core.Presentation.Controls
         {
             base.OnApplyTemplate(e);
 
-            logTextBox =  e.NameScope.Find<TextBox>("PART_LogTextBox");
+            logTextBox =  e.NameScope.Find<TextBlock>("PART_LogTextBox");
             if (logTextBox == null)
                 throw new InvalidOperationException("A part named 'PART_LogTextBox' must be present in the ControlTemplate, and must be of type 'TextBox'.");
 
@@ -353,7 +353,7 @@ namespace Stride.Core.Presentation.Controls
                 return;
             }
             
-            logTextBox.Clear();
+            logTextBox.Inlines.Clear();
             ClearSearchResults();
             if (LogMessages != null)
             {
@@ -401,7 +401,7 @@ namespace Stride.Core.Presentation.Controls
                 
                 if (string.IsNullOrEmpty(searchToken))
                 {
-                    logTextBlock.Inlines.Add(new Run(lineText) { Foreground = logColor });
+                    logTextBox.Inlines.Add(new Run(lineText) { Foreground = logColor });
                 }
                 else
                 {
@@ -410,7 +410,7 @@ namespace Stride.Core.Presentation.Controls
                         var tokenIndex = lineText.IndexOf(searchToken, stringComparison);
                         if (tokenIndex == -1)
                         {
-                            logTextBlock.Inlines.Add(new Run(lineText) { Foreground = logColor });
+                            logTextBox.Inlines.Add(new Run(lineText) { Foreground = logColor });
                             break;
                         }
                         var acceptResult = true;
@@ -433,10 +433,10 @@ namespace Stride.Core.Presentation.Controls
                         if (acceptResult)
                         {
                             if (tokenIndex > 0)
-                                logTextBlock.Inlines.Add(new Run(lineText.Substring(0, tokenIndex)) { Foreground = logColor });
+                                logTextBox.Inlines.Add(new Run(lineText.Substring(0, tokenIndex)) { Foreground = logColor });
 
                             var tokenRun = new Run(lineText.Substring(tokenIndex, searchToken.Length)) { Background = SearchMatchBrush, Foreground = logColor };
-                            logTextBlock.Inlines.Add(tokenRun);
+                            logTextBox.Inlines.Add(tokenRun);
                             var tokenRange = new TextRange(tokenIndex, searchToken.Length);
                             searchMatches.Add(tokenRange);
                             lineText = lineText.Substring(tokenIndex + searchToken.Length);
@@ -481,11 +481,11 @@ namespace Stride.Core.Presentation.Controls
         private void SelectSearchResult(int resultIndex)
         {
             var result = searchMatches[resultIndex];
-            logTextBlock.Selection.Select(result.Start, result.End);
-            var selectionRect = logTextBlock.Selection.Start.GetCharacterRect(LogicalDirection.Forward);
-            var offset = selectionRect.Top + logTextBlock.VerticalOffset;
-            logTextBlock.ScrollToVerticalOffset(offset - logTextBlock.Bounds.Height / 2);
-            logTextBlock.BringIntoView();
+            logTextBox.Selection.Select(result.Start, result.End);
+            var selectionRect = logTextBox.Selection.Start.GetCharacterRect(LogicalDirection.Forward);
+            var offset = selectionRect.Top + logTextBox.VerticalOffset;
+            logTextBox.ScrollToVerticalOffset(offset - logTextBox.Bounds.Height / 2);
+            logTextBox.BringIntoView();
             currentResult = resultIndex;
         }
 
@@ -521,7 +521,7 @@ namespace Stride.Core.Presentation.Controls
         {
             var logViewer = (TextLogViewer)d;
             logViewer.ResetText();
-            var scrollViewer = logViewer.logTextBlock?
+            var scrollViewer = logViewer.logTextBox?
                 .GetVisualDescendants()
                 .OfType<ScrollViewer>()
                 .FirstOrDefault();
@@ -568,13 +568,13 @@ namespace Stride.Core.Presentation.Controls
         /// </summary>
         private void LogMessagesCollectionChanged(object sender, [NotNull] NotifyCollectionChangedEventArgs e)
         {
-            var shouldScroll = AutoScroll && logTextBlock != null && logTextBlock.ExtentHeight - logTextBlock.ViewportHeight - logTextBlock.VerticalOffset < 1.0;
+            var shouldScroll = AutoScroll && logTextBox != null && logTextBox.ExtentHeight - logTextBox.ViewportHeight - logTextBox.VerticalOffset < 1.0;
 
             if (e.Action == NotifyCollectionChangedAction.Add)
             {
                 if (e.NewItems != null)
                 {
-                    if (logTextBlock != null)
+                    if (logTextBox != null)
                     {
                         AppendText(e.NewItems.Cast<ILogMessage>());
                     }
@@ -591,7 +591,7 @@ namespace Stride.Core.Presentation.Controls
                 // Note: priority should still be higher than DispatcherPriority.Input so that user input have a chance to scroll.
                 Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    var scrollViewer = logTextBlock?.GetVisualDescendants()
+                    var scrollViewer = logTextBox?.GetVisualDescendants()
                         .OfType<ScrollViewer>()
                         .FirstOrDefault();
                     scrollViewer?.ScrollToEnd();

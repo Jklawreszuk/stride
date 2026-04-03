@@ -40,6 +40,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Shapes;
 using Avalonia.Layout;
 using Avalonia.Media;
+using Avalonia.Media.TextFormatting;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Extensions;
 
@@ -287,8 +288,9 @@ namespace Stride.Core.Presentation.Drawing
             switch (measurementMethod)
             {
                 case TextMeasurementMethod.GlyphTypeface:
-                    if (TryGetGlyphTypeface(fontFamily, FontStyle.Normal, fontWeight, FontStretch.Normal, out var glyphTypeface))
-                        return MeasureTextSize(glyphTypeface, fontSize, text);
+                    var typeface = new Typeface(fontFamily, FontStyle.Normal, fontWeight);
+                    if (typeface.GlyphTypeface != null)
+                        return MeasureTextSize(typeface, fontSize, text);
                     // Fallback to TextBlock measurement method
                     goto case TextMeasurementMethod.TextBlock;
 
@@ -323,9 +325,10 @@ namespace Stride.Core.Presentation.Drawing
                 switch (measurementMethod)
                 {
                     case TextMeasurementMethod.GlyphTypeface:
-                        if (TryGetGlyphTypeface(fontFamily, FontStyle.Normal, fontWeight, FontStretch.Normal, out var glyphTypeface))
+                        var typeface = new Typeface(fontFamily, FontStyle.Normal, fontWeight);
+                        if (typeface.GlyphTypeface != null)
                         {
-                            size = MeasureTextSize(glyphTypeface, fontSize, text);
+                            size = MeasureTextSize(typeface, fontSize, text);
                             break;
                         }
                         // Fallback to TextBlock measurement method
@@ -538,41 +541,10 @@ namespace Stride.Core.Presentation.Drawing
         /// <param name="sizeInEm">The size.</param>
         /// <param name="text">The text.</param>
         /// <returns>The text size.</returns>
-        private static Size MeasureTextSize([NotNull] GlyphTypeface glyphTypeface, double sizeInEm, [NotNull] string text)
+        private static Size MeasureTextSize([NotNull] Typeface typeface, double sizeInEm, [NotNull] string text)
         {
-            double width = 0;
-            double lineWidth = 0;
-            var lines = 0;
-            foreach (var ch in text)
-            {
-                switch (ch)
-                {
-                    case '\n':
-                        lines++;
-                        if (lineWidth > width)
-                        {
-                            width = lineWidth;
-                        }
-
-                        lineWidth = 0;
-                        continue;
-
-                    case '\t':
-                        continue;
-                }
-
-                var glyph = glyphTypeface.CharacterToGlyphMap[ch];
-                var advanceWidth = glyphTypeface.AdvanceWidths[glyph];
-                lineWidth += advanceWidth;
-            }
-
-            lines++;
-            if (lineWidth > width)
-            {
-                width = lineWidth;
-            }
-
-            return new Size(Math.Round(width*sizeInEm, 2), Math.Round(lines*glyphTypeface.Height*sizeInEm, 2));
+            var textLayout = new TextLayout(text, typeface, sizeInEm, Brushes.Black);
+            return new Size(Math.Round(textLayout.Width, 2), Math.Round(textLayout.Height, 2));
         }
 
         /// <summary>
@@ -597,13 +569,6 @@ namespace Stride.Core.Presentation.Drawing
         private static List<Point> ToPointCollection(IEnumerable<Point> points, bool aliased)
         {
             return [..aliased ? points.Select(ToPixelAlignedPoint) : points];
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool TryGetGlyphTypeface([NotNull] FontFamily fontFamily, FontStyle fontStyle, FontWeight fontWeight, FontStretch fontStretch, out GlyphTypeface glyphTypeface)
-        {
-            var typeface = new Typeface(fontFamily, fontStyle, fontWeight, fontStretch);
-            return typeface.TryGetGlyphTypeface(out glyphTypeface);
         }
     }
 }
