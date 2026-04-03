@@ -1,8 +1,8 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 using System;
-using System.Windows;
-
+using Avalonia;
+using Avalonia.Data;
 using Stride.Core.Mathematics;
 
 namespace Stride.Core.Presentation.Controls
@@ -15,11 +15,7 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         /// Identifies the <see cref="Degrees"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty DegreesProperty = DependencyProperty.Register(
-            nameof(Degrees),
-            typeof(float),
-            typeof(AngleEditor),
-            new FrameworkPropertyMetadata(0f, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnComponentPropertyChanged, CoerceComponentValue));
+        public static readonly AvaloniaProperty DegreesProperty = AvaloniaProperty.Register<AngleEditor, float>(nameof(Degrees), defaultBindingMode: BindingMode.TwoWay, coerce: CoerceComponentValue);
 
         /// <summary>
         /// Gets or sets the angle in degrees.
@@ -44,7 +40,7 @@ namespace Stride.Core.Presentation.Controls
         }
 
         /// <inheritdoc/>
-        protected override float UpdateValueFromComponent(DependencyProperty property)
+        protected override float UpdateValueFromComponent(AvaloniaProperty property)
         {
             if (property == DegreesProperty)
             {

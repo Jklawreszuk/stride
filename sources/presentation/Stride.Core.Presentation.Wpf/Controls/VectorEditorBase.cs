@@ -198,14 +198,11 @@ namespace Stride.Core.Presentation.Controls
             editor.OnComponentPropertyChanged(e);
         }
 
-        protected static object CoerceComponentValue(AvaloniaObject sender, object basevalue)
+        protected static float CoerceComponentValue(AvaloniaObject sender, float basevalue)
         {
-            if (basevalue == null)
-                return null;
-
             var editor = (VectorEditorBase<T>)sender;
             var decimalPlaces = editor.DecimalPlaces;
-            return decimalPlaces < 0 ? basevalue : MathF.Round((float)basevalue, decimalPlaces);
+            return decimalPlaces < 0 ? basevalue : MathF.Round(basevalue, decimalPlaces);
         }
 
         /// <summary>
