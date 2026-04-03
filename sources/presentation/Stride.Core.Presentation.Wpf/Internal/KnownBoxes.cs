@@ -2,7 +2,6 @@
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
-using Stride.Core.Presentation.ValueConverters;
 
 namespace Stride.Core.Presentation.Internal
 {
@@ -25,38 +24,6 @@ namespace Stride.Core.Presentation.Internal
         internal static object Box(this bool value)
         {
             return value ? TrueBox : FalseBox;
-        }
-    }
-
-    internal static class VisibilityBoxes
-    {
-        /// <summary>
-        /// An object representing the value <see cref="Visibility.Visible"/>.
-        /// </summary>
-        internal static object VisibleBox = Visibility.Visible;
-        /// <summary>
-        /// An object representing the value <see cref="Visibility.Hidden"/>.
-        /// </summary>
-        internal static object HiddenBox = Visibility.Hidden;
-        /// <summary>
-        /// An object representing the value <see cref="Visibility.Collapsed"/>.
-        /// </summary>
-        internal static object CollapsedBox = Visibility.Collapsed;
-
-        /// <summary>
-        /// Returns an object representing the provided Visibility <paramref name="value"/>.
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns>A boxed <see cref="Visibility"/> equivalent to the provided <paramref name="value"/>.</returns>
-        internal static object Box(this Visibility value)
-        {
-            return value switch
-            {
-                Visibility.Visible => VisibleBox,
-                Visibility.Hidden => HiddenBox,
-                Visibility.Collapsed => CollapsedBox,
-                _ => throw new ArgumentOutOfRangeException(nameof(value), value, null)
-            };
         }
     }
 }

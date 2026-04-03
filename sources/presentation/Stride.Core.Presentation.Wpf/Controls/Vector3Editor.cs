@@ -116,7 +116,7 @@ namespace Stride.Core.Presentation.Controls
         [NotNull]
         private static object CoerceLengthValue(AvaloniaObject sender, object baseValue)
         {
-            baseValue = CoerceComponentValue(sender, baseValue);
+            baseValue = CoerceComponentValue(sender, (float)baseValue);
             return Math.Max(0.0f, (float)baseValue);
         }
 

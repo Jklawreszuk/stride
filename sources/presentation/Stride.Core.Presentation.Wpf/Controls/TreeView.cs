@@ -95,14 +95,10 @@ namespace Stride.Core.Presentation.Controls
             SelectedItemsProperty.Changed.AddClassHandler<AvaloniaObject>(OnSelectedItemsPropertyChanged);
             SelectionModeProperty.Changed.AddClassHandler<AvaloniaObject>(OnSelectionModeChanged);
             
-            var vPanel = new FrameworkElementFactory(typeof(VirtualizingTreePanel));
-            vPanel.SetValue(Panel.IsItemsHostProperty, true);
-            var vPanelTemplate = new ItemsPanelTemplate { VisualTree = vPanel };
-            ItemsPanelProperty.OverrideMetadata(typeof(TreeView), new FrameworkPropertyMetadata(vPanelTemplate));
 
-            KeyboardNavigation.DirectionalNavigationProperty.OverrideMetadata(typeof(TreeView), new FrameworkPropertyMetadata(KeyboardNavigationMode.Contained));
-            KeyboardNavigation.TabNavigationProperty.OverrideMetadata(typeof(TreeView), new FrameworkPropertyMetadata(KeyboardNavigationMode.None));
-            VirtualizingPanel.ScrollUnitProperty.OverrideMetadata(typeof(TreeView), new FrameworkPropertyMetadata(ScrollUnit.Item));
+            KeyboardNavigation.DirectionalNavigationProperty.OverrideMetadata(typeof(TreeView), new (KeyboardNavigationMode.Contained));
+            KeyboardNavigation.TabNavigationProperty.OverrideMetadata(typeof(TreeView), new (KeyboardNavigationMode.None));
+            VirtualizingPanel.ScrollUnitProperty.OverrideMetadata(typeof(TreeView), new (ScrollUnit.Item));
         }
 
         /// <summary>
