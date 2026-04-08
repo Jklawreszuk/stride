@@ -15,6 +15,7 @@ using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml.Templates;
+using Avalonia.VisualTree;
 using Stride.Core.Annotations;
 using Stride.Core.Presentation.Collections;
 using Stride.Core.Presentation.Extensions;
@@ -571,13 +572,10 @@ namespace Stride.Core.Presentation.Controls
             var newValue = (SelectionMode)e.NewValue;
             switch (newValue)
             {
-                case SelectionMode.Multiple:
-                    throw new NotSupportedException("SelectionMode.Multiple is not yet supported. Please use SelectionMode.Single or SelectionMode.Extended.");
-
                 case SelectionMode.Single:
                     break;
 
-                case SelectionMode.Extended:
+                case SelectionMode.Multiple:
                     var treeView = (TreeView)d;
                     var selectedItem = treeView.SelectedItem;
                     treeView.updatingSelection = true;
@@ -652,7 +650,7 @@ namespace Stride.Core.Presentation.Controls
         /// <summary>
         ///     This method is invoked when the Items property changes.
         /// </summary>
-        protected override void OnItemsChanged(NotifyCollectionChangedEventArgs e)
+        protected void OnItemsChanged(NotifyCollectionChangedEventArgs e)
         {
             switch (e.Action)
             {
@@ -700,27 +698,25 @@ namespace Stride.Core.Presentation.Controls
         [CanBeNull]
         protected TreeViewItem GetTreeViewItemUnderMouse(Point positionRelativeToTree)
         {
-            var hitTestResult = VisualTreeHelper.HitTest(this, positionRelativeToTree);
-            if (hitTestResult?.VisualHit == null)
+            var visual = this.InputHitTest(positionRelativeToTree);
+            if (visual == null)
                 return null;
-
-            var child = hitTestResult.VisualHit as Control;
-
-            do
+            
+            var current = visual as Visual;
+            while (current != null)
             {
-                if (child == null)
-                    return null;
-
-                if (child is TreeViewItem treeViewItem)
+                if (current is TreeViewItem tvi)
                 {
-                    return treeViewItem.IsVisible ? treeViewItem : null;
+                    return tvi.IsVisible ? tvi : null;
                 }
-
-                if (child is TreeView)
+        
+                if (current is TreeView)
+                {
                     return null;
-
-                child = VisualTreeHelper.GetParent(child) as Control;
-            } while (child != null);
+                }
+        
+                current = current.GetVisualParent();
+            }
 
             return null;
         }
