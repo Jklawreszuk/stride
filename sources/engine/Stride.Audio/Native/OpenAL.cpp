@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation and Contributors (https://dotnetfoundation.org/ & https://stride3d.net) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
+#include <atomic>
 #include "Common.h"
 
 #if defined(PLATFORM_LINUX) || defined(PLATFORM_MACOS) || defined(IOS) || !defined(__clang__)
@@ -25,21 +26,21 @@ extern "C" {
 	public:
 		SpinLock()
 		{
-			mLocked = false;
+			mLocked = {false};
 		}
 
 		void Lock()
-		{			
-			while(!__sync_bool_compare_and_swap(&mLocked, false, true)) {}
+		{
+			while(mLocked.exchange(true));
 		}
 
 		void Unlock()
 		{
-			mLocked = false;
+			mLocked.store(false);
 		}
 
 	private:
-		volatile bool mLocked;
+		std::atomic<bool> mLocked;
 	};
 
 	namespace OpenAL
@@ -53,7 +54,7 @@ extern "C" {
 		LPALCPROCESSCONTEXT ProcessContext;
 		LPALCGETERROR GetErrorALC;
 		LPALCSUSPENDCONTEXT SuspendContext;
-		
+
 		LPALSOURCEPLAY SourcePlay;
 		LPALSOURCEPAUSE SourcePause;
 		LPALSOURCESTOP SourceStop;
@@ -101,7 +102,7 @@ extern "C" {
 				{
 					MakeContextCurrent(mOldContext);
 				}
-				
+
 				sOpenAlLock.Unlock();
 			}
 
@@ -120,7 +121,7 @@ extern "C" {
 			//Generic
 			OpenALLibrary = LoadDynamicLibrary("OpenAL");
 			OpenALLibrary = LoadDynamicLibrary("openal");
-			
+
 			//PC - Windows
 			if(sizeof(intptr_t) == 4)
 			{
@@ -132,13 +133,13 @@ extern "C" {
 				if (!OpenALLibrary) OpenALLibrary = LoadDynamicLibrary("x64\\OpenAL");
 				if (!OpenALLibrary) OpenALLibrary = LoadDynamicLibrary("x64/OpenAL");
 			}
-			
+
 			//iOS
 			if (!OpenALLibrary) OpenALLibrary = LoadDynamicLibrary("/System/Library/Frameworks/OpenAL.framework/OpenAL"); //iOS Apple OpenAL
 
 			//Linux
 			if (!OpenALLibrary) OpenALLibrary = LoadDynamicLibrary("libopenal.so.1");
-			
+
 			if (!OpenALLibrary) return false;
 
 			OpenDevice = (LPALCOPENDEVICE)GetSymbolAddress(OpenALLibrary, "alcOpenDevice");
@@ -178,11 +179,11 @@ extern "C" {
 			if (!GenBuffers) return false;
 			Source3I = (LPALSOURCE3I)GetSymbolAddress(OpenALLibrary, "alSource3i");
 			if (!Source3I) return false;
-			SourceI = (LPALSOURCEI)GetSymbolAddress(OpenALLibrary, "alSourcei"); 
+			SourceI = (LPALSOURCEI)GetSymbolAddress(OpenALLibrary, "alSourcei");
 			if (!SourceI) return false;
 			BufferData = (LPALBUFFERDATA)GetSymbolAddress(OpenALLibrary, "alBufferData");
 			if (!BufferData) return false;
-			SourceQueueBuffers = (LPALSOURCEQUEUEBUFFERS)GetSymbolAddress(OpenALLibrary, "alSourceQueueBuffers"); 
+			SourceQueueBuffers = (LPALSOURCEQUEUEBUFFERS)GetSymbolAddress(OpenALLibrary, "alSourceQueueBuffers");
 			if (!SourceQueueBuffers) return false;
 			SourceUnqueueBuffers = (LPALSOURCEUNQUEUEBUFFERS)GetSymbolAddress(OpenALLibrary, "alSourceUnqueueBuffers");
 			if (!SourceUnqueueBuffers) return false;
@@ -309,7 +310,7 @@ extern "C" {
 					}
 				}
 			}
-			
+
 			device->deviceLock.Unlock();
 		}
 
@@ -401,7 +402,7 @@ extern "C" {
 			}
 
 			listener->sources.insert(res);
-			
+
 			return res;
 		}
 
@@ -425,7 +426,7 @@ extern "C" {
 			GetSourceF(source->source, AL_SEC_OFFSET, &offset);
 
 			if (!source->streamed)
-			{				
+			{
 				return offset;
 			}
 
@@ -436,7 +437,7 @@ extern "C" {
 		{
 			auto clampedPan = pan > 1.0f ? 1.0f : pan < -1.0f ? -1.0f : pan;
 			ALfloat alpan[3];
-			alpan[0] = clampedPan; // from -1 (left) to +1 (right) 
+			alpan[0] = clampedPan; // from -1 (left) to +1 (right)
 			alpan[1] = sqrt(1.0f - clampedPan*clampedPan);
 			alpan[2] = 0.0f;
 
@@ -470,8 +471,8 @@ extern "C" {
 			//As result we need to rewrite the buffer
 			if(startTime == 0 && stopTime == 0)
 			{
-				//cancel the offsetting							
-				BufferData(source->singleBuffer->buffer, source->mono ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, source->singleBuffer->pcm, source->singleBuffer->size, source->singleBuffer->sampleRate);						
+				//cancel the offsetting
+				BufferData(source->singleBuffer->buffer, source->mono ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, source->singleBuffer->pcm, source->singleBuffer->size, source->singleBuffer->sampleRate);
 			}
 			else
 			{
@@ -696,14 +697,14 @@ extern "C" {
 
 		DLL_EXPORT_API void xnAudioBufferFill(xnAudioBuffer* buffer, short* pcm, int bufferSize, int sampleRate, npBool mono)
 		{
-			//we have to keep a copy sadly because we might need to offset the data at some point			
+			//we have to keep a copy sadly because we might need to offset the data at some point
 			memcpy(buffer->pcm, pcm, bufferSize);
 			buffer->size = bufferSize;
 			buffer->sampleRate = sampleRate;
-			
+
 			BufferData(buffer->buffer, mono ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, pcm, bufferSize, sampleRate);
 		}
-		
+
 	}
 }
 
