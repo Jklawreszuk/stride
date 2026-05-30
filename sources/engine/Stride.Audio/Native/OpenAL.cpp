@@ -272,46 +272,60 @@ extern "C" {
 
 		DLL_EXPORT_API void xnAudioUpdate(xnAudioDevice* device)
 		{
+			// Snapshot listeners under the device lock, then release it
+			// so Destroy calls on other threads are never blocked for long
 			device->deviceLock.Lock();
-
+			tinystl::vector<xnAudioListener*> listenerSnapshot;
 			for (auto listener : device->listeners)
+				listenerSnapshot.push_back(listener);
+			device->deviceLock.Unlock();  // release A before acquiring B
+
+			for (auto listener : listenerSnapshot)
 			{
-				ContextState lock(listener->context);
-
-				for(auto source : listener->sources)
+				// Snapshot sources too, for the same reason
+				tinystl::vector<xnAudioSource*> sourceSnapshot;
 				{
-					if (source->streamed)
+					ContextState lock(listener->context);
+					for (auto source : listener->sources)
+						sourceSnapshot.push_back(source);
+				}
+
+				for (auto source : sourceSnapshot)
+				{
+					if (!source->streamed)
 					{
-						auto processed = 0;
-						GetSourceI(source->source, AL_BUFFERS_PROCESSED, &processed);
-						while (processed--)
+						continue;
+					}
+
+					ContextState lock(source->listener->context);
+
+					auto processed = 0;
+					GetSourceI(source->source, AL_BUFFERS_PROCESSED, &processed);
+					while (processed--)
+					{
+						ALfloat preDTime;
+						GetSourceF(source->source, AL_SEC_OFFSET, &preDTime);
+
+						ALuint buffer;
+						SourceUnqueueBuffers(source->source, 1, &buffer);
+						xnAudioBuffer* bufferPtr = source->listener->buffers[buffer];
+
+						ALfloat postDTime;
+						GetSourceF(source->source, AL_SEC_OFFSET, &postDTime);
+
+						if (bufferPtr->type == EndOfStream || bufferPtr->type == EndOfLoop)
 						{
-							ALfloat preDTime;
-							GetSourceF(source->source, AL_SEC_OFFSET, &preDTime);
-
-							ALuint buffer;
-							SourceUnqueueBuffers(source->source, 1, &buffer);
-							xnAudioBuffer* bufferPtr = source->listener->buffers[buffer];
-
-							ALfloat postDTime;
-							GetSourceF(source->source, AL_SEC_OFFSET, &postDTime);
-
-							if (bufferPtr->type == EndOfStream || bufferPtr->type == EndOfLoop)
-							{
-								source->dequeuedTime = 0.0;
-							}
-							else
-							{
-								source->dequeuedTime += preDTime - postDTime;
-							}
-
-							source->freeBuffers.push_back(bufferPtr);
+							source->dequeuedTime = 0.0;
 						}
+						else
+						{
+							source->dequeuedTime += preDTime - postDTime;
+						}
+
+						source->freeBuffers.push_back(bufferPtr);
 					}
 				}
 			}
-
-			device->deviceLock.Unlock();
 		}
 
 		DLL_EXPORT_API xnAudioListener* xnAudioListenerCreate(xnAudioDevice* device)
@@ -562,10 +576,9 @@ extern "C" {
 			SourcePause(source->source);
 		}
 
-		DLL_EXPORT_API void xnAudioSourceFlushBuffers(xnAudioSource* source)
+		// Internal version - caller must already hold the ContextState lock
+		static void xnAudioSourceFlushBuffers_Locked(xnAudioSource* source)
 		{
-			ContextState lock(source->listener->context);
-
 			if (source->streamed)
 			{
 				//flush all buffers
@@ -589,12 +602,19 @@ extern "C" {
 			}
 		}
 
+		DLL_EXPORT_API void xnAudioSourceFlushBuffers(xnAudioSource* source)
+		{
+			ContextState lock(source->listener->context);
+			xnAudioSourceFlushBuffers_Locked(source);
+		}
+
+
 		DLL_EXPORT_API void xnAudioSourceStop(xnAudioSource* source)
 		{
 			ContextState lock(source->listener->context);
 
 			SourceStop(source->source);
-			xnAudioSourceFlushBuffers(source);
+			xnAudioSourceFlushBuffers_Locked(source);
 
 			//reset timing info
 			if(source->streamed)
