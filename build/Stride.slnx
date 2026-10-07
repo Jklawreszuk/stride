@@ -157,6 +157,7 @@
     <Project Path="../sources/presentation/Stride.Core.Quantum/Stride.Core.Quantum.csproj" />
   </Folder>
   <Folder Name="/50-Presentation/Avalonia/">
+    <Project Path="../sources/avalonia-presentation/Stride.Core.Translation.Presentation/Stride.Core.Translation.Presentation.csproj" />
     <Project Path="../sources/presentation/Stride.Core.Presentation.Avalonia/Stride.Core.Presentation.Avalonia.csproj" />
   </Folder>
   <Folder Name="/50-Presentation/Wpf/">
@@ -177,6 +178,10 @@
     <Project Path="../sources/crashreport/Stride.CrashReporter/Stride.CrashReporter.csproj" />
     <Project Path="../sources/crashreport/Stride.CrashReport.TestProbe/Stride.CrashReport.TestProbe.csproj" />
     <Project Path="../sources/engine/Stride.Debugger/Stride.Debugger.csproj" />
+  </Folder>
+  <Folder Name="/60-Editor/Avalonia/">
+    <Project Path="../sources/avalonia-editor/Stride.Core.Assets.Editor/Stride.Core.Assets.Editor.csproj" />
+    <Project Path="../sources/avalonia-editor/Stride.GameStudio/Stride.GameStudio.csproj" />
   </Folder>
   <Folder Name="/60-Editor/Wpf/">
     <Project Path="../sources/editor/Stride.Assets.Presentation.Wpf/Stride.Assets.Presentation.Wpf.csproj" />
