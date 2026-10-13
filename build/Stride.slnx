@@ -176,7 +176,30 @@
     <Project Path="../sources/crashreport/Stride.CrashReport/Stride.CrashReport.csproj" />
     <Project Path="../sources/crashreport/Stride.CrashReporter/Stride.CrashReporter.csproj" />
     <Project Path="../sources/crashreport/Stride.CrashReport.TestProbe/Stride.CrashReport.TestProbe.csproj" />
+    <Project Path="../sources/editor/Stride.Core.Assets.Editor/Stride.Core.Assets.Editor.csproj">
+      <Platform Project="iPhone" />
+    </Project>
+    <Project Path="../sources/editor/Stride.Core.Assets.Presentation/Stride.Core.Assets.Presentation.csproj">
+      <Platform Project="iPhone" />
+    </Project>
+    <Project Path="../sources/editor/Stride.Editor/Stride.Editor.csproj">
+      <Platform Project="iPhone" />
+    </Project>
     <Project Path="../sources/engine/Stride.Debugger/Stride.Debugger.csproj" />
+  </Folder>
+  <Folder Name="/60-Editor/Avalonia/">
+    <Project Path="../sources/editor/Stride.Core.Assets.Editor.Avalonia/Stride.Core.Assets.Editor.Avalonia.csproj">
+      <Platform Project="iPhone" />
+    </Project>
+    <Project Path="../sources/editor/Stride.Editor.Avalonia/Stride.Editor.Avalonia.csproj">
+      <Platform Project="iPhone" />
+    </Project>
+    <Project Path="../sources/editor/Stride.GameStudio.Avalonia.Desktop/Stride.GameStudio.Avalonia.Desktop.csproj">
+      <Platform Project="iPhone" />
+    </Project>
+    <Project Path="../sources/editor/Stride.GameStudio.Avalonia/Stride.GameStudio.Avalonia.csproj">
+      <Platform Project="iPhone" />
+    </Project>
   </Folder>
   <Folder Name="/60-Editor/Wpf/">
     <Project Path="../sources/editor/Stride.Assets.Presentation.Wpf/Stride.Assets.Presentation.Wpf.csproj" />

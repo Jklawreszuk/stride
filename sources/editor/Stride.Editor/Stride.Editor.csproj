@@ -1,0 +1,41 @@
+<Project>
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildProjectDirectory), 'Directory.Build.props'))/sdk/Stride.Build.Sdk.Editor/Sdk/Sdk.props" />
+
+  <PropertyGroup>
+    <TargetFramework>$(StrideXplatEditorTargetFramework)</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <StrideAssemblyProcessor>true</StrideAssemblyProcessor>
+    <StrideAssemblyProcessorOptions>--auto-module-initializer --serialization</StrideAssemblyProcessorOptions>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\shared\SharedAssemblyInfo.cs">
+      <Link>Properties\SharedAssemblyInfo.cs</Link>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\engine\Stride.Assets.Models\Stride.Assets.Models.csproj" />
+    <ProjectReference Include="..\..\engine\Stride.Particles\Stride.Particles.csproj" />
+    <ProjectReference Include="..\..\engine\Stride.SpriteStudio.Offline\Stride.SpriteStudio.Offline.csproj" />
+    <ProjectReference Include="..\Stride.Core.Assets.Editor\Stride.Core.Assets.Editor.csproj" />
+    <ProjectReference Include="..\..\core\Stride.Core.MicroThreading\Stride.Core.MicroThreading.csproj" />
+  </ItemGroup>
+
+  <!-- Resources -->
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\appbar.box.png" />
+    <EmbeddedResource Include="Resources\appbar.checkmark.cross.png" />
+    <EmbeddedResource Include="Resources\appbar.page.delete.png" />
+    <EmbeddedResource Include="Resources\appbar.resource.png" />
+    <EmbeddedResource Include="Resources\ThumbnailDependencyError.png" />
+    <EmbeddedResource Include="Resources\ThumbnailDependencyWarning.png" />
+  </ItemGroup>
+
+  <Import Project="$(StrideRoot)sources/sdk/Stride.Build.Sdk.Editor/Sdk/Sdk.targets" />
+</Project>
